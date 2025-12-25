@@ -97,11 +97,12 @@ const models = {
     'one-time': {
         name: 'One-Time Purchase (Perpetual License)',
         inputs: [
-            { name: 'unitPrice', label: 'Unit Price per License ($)', type: 'currency', default: 499, min: 0, step: 1 },
-            { name: 'unitsSold', label: 'Units Sold per Month', type: 'number', default: 25, min: 0, step: 1 },
-            { name: 'maintenanceFee', label: 'Annual Maintenance Fee (%)', type: 'percent', default: 20, min: 0, max: 100, step: 0.1 },
-            { name: 'maintenanceAttach', label: 'Maintenance Attach Rate (%)', type: 'percent', default: 60, min: 0, max: 100, step: 0.1 },
-            { name: 'customerLifetime', label: 'Customer Lifetime (years)', type: 'number', default: 5, min: 1, step: 1 }
+            { name: 'unitPrice', label: 'Unit Price per License ($)', type: 'currency', default: 499, min: 0, step: 1, hint: 'One-time purchase price' },
+            { name: 'unitsSold', label: 'Units Sold per Month', type: 'number', default: 25, min: 0, step: 1, hint: 'Number of licenses sold monthly' },
+            { name: 'maintenanceFee', label: 'Annual Maintenance Fee (%)', type: 'percent', default: 20, min: 0, max: 100, step: 0.1, hint: 'Percentage of license price charged annually' },
+            { name: 'maintenanceAttach', label: 'Maintenance Attach Rate (%)', type: 'percent', default: 60, min: 0, max: 100, step: 0.1, hint: 'Percentage of customers buying maintenance' },
+            { name: 'customerLifetime', label: 'Customer Lifetime (years)', type: 'number', default: 5, min: 1, step: 1, hint: 'Average years customers remain active' },
+            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 300, min: 0, step: 1, hint: 'Sales and marketing cost per customer' }
         ],
         calculate: function(inputs, months) {
             const results = [];
@@ -132,11 +133,12 @@ const models = {
     'subscription': {
         name: 'Subscription (SaaS)',
         inputs: [
-            { name: 'monthlyPrice', label: 'Monthly Subscription Price ($)', type: 'currency', default: 99, min: 0, step: 1 },
-            { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 50, min: 0, step: 1 },
-            { name: 'churnRate', label: 'Monthly Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1 },
-            { name: 'startingCustomers', label: 'Starting Customer Base', type: 'number', default: 0, min: 0, step: 1 },
-            { name: 'expansionRate', label: 'Monthly Expansion Revenue (%)', type: 'percent', default: 2, min: 0, max: 100, step: 0.1 }
+            { name: 'monthlyPrice', label: 'Monthly Subscription Price ($)', type: 'currency', default: 99, min: 0, step: 1, hint: 'Average monthly subscription fee per customer' },
+            { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 50, min: 0, step: 1, hint: 'Typical range for Early Stage SaaS: 20-100/month' },
+            { name: 'churnRate', label: 'Monthly Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1, hint: 'Healthy SaaS churn: 3-7% monthly' },
+            { name: 'startingCustomers', label: 'Starting Customer Base', type: 'number', default: 0, min: 0, step: 1, hint: 'Number of existing customers at start' },
+            { name: 'expansionRate', label: 'Monthly Expansion Revenue (%)', type: 'percent', default: 2, min: 0, max: 100, step: 0.1, hint: 'Revenue growth from existing customers through upsells' },
+            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 200, min: 0, step: 1, hint: 'Average cost to acquire one new customer' }
         ],
         calculate: function(inputs, months) {
             const results = [];
@@ -171,12 +173,13 @@ const models = {
     'freemium': {
         name: 'Freemium',
         inputs: [
-            { name: 'freeUsers', label: 'Free Users Acquired per Month', type: 'number', default: 500, min: 0, step: 1 },
-            { name: 'conversionRate', label: 'Free-to-Paid Conversion Rate (%)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1 },
-            { name: 'timeToConversion', label: 'Time to Conversion (months)', type: 'number', default: 2, min: 1, step: 1 },
-            { name: 'paidPrice', label: 'Paid Subscription Price ($)', type: 'currency', default: 49, min: 0, step: 1 },
-            { name: 'freeChurn', label: 'Free User Churn Rate (%)', type: 'percent', default: 15, min: 0, max: 100, step: 0.1 },
-            { name: 'paidChurn', label: 'Paid User Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1 }
+            { name: 'freeUsers', label: 'Free Users Acquired per Month', type: 'number', default: 500, min: 0, step: 1, hint: 'High free user acquisition is key for freemium models' },
+            { name: 'conversionRate', label: 'Free-to-Paid Conversion Rate (%)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1, hint: 'Typical freemium conversion: 2-5%' },
+            { name: 'timeToConversion', label: 'Time to Conversion (months)', type: 'number', default: 2, min: 1, step: 1, hint: 'Average time before free users upgrade to paid' },
+            { name: 'paidPrice', label: 'Paid Subscription Price ($)', type: 'currency', default: 49, min: 0, step: 1, hint: 'Monthly price for paid tier' },
+            { name: 'freeChurn', label: 'Free User Churn Rate (%)', type: 'percent', default: 15, min: 0, max: 100, step: 0.1, hint: 'Free users typically have higher churn' },
+            { name: 'paidChurn', label: 'Paid User Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1, hint: 'Paid user churn should be low: 3-7%' },
+            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 50, min: 0, step: 1, hint: 'Cost to acquire free users (typically lower than paid)' }
         ],
         calculate: function(inputs, months) {
             const results = [];
@@ -225,12 +228,13 @@ const models = {
     'usage-based': {
         name: 'Usage-Based (Consumption)',
         inputs: [
-            { name: 'pricePerUnit', label: 'Price per Unit ($)', type: 'currency', default: 0.05, min: 0, step: 0.01 },
-            { name: 'avgUsage', label: 'Avg Usage per Customer per Month', type: 'number', default: 1000, min: 0, step: 1 },
-            { name: 'usageGrowth', label: 'Usage Growth per Customer (% monthly)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1 },
-            { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 20, min: 0, step: 1 },
-            { name: 'churnRate', label: 'Customer Churn Rate (%)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1 },
-            { name: 'usageVariance', label: 'Usage Std Deviation (%)', type: 'percent', default: 20, min: 0, max: 100, step: 1 }
+            { name: 'pricePerUnit', label: 'Price per Unit ($)', type: 'currency', default: 0.05, min: 0, step: 0.01, hint: 'Price per API call, GB, or other unit' },
+            { name: 'avgUsage', label: 'Avg Usage per Customer per Month', type: 'number', default: 1000, min: 0, step: 1, hint: 'Starting usage level per customer' },
+            { name: 'usageGrowth', label: 'Usage Growth per Customer (% monthly)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1, hint: 'Natural usage expansion as customers grow' },
+            { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 20, min: 0, step: 1, hint: 'New customers onboarded each month' },
+            { name: 'churnRate', label: 'Customer Churn Rate (%)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1, hint: 'Usage-based models often have lower churn: 2-5%' },
+            { name: 'usageVariance', label: 'Usage Std Deviation (%)', type: 'percent', default: 20, min: 0, max: 100, step: 1, hint: 'Variability in monthly usage patterns' },
+            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 150, min: 0, step: 1, hint: 'Average cost to acquire one customer' }
         ],
         calculate: function(inputs, months) {
             const results = [];
@@ -266,16 +270,17 @@ const models = {
     'tiered': {
         name: 'Tiered Pricing',
         inputs: [
-            { name: 'starterPrice', label: 'Starter Tier Price ($)', type: 'currency', default: 29, min: 0, step: 1 },
-            { name: 'proPrice', label: 'Professional Tier Price ($)', type: 'currency', default: 99, min: 0, step: 1 },
-            { name: 'enterprisePrice', label: 'Enterprise Tier Price ($)', type: 'currency', default: 299, min: 0, step: 1 },
-            { name: 'starterPct', label: 'Starter Tier % of New Customers', type: 'percent', default: 60, min: 0, max: 100, step: 1 },
-            { name: 'proPct', label: 'Pro Tier % of New Customers', type: 'percent', default: 30, min: 0, max: 100, step: 1 },
-            { name: 'enterprisePct', label: 'Enterprise Tier % of New Customers', type: 'percent', default: 10, min: 0, max: 100, step: 1 },
-            { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 100, min: 0, step: 1 },
-            { name: 'upgradeRate', label: 'Monthly Upgrade Rate (%)', type: 'percent', default: 2, min: 0, max: 100, step: 0.1 },
-            { name: 'downgradeRate', label: 'Monthly Downgrade Rate (%)', type: 'percent', default: 1, min: 0, max: 100, step: 0.1 },
-            { name: 'churnRate', label: 'Monthly Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1 }
+            { name: 'starterPrice', label: 'Starter Tier Price ($)', type: 'currency', default: 29, min: 0, step: 1, hint: 'Entry-level pricing tier' },
+            { name: 'proPrice', label: 'Professional Tier Price ($)', type: 'currency', default: 99, min: 0, step: 1, hint: 'Mid-tier pricing for power users' },
+            { name: 'enterprisePrice', label: 'Enterprise Tier Price ($)', type: 'currency', default: 299, min: 0, step: 1, hint: 'Premium tier for large customers' },
+            { name: 'starterPct', label: 'Starter Tier % of New Customers', type: 'percent', default: 60, min: 0, max: 100, step: 1, hint: 'Most customers start in lower tier' },
+            { name: 'proPct', label: 'Pro Tier % of New Customers', type: 'percent', default: 30, min: 0, max: 100, step: 1, hint: 'Percentage starting in middle tier' },
+            { name: 'enterprisePct', label: 'Enterprise Tier % of New Customers', type: 'percent', default: 10, min: 0, max: 100, step: 1, hint: 'Few start at highest tier' },
+            { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 100, min: 0, step: 1, hint: 'Total new customers across all tiers' },
+            { name: 'upgradeRate', label: 'Monthly Upgrade Rate (%)', type: 'percent', default: 2, min: 0, max: 100, step: 0.1, hint: 'Customers moving to higher tiers' },
+            { name: 'downgradeRate', label: 'Monthly Downgrade Rate (%)', type: 'percent', default: 1, min: 0, max: 100, step: 0.1, hint: 'Customers moving to lower tiers' },
+            { name: 'churnRate', label: 'Monthly Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1, hint: 'Customer churn across all tiers' },
+            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 180, min: 0, step: 1, hint: 'Blended CAC across all tiers' }
         ],
         calculate: function(inputs, months) {
             const results = [];
@@ -339,11 +344,12 @@ const models = {
     'per-seat': {
         name: 'Per-Seat/Per-User',
         inputs: [
-            { name: 'pricePerSeat', label: 'Price per Seat per Month ($)', type: 'currency', default: 25, min: 0, step: 1 },
-            { name: 'avgSeats', label: 'Avg Seats per Customer at Signup', type: 'number', default: 5, min: 1, step: 1 },
-            { name: 'seatExpansion', label: 'Seat Expansion Rate (% monthly)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1 },
-            { name: 'customerChurn', label: 'Customer Churn Rate (%)', type: 'percent', default: 4, min: 0, max: 100, step: 0.1 },
-            { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 30, min: 0, step: 1 }
+            { name: 'pricePerSeat', label: 'Price per Seat per Month ($)', type: 'currency', default: 25, min: 0, step: 1, hint: 'Price charged per user/seat' },
+            { name: 'avgSeats', label: 'Avg Seats per Customer at Signup', type: 'number', default: 5, min: 1, step: 1, hint: 'Initial team size for new customers' },
+            { name: 'seatExpansion', label: 'Seat Expansion Rate (% monthly)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1, hint: 'Team growth rate within existing customers' },
+            { name: 'customerChurn', label: 'Customer Churn Rate (%)', type: 'percent', default: 4, min: 0, max: 100, step: 0.1, hint: 'Account-level churn rate' },
+            { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 30, min: 0, step: 1, hint: 'New accounts (not seats) per month' },
+            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 250, min: 0, step: 1, hint: 'Cost to acquire one account' }
         ],
         calculate: function(inputs, months) {
             const results = [];
@@ -1135,6 +1141,215 @@ function validateInput(type, value) {
 }
 
 /**
+ * Validate model inputs for potential issues
+ */
+function validateModelInputs(modelKey, inputs) {
+    const warnings = [];
+
+    // Model-specific validation rules
+    if (modelKey === 'subscription' || modelKey === 'per-seat' || modelKey === 'tiered') {
+        if (inputs.newCustomers === 0) {
+            warnings.push({
+                severity: 'error',
+                field: 'newCustomers',
+                message: 'New customers must be > 0 to generate revenue',
+                suggestion: 'Try: 20-50 customers/month'
+            });
+        }
+
+        if (inputs.churnRate && inputs.churnRate > 15 && (!inputs.expansionRate || inputs.expansionRate < 5)) {
+            warnings.push({
+                severity: 'warning',
+                field: 'churnRate',
+                message: 'High churn (>15%) without expansion will cause declining revenue',
+                suggestion: 'Reduce churn to <10% or increase expansion rate'
+            });
+        }
+
+        if (inputs.monthlyPrice && inputs.cac && inputs.monthlyPrice < inputs.cac / 12) {
+            warnings.push({
+                severity: 'warning',
+                field: 'monthlyPrice',
+                message: 'Monthly price is too low - CAC payback will exceed 1 year',
+                suggestion: 'Increase price or reduce CAC'
+            });
+        }
+    }
+
+    if (modelKey === 'freemium') {
+        if (inputs.conversionRate < 1) {
+            warnings.push({
+                severity: 'warning',
+                field: 'conversionRate',
+                message: 'Conversion rate <1% is very low for freemium models',
+                suggestion: 'Typical freemium conversion: 2-5%'
+            });
+        }
+
+        if (inputs.freeUsers === 0) {
+            warnings.push({
+                severity: 'error',
+                field: 'freeUsers',
+                message: 'Free users must be > 0 for freemium model',
+                suggestion: 'Try: 500-1000 free users/month'
+            });
+        }
+    }
+
+    if (modelKey === 'usage-based') {
+        if (inputs.pricePerUnit === 0) {
+            warnings.push({
+                severity: 'error',
+                field: 'pricePerUnit',
+                message: 'Price per unit must be > 0',
+                suggestion: 'Set a minimum unit price'
+            });
+        }
+
+        if (inputs.newCustomers === 0) {
+            warnings.push({
+                severity: 'error',
+                field: 'newCustomers',
+                message: 'New customers must be > 0',
+                suggestion: 'Try: 10-30 customers/month'
+            });
+        }
+    }
+
+    if (modelKey === 'one-time') {
+        if (inputs.unitsSold === 0) {
+            warnings.push({
+                severity: 'error',
+                field: 'unitsSold',
+                message: 'Units sold must be > 0',
+                suggestion: 'Try: 10-50 units/month'
+            });
+        }
+    }
+
+    return warnings;
+}
+
+/**
+ * Display validation warnings
+ */
+function displayValidationWarnings(warnings) {
+    // Remove existing warnings
+    const existingWarnings = document.getElementById('validation-warnings');
+    if (existingWarnings) {
+        existingWarnings.remove();
+    }
+
+    if (warnings.length === 0) return;
+
+    // Create warnings container
+    const warningsDiv = document.createElement('div');
+    warningsDiv.id = 'validation-warnings';
+    warningsDiv.className = 'mb-4 space-y-2';
+
+    warnings.forEach(w => {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = w.severity === 'error'
+            ? 'p-3 bg-red-900 border border-red-700 rounded-md text-sm'
+            : 'p-3 bg-yellow-900 border border-yellow-700 rounded-md text-sm';
+
+        alertDiv.innerHTML = `
+            <div class="font-semibold text-gray-100">${w.field ? w.field + ': ' : ''}${w.message}</div>
+            <div class="text-xs text-gray-300 mt-1">💡 ${w.suggestion}</div>
+        `;
+
+        warningsDiv.appendChild(alertDiv);
+    });
+
+    // Insert warnings before calculate button
+    const calculateBtn = document.getElementById('calculateBtn');
+    calculateBtn.parentElement.insertBefore(warningsDiv, calculateBtn);
+}
+
+/**
+ * Metric explanations and interpretations
+ */
+const METRIC_EXPLANATIONS = {
+    totalRevenue: {
+        label: 'Total Revenue',
+        explanation: 'Sum of all revenue over the forecast period',
+        higherIsBetter: true,
+        benchmark: 'Depends on business stage and market size'
+    },
+    finalMonthRevenue: {
+        label: 'Final Month Revenue',
+        explanation: 'Revenue in the last month of the forecast',
+        higherIsBetter: true,
+        benchmark: 'Indicates growth trajectory'
+    },
+    avgMonthlyGrowth: {
+        label: 'Avg Monthly Growth',
+        explanation: 'Average month-over-month revenue growth rate',
+        higherIsBetter: true,
+        interpretation: {
+            '<5%': '⚠️ Slow growth',
+            '5-15%': '✓ Good growth',
+            '15-30%': '⭐ Strong growth',
+            '>30%': '🚀 Exceptional growth'
+        },
+        benchmark: '10-20% monthly is typical for early stage SaaS'
+    },
+    estimatedLTV: {
+        label: 'Estimated LTV',
+        explanation: 'Customer Lifetime Value - total revenue expected from average customer',
+        higherIsBetter: true,
+        benchmark: 'Should be at least 3x CAC'
+    },
+    ltvCacRatio: {
+        label: 'LTV:CAC Ratio',
+        explanation: 'Lifetime Value to Customer Acquisition Cost ratio',
+        higherIsBetter: true,
+        interpretation: {
+            '<1': '🔴 Unsustainable - losing money on each customer',
+            '1-3': '🟡 Concerning - barely profitable',
+            '3-5': '🟢 Good - healthy business',
+            '>5': '🟢 Excellent - very profitable'
+        },
+        benchmark: '3:1 is considered healthy for SaaS businesses'
+    },
+    paybackPeriod: {
+        label: 'CAC Payback Period',
+        explanation: 'Months required to recover customer acquisition cost',
+        higherIsBetter: false,
+        interpretation: {
+            '<6': '🟢 Excellent - fast payback',
+            '6-12': '🟢 Good - acceptable for most SaaS',
+            '12-18': '🟡 Concerning - need high retention',
+            '>18': '🔴 Poor - requires significant capital'
+        },
+        benchmark: '6-12 months is typical for SaaS'
+    }
+};
+
+/**
+ * Get interpretation for a metric value
+ */
+function getMetricInterpretation(metricKey, value) {
+    const info = METRIC_EXPLANATIONS[metricKey];
+    if (!info || !info.interpretation) return null;
+
+    for (const [range, text] of Object.entries(info.interpretation)) {
+        if (range.startsWith('<')) {
+            const threshold = parseFloat(range.substring(1));
+            if (value < threshold) return text;
+        } else if (range.startsWith('>')) {
+            const threshold = parseFloat(range.substring(1));
+            if (value > threshold) return text;
+        } else if (range.includes('-')) {
+            const [min, max] = range.split('-').map(s => parseFloat(s));
+            if (value >= min && value <= max) return text;
+        }
+    }
+
+    return null;
+}
+
+/**
  * Calculate universal metrics that work across all models
  * Allows comparison even between different model families
  */
@@ -1175,17 +1390,21 @@ function calculateUniversalMetrics(modelKey, results, inputs) {
 
     const revenuePerCustomer = finalMonthCustomers > 0 ? finalMonthRevenue / finalMonthCustomers : 0;
 
-    // Calculate CAC, LTV, and related metrics (simplified estimates)
-    // For accurate CAC, we'd need marketing/sales costs as inputs
-    // For now, we'll estimate based on typical SaaS metrics
+    // Calculate CAC, LTV, and related metrics
+    // Use real CAC from inputs if provided, otherwise estimate
+    const estimatedCAC = inputs.cac !== undefined && inputs.cac > 0
+        ? inputs.cac
+        : revenuePerCustomer * 4; // Fallback: Conservative estimate
 
-    // Estimate CAC as 3-6 months of revenue per customer (industry standard)
-    const estimatedCAC = revenuePerCustomer * 4; // Conservative estimate
+    // Calculate retention rate (use appropriate churn field based on model)
+    const churnRate = inputs.churnRate !== undefined ? inputs.churnRate
+        : inputs.paidChurn !== undefined ? inputs.paidChurn
+        : inputs.customerChurn !== undefined ? inputs.customerChurn
+        : inputs.clientChurn !== undefined ? inputs.clientChurn
+        : inputs.accountChurn !== undefined ? inputs.accountChurn
+        : 5; // Default 5% churn if not specified
 
-    // Calculate retention rate
-    const retentionRate = inputs.churnRate !== undefined
-        ? (100 - inputs.churnRate) / 100
-        : 0.95; // Default 95% retention if not specified
+    const retentionRate = (100 - churnRate) / 100;
 
     // Calculate average customer lifetime in months
     const avgLifetimeMonths = retentionRate > 0 ? 1 / (1 - retentionRate) : 24;
@@ -1236,6 +1455,90 @@ function debounce(func, delay) {
 // ========== FORM GENERATION ==========
 
 /**
+ * Scenario templates for quick-start
+ */
+const SCENARIO_TEMPLATES = {
+    'subscription': {
+        'Early Stage SaaS': {
+            monthlyPrice: 49,
+            newCustomers: 50,
+            churnRate: 8,
+            startingCustomers: 0,
+            expansionRate: 2,
+            cac: 150
+        },
+        'Enterprise SaaS': {
+            monthlyPrice: 999,
+            newCustomers: 5,
+            churnRate: 3,
+            startingCustomers: 10,
+            expansionRate: 10,
+            cac: 5000
+        }
+    },
+    'freemium': {
+        'Consumer App': {
+            freeUsers: 1000,
+            conversionRate: 2,
+            timeToConversion: 3,
+            paidPrice: 9.99,
+            freeChurn: 20,
+            paidChurn: 5,
+            cac: 10
+        },
+        'B2B Freemium': {
+            freeUsers: 200,
+            conversionRate: 5,
+            timeToConversion: 1,
+            paidPrice: 99,
+            freeChurn: 10,
+            paidChurn: 4,
+            cac: 100
+        }
+    },
+    'usage-based': {
+        'API Service': {
+            pricePerUnit: 0.01,
+            avgUsage: 5000,
+            usageGrowth: 8,
+            newCustomers: 30,
+            churnRate: 2,
+            usageVariance: 25,
+            cac: 200
+        },
+        'Cloud Infrastructure': {
+            pricePerUnit: 0.10,
+            avgUsage: 1000,
+            usageGrowth: 15,
+            newCustomers: 10,
+            churnRate: 5,
+            usageVariance: 30,
+            cac: 800
+        }
+    }
+};
+
+/**
+ * Apply template to form inputs
+ */
+function applyTemplate(modelKey, templateName) {
+    const templates = SCENARIO_TEMPLATES[modelKey];
+    if (!templates || !templates[templateName]) return;
+
+    const templateData = templates[templateName];
+    for (const [key, value] of Object.entries(templateData)) {
+        const inputId = `${modelKey}-${key}`;
+        const element = document.getElementById(inputId);
+        if (element) {
+            element.value = value;
+        }
+    }
+
+    // Trigger input change to recalculate
+    onInputChange();
+}
+
+/**
  * Generate dynamic form based on model inputs
  */
 function generateForm(modelKey) {
@@ -1243,6 +1546,25 @@ function generateForm(modelKey) {
     const formContainer = document.getElementById('inputForm');
 
     let formHTML = `<h3 class="text-lg font-semibold text-gray-100 mb-4">Input Parameters</h3>`;
+
+    // Add template selector if templates exist for this model
+    if (SCENARIO_TEMPLATES[modelKey]) {
+        formHTML += `
+            <div class="mb-4 p-3 bg-gray-750 rounded-md border border-gray-600">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Quick Start Template</label>
+                <select
+                    id="${modelKey}-template"
+                    class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onchange="applyTemplate('${modelKey}', this.value)"
+                >
+                    <option value="">Choose a template...</option>
+                    ${Object.keys(SCENARIO_TEMPLATES[modelKey]).map(name =>
+                        `<option value="${name}">${name}</option>`
+                    ).join('')}
+                </select>
+            </div>
+        `;
+    }
 
     model.inputs.forEach(input => {
         const inputId = `${modelKey}-${input.name}`;
@@ -1263,6 +1585,7 @@ function generateForm(modelKey) {
                     data-type="${input.type}"
                     data-model="${modelKey}"
                 />
+                ${input.hint ? `<small class="text-xs text-gray-500 mt-1 block">${input.hint}</small>` : ''}
             </div>
         `;
     });
@@ -2079,15 +2402,26 @@ function onCalculate() {
 function performCalculation() {
     if (selectedModels.size === 0) return;
 
-    // Calculate results for all selected models
-    const allResults = new Map();
+    // Validate inputs and collect warnings
+    const allWarnings = [];
     const allInputs = new Map();
 
     for (const modelKey of selectedModels) {
-        const results = calculateModel(modelKey);
         const inputs = gatherInputs(modelKey);
-        allResults.set(modelKey, results);
         allInputs.set(modelKey, inputs);
+        const warnings = validateModelInputs(modelKey, inputs);
+        allWarnings.push(...warnings);
+    }
+
+    // Display validation warnings
+    displayValidationWarnings(allWarnings);
+
+    // Calculate results for all selected models
+    const allResults = new Map();
+
+    for (const modelKey of selectedModels) {
+        const results = calculateModel(modelKey);
+        allResults.set(modelKey, results);
     }
 
     // Determine comparison type
@@ -2148,10 +2482,100 @@ function renderComparison(allResults, allInputs, comparison) {
     document.getElementById('secondaryChart2Container').classList.add('hidden');
     document.getElementById('metricsPanel').classList.add('hidden');
 
+    // Remove existing executive summary if present
+    const existingSummary = document.getElementById('executive-summary');
+    if (existingSummary) {
+        existingSummary.remove();
+    }
+
+    // Render executive summary and insert before universal metrics panel
+    const executiveSummary = renderExecutiveSummary(allResults, allInputs);
+    if (executiveSummary) {
+        const metricsPanel = document.getElementById('universalMetricsPanel');
+        metricsPanel.parentElement.insertBefore(executiveSummary, metricsPanel);
+    }
+
     // Show comparison views
     renderUniversalMetrics(allResults, allInputs);
     renderComparisonCharts(allResults, comparison);
     renderComparisonTable(allResults);
+}
+
+/**
+ * Render executive summary panel
+ */
+function renderExecutiveSummary(allResults, allInputs) {
+    const summaryDiv = document.createElement('div');
+    summaryDiv.id = 'executive-summary';
+    summaryDiv.className = 'bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700';
+
+    // Calculate metrics for all models
+    const metricsData = [];
+    for (const [modelKey, results] of allResults) {
+        const inputs = allInputs.get(modelKey);
+        const metrics = calculateUniversalMetrics(modelKey, results, inputs);
+        if (metrics) {
+            metricsData.push({ modelKey, modelName: models[modelKey].name, metrics });
+        }
+    }
+
+    if (metricsData.length === 0) return null;
+
+    // Find best models for each category
+    const bestRevenue = metricsData.reduce((a, b) =>
+        a.metrics.totalRevenue > b.metrics.totalRevenue ? a : b
+    );
+    const bestEfficiency = metricsData.reduce((a, b) =>
+        a.metrics.ltvCacRatio > b.metrics.ltvCacRatio ? a : b
+    );
+    const bestPayback = metricsData.reduce((a, b) =>
+        a.metrics.paybackPeriod < b.metrics.paybackPeriod ? a : b
+    );
+
+    let html = `
+        <h2 class="text-xl font-semibold text-gray-100 mb-4">📊 Executive Summary</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="bg-gradient-to-br from-blue-900 to-blue-800 rounded-lg p-4 border border-blue-700">
+                <div class="text-xs text-blue-200 mb-1">💵 Highest Total Revenue</div>
+                <div class="text-lg font-bold text-white">${bestRevenue.modelName}</div>
+                <div class="text-sm text-blue-100 mt-1">${formatCurrency(bestRevenue.metrics.totalRevenue)}</div>
+            </div>
+            <div class="bg-gradient-to-br from-green-900 to-green-800 rounded-lg p-4 border border-green-700">
+                <div class="text-xs text-green-200 mb-1">⚡ Best Efficiency (LTV:CAC)</div>
+                <div class="text-lg font-bold text-white">${bestEfficiency.modelName}</div>
+                <div class="text-sm text-green-100 mt-1">${bestEfficiency.metrics.ltvCacRatio.toFixed(2)}:1 ratio</div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-900 to-purple-800 rounded-lg p-4 border border-purple-700">
+                <div class="text-xs text-purple-200 mb-1">🚀 Fastest CAC Payback</div>
+                <div class="text-lg font-bold text-white">${bestPayback.modelName}</div>
+                <div class="text-sm text-purple-100 mt-1">${bestPayback.metrics.paybackPeriod.toFixed(1)} months</div>
+            </div>
+        </div>
+        <div class="bg-gray-750 rounded-lg p-4 border border-gray-600">
+            <div class="text-sm font-semibold text-gray-200 mb-2">💡 Recommendation</div>
+            <div class="text-sm text-gray-300">
+                ${generateRecommendation(metricsData, bestRevenue, bestEfficiency, bestPayback)}
+            </div>
+        </div>
+    `;
+
+    summaryDiv.innerHTML = html;
+    return summaryDiv;
+}
+
+/**
+ * Generate recommendation based on comparison data
+ */
+function generateRecommendation(metricsData, bestRevenue, bestEfficiency, bestPayback) {
+    if (bestRevenue.modelKey === bestEfficiency.modelKey) {
+        return `<strong>${bestRevenue.modelName}</strong> is the clear winner with both the highest revenue AND best efficiency. This model provides the optimal balance of growth and profitability.`;
+    } else if (bestRevenue.modelKey === bestPayback.modelKey) {
+        return `<strong>${bestRevenue.modelName}</strong> leads in total revenue and has the fastest payback period, making it ideal for capital-efficient growth.`;
+    } else if (bestEfficiency.modelKey === bestPayback.modelKey) {
+        return `<strong>${bestEfficiency.modelName}</strong> offers the best unit economics with top efficiency and fastest payback. Choose <strong>${bestRevenue.modelName}</strong> if maximum revenue is the priority.`;
+    } else {
+        return `Each model excels in different areas: <strong>${bestRevenue.modelName}</strong> for maximum revenue, <strong>${bestEfficiency.modelName}</strong> for sustainable unit economics, and <strong>${bestPayback.modelName}</strong> for capital efficiency. Choose based on your strategic priorities.`;
+    }
 }
 
 /**
@@ -2189,28 +2613,92 @@ function renderUniversalMetrics(allResults, allInputs) {
     ];
 
     metricsToShow.forEach(metric => {
+        const metricInfo = METRIC_EXPLANATIONS[metric.key];
+        const higherIsBetter = metricInfo?.higherIsBetter !== false;
+
         const card = document.createElement('div');
-        card.className = 'bg-gray-700 rounded-lg p-4';
+        card.className = 'bg-gray-700 rounded-lg p-4 relative cursor-help metric-card';
+        card.title = metricInfo ? `${metricInfo.explanation}\n\nBenchmark: ${metricInfo.benchmark}` : '';
+
+        // Metric label with info icon
+        const labelContainer = document.createElement('div');
+        labelContainer.className = 'flex items-center justify-between mb-2';
 
         const label = document.createElement('div');
-        label.className = 'text-sm text-gray-400 mb-2';
+        label.className = 'text-sm text-gray-400';
         label.textContent = metric.label;
-        card.appendChild(label);
 
+        const infoIcon = document.createElement('span');
+        infoIcon.className = 'text-xs text-blue-400 cursor-help';
+        infoIcon.textContent = 'ⓘ';
+        infoIcon.title = metricInfo ? metricInfo.explanation : '';
+
+        labelContainer.appendChild(label);
+        labelContainer.appendChild(infoIcon);
+        card.appendChild(labelContainer);
+
+        // Find winner for this metric
+        const values = metricsData.map(d => ({
+            ...d,
+            value: d.metrics[metric.key] || 0
+        }));
+
+        values.sort((a, b) => higherIsBetter ? b.value - a.value : a.value - b.value);
+        const winner = values[0];
+
+        // Render each model's value
         metricsData.forEach(data => {
+            const metricValue = data.metrics[metric.key] || 0;
+            const isWinner = data.modelKey === winner.modelKey;
+            const percentDiff = winner.value !== 0
+                ? Math.abs(((metricValue - winner.value) / winner.value) * 100)
+                : 0;
+
             const row = document.createElement('div');
-            row.className = 'flex justify-between items-center mt-2';
+            row.className = `flex justify-between items-center mt-2 ${isWinner ? 'winner-row p-2 -mx-2 rounded bg-green-900 bg-opacity-20' : ''}`;
+
+            const modelNameContainer = document.createElement('div');
+            modelNameContainer.className = 'flex items-center gap-1';
+
+            if (isWinner) {
+                const trophy = document.createElement('span');
+                trophy.textContent = '🏆';
+                trophy.className = 'text-xs';
+                modelNameContainer.appendChild(trophy);
+            }
 
             const modelName = document.createElement('span');
-            modelName.className = 'text-xs text-gray-300';
+            modelName.className = `text-xs ${isWinner ? 'text-green-300 font-semibold' : 'text-gray-300'}`;
             modelName.textContent = data.modelName;
+            modelNameContainer.appendChild(modelName);
 
-            const value = document.createElement('span');
-            value.className = 'text-sm font-semibold text-gray-100';
-            value.textContent = metric.format(data.metrics[metric.key] || 0);
+            const valueContainer = document.createElement('div');
+            valueContainer.className = 'text-right';
 
-            row.appendChild(modelName);
-            row.appendChild(value);
+            const value = document.createElement('div');
+            value.className = `text-sm font-semibold ${isWinner ? 'text-green-200' : 'text-gray-100'}`;
+            value.textContent = metric.format(metricValue);
+            valueContainer.appendChild(value);
+
+            // Show percentage difference for non-winners
+            if (!isWinner && percentDiff > 0.1) {
+                const diff = document.createElement('div');
+                diff.className = 'text-xs text-gray-500';
+                diff.textContent = `(-${percentDiff.toFixed(1)}%)`;
+                valueContainer.appendChild(diff);
+            }
+
+            // Show interpretation if available
+            const interpretation = getMetricInterpretation(metric.key, metricValue);
+            if (interpretation) {
+                const interpSpan = document.createElement('div');
+                interpSpan.className = 'text-xs mt-1';
+                interpSpan.textContent = interpretation;
+                valueContainer.appendChild(interpSpan);
+            }
+
+            row.appendChild(modelNameContainer);
+            row.appendChild(valueContainer);
             card.appendChild(row);
         });
 
@@ -2249,7 +2737,9 @@ function renderFamilyOverlayChart(container, allResults, family) {
     // Prepare series data for overlay
     const series = [];
     const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+    const annotations = [];
     let colorIndex = 0;
+    let hasNonZeroData = false;
 
     for (const [modelKey, results] of allResults) {
         // Determine which metric to use based on family
@@ -2267,13 +2757,49 @@ function renderFamilyOverlayChart(container, allResults, family) {
             y: r[dataKey] || r.revenue || r.mrr || r.totalRevenue || 0
         }));
 
+        // Check if all values are zero
+        const allZero = data.every(d => d.y === 0);
+        if (!allZero) {
+            hasNonZeroData = true;
+        }
+
         series.push({
             name: models[modelKey].name,
             data: data.map(d => d.y),
-            color: colors[colorIndex % colors.length]
+            color: allZero ? '#6B7280' : colors[colorIndex % colors.length],
+            dashArray: allZero ? 5 : 0
         });
 
+        if (allZero) {
+            annotations.push({
+                y: 0,
+                label: {
+                    borderColor: '#EF4444',
+                    style: { color: '#fff', background: '#EF4444' },
+                    text: `⚠️ ${models[modelKey].name}: Zero Revenue - Check inputs`
+                }
+            });
+        }
+
         colorIndex++;
+    }
+
+    // If all models have zero revenue, show empty state
+    if (!hasNonZeroData) {
+        chartDiv.innerHTML = `
+            <div class="text-center py-12">
+                <div class="text-6xl mb-4">📊</div>
+                <div class="text-xl font-semibold text-gray-200 mb-2">No Revenue Data</div>
+                <div class="text-sm text-gray-400 mb-4">All models are generating zero revenue. This usually happens when:</div>
+                <ul class="text-sm text-gray-400 text-left max-w-md mx-auto space-y-1">
+                    <li>• New customers per month = 0</li>
+                    <li>• Price per unit = 0</li>
+                    <li>• Churn rate exceeds acquisition rate</li>
+                </ul>
+                <div class="mt-4 text-sm text-blue-400">💡 Check the validation warnings above and adjust your inputs</div>
+            </div>
+        `;
+        return;
     }
 
     // Create ApexCharts overlay
@@ -2306,6 +2832,7 @@ function renderFamilyOverlayChart(container, allResults, family) {
             text: `${family.name} - Revenue Comparison`,
             style: { color: '#F3F4F6' }
         },
+        annotations: annotations.length > 0 ? { yaxis: annotations } : {},
         theme: { mode: 'dark' }
     };
 
@@ -2331,50 +2858,65 @@ function renderSideBySideCharts(container, allResults) {
         // Determine revenue metric
         const revenueData = results.map(r => r.totalRevenue || r.revenue || r.mrr || 0);
 
-        const options = {
-            series: [{
-                name: 'Revenue',
-                data: revenueData,
-                color: colors[colorIndex % colors.length]
-            }],
-            chart: {
-                type: 'area',
-                height: 300,
-                background: '#1F2937',
-                toolbar: { show: false }
-            },
-            stroke: {
-                curve: 'smooth',
-                width: 2
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.6,
-                    opacityTo: 0.1
-                }
-            },
-            xaxis: {
-                categories: results.map(r => `Month ${r.month}`),
-                labels: { style: { colors: '#9CA3AF' } }
-            },
-            yaxis: {
-                labels: {
-                    style: { colors: '#9CA3AF' },
-                    formatter: (value) => formatCurrency(value)
-                }
-            },
-            title: {
-                text: models[modelKey].name,
-                style: { color: '#F3F4F6' }
-            },
-            theme: { mode: 'dark' }
-        };
+        // Check if all revenue is zero
+        const allZero = revenueData.every(v => v === 0);
 
-        const chart = new ApexCharts(chartDiv, options);
-        chart.render();
-        grid.appendChild(chartDiv);
+        if (allZero) {
+            chartDiv.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="text-4xl mb-2">⚠️</div>
+                    <div class="text-lg font-semibold text-gray-200 mb-1">${models[modelKey].name}</div>
+                    <div class="text-sm text-gray-400">Zero Revenue</div>
+                    <div class="text-xs text-gray-500 mt-2">Check inputs and validation warnings</div>
+                </div>
+            `;
+            grid.appendChild(chartDiv);
+        } else {
+            const options = {
+                series: [{
+                    name: 'Revenue',
+                    data: revenueData,
+                    color: colors[colorIndex % colors.length]
+                }],
+                chart: {
+                    type: 'area',
+                    height: 300,
+                    background: '#1F2937',
+                    toolbar: { show: false }
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 2
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.6,
+                        opacityTo: 0.1
+                    }
+                },
+                xaxis: {
+                    categories: results.map(r => `Month ${r.month}`),
+                    labels: { style: { colors: '#9CA3AF' } }
+                },
+                yaxis: {
+                    labels: {
+                        style: { colors: '#9CA3AF' },
+                        formatter: (value) => formatCurrency(value)
+                    }
+                },
+                title: {
+                    text: models[modelKey].name,
+                    style: { color: '#F3F4F6' }
+                },
+                theme: { mode: 'dark' }
+            };
+
+            const chart = new ApexCharts(chartDiv, options);
+            chart.render();
+            grid.appendChild(chartDiv);
+        }
 
         colorIndex++;
     }
@@ -2590,6 +3132,25 @@ function generateAllForms() {
         const model = models[modelKey];
         let formHTML = `<h3 class="text-lg font-semibold text-gray-100 mb-4">Input Parameters</h3>`;
 
+        // Add template selector if templates exist for this model
+        if (SCENARIO_TEMPLATES[modelKey]) {
+            formHTML += `
+                <div class="mb-4 p-3 bg-gray-750 rounded-md border border-gray-600">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Quick Start Template</label>
+                    <select
+                        id="${modelKey}-template"
+                        class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onchange="applyTemplate('${modelKey}', this.value)"
+                    >
+                        <option value="">Choose a template...</option>
+                        ${Object.keys(SCENARIO_TEMPLATES[modelKey]).map(name =>
+                            `<option value="${name}">${name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+            `;
+        }
+
         model.inputs.forEach(input => {
             const inputId = `${modelKey}-${input.name}`;
             formHTML += `
@@ -2609,6 +3170,7 @@ function generateAllForms() {
                         data-type="${input.type}"
                         data-model="${modelKey}"
                     />
+                    ${input.hint ? `<small class="text-xs text-gray-500 mt-1 block">${input.hint}</small>` : ''}
                 </div>
             `;
         });
