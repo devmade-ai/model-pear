@@ -8,3 +8,74 @@ body {
     margin: 0 auto;
     padding: 1rem;
 }
+
+/* Custom background colors for new UI components */
+.bg-gray-750 {
+    background-color: #2d3748;
+}
+
+/* Winner row styling */
+.winner-row {
+    transition: all 0.2s ease;
+}
+
+.winner-row:hover {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+/* Metric card hover effect */
+.metric-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Tooltip styling for info icons */
+.cursor-help {
+    cursor: help;
+}
+
+/* Validation warning animations */
+#validation-warnings > div {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Executive summary card animations */
+#executive-summary {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Improve select dropdown styling */
+select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
