@@ -1245,14 +1245,15 @@ function generateForm(modelKey) {
     let formHTML = `<h3 class="text-lg font-semibold text-gray-100 mb-4">Input Parameters</h3>`;
 
     model.inputs.forEach(input => {
+        const inputId = `${modelKey}-${input.name}`;
         formHTML += `
             <div class="mb-4">
-                <label for="${input.name}" class="block text-sm font-medium text-gray-300 mb-1">
+                <label for="${inputId}" class="block text-sm font-medium text-gray-300 mb-1">
                     ${input.label}
                 </label>
                 <input
                     type="number"
-                    id="${input.name}"
+                    id="${inputId}"
                     name="${input.name}"
                     class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value="${input.default}"
@@ -1260,6 +1261,7 @@ function generateForm(modelKey) {
                     ${input.max !== undefined ? 'max="' + input.max + '"' : ''}
                     step="${input.step}"
                     data-type="${input.type}"
+                    data-model="${modelKey}"
                 />
             </div>
         `;
@@ -1269,7 +1271,8 @@ function generateForm(modelKey) {
 
     // Add input event listeners
     model.inputs.forEach(input => {
-        const inputElement = document.getElementById(input.name);
+        const inputId = `${modelKey}-${input.name}`;
+        const inputElement = document.getElementById(inputId);
         inputElement.addEventListener('input', onInputChange);
     });
 }
@@ -1285,8 +1288,13 @@ function calculateModel(modelKey) {
 
     // Gather input values
     model.inputs.forEach(input => {
-        const element = document.getElementById(input.name);
-        inputs[input.name] = parseFloat(element.value);
+        const inputId = `${modelKey}-${input.name}`;
+        const element = document.getElementById(inputId);
+        if (element) {
+            inputs[input.name] = parseFloat(element.value) || input.default || 0;
+        } else {
+            inputs[input.name] = input.default || 0;
+        }
     });
 
     // Run calculation
@@ -2105,7 +2113,8 @@ function gatherInputs(modelKey) {
 
     const inputs = {};
     for (const input of model.inputs) {
-        const element = document.getElementById(input.name);
+        const inputId = `${modelKey}-${input.name}`;
+        const element = document.getElementById(inputId);
         if (element) {
             inputs[input.name] = parseFloat(element.value) || input.default || 0;
         } else {
@@ -2560,9 +2569,62 @@ function updateInputForms() {
         tabsContainer.classList.add('hidden');
     }
 
-    // Generate form for first selected model or active tab
+    // Generate ALL forms for ALL selected models
+    generateAllForms();
+}
+
+/**
+ * Generate all forms for selected models and keep them in the DOM
+ */
+function generateAllForms() {
+    const formContainer = document.getElementById('inputForm');
+    formContainer.innerHTML = '';
+
     const firstModel = Array.from(selectedModels)[0];
-    generateForm(firstModel);
+
+    selectedModels.forEach(modelKey => {
+        const modelFormDiv = document.createElement('div');
+        modelFormDiv.id = `form-${modelKey}`;
+        modelFormDiv.className = modelKey === firstModel ? '' : 'hidden';
+
+        const model = models[modelKey];
+        let formHTML = `<h3 class="text-lg font-semibold text-gray-100 mb-4">Input Parameters</h3>`;
+
+        model.inputs.forEach(input => {
+            const inputId = `${modelKey}-${input.name}`;
+            formHTML += `
+                <div class="mb-4">
+                    <label for="${inputId}" class="block text-sm font-medium text-gray-300 mb-1">
+                        ${input.label}
+                    </label>
+                    <input
+                        type="number"
+                        id="${inputId}"
+                        name="${input.name}"
+                        class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        value="${input.default}"
+                        min="${input.min !== undefined ? input.min : 0}"
+                        ${input.max !== undefined ? 'max="' + input.max + '"' : ''}
+                        step="${input.step}"
+                        data-type="${input.type}"
+                        data-model="${modelKey}"
+                    />
+                </div>
+            `;
+        });
+
+        modelFormDiv.innerHTML = formHTML;
+        formContainer.appendChild(modelFormDiv);
+
+        // Add input event listeners
+        model.inputs.forEach(input => {
+            const inputId = `${modelKey}-${input.name}`;
+            const inputElement = document.getElementById(inputId);
+            if (inputElement) {
+                inputElement.addEventListener('input', onInputChange);
+            }
+        });
+    });
 }
 
 /**
@@ -2572,28 +2634,38 @@ function generateInputTabs() {
     const tabsContainer = document.getElementById('inputFormTabs');
     tabsContainer.innerHTML = '';
 
+    const firstModel = Array.from(selectedModels)[0];
+
     selectedModels.forEach(modelKey => {
         const button = document.createElement('button');
         button.textContent = models[modelKey].name;
-        button.className = 'px-3 py-1 text-sm rounded bg-gray-700 text-gray-300 hover:bg-gray-600';
+        button.className = modelKey === firstModel
+            ? 'px-3 py-1 text-sm rounded bg-blue-600 text-white'
+            : 'px-3 py-1 text-sm rounded bg-gray-700 text-gray-300 hover:bg-gray-600';
         button.dataset.model = modelKey;
         button.addEventListener('click', (e) => {
+            const targetModel = e.target.dataset.model;
+
             // Update active tab styling
             tabsContainer.querySelectorAll('button').forEach(btn => {
                 btn.className = 'px-3 py-1 text-sm rounded bg-gray-700 text-gray-300 hover:bg-gray-600';
             });
             e.target.className = 'px-3 py-1 text-sm rounded bg-blue-600 text-white';
 
-            // Show form for this model
-            generateForm(modelKey);
+            // Show/hide forms
+            selectedModels.forEach(mk => {
+                const formDiv = document.getElementById(`form-${mk}`);
+                if (formDiv) {
+                    if (mk === targetModel) {
+                        formDiv.classList.remove('hidden');
+                    } else {
+                        formDiv.classList.add('hidden');
+                    }
+                }
+            });
         });
         tabsContainer.appendChild(button);
     });
-
-    // Set first tab as active
-    if (tabsContainer.firstChild) {
-        tabsContainer.firstChild.className = 'px-3 py-1 text-sm rounded bg-blue-600 text-white';
-    }
 }
 
 /**
