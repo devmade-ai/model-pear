@@ -29,14 +29,101 @@
             <!-- Left Sidebar: Model Selection & Input Form -->
             <div class="lg:col-span-1">
                 <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Select Models to Compare</h2>
-
-                    <!-- Model Selector -->
-                    <div class="mb-6 max-h-96 overflow-y-auto">
-                        <div id="modelSelector">
-                            <!-- Checkboxes will be dynamically populated grouped by family -->
+                    <!-- STEP 1: Category Selection -->
+                    <div class="mb-6">
+                        <h2 class="text-xl font-semibold text-gray-100 mb-2">Step 1: What type of software?</h2>
+                        <label for="categorySelector" class="block text-sm font-medium text-gray-300 mb-2">
+                            Select software category
+                        </label>
+                        <select id="categorySelector" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Select a category --</option>
+                            <option value="dev-devops">Development & DevOps Infrastructure</option>
+                            <option value="business-ops">Business Operations Software</option>
+                            <option value="marketing">Marketing & Customer Engagement</option>
+                            <option value="productivity">Workplace Productivity & Collaboration</option>
+                            <option value="data-analytics">Data & Analytics</option>
+                            <option value="security">Security & Compliance</option>
+                            <option value="content-media">Content & Media Management</option>
+                            <option value="customer-support">Customer Support & Service</option>
+                            <option value="ecommerce-payments">E-commerce & Payments</option>
+                            <option value="industry-specific">Industry-Specific Solutions</option>
+                        </select>
+                        <div id="categoryDescription" class="mt-2 text-sm text-gray-400 hidden">
+                            <!-- Category description will be populated here -->
+                        </div>
+                        <div id="categoryExamples" class="mt-1 text-xs text-gray-500 hidden">
+                            <!-- Category examples will be populated here -->
                         </div>
                     </div>
+
+                    <!-- STEP 2: Model Selection -->
+                    <div id="modelSelectionSection" class="hidden">
+                        <h2 class="text-xl font-semibold text-gray-100 mb-4">Step 2: Select Revenue Models</h2>
+
+                        <!-- Model Selector -->
+                        <div class="mb-6 max-h-96 overflow-y-auto">
+                            <div id="modelSelector">
+                                <!-- Checkboxes will be dynamically populated based on selected category -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Delivery & Service Options -->
+                    <div id="layerTwoThreeSection" class="hidden mb-6 pb-6 border-b border-gray-700">
+                        <h2 class="text-xl font-semibold text-gray-100 mb-4">Step 3: Delivery & Service Options</h2>
+
+                        <!-- Layer 2: Delivery Mechanism -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Delivery Mechanism</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="deliveryMechanism" value="cloud-saas" checked class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Cloud-Hosted SaaS <span class="text-gray-500">(baseline)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="deliveryMechanism" value="self-hosted" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Self-Hosted/On-Premise <span class="text-gray-500">(higher upfront)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="deliveryMechanism" value="hybrid" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Hybrid Cloud <span class="text-gray-500">(+40% premium)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="deliveryMechanism" value="mobile" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Mobile Apps <span class="text-gray-500">(-15% for app store fees)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="deliveryMechanism" value="api-embedded" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>API/Embedded <span class="text-gray-500">(+20% for support)</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Layer 3: Service Model -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Service Model</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="serviceModel" value="self-service" checked class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Self-Service <span class="text-gray-500">(-30% price, higher churn)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="serviceModel" value="managed-services" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Managed Services <span class="text-gray-500">(+R1,500-R5,000/mo)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="serviceModel" value="professional-services" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Professional Services <span class="text-gray-500">(R500-R2,500/hr)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="serviceModel" value="hybrid-modular" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Hybrid/Modular <span class="text-gray-500">(flexible pricing)</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Model-Specific Inputs (existing) -->
 
                     <!-- Selected Models Summary -->
                     <div id="selectedSummary" class="mb-4 text-sm text-gray-400">
