@@ -1,5 +1,124 @@
 # Revenue Model Calculator
 
+> **IMPORTANT**: This file should ALWAYS be kept up to date with any changes to project goals, architecture, completed features, and progress. Update this file whenever making significant changes to the codebase.
+
+## Current Project Status
+
+**Current Phase**: Building Multi-Model Comparison Infrastructure
+
+**Completed Models**: 6/20
+- ✅ One-Time Purchase (Perpetual License)
+- ✅ Subscription (SaaS)
+- ✅ Freemium
+- ✅ Usage-Based (Consumption)
+- ✅ Tiered Pricing
+- ✅ Per-Seat/Per-User
+
+**In Progress**:
+- Designing model family metadata system
+- Planning universal metrics calculator
+- Planning comparison UI architecture
+
+**Next Steps**:
+- Implement remaining 14 revenue models
+- Build model family compatibility matrix
+- Create multi-model comparison UI
+- Implement universal metrics (CAC, LTV, LTV:CAC, etc.)
+- Build comparison chart overlay system
+
+## New Goals: Multi-Model Comparison System
+
+### Primary Objective
+Enable users to compare multiple revenue models simultaneously on the same page, with intelligent grouping by model families and universal metrics that work across all models.
+
+### Key Requirements
+
+1. **No Mode Toggle**: Single page layout that dynamically updates as models are selected/deselected
+2. **Model Families**: Group similar models that share inputs and can be directly compared
+3. **Family-Level Comparison**: Models in the same family can overlay on identical charts
+4. **Universal Metrics**: All models calculate CAC, LTV, LTV:CAC, payback period, growth rates
+5. **Cross-Family Comparison**: Universal metrics allow comparison even between different families
+
+### Model Families & Comparison Strategy
+
+#### **Subscription Model Family**
+- **Models**: Subscription (SaaS), Per-Seat/Per-User, Retainer Agreements, Managed Services
+- **Shared Metrics**: MRR/ARR, Customer Count, Churn Rate, Revenue per Customer
+- **Direct Comparison**: Can overlay on same charts
+
+#### **Usage-Based Consumption Family**
+- **Models**: Usage-Based (Consumption), Pay-Per-Transaction, Credits/Token System
+- **Shared Metrics**: Revenue over time, Volume consumed, ARPU, Usage growth
+- **Direct Comparison**: Can overlay on same charts
+
+#### **Project Delivery Family**
+- **Models**: Time and Materials (Hourly), Fixed-Price Projects, Outcome-Based/Milestone
+- **Shared Metrics**: Revenue over time, Active projects, Revenue per resource
+- **Note**: Revenue recognition patterns differ
+
+#### **Free-to-Paid Conversion Family**
+- **Models**: Freemium, Open Core
+- **Shared Metrics**: Free vs Paid users, Conversion rate, Cohort conversion
+- **Direct Comparison**: Can overlay on same charts
+
+#### **Platform/Intermediary Family**
+- **Models**: Marketplace/Platform Fee, Revenue Share, Advertising Supported
+- **Shared Metrics**: Volume vs Revenue, Take rate, Participant growth
+- **Direct Comparison**: Can overlay on same charts
+
+#### **Enterprise License Family**
+- **Models**: Enterprise License Agreement (ELA), Data Licensing, White Label/OEM
+- **Shared Metrics**: Annual contract value, Contract count, Renewal rates
+- **Direct Comparison**: Can overlay on same charts
+
+#### **Standalone Models**
+- **One-Time Purchase**: Lumpy revenue pattern, incompatible with recurring models (except maintenance component)
+- **Professional Services Attachment**: Hybrid requiring split analysis
+
+### Universal Comparable Metrics (All Models)
+
+These allow comparison across ANY model combination:
+
+**Customer Economics**:
+- Customer Acquisition Cost (CAC)
+- Lifetime Value (LTV)
+- LTV:CAC ratio
+- Payback period
+
+**Growth Metrics**:
+- Month-over-month growth rate
+- Customer/unit growth rate
+- Revenue growth rate
+
+**Efficiency Metrics**:
+- Revenue per customer
+- Gross margin percentage
+- Customer retention rate
+
+**Financial Performance**:
+- Total revenue over time
+- Revenue run rate
+- Cash flow patterns
+
+### Comparison UI Architecture
+
+**Multi-Model Selector**:
+- Checkbox list of all 20 models
+- Visual grouping by family
+- Select multiple models simultaneously
+- Page updates dynamically as selections change
+
+**Comparison Views**:
+1. **Family Overlay Charts**: When models from same family selected, overlay their data
+2. **Universal Metrics Dashboard**: Side-by-side cards showing CAC, LTV, etc. for each selected model
+3. **Comparison Table**: Month-by-month data for all selected models
+4. **Individual Model Cards**: Each selected model gets its own card with specific charts
+
+**Chart Strategy**:
+- Same family → Single chart with multiple series (overlaid)
+- Different families → Side-by-side charts OR universal metrics comparison
+- Always show universal metrics for cross-model comparison
+
 ## Project Overview
 
 Static web application for visualizing and comparing different software revenue models. Single HTML file with embedded JavaScript and CSS, hosted on GitHub Pages.

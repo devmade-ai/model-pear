@@ -29,28 +29,34 @@
             <!-- Left Sidebar: Model Selection & Input Form -->
             <div class="lg:col-span-1">
                 <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Select Model</h2>
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Select Models to Compare</h2>
 
                     <!-- Model Selector -->
-                    <div class="mb-6">
-                        <label for="modelSelect" class="block text-sm font-medium text-gray-300 mb-2">
-                            Revenue Model
-                        </label>
-                        <select id="modelSelect" class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">-- Select a Model --</option>
-                            <!-- Options will be dynamically populated -->
-                        </select>
+                    <div class="mb-6 max-h-96 overflow-y-auto">
+                        <div id="modelSelector">
+                            <!-- Checkboxes will be dynamically populated grouped by family -->
+                        </div>
                     </div>
 
-                    <!-- Dynamic Input Form -->
-                    <div id="inputForm">
-                        <p class="text-gray-400 text-sm">Select a model to see input fields</p>
+                    <!-- Selected Models Summary -->
+                    <div id="selectedSummary" class="mb-4 text-sm text-gray-400">
+                        No models selected
+                    </div>
+
+                    <!-- Dynamic Input Forms (Tabbed) -->
+                    <div id="inputFormContainer">
+                        <div id="inputFormTabs" class="flex flex-wrap gap-2 mb-4 hidden">
+                            <!-- Tabs will be dynamically generated -->
+                        </div>
+                        <div id="inputForm">
+                            <p class="text-gray-400 text-sm">Select models to configure inputs</p>
+                        </div>
                     </div>
 
                     <!-- Calculate Button -->
                     <div class="mt-6">
                         <button id="calculateBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>
-                            Calculate
+                            Calculate & Compare
                         </button>
                     </div>
                 </div>
@@ -58,12 +64,25 @@
 
             <!-- Right Content: Charts & Metrics -->
             <div class="lg:col-span-2">
-                <!-- Metrics Panel -->
+                <!-- Universal Metrics Comparison (shown when multiple models selected) -->
+                <div id="universalMetricsPanel" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Universal Metrics Comparison</h2>
+                    <div id="universalMetricsContent">
+                        <!-- Universal metrics cards will be dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Model-Specific Metrics Panel -->
                 <div id="metricsPanel" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
                     <h2 class="text-xl font-semibold text-gray-100 mb-4">Key Metrics</h2>
                     <div id="metricsContent" class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <!-- Metrics will be dynamically populated -->
                     </div>
+                </div>
+
+                <!-- Comparison Charts Container -->
+                <div id="comparisonChartsContainer" class="mb-6 hidden">
+                    <!-- Comparison charts will be dynamically populated -->
                 </div>
 
                 <!-- Primary Chart -->
@@ -78,6 +97,16 @@
                     </div>
                     <div id="secondaryChart2Container" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 hidden">
                         <div id="secondaryChart2"></div>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div id="comparisonTableContainer" class="bg-gray-800 shadow-sm rounded-lg p-6 mt-6 border border-gray-700 hidden">
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Month-by-Month Comparison</h2>
+                    <div class="overflow-x-auto">
+                        <table id="comparisonTable" class="w-full text-sm text-gray-300">
+                            <!-- Table will be dynamically populated -->
+                        </table>
                     </div>
                 </div>
             </div>
