@@ -25,28 +25,28 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-900">
     <!-- Main Container -->
     <div class="container-custom">
         <!-- Header -->
-        <header class="bg-white shadow-sm rounded-lg p-6 mb-6">
-            <h1 class="text-3xl font-bold text-gray-900">Revenue Model Calculator</h1>
-            <p class="text-gray-600 mt-2">Visualize and compare different software revenue models</p>
+        <header class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700">
+            <h1 class="text-3xl font-bold text-gray-100">Revenue Model Calculator</h1>
+            <p class="text-gray-400 mt-2">Visualize and compare different software revenue models</p>
         </header>
 
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Left Sidebar: Model Selection & Input Form -->
             <div class="lg:col-span-1">
-                <div class="bg-white shadow-sm rounded-lg p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Select Model</h2>
+                <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Select Model</h2>
 
                     <!-- Model Selector -->
                     <div class="mb-6">
-                        <label for="modelSelect" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="modelSelect" class="block text-sm font-medium text-gray-300 mb-2">
                             Revenue Model
                         </label>
-                        <select id="modelSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select id="modelSelect" class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="">-- Select a Model --</option>
                             <!-- Options will be dynamically populated -->
                         </select>
@@ -54,12 +54,12 @@
 
                     <!-- Dynamic Input Form -->
                     <div id="inputForm">
-                        <p class="text-gray-500 text-sm">Select a model to see input fields</p>
+                        <p class="text-gray-400 text-sm">Select a model to see input fields</p>
                     </div>
 
                     <!-- Calculate Button -->
                     <div class="mt-6">
-                        <button id="calculateBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                        <button id="calculateBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>
                             Calculate
                         </button>
                     </div>
@@ -69,24 +69,24 @@
             <!-- Right Content: Charts & Metrics -->
             <div class="lg:col-span-2">
                 <!-- Metrics Panel -->
-                <div id="metricsPanel" class="bg-white shadow-sm rounded-lg p-6 mb-6 hidden">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Key Metrics</h2>
+                <div id="metricsPanel" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Key Metrics</h2>
                     <div id="metricsContent" class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <!-- Metrics will be dynamically populated -->
                     </div>
                 </div>
 
                 <!-- Primary Chart -->
-                <div id="primaryChartContainer" class="bg-white shadow-sm rounded-lg p-6 mb-6 hidden">
+                <div id="primaryChartContainer" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
                     <div id="primaryChart"></div>
                 </div>
 
                 <!-- Secondary Charts -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div id="secondaryChart1Container" class="bg-white shadow-sm rounded-lg p-6 hidden">
+                    <div id="secondaryChart1Container" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 hidden">
                         <div id="secondaryChart1"></div>
                     </div>
-                    <div id="secondaryChart2Container" class="bg-white shadow-sm rounded-lg p-6 hidden">
+                    <div id="secondaryChart2Container" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 hidden">
                         <div id="secondaryChart2"></div>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
         </div>
 
         <!-- Footer -->
-        <footer class="mt-8 text-center text-gray-500 text-sm">
+        <footer class="mt-8 text-center text-gray-400 text-sm">
             <p>Revenue Model Calculator | Open Source | Built with ApexCharts & Tailwind CSS</p>
         </footer>
     </div>
@@ -476,19 +476,19 @@
             const model = models[modelKey];
             const formContainer = document.getElementById('inputForm');
 
-            let formHTML = `<h3 class="text-lg font-semibold text-gray-900 mb-4">Input Parameters</h3>`;
+            let formHTML = `<h3 class="text-lg font-semibold text-gray-100 mb-4">Input Parameters</h3>`;
 
             model.inputs.forEach(input => {
                 formHTML += `
                     <div class="mb-4">
-                        <label for="${input.name}" class="block text-sm font-medium text-gray-700 mb-1">
+                        <label for="${input.name}" class="block text-sm font-medium text-gray-300 mb-1">
                             ${input.label}
                         </label>
                         <input
                             type="number"
                             id="${input.name}"
                             name="${input.name}"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             value="${input.default}"
                             min="${input.min !== undefined ? input.min : 0}"
                             ${input.max !== undefined ? 'max="' + input.max + '"' : ''}
@@ -583,7 +583,8 @@
                     type: 'area',
                     height: 400,
                     stacked: true,
-                    toolbar: { show: true }
+                    toolbar: { show: true },
+                    background: 'transparent'
                 },
                 colors: [CONFIG.chartColors.primary, CONFIG.chartColors.positive],
                 dataLabels: { enabled: false },
@@ -591,17 +592,35 @@
                 fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.3 } },
                 xaxis: {
                     categories: data.map(d => `Month ${d.month}`),
-                    labels: { rotate: -45, rotateAlways: false }
+                    labels: {
+                        rotate: -45,
+                        rotateAlways: false,
+                        style: { colors: '#9CA3AF' }
+                    }
                 },
                 yaxis: {
-                    title: { text: 'Revenue ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+                    labels: {
+                        formatter: val => formatCurrency(val),
+                        style: { colors: '#9CA3AF' }
+                    }
+                },
+                grid: {
+                    borderColor: '#374151'
                 },
                 tooltip: {
+                    theme: 'dark',
                     y: { formatter: val => formatCurrency(val) }
                 },
-                legend: { position: 'top' },
-                title: { text: 'Revenue Breakdown: License vs Maintenance', align: 'center', style: { fontSize: '16px', fontWeight: 600 } }
+                legend: {
+                    position: 'top',
+                    labels: { colors: '#9CA3AF' }
+                },
+                title: {
+                    text: 'Revenue Breakdown: License vs Maintenance',
+                    align: 'center',
+                    style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' }
+                }
             };
 
             document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -614,19 +633,20 @@
                     name: 'Total Revenue',
                     data: data.map(d => d.totalRevenue.toFixed(2))
                 }],
-                chart: { type: 'line', height: 300, toolbar: { show: true } },
+                chart: { type: 'line', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.moderate],
                 stroke: { curve: 'smooth', width: 3 },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Revenue ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatCurrency(val) } },
-                title: { text: 'Total Monthly Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
+                title: { text: 'Total Monthly Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart1Container').classList.remove('hidden');
@@ -639,7 +659,7 @@
                     name: 'Total Customers',
                     data: data.map(d => d.totalCustomers)
                 }],
-                chart: { type: 'bar', height: 300, toolbar: { show: true } },
+                chart: { type: 'bar', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.primary],
                 plotOptions: {
                     bar: { borderRadius: 4, dataLabels: { position: 'top' } }
@@ -647,14 +667,15 @@
                 dataLabels: { enabled: false },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Customers' },
-                    labels: { formatter: val => formatNumber(val) }
+                    title: { text: 'Customers', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatNumber(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatNumber(val) } },
-                title: { text: 'Customer Base Growth', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) } },
+                title: { text: 'Customer Base Growth', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart2Container').classList.remove('hidden');
@@ -675,20 +696,21 @@
                         data: data.map(d => d.arr.toFixed(2))
                     }
                 ],
-                chart: { type: 'line', height: 400, toolbar: { show: true } },
+                chart: { type: 'line', height: 400, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.primary, CONFIG.chartColors.positive],
                 stroke: { curve: 'smooth', width: 3 },
                 xaxis: {
                     categories: data.map(d => `Month ${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Revenue ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatCurrency(val) } },
-                legend: { position: 'top' },
-                title: { text: 'MRR and ARR Growth', align: 'center', style: { fontSize: '16px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
+                legend: { position: 'top', labels: { colors: '#9CA3AF' } },
+                title: { text: 'MRR and ARR Growth', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -701,20 +723,21 @@
                     name: 'Customers',
                     data: data.map(d => d.customers)
                 }],
-                chart: { type: 'area', height: 300, toolbar: { show: true } },
+                chart: { type: 'area', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.moderate],
                 fill: { type: 'gradient', gradient: { opacityFrom: 0.6, opacityTo: 0.2 } },
                 stroke: { curve: 'smooth', width: 2 },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Customers' },
-                    labels: { formatter: val => formatNumber(val) }
+                    title: { text: 'Customers', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatNumber(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatNumber(val) } },
-                title: { text: 'Customer Count', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) } },
+                title: { text: 'Customer Count', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart1Container').classList.remove('hidden');
@@ -737,20 +760,21 @@
                         data: data.map(d => -d.churnedMRR.toFixed(2))
                     }
                 ],
-                chart: { type: 'bar', height: 300, stacked: true, toolbar: { show: true } },
+                chart: { type: 'bar', height: 300, stacked: true, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.positive, CONFIG.chartColors.moderate, CONFIG.chartColors.negative],
                 plotOptions: { bar: { borderRadius: 4 } },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'MRR Change ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'MRR Change ($)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatCurrency(Math.abs(val)) } },
-                legend: { position: 'top' },
-                title: { text: 'MRR Components', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(Math.abs(val)) } },
+                legend: { position: 'top', labels: { colors: '#9CA3AF' } },
+                title: { text: 'MRR Components', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart2Container').classList.remove('hidden');
@@ -771,21 +795,22 @@
                         data: data.map(d => d.paidUsers)
                     }
                 ],
-                chart: { type: 'area', height: 400, stacked: true, toolbar: { show: true } },
+                chart: { type: 'area', height: 400, stacked: true, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.secondary, CONFIG.chartColors.positive],
                 fill: { type: 'gradient', gradient: { opacityFrom: 0.6, opacityTo: 0.3 } },
                 stroke: { curve: 'smooth', width: 2 },
                 xaxis: {
                     categories: data.map(d => `Month ${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Users' },
-                    labels: { formatter: val => formatNumber(val) }
+                    title: { text: 'Users', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatNumber(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatNumber(val) } },
-                legend: { position: 'top' },
-                title: { text: 'Free vs Paid Users', align: 'center', style: { fontSize: '16px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) } },
+                legend: { position: 'top', labels: { colors: '#9CA3AF' } },
+                title: { text: 'Free vs Paid Users', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -798,19 +823,20 @@
                     name: 'Revenue',
                     data: data.map(d => d.revenue.toFixed(2))
                 }],
-                chart: { type: 'line', height: 300, toolbar: { show: true } },
+                chart: { type: 'line', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.primary],
                 stroke: { curve: 'smooth', width: 3 },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Revenue ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatCurrency(val) } },
-                title: { text: 'Revenue from Paid Users', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
+                title: { text: 'Revenue from Paid Users', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart1Container').classList.remove('hidden');
@@ -823,19 +849,20 @@
                     name: 'Conversion Rate',
                     data: data.map(d => d.conversionRate.toFixed(2))
                 }],
-                chart: { type: 'line', height: 300, toolbar: { show: true } },
+                chart: { type: 'line', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.moderate],
                 stroke: { curve: 'smooth', width: 3 },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Conversion Rate (%)' },
-                    labels: { formatter: val => val.toFixed(1) + '%' }
+                    title: { text: 'Conversion Rate (%)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => val.toFixed(1) + '%', style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => val.toFixed(1) + '%' } },
-                title: { text: 'Free-to-Paid Conversion Rate', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => val.toFixed(1) + '%' } },
+                title: { text: 'Free-to-Paid Conversion Rate', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart2Container').classList.remove('hidden');
@@ -860,20 +887,21 @@
                         data: data.map(d => d.revenueLow.toFixed(2))
                     }
                 ],
-                chart: { type: 'line', height: 400, toolbar: { show: true } },
+                chart: { type: 'line', height: 400, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.primary, CONFIG.chartColors.positive, CONFIG.chartColors.negative],
                 stroke: { curve: 'smooth', width: [3, 1, 1], dashArray: [0, 5, 5] },
                 xaxis: {
                     categories: data.map(d => `Month ${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Revenue ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatCurrency(val) } },
-                legend: { position: 'top' },
-                title: { text: 'Revenue with Usage Variance', align: 'center', style: { fontSize: '16px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
+                legend: { position: 'top', labels: { colors: '#9CA3AF' } },
+                title: { text: 'Revenue with Usage Variance', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -886,20 +914,21 @@
                     name: 'Avg Usage',
                     data: data.map(d => d.avgUsage.toFixed(2))
                 }],
-                chart: { type: 'area', height: 300, toolbar: { show: true } },
+                chart: { type: 'area', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.moderate],
                 fill: { type: 'gradient', gradient: { opacityFrom: 0.6, opacityTo: 0.2 } },
                 stroke: { curve: 'smooth', width: 2 },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Units' },
-                    labels: { formatter: val => formatNumber(val) }
+                    title: { text: 'Units', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatNumber(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatNumber(val) + ' units' } },
-                title: { text: 'Avg Usage per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) + ' units' } },
+                title: { text: 'Avg Usage per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart1Container').classList.remove('hidden');
@@ -912,19 +941,20 @@
                     name: 'Revenue per Customer',
                     data: data.map(d => d.revenuePerCustomer.toFixed(2))
                 }],
-                chart: { type: 'bar', height: 300, toolbar: { show: true } },
+                chart: { type: 'bar', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.primary],
                 plotOptions: { bar: { borderRadius: 4 } },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Revenue ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatCurrency(val) } },
-                title: { text: 'Revenue per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
+                title: { text: 'Revenue per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart2Container').classList.remove('hidden');
@@ -949,21 +979,22 @@
                         data: data.map(d => d.enterpriseRevenue.toFixed(2))
                     }
                 ],
-                chart: { type: 'area', height: 400, stacked: true, toolbar: { show: true } },
+                chart: { type: 'area', height: 400, stacked: true, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.secondary, CONFIG.chartColors.primary, CONFIG.chartColors.positive],
                 fill: { type: 'gradient', gradient: { opacityFrom: 0.6, opacityTo: 0.3 } },
                 stroke: { curve: 'smooth', width: 2 },
                 xaxis: {
                     categories: data.map(d => `Month ${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Revenue ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatCurrency(val) } },
-                legend: { position: 'top' },
-                title: { text: 'Revenue by Tier', align: 'center', style: { fontSize: '16px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
+                legend: { position: 'top', labels: { colors: '#9CA3AF' } },
+                title: { text: 'Revenue by Tier', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -986,20 +1017,21 @@
                         data: data.map(d => d.enterpriseCustomers)
                     }
                 ],
-                chart: { type: 'bar', height: 300, stacked: true, toolbar: { show: true } },
+                chart: { type: 'bar', height: 300, stacked: true, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.secondary, CONFIG.chartColors.primary, CONFIG.chartColors.positive],
                 plotOptions: { bar: { borderRadius: 4 } },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Customers' },
-                    labels: { formatter: val => formatNumber(val) }
+                    title: { text: 'Customers', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatNumber(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatNumber(val) } },
-                legend: { position: 'top' },
-                title: { text: 'Customer Distribution by Tier', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) } },
+                legend: { position: 'top', labels: { colors: '#9CA3AF' } },
+                title: { text: 'Customer Distribution by Tier', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart1Container').classList.remove('hidden');
@@ -1012,19 +1044,20 @@
                     name: 'Total Revenue',
                     data: data.map(d => d.totalRevenue.toFixed(2))
                 }],
-                chart: { type: 'line', height: 300, toolbar: { show: true } },
+                chart: { type: 'line', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.moderate],
                 stroke: { curve: 'smooth', width: 3 },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Revenue ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatCurrency(val) } },
-                title: { text: 'Total Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
+                title: { text: 'Total Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart2Container').classList.remove('hidden');
@@ -1039,20 +1072,21 @@
                     name: 'Total Seats',
                     data: data.map(d => d.totalSeats)
                 }],
-                chart: { type: 'area', height: 400, toolbar: { show: true } },
+                chart: { type: 'area', height: 400, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.primary],
                 fill: { type: 'gradient', gradient: { opacityFrom: 0.6, opacityTo: 0.3 } },
                 stroke: { curve: 'smooth', width: 3 },
                 xaxis: {
                     categories: data.map(d => `Month ${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Seats' },
-                    labels: { formatter: val => formatNumber(val) }
+                    title: { text: 'Seats', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatNumber(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatNumber(val) + ' seats' } },
-                title: { text: 'Total Seats Over Time', align: 'center', style: { fontSize: '16px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) + ' seats' } },
+                title: { text: 'Total Seats Over Time', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -1065,19 +1099,20 @@
                     name: 'Avg Seats',
                     data: data.map(d => d.avgSeatsPerCustomer.toFixed(2))
                 }],
-                chart: { type: 'line', height: 300, toolbar: { show: true } },
+                chart: { type: 'line', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.moderate],
                 stroke: { curve: 'smooth', width: 3 },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Seats' },
-                    labels: { formatter: val => val.toFixed(1) }
+                    title: { text: 'Seats', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => val.toFixed(1), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => val.toFixed(1) + ' seats' } },
-                title: { text: 'Avg Seats per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => val.toFixed(1) + ' seats' } },
+                title: { text: 'Avg Seats per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart1Container').classList.remove('hidden');
@@ -1090,19 +1125,20 @@
                     name: 'Revenue',
                     data: data.map(d => d.revenue.toFixed(2))
                 }],
-                chart: { type: 'bar', height: 300, toolbar: { show: true } },
+                chart: { type: 'bar', height: 300, toolbar: { show: true }, background: 'transparent' },
                 colors: [CONFIG.chartColors.positive],
                 plotOptions: { bar: { borderRadius: 4 } },
                 xaxis: {
                     categories: data.map(d => `M${d.month}`),
-                    labels: { rotate: -45 }
+                    labels: { rotate: -45, style: { colors: '#9CA3AF' } }
                 },
                 yaxis: {
-                    title: { text: 'Revenue ($)' },
-                    labels: { formatter: val => formatCurrency(val) }
+                    title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+                    labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
                 },
-                tooltip: { y: { formatter: val => formatCurrency(val) } },
-                title: { text: 'Monthly Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600 } }
+                grid: { borderColor: '#374151' },
+                tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
+                title: { text: 'Monthly Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
             };
 
             document.getElementById('secondaryChart2Container').classList.remove('hidden');
@@ -1155,61 +1191,61 @@
 
             // Model-specific metrics
             let metricsHTML = `
-                <div class="bg-blue-50 rounded-lg p-4">
-                    <div class="text-sm text-gray-600">Total Revenue</div>
-                    <div class="text-2xl font-bold text-gray-900">${formatCurrency(totalRevenue)}</div>
+                <div class="bg-blue-900/30 border border-blue-700/50 rounded-lg p-4">
+                    <div class="text-sm text-gray-400">Total Revenue</div>
+                    <div class="text-2xl font-bold text-gray-100">${formatCurrency(totalRevenue)}</div>
                 </div>
-                <div class="bg-green-50 rounded-lg p-4">
-                    <div class="text-sm text-gray-600">Avg Monthly Growth</div>
-                    <div class="text-2xl font-bold text-gray-900">${formatPercentage(avgGrowth)}</div>
+                <div class="bg-green-900/30 border border-green-700/50 rounded-lg p-4">
+                    <div class="text-sm text-gray-400">Avg Monthly Growth</div>
+                    <div class="text-2xl font-bold text-gray-100">${formatPercentage(avgGrowth)}</div>
                 </div>
-                <div class="bg-orange-50 rounded-lg p-4">
-                    <div class="text-sm text-gray-600">Final Month Revenue</div>
-                    <div class="text-2xl font-bold text-gray-900">${formatCurrency(revenueValues[revenueValues.length - 1])}</div>
+                <div class="bg-orange-900/30 border border-orange-700/50 rounded-lg p-4">
+                    <div class="text-sm text-gray-400">Final Month Revenue</div>
+                    <div class="text-2xl font-bold text-gray-100">${formatCurrency(revenueValues[revenueValues.length - 1])}</div>
                 </div>
             `;
 
             // Add model-specific metric
             if (modelKey === 'subscription') {
                 metricsHTML += `
-                    <div class="bg-purple-50 rounded-lg p-4">
-                        <div class="text-sm text-gray-600">Final ARR</div>
-                        <div class="text-2xl font-bold text-gray-900">${formatCurrency(lastMonth.arr)}</div>
+                    <div class="bg-purple-900/30 border border-purple-700/50 rounded-lg p-4">
+                        <div class="text-sm text-gray-400">Final ARR</div>
+                        <div class="text-2xl font-bold text-gray-100">${formatCurrency(lastMonth.arr)}</div>
                     </div>
                 `;
             } else if (modelKey === 'freemium') {
                 metricsHTML += `
-                    <div class="bg-purple-50 rounded-lg p-4">
-                        <div class="text-sm text-gray-600">Conversion Rate</div>
-                        <div class="text-2xl font-bold text-gray-900">${formatPercentage(lastMonth.conversionRate)}</div>
+                    <div class="bg-purple-900/30 border border-purple-700/50 rounded-lg p-4">
+                        <div class="text-sm text-gray-400">Conversion Rate</div>
+                        <div class="text-2xl font-bold text-gray-100">${formatPercentage(lastMonth.conversionRate)}</div>
                     </div>
                 `;
             } else if (modelKey === 'usage-based') {
                 metricsHTML += `
-                    <div class="bg-purple-50 rounded-lg p-4">
-                        <div class="text-sm text-gray-600">Avg Usage per Customer</div>
-                        <div class="text-2xl font-bold text-gray-900">${formatNumber(lastMonth.avgUsage)}</div>
+                    <div class="bg-purple-900/30 border border-purple-700/50 rounded-lg p-4">
+                        <div class="text-sm text-gray-400">Avg Usage per Customer</div>
+                        <div class="text-2xl font-bold text-gray-100">${formatNumber(lastMonth.avgUsage)}</div>
                     </div>
                 `;
             } else if (modelKey === 'tiered') {
                 metricsHTML += `
-                    <div class="bg-purple-50 rounded-lg p-4">
-                        <div class="text-sm text-gray-600">Total Customers</div>
-                        <div class="text-2xl font-bold text-gray-900">${formatNumber(lastMonth.totalCustomers)}</div>
+                    <div class="bg-purple-900/30 border border-purple-700/50 rounded-lg p-4">
+                        <div class="text-sm text-gray-400">Total Customers</div>
+                        <div class="text-2xl font-bold text-gray-100">${formatNumber(lastMonth.totalCustomers)}</div>
                     </div>
                 `;
             } else if (modelKey === 'per-seat') {
                 metricsHTML += `
-                    <div class="bg-purple-50 rounded-lg p-4">
-                        <div class="text-sm text-gray-600">Total Seats</div>
-                        <div class="text-2xl font-bold text-gray-900">${formatNumber(lastMonth.totalSeats)}</div>
+                    <div class="bg-purple-900/30 border border-purple-700/50 rounded-lg p-4">
+                        <div class="text-sm text-gray-400">Total Seats</div>
+                        <div class="text-2xl font-bold text-gray-100">${formatNumber(lastMonth.totalSeats)}</div>
                     </div>
                 `;
             } else if (modelKey === 'one-time') {
                 metricsHTML += `
-                    <div class="bg-purple-50 rounded-lg p-4">
-                        <div class="text-sm text-gray-600">Total Customers</div>
-                        <div class="text-2xl font-bold text-gray-900">${formatNumber(lastMonth.totalCustomers)}</div>
+                    <div class="bg-purple-900/30 border border-purple-700/50 rounded-lg p-4">
+                        <div class="text-sm text-gray-400">Total Customers</div>
+                        <div class="text-2xl font-bold text-gray-100">${formatNumber(lastMonth.totalCustomers)}</div>
                     </div>
                 `;
             }
@@ -1227,7 +1263,7 @@
             const selectedModel = event.target.value;
 
             if (!selectedModel) {
-                document.getElementById('inputForm').innerHTML = '<p class="text-gray-500 text-sm">Select a model to see input fields</p>';
+                document.getElementById('inputForm').innerHTML = '<p class="text-gray-400 text-sm">Select a model to see input fields</p>';
                 document.getElementById('calculateBtn').disabled = true;
 
                 // Hide all charts and metrics
