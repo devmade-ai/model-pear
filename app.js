@@ -3478,6 +3478,40 @@ function renderUniversalMetrics(allResults, allInputs) {
     panel.classList.remove('hidden');
     content.innerHTML = '';
 
+    // Add category context header
+    if (selectedCategory) {
+        const categoryInfo = LAYER_1_CATEGORIES[selectedCategory];
+        const deliveryInfo = selectedDelivery ? LAYER_2_DELIVERY[selectedDelivery] : null;
+        const serviceInfo = selectedService ? LAYER_3_SERVICE[selectedService] : null;
+
+        const contextHeader = document.createElement('div');
+        contextHeader.className = 'bg-gray-800 rounded-lg p-4 mb-6 border border-gray-600';
+
+        let contextHTML = `<h3 class="text-lg font-semibold text-blue-400 mb-2">Calculation Context</h3>`;
+        contextHTML += `<div class="space-y-1 text-sm">`;
+        contextHTML += `<div><span class="text-gray-400">Category:</span> <span class="text-gray-100 font-medium">${categoryInfo.name}</span></div>`;
+
+        if (deliveryInfo) {
+            contextHTML += `<div><span class="text-gray-400">Delivery:</span> <span class="text-gray-100 font-medium">${deliveryInfo.name}</span>`;
+            if (deliveryInfo.costImpact) {
+                contextHTML += ` <span class="text-gray-500 text-xs">(${deliveryInfo.costImpact})</span>`;
+            }
+            contextHTML += `</div>`;
+        }
+
+        if (serviceInfo) {
+            contextHTML += `<div><span class="text-gray-400">Service Model:</span> <span class="text-gray-100 font-medium">${serviceInfo.name}</span>`;
+            if (serviceInfo.characteristics && serviceInfo.characteristics.length > 0) {
+                contextHTML += ` <span class="text-gray-500 text-xs">(${serviceInfo.characteristics[0]})</span>`;
+            }
+            contextHTML += `</div>`;
+        }
+
+        contextHTML += `</div>`;
+        contextHeader.innerHTML = contextHTML;
+        content.appendChild(contextHeader);
+    }
+
     // Calculate universal metrics for each model
     const metricsData = [];
     for (const [modelKey, results] of allResults) {
