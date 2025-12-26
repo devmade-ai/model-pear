@@ -680,6 +680,66 @@ function applyServiceModifier(basePrice, serviceKey, churnRate = 0, cac = 0) {
     };
 }
 
+/**
+ * Apply all Layer 2/3 modifiers to pricing inputs
+ * This is the central function that should be called by all calculate() functions
+ * to ensure consistent application of delivery and service modifiers.
+ *
+ * @param {number} basePrice - The base monthly/recurring price
+ * @param {number} churnRate - The base churn rate (as percentage, e.g., 5 for 5%)
+ * @param {number} cac - The base Customer Acquisition Cost
+ * @returns {object} Modified values: { price, churn, cac, additionalMRR, isOneTime, oneTimeLicense, annualMaintenance }
+ */
+function applyFrameworkModifiers(basePrice, churnRate = 0, cac = 0) {
+    let modifiedPrice = basePrice;
+    let modifiedChurn = churnRate;
+    let modifiedCac = cac;
+    let additionalMRR = 0;
+    let isOneTime = false;
+    let oneTimeLicense = 0;
+    let annualMaintenance = 0;
+
+    // Step 1: Apply Layer 2 (Delivery) modifiers
+    if (selectedDelivery) {
+        const deliveryResult = applyDeliveryModifier(modifiedPrice, selectedDelivery);
+
+        if (typeof deliveryResult === 'object' && deliveryResult.model === 'one-time-maintenance') {
+            // Self-hosted: convert to one-time license model
+            isOneTime = true;
+            oneTimeLicense = deliveryResult.oneTimeLicense;
+            annualMaintenance = deliveryResult.annualMaintenance;
+            // For recurring calculations, use the monthly maintenance equivalent
+            modifiedPrice = deliveryResult.annualMaintenance / 12;
+        } else {
+            // Regular pricing multiplier
+            modifiedPrice = deliveryResult;
+        }
+    }
+
+    // Step 2: Apply Layer 3 (Service) modifiers
+    if (selectedService) {
+        const serviceResult = applyServiceModifier(modifiedPrice, selectedService, modifiedChurn, modifiedCac);
+        modifiedPrice = serviceResult.price;
+        modifiedChurn = serviceResult.churn;
+        modifiedCac = serviceResult.cac;
+
+        // Managed services adds base fee per unit
+        if (serviceResult.additionalRevenue) {
+            additionalMRR = serviceResult.additionalRevenue;
+        }
+    }
+
+    return {
+        price: modifiedPrice,
+        churn: modifiedChurn,
+        cac: modifiedCac,
+        additionalMRR: additionalMRR,
+        isOneTime: isOneTime,
+        oneTimeLicense: oneTimeLicense,
+        annualMaintenance: annualMaintenance
+    };
+}
+
 // ========== MODEL DEFINITIONS ==========
 const models = {
     'one-time': {
@@ -693,6 +753,13 @@ const models = {
             { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 300, min: 0, step: 1, hint: 'Sales and marketing cost per customer' }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.unitPrice,
+                0,  // No churn for one-time model
+                inputs.cac
+            );
+
             const results = [];
             let totalCustomers = 0;
 
@@ -700,10 +767,15 @@ const models = {
                 const newCustomers = inputs.unitsSold;
                 totalCustomers += newCustomers;
 
-                const licenseRevenue = newCustomers * inputs.unitPrice;
+                const licenseRevenue = newCustomers * modifiers.price;
                 const customersWithMaintenance = totalCustomers * (inputs.maintenanceAttach / 100);
-                const maintenanceRevenue = customersWithMaintenance * inputs.unitPrice * (inputs.maintenanceFee / 100) / 12;
-                const totalRevenue = licenseRevenue + maintenanceRevenue;
+                const maintenanceRevenue = customersWithMaintenance * modifiers.price * (inputs.maintenanceFee / 100) / 12;
+                let totalRevenue = licenseRevenue + maintenanceRevenue;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    totalRevenue += totalCustomers * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -729,19 +801,32 @@ const models = {
             { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 200, min: 0, step: 1, hint: 'Average cost to acquire one new customer' }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.monthlyPrice,
+                inputs.churnRate,
+                inputs.cac
+            );
+
             const results = [];
             let customers = inputs.startingCustomers;
-            let avgRevenuePerCustomer = inputs.monthlyPrice;
+            let avgRevenuePerCustomer = modifiers.price;
 
             for (let month = 0; month < months; month++) {
-                const newMRR = inputs.newCustomers * inputs.monthlyPrice;
-                const churnedCustomers = customers * (inputs.churnRate / 100);
+                const newMRR = inputs.newCustomers * modifiers.price;
+                const churnedCustomers = customers * (modifiers.churn / 100);
                 const churnedMRR = churnedCustomers * avgRevenuePerCustomer;
                 const expansionMRR = customers * avgRevenuePerCustomer * (inputs.expansionRate / 100);
 
                 customers = customers + inputs.newCustomers - churnedCustomers;
-                const mrr = customers * avgRevenuePerCustomer + expansionMRR;
-                avgRevenuePerCustomer = customers > 0 ? mrr / customers : inputs.monthlyPrice;
+                let mrr = customers * avgRevenuePerCustomer + expansionMRR;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    mrr += customers * modifiers.additionalMRR;
+                }
+
+                avgRevenuePerCustomer = customers > 0 ? mrr / customers : modifiers.price;
 
                 results.push({
                     month: month + 1,
@@ -751,7 +836,10 @@ const models = {
                     newMRR: newMRR,
                     churnedMRR: churnedMRR,
                     expansionMRR: expansionMRR,
-                    revenuePerCustomer: avgRevenuePerCustomer
+                    revenuePerCustomer: avgRevenuePerCustomer,
+                    // Include modifier info
+                    appliedMonthlyPrice: modifiers.price,
+                    appliedChurnRate: modifiers.churn
                 });
             }
 
@@ -770,6 +858,13 @@ const models = {
             { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 50, min: 0, step: 1, hint: 'Cost to acquire free users (typically lower than paid)' }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.paidPrice,
+                inputs.paidChurn,
+                inputs.cac
+            );
+
             const results = [];
             let freeUsers = 0;
             let paidUsers = 0;
@@ -794,9 +889,16 @@ const models = {
                 // Apply churn
                 freeUsers = freeUsers * (1 - inputs.freeChurn / 100) - newConversions;
                 paidUsers = paidUsers + newConversions;
-                paidUsers = paidUsers * (1 - inputs.paidChurn / 100);
+                paidUsers = paidUsers * (1 - modifiers.churn / 100);
 
-                const revenue = paidUsers * inputs.paidPrice;
+                // Calculate revenue using modified price
+                let revenue = paidUsers * modifiers.price;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    revenue += paidUsers * modifiers.additionalMRR;
+                }
+
                 const totalUsers = freeUsers + paidUsers;
 
                 results.push({
@@ -806,7 +908,10 @@ const models = {
                     totalUsers: Math.round(totalUsers),
                     revenue: revenue,
                     conversionRate: totalUsers > 0 ? (paidUsers / totalUsers * 100) : 0,
-                    newConversions: Math.round(newConversions)
+                    newConversions: Math.round(newConversions),
+                    // Include modifier info
+                    appliedPaidPrice: modifiers.price,
+                    appliedPaidChurn: modifiers.churn
                 });
             }
 
@@ -825,19 +930,33 @@ const models = {
             { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 150, min: 0, step: 1, hint: 'Average cost to acquire one customer' }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.pricePerUnit,
+                inputs.churnRate,
+                inputs.cac
+            );
+
             const results = [];
             let customers = 0;
             let avgUsagePerCustomer = inputs.avgUsage;
 
             for (let month = 0; month < months; month++) {
                 customers = customers + inputs.newCustomers;
-                customers = customers * (1 - inputs.churnRate / 100);
+                customers = customers * (1 - modifiers.churn / 100);
 
                 avgUsagePerCustomer = avgUsagePerCustomer * (1 + inputs.usageGrowth / 100);
                 const totalUsage = customers * avgUsagePerCustomer;
-                const revenue = totalUsage * inputs.pricePerUnit;
-                const revenuePerCustomer = customers > 0 ? revenue / customers : 0;
 
+                // Calculate revenue using modified price per unit
+                let revenue = totalUsage * modifiers.price;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    revenue += customers * modifiers.additionalMRR;
+                }
+
+                const revenuePerCustomer = customers > 0 ? revenue / customers : 0;
                 const variance = revenue * (inputs.usageVariance / 100);
 
                 results.push({
@@ -848,7 +967,10 @@ const models = {
                     revenue: revenue,
                     revenuePerCustomer: revenuePerCustomer,
                     revenueHigh: revenue + variance,
-                    revenueLow: Math.max(0, revenue - variance)
+                    revenueLow: Math.max(0, revenue - variance),
+                    // Include modifier info
+                    appliedPricePerUnit: modifiers.price,
+                    appliedChurnRate: modifiers.churn
                 });
             }
 
@@ -871,6 +993,11 @@ const models = {
             { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 180, min: 0, step: 1, hint: 'Blended CAC across all tiers' }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers to each tier
+            const starterMod = applyFrameworkModifiers(inputs.starterPrice, inputs.churnRate, inputs.cac);
+            const proMod = applyFrameworkModifiers(inputs.proPrice, inputs.churnRate, inputs.cac);
+            const enterpriseMod = applyFrameworkModifiers(inputs.enterprisePrice, inputs.churnRate, inputs.cac);
+
             const results = [];
             let starterCustomers = 0;
             let proCustomers = 0;
@@ -903,15 +1030,21 @@ const models = {
                 enterpriseCustomers += proUpgrade;
                 enterpriseCustomers -= enterpriseDowngrade;
 
-                // Apply churn
-                starterCustomers *= (1 - inputs.churnRate / 100);
-                proCustomers *= (1 - inputs.churnRate / 100);
-                enterpriseCustomers *= (1 - inputs.churnRate / 100);
+                // Apply churn (use modified churn rate)
+                starterCustomers *= (1 - starterMod.churn / 100);
+                proCustomers *= (1 - proMod.churn / 100);
+                enterpriseCustomers *= (1 - enterpriseMod.churn / 100);
 
-                const starterRevenue = starterCustomers * inputs.starterPrice;
-                const proRevenue = proCustomers * inputs.proPrice;
-                const enterpriseRevenue = enterpriseCustomers * inputs.enterprisePrice;
-                const totalRevenue = starterRevenue + proRevenue + enterpriseRevenue;
+                // Calculate revenue using modified prices
+                const starterRevenue = starterCustomers * starterMod.price;
+                const proRevenue = proCustomers * proMod.price;
+                const enterpriseRevenue = enterpriseCustomers * enterpriseMod.price;
+
+                // Add managed services fees if applicable
+                let totalRevenue = starterRevenue + proRevenue + enterpriseRevenue;
+                if (starterMod.additionalMRR > 0) {
+                    totalRevenue += (starterCustomers + proCustomers + enterpriseCustomers) * starterMod.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -922,7 +1055,9 @@ const models = {
                     proRevenue: proRevenue,
                     enterpriseRevenue: enterpriseRevenue,
                     totalRevenue: totalRevenue,
-                    totalCustomers: Math.round(starterCustomers + proCustomers + enterpriseCustomers)
+                    totalCustomers: Math.round(starterCustomers + proCustomers + enterpriseCustomers),
+                    // Include modifier info
+                    appliedChurnRate: starterMod.churn
                 });
             }
 
@@ -940,6 +1075,13 @@ const models = {
             { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 250, min: 0, step: 1, hint: 'Cost to acquire one account' }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.pricePerSeat,
+                inputs.customerChurn,
+                inputs.cac
+            );
+
             const results = [];
             let customers = 0;
             let totalSeats = 0;
@@ -952,15 +1094,22 @@ const models = {
                 // Expand seats for existing customers
                 totalSeats = totalSeats * (1 + inputs.seatExpansion / 100);
 
-                // Apply customer churn (seats churn with customers)
+                // Apply customer churn (seats churn with customers) - use modified churn rate
                 const avgSeatsPerCustomer = customers > 0 ? totalSeats / customers : inputs.avgSeats;
-                const churnedCustomers = customers * (inputs.customerChurn / 100);
+                const churnedCustomers = customers * (modifiers.churn / 100);
                 const churnedSeats = churnedCustomers * avgSeatsPerCustomer;
 
                 customers -= churnedCustomers;
                 totalSeats -= churnedSeats;
 
-                const revenue = totalSeats * inputs.pricePerSeat;
+                // Calculate revenue using modified price
+                let revenue = totalSeats * modifiers.price;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    revenue += customers * modifiers.additionalMRR;
+                }
+
                 const seatsPerCustomer = customers > 0 ? totalSeats / customers : inputs.avgSeats;
                 const revenuePerCustomer = customers > 0 ? revenue / customers : 0;
 
@@ -970,7 +1119,10 @@ const models = {
                     totalSeats: Math.round(totalSeats),
                     avgSeatsPerCustomer: seatsPerCustomer,
                     revenue: revenue,
-                    revenuePerCustomer: revenuePerCustomer
+                    revenuePerCustomer: revenuePerCustomer,
+                    // Include modifier info for debugging/display
+                    appliedPricePerSeat: modifiers.price,
+                    appliedChurnRate: modifiers.churn
                 });
             }
 
@@ -987,16 +1139,23 @@ const models = {
             { name: 'overage', label: 'Avg Overage Revenue per Client ($)', type: 'currency', default: 500, min: 0, step: 50 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.retainerFee,
+                inputs.clientChurn,
+                0  // No CAC in this model
+            );
+
             const results = [];
             let clients = 0;
-            let avgRetainerFee = inputs.retainerFee;
+            let avgRetainerFee = modifiers.price;
 
             for (let month = 0; month < months; month++) {
                 // Add new clients
                 clients += inputs.newClients;
 
                 // Apply churn
-                const churnedClients = clients * (inputs.clientChurn / 100);
+                const churnedClients = clients * (modifiers.churn / 100);
                 clients -= churnedClients;
 
                 // Apply annual price increase (every 12 months)
@@ -1006,7 +1165,12 @@ const models = {
 
                 const retainerRevenue = clients * avgRetainerFee;
                 const overageRevenue = clients * inputs.overage;
-                const totalRevenue = retainerRevenue + overageRevenue;
+                let totalRevenue = retainerRevenue + overageRevenue;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    totalRevenue += clients * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -1033,9 +1197,16 @@ const models = {
             { name: 'setupFee', label: 'One-Time Setup Fee ($)', type: 'currency', default: 5000, min: 0, step: 100 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.baseServiceFee,
+                inputs.accountChurn,
+                0  // No CAC in this model
+            );
+
             const results = [];
             let accounts = 0;
-            let avgServiceFee = inputs.baseServiceFee;
+            let avgServiceFee = modifiers.price;
 
             for (let month = 0; month < months; month++) {
                 // Add new accounts
@@ -1046,11 +1217,16 @@ const models = {
                 avgServiceFee = avgServiceFee * (1 + inputs.expansionRate / 100);
 
                 // Apply churn
-                const churnedAccounts = accounts * (inputs.accountChurn / 100);
+                const churnedAccounts = accounts * (modifiers.churn / 100);
                 accounts -= churnedAccounts;
 
                 const recurringRevenue = accounts * avgServiceFee;
-                const totalRevenue = recurringRevenue + setupRevenue;
+                let totalRevenue = recurringRevenue + setupRevenue;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    totalRevenue += accounts * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -1077,14 +1253,26 @@ const models = {
             { name: 'customerGrowth', label: 'Customer Growth (% monthly)', type: 'percent', default: 8, min: 0, max: 100, step: 0.1 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.feePerTransaction,
+                0,  // No churn in this model
+                0   // No CAC in this model
+            );
+
             const results = [];
             let transactions = inputs.transactionsMonth1;
             let customers = inputs.activeCustomers;
 
             for (let month = 0; month < months; month++) {
-                const revenue = transactions * inputs.feePerTransaction;
+                let revenue = transactions * modifiers.price;
                 const transactionsPerCustomer = customers > 0 ? transactions / customers : 0;
                 const revenuePerCustomer = customers > 0 ? revenue / customers : 0;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    revenue += customers * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -1115,6 +1303,13 @@ const models = {
             { name: 'usageGrowth', label: 'Credit Usage Growth per Customer (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.pricePerCredit,
+                inputs.customerChurn,
+                0  // No CAC in this model
+            );
+
             const results = [];
             let customers = 0;
             let avgCreditsPerPurchase = inputs.avgPurchaseSize;
@@ -1124,7 +1319,7 @@ const models = {
                 customers += inputs.newCustomers;
 
                 // Apply churn
-                const churnedCustomers = customers * (inputs.customerChurn / 100);
+                const churnedCustomers = customers * (modifiers.churn / 100);
                 customers -= churnedCustomers;
 
                 // Apply usage growth
@@ -1133,8 +1328,13 @@ const models = {
                 // Calculate revenue
                 const totalPurchases = customers * inputs.purchaseFrequency;
                 const totalCredits = totalPurchases * avgCreditsPerPurchase;
-                const revenue = totalCredits * inputs.pricePerCredit;
+                let revenue = totalCredits * modifiers.price;
                 const revenuePerCustomer = customers > 0 ? revenue / customers : 0;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    revenue += customers * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -1161,12 +1361,19 @@ const models = {
             { name: 'resourceGrowth', label: 'Resource Growth (% monthly)', type: 'percent', default: 2, min: 0, max: 100, step: 0.1 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.hourlyRate,
+                0,  // No churn in this model
+                0   // No CAC in this model
+            );
+
             const results = [];
             let resources = inputs.billableResources;
 
             for (let month = 0; month < months; month++) {
                 const billableHours = resources * inputs.hoursPerMonth * (inputs.utilization / 100);
-                const revenue = billableHours * inputs.hourlyRate;
+                const revenue = billableHours * modifiers.price;
                 const revenuePerResource = resources > 0 ? revenue / resources : 0;
 
                 results.push({
@@ -1196,6 +1403,13 @@ const models = {
             { name: 'projectGrowth', label: 'Project Win Rate Growth (%)', type: 'percent', default: 5, min: 0, max: 100, step: 1 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.avgProjectValue,
+                0,  // No churn in this model
+                0   // No CAC in this model
+            );
+
             const results = [];
             const activeProjects = [];
             let projectsPerMonth = inputs.projectsPerMonth;
@@ -1205,10 +1419,10 @@ const models = {
                 for (let i = 0; i < Math.round(projectsPerMonth); i++) {
                     activeProjects.push({
                         startMonth: month,
-                        value: inputs.avgProjectValue,
+                        value: modifiers.price,
                         duration: inputs.projectDuration,
-                        upfront: inputs.avgProjectValue * (inputs.upfrontPayment / 100),
-                        monthly: inputs.avgProjectValue * (1 - inputs.upfrontPayment / 100) / inputs.projectDuration
+                        upfront: modifiers.price * (inputs.upfrontPayment / 100),
+                        monthly: modifiers.price * (1 - inputs.upfrontPayment / 100) / inputs.projectDuration
                     });
                 }
 
@@ -1256,6 +1470,13 @@ const models = {
             { name: 'successRate', label: 'Milestone Success Rate (%)', type: 'percent', default: 85, min: 0, max: 100, step: 5 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.baseProjectValue,
+                0,  // No churn in this model
+                0   // No CAC in this model
+            );
+
             const results = [];
             const activeProjects = [];
 
@@ -1265,8 +1486,8 @@ const models = {
                     activeProjects.push({
                         startMonth: month,
                         milestones: inputs.milestones,
-                        valuePerMilestone: inputs.baseProjectValue / inputs.milestones,
-                        bonusPerMilestone: (inputs.baseProjectValue * (inputs.successBonus / 100)) / inputs.milestones
+                        valuePerMilestone: modifiers.price / inputs.milestones,
+                        bonusPerMilestone: (modifiers.price * (inputs.successBonus / 100)) / inputs.milestones
                     });
                 }
 
@@ -1322,6 +1543,13 @@ const models = {
             { name: 'churnRate', label: 'Enterprise Customer Churn (%)', type: 'percent', default: 8, min: 0, max: 100, step: 0.1 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.enterprisePrice,
+                inputs.churnRate,
+                0  // No CAC in this model
+            );
+
             const results = [];
             let freeUsers = 0;
             let paidCustomers = 0;
@@ -1336,13 +1564,18 @@ const models = {
                 paidCustomers += newConversions;
 
                 // Apply churn to paid customers
-                const churnedCustomers = paidCustomers * (inputs.churnRate / 100);
+                const churnedCustomers = paidCustomers * (modifiers.churn / 100);
                 paidCustomers -= churnedCustomers;
 
                 // Calculate revenue
-                const licenseRevenue = paidCustomers * inputs.enterprisePrice / 12; // Monthly
+                const licenseRevenue = paidCustomers * modifiers.price / 12; // Monthly
                 const supportRevenue = paidCustomers * (inputs.supportAttach / 100) * inputs.supportPrice / 12;
-                const totalRevenue = licenseRevenue + supportRevenue;
+                let totalRevenue = licenseRevenue + supportRevenue;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    totalRevenue += paidCustomers * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -1369,14 +1602,28 @@ const models = {
             { name: 'participantGrowth', label: 'Participant Growth (% monthly)', type: 'percent', default: 10, min: 0, max: 100, step: 1 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            // Note: For percentage-based pricing, we apply modifiers to the transaction volume
+            const modifiers = applyFrameworkModifiers(
+                inputs.transactionVolume,
+                0,  // No churn in this model
+                0   // No CAC in this model
+            );
+
             const results = [];
-            let volume = inputs.transactionVolume;
+            let volume = modifiers.price;  // Modified transaction volume
             let buyers = inputs.activeBuyers;
             let sellers = inputs.activeSellers;
 
             for (let month = 0; month < months; month++) {
-                const revenue = volume * (inputs.takeRate / 100);
+                let revenue = volume * (inputs.takeRate / 100);
                 const avgTransactionSize = buyers > 0 ? volume / buyers : 0;
+
+                // Add managed services fee if applicable
+                const totalParticipants = buyers + sellers;
+                if (modifiers.additionalMRR > 0) {
+                    revenue += totalParticipants * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -1410,23 +1657,35 @@ const models = {
             { name: 'partnerChurn', label: 'Partner Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.5 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.partnerRevenue / inputs.activePartners,  // Revenue per partner
+                inputs.partnerChurn,
+                0  // No CAC in this model
+            );
+
             const results = [];
             let partners = inputs.activePartners;
-            let avgRevenuePerPartner = inputs.partnerRevenue / inputs.activePartners;
+            let avgRevenuePerPartner = modifiers.price;
 
             for (let month = 0; month < months; month++) {
                 // Add new partners
                 partners += inputs.newPartnersPerMonth;
 
                 // Apply churn
-                const churnedPartners = partners * (inputs.partnerChurn / 100);
+                const churnedPartners = partners * (modifiers.churn / 100);
                 partners -= churnedPartners;
 
                 // Apply revenue growth
                 avgRevenuePerPartner = avgRevenuePerPartner * (1 + inputs.revenueGrowth / 100);
 
                 const totalPartnerRevenue = partners * avgRevenuePerPartner;
-                const yourRevenue = totalPartnerRevenue * (inputs.sharePercentage / 100);
+                let yourRevenue = totalPartnerRevenue * (inputs.sharePercentage / 100);
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    yourRevenue += partners * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -1453,6 +1712,13 @@ const models = {
             { name: 'premiumPrice', label: 'Premium Subscription Price ($)', type: 'currency', default: 9.99, min: 0, step: 0.1 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.cpm,  // CPM is the primary price input
+                0,  // No churn in this model
+                0   // No CAC in this model
+            );
+
             const results = [];
             let users = inputs.monthlyUsers;
             let premiumUsers = 0;
@@ -1465,13 +1731,18 @@ const models = {
 
                 // Calculate ad revenue from free users
                 const impressions = users * inputs.pageViewsPerUser;
-                const adRevenue = (impressions / 1000) * inputs.cpm;
+                const adRevenue = (impressions / 1000) * modifiers.price;
 
                 // Calculate premium subscription revenue
                 const premiumRevenue = premiumUsers * inputs.premiumPrice;
 
-                const totalRevenue = adRevenue + premiumRevenue;
+                let totalRevenue = adRevenue + premiumRevenue;
                 const totalUsers = users + premiumUsers;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    totalRevenue += totalUsers * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -1503,6 +1774,13 @@ const models = {
             { name: 'annualIncrease', label: 'Annual Price Increase (%)', type: 'percent', default: 5, min: 0, max: 100, step: 1 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.avgContractValue,
+                0,  // No churn in this model
+                0   // No CAC in this model
+            );
+
             const results = [];
             const activeContracts = [];
             const dealsPerMonth = inputs.newDealsPerYear / 12;
@@ -1512,8 +1790,8 @@ const models = {
                 if (Math.random() < dealsPerMonth || (month % Math.floor(12 / inputs.newDealsPerYear) === 0)) {
                     activeContracts.push({
                         startMonth: month,
-                        annualValue: inputs.avgContractValue,
-                        monthlyValue: inputs.avgContractValue / 12,
+                        annualValue: modifiers.price,
+                        monthlyValue: modifiers.price / 12,
                         lengthMonths: inputs.contractLength * 12
                     });
                 }
@@ -1563,6 +1841,13 @@ const models = {
             { name: 'avgQueriesPerCustomer', label: 'Avg Queries per Customer (1000s)', type: 'number', default: 50, min: 0, step: 5 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.licensePrice,
+                0,  // No churn in this model
+                0   // No CAC in this model
+            );
+
             const results = [];
             const customers = [];
 
@@ -1583,7 +1868,7 @@ const models = {
 
                     if (customerAge === 0) {
                         // Initial license fee
-                        licenseRevenue += inputs.licensePrice;
+                        licenseRevenue += modifiers.price;
                         activeCount++;
                     } else if (customerAge % 12 === 0) {
                         // Annual renewal
@@ -1601,7 +1886,12 @@ const models = {
                     }
                 });
 
-                const totalRevenue = licenseRevenue + renewalRevenue + usageRevenue;
+                let totalRevenue = licenseRevenue + renewalRevenue + usageRevenue;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    totalRevenue += activeCount * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -1629,6 +1919,13 @@ const models = {
             { name: 'revenueGrowth', label: 'Partner Revenue Growth (% monthly)', type: 'percent', default: 5, min: 0, max: 100, step: 0.5 }
         ],
         calculate: function(inputs, months) {
+            // Apply Layer 2/3 framework modifiers
+            const modifiers = applyFrameworkModifiers(
+                inputs.monthlyFee,
+                0,  // No churn in this model
+                0   // No CAC in this model
+            );
+
             const results = [];
             const partners = [];
 
@@ -1658,7 +1955,7 @@ const models = {
 
                     if (partnerAge >= 0) {
                         activeCount++;
-                        platformRevenue += inputs.monthlyFee;
+                        platformRevenue += modifiers.price;
 
                         // Revenue share grows over time
                         const grownRevenue = partner.monthlyRevenue * Math.pow(1 + inputs.revenueGrowth / 100, partnerAge);
@@ -1666,7 +1963,12 @@ const models = {
                     }
                 });
 
-                const totalRevenue = setupRevenue + platformRevenue + shareRevenue;
+                let totalRevenue = setupRevenue + platformRevenue + shareRevenue;
+
+                // Add managed services fee if applicable
+                if (modifiers.additionalMRR > 0) {
+                    totalRevenue += activeCount * modifiers.additionalMRR;
+                }
 
                 results.push({
                     month: month + 1,
@@ -3870,6 +4172,29 @@ function generateAllForms() {
 
         model.inputs.forEach(input => {
             const inputId = `${modelKey}-${input.name}`;
+
+            // Get category-specific defaults if available
+            const categoryDefaults = getCategoryDefaults(modelKey, selectedCategory);
+            let defaultValue = input.default;
+            let hintText = input.hint;
+
+            // Apply category-specific defaults if they exist
+            if (categoryDefaults) {
+                // Map common input names to pricing context properties
+                if (input.name === 'price' && categoryDefaults.default !== undefined) {
+                    defaultValue = categoryDefaults.default;
+                }
+
+                // Update hint text to show category-specific range
+                if (input.name === 'price' && categoryDefaults.range) {
+                    hintText = `${categoryDefaults.range} (category-specific)`;
+                } else if (input.name === 'churnRate' && categoryDefaults.typicalChurn) {
+                    hintText = `Typical for this category: ${categoryDefaults.typicalChurn}`;
+                } else if (input.name === 'conversionRate' && categoryDefaults.conversion) {
+                    hintText = `Typical for this category: ${categoryDefaults.conversion}`;
+                }
+            }
+
             formHTML += `
                 <div class="mb-4">
                     <label for="${inputId}" class="block text-sm font-medium text-gray-300 mb-1">
@@ -3880,14 +4205,14 @@ function generateAllForms() {
                         id="${inputId}"
                         name="${input.name}"
                         class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        value="${input.default}"
+                        value="${defaultValue}"
                         min="${input.min !== undefined ? input.min : 0}"
                         ${input.max !== undefined ? 'max="' + input.max + '"' : ''}
                         step="${input.step}"
                         data-type="${input.type}"
                         data-model="${modelKey}"
                     />
-                    ${input.hint ? `<small class="text-xs text-gray-500 mt-1 block">${input.hint}</small>` : ''}
+                    ${hintText ? `<small class="text-xs text-gray-500 mt-1 block">${hintText}</small>` : ''}
                 </div>
             `;
         });
