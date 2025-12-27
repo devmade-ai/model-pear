@@ -3557,14 +3557,14 @@ function renderUniversalMetrics(allResults, allInputs) {
         const metricInfo = METRIC_EXPLANATIONS[metric.key];
         const higherIsBetter = metricInfo?.higherIsBetter !== false;
 
-        // Check if all values for this metric are null or zero
-        const allValuesEmpty = metricsData.every(data => {
+        // Count how many values are null, undefined, or zero
+        const emptyCount = metricsData.filter(data => {
             const value = data.metrics[metric.key];
             return value === null || value === undefined || value === 0;
-        });
+        }).length;
 
-        // Skip rendering this card if all values are empty
-        if (allValuesEmpty) {
+        // Skip rendering this card if all values are empty, or if more than 50% are empty
+        if (emptyCount === metricsData.length || emptyCount > metricsData.length / 2) {
             return;
         }
 
@@ -3947,11 +3947,9 @@ function renderComparisonTable(allResults) {
 }
 
 /**
- * Render interactive race chart visualization
+ * Render cumulative revenue line chart
  */
-let raceChartData = null;
-let raceChartAnimation = null;
-let raceChartCurrentMonth = 1;
+let cumulativeChartInstance = null;
 
 function renderRaceChart(allResults) {
     const container = document.getElementById('raceChartContainer');
@@ -3960,151 +3958,124 @@ function renderRaceChart(allResults) {
     container.classList.remove('hidden');
     chartDiv.innerHTML = '';
 
-    // Prepare data for race chart
-    const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+    // Prepare data for cumulative chart
+    const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16'];
     const modelKeys = Array.from(allResults.keys());
     const maxMonths = Math.max(...Array.from(allResults.values()).map(r => r.length));
 
-    // Store race chart data globally
-    raceChartData = {
-        models: modelKeys.map((key, idx) => ({
-            key: key,
-            name: models[key].name,
-            color: colors[idx % colors.length],
-            data: []
-        })),
-        maxMonths: maxMonths
-    };
+    // Calculate cumulative revenue for each model
+    const series = modelKeys.map((modelKey, idx) => {
+        const results = allResults.get(modelKey);
+        let cumulativeRevenue = 0;
+        const cumulativeData = [];
 
-    // Populate monthly data
-    for (let month = 0; month < maxMonths; month++) {
-        for (let i = 0; i < modelKeys.length; i++) {
-            const modelKey = modelKeys[i];
-            const results = allResults.get(modelKey);
-            const revenue = results[month] ? (results[month].totalRevenue || results[month].revenue || results[month].mrr || 0) : 0;
-            raceChartData.models[i].data.push(revenue);
+        for (let month = 0; month < maxMonths; month++) {
+            const monthlyRevenue = results[month] ? (results[month].totalRevenue || results[month].revenue || results[month].mrr || 0) : 0;
+            cumulativeRevenue += monthlyRevenue;
+            cumulativeData.push(cumulativeRevenue);
         }
+
+        return {
+            name: models[modelKey].name,
+            data: cumulativeData
+        };
+    });
+
+    // Create categories (month labels)
+    const categories = Array.from({ length: maxMonths }, (_, i) => `Month ${i + 1}`);
+
+    // Destroy previous chart instance if exists
+    if (cumulativeChartInstance) {
+        cumulativeChartInstance.destroy();
     }
 
-    // Update slider max value
-    document.getElementById('raceChartSlider').max = maxMonths;
+    // Create ApexCharts line chart
+    const options = {
+        series: series,
+        chart: {
+            type: 'line',
+            height: 400,
+            background: 'transparent',
+            foreColor: '#9CA3AF',
+            toolbar: {
+                show: true,
+                tools: {
+                    download: true,
+                    selection: true,
+                    zoom: true,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: true,
+                    reset: true
+                }
+            },
+            animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 800
+            }
+        },
+        colors: colors,
+        stroke: {
+            width: 3,
+            curve: 'smooth'
+        },
+        xaxis: {
+            categories: categories,
+            labels: {
+                style: {
+                    colors: '#9CA3AF'
+                }
+            }
+        },
+        yaxis: {
+            labels: {
+                style: {
+                    colors: '#9CA3AF'
+                },
+                formatter: function(value) {
+                    return formatCurrency(value);
+                }
+            }
+        },
+        tooltip: {
+            theme: 'dark',
+            y: {
+                formatter: function(value) {
+                    return formatCurrency(value);
+                }
+            }
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'center',
+            labels: {
+                colors: '#9CA3AF'
+            }
+        },
+        grid: {
+            borderColor: '#374151',
+            strokeDashArray: 4
+        },
+        markers: {
+            size: 0,
+            hover: {
+                size: 6
+            }
+        }
+    };
 
-    // Initialize race chart at month 1
-    updateRaceChartDisplay(1);
-
-    // Setup controls
-    setupRaceChartControls();
+    cumulativeChartInstance = new ApexCharts(chartDiv, options);
+    cumulativeChartInstance.render();
 }
 
+// Legacy functions kept for compatibility but not used
 function updateRaceChartDisplay(month) {
-    raceChartCurrentMonth = month;
-    const chartDiv = document.getElementById('raceChart');
-    document.getElementById('raceChartMonth').textContent = month;
-    document.getElementById('raceChartSlider').value = month;
-
-    // Get data for this month and sort by revenue
-    const monthData = raceChartData.models.map(model => ({
-        ...model,
-        revenue: model.data[month - 1] || 0
-    })).sort((a, b) => b.revenue - a.revenue);
-
-    // Find max revenue for scaling
-    const maxRevenue = Math.max(...monthData.map(d => d.revenue), 1);
-
-    // Render bars
-    chartDiv.innerHTML = '';
-    monthData.forEach((model, index) => {
-        const barContainer = document.createElement('div');
-        barContainer.className = 'flex items-center mb-2 transition-all duration-500';
-        barContainer.style.transform = `translateY(${index * 52}px)`;
-
-        const rank = document.createElement('div');
-        rank.className = 'text-2xl font-bold text-gray-400 w-12 text-center';
-        rank.textContent = `#${index + 1}`;
-
-        const modelInfo = document.createElement('div');
-        modelInfo.className = 'flex-1 flex items-center';
-
-        const barWrapper = document.createElement('div');
-        barWrapper.className = 'flex-1 bg-gray-700 rounded-full h-8 mr-4 relative overflow-hidden';
-
-        const bar = document.createElement('div');
-        bar.className = 'h-full rounded-full transition-all duration-500 flex items-center justify-end px-3';
-        bar.style.backgroundColor = model.color;
-        bar.style.width = `${(model.revenue / maxRevenue) * 100}%`;
-
-        const modelName = document.createElement('span');
-        modelName.className = 'text-xs font-semibold text-white whitespace-nowrap';
-        modelName.textContent = model.name;
-
-        bar.appendChild(modelName);
-        barWrapper.appendChild(bar);
-
-        const value = document.createElement('div');
-        value.className = 'text-sm font-semibold text-gray-100 w-32 text-right';
-        value.textContent = formatCurrency(model.revenue);
-
-        modelInfo.appendChild(barWrapper);
-        modelInfo.appendChild(value);
-
-        barContainer.appendChild(rank);
-        barContainer.appendChild(modelInfo);
-        chartDiv.appendChild(barContainer);
-    });
+    // Deprecated - chart is now static cumulative line chart
 }
 
 function setupRaceChartControls() {
-    const playBtn = document.getElementById('raceChartPlay');
-    const pauseBtn = document.getElementById('raceChartPause');
-    const resetBtn = document.getElementById('raceChartReset');
-    const slider = document.getElementById('raceChartSlider');
-
-    // Clear any existing listeners
-    playBtn.replaceWith(playBtn.cloneNode(true));
-    pauseBtn.replaceWith(pauseBtn.cloneNode(true));
-    resetBtn.replaceWith(resetBtn.cloneNode(true));
-    slider.replaceWith(slider.cloneNode(true));
-
-    // Get fresh references
-    const newPlayBtn = document.getElementById('raceChartPlay');
-    const newPauseBtn = document.getElementById('raceChartPause');
-    const newResetBtn = document.getElementById('raceChartReset');
-    const newSlider = document.getElementById('raceChartSlider');
-
-    newPlayBtn.addEventListener('click', () => {
-        newPlayBtn.classList.add('hidden');
-        newPauseBtn.classList.remove('hidden');
-
-        raceChartAnimation = setInterval(() => {
-            if (raceChartCurrentMonth < raceChartData.maxMonths) {
-                updateRaceChartDisplay(raceChartCurrentMonth + 1);
-            } else {
-                clearInterval(raceChartAnimation);
-                newPlayBtn.classList.remove('hidden');
-                newPauseBtn.classList.add('hidden');
-            }
-        }, 500);
-    });
-
-    newPauseBtn.addEventListener('click', () => {
-        clearInterval(raceChartAnimation);
-        newPlayBtn.classList.remove('hidden');
-        newPauseBtn.classList.add('hidden');
-    });
-
-    newResetBtn.addEventListener('click', () => {
-        clearInterval(raceChartAnimation);
-        newPlayBtn.classList.remove('hidden');
-        newPauseBtn.classList.add('hidden');
-        updateRaceChartDisplay(1);
-    });
-
-    newSlider.addEventListener('input', (e) => {
-        clearInterval(raceChartAnimation);
-        newPlayBtn.classList.remove('hidden');
-        newPauseBtn.classList.add('hidden');
-        updateRaceChartDisplay(parseInt(e.target.value));
-    });
+    // Deprecated - chart is now static cumulative line chart
 }
 
 // ========== INITIALIZATION ==========
@@ -4171,8 +4142,8 @@ function onCategoryChange(event) {
     modelSelectionSection.classList.remove('hidden');
     layerTwoThreeSection.classList.remove('hidden');
 
-    // Keep existing selections - don't clear them
-    // selectedModels is preserved across category changes
+    // Clear previously selected models when category changes
+    selectedModels.clear();
 
     updateSelectedSummary();
 
