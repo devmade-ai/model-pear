@@ -2641,7 +2641,7 @@ function renderOneTimePurchaseCharts(data) {
         title: { text: 'Total Monthly Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart1Container').classList.remove('hidden');
+    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
     chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
     chartInstances.secondary1.render();
 
@@ -2669,8 +2669,6 @@ function renderOneTimePurchaseCharts(data) {
         tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) } },
         title: { text: 'Customer Base Growth', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
-
-    document.getElementById('secondaryChart2Container').classList.remove('hidden');
     chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
     chartInstances.secondary2.render();
 }
@@ -2732,7 +2730,7 @@ function renderSubscriptionCharts(data) {
         title: { text: 'Customer Count', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart1Container').classList.remove('hidden');
+    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
     chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
     chartInstances.secondary1.render();
 
@@ -2769,7 +2767,6 @@ function renderSubscriptionCharts(data) {
         title: { text: 'MRR Components', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart2Container').classList.remove('hidden');
     chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
     chartInstances.secondary2.render();
 }
@@ -2831,7 +2828,7 @@ function renderFreemiumCharts(data) {
         title: { text: 'Revenue from Paid Users', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart1Container').classList.remove('hidden');
+    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
     chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
     chartInstances.secondary1.render();
 
@@ -2857,7 +2854,6 @@ function renderFreemiumCharts(data) {
         title: { text: 'Free-to-Paid Conversion Rate', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart2Container').classList.remove('hidden');
     chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
     chartInstances.secondary2.render();
 }
@@ -2923,7 +2919,7 @@ function renderUsageBasedCharts(data) {
         title: { text: 'Avg Usage per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart1Container').classList.remove('hidden');
+    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
     chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
     chartInstances.secondary1.render();
 
@@ -2949,7 +2945,6 @@ function renderUsageBasedCharts(data) {
         title: { text: 'Revenue per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart2Container').classList.remove('hidden');
     chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
     chartInstances.secondary2.render();
 }
@@ -3026,7 +3021,7 @@ function renderTieredCharts(data) {
         title: { text: 'Customer Distribution by Tier', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart1Container').classList.remove('hidden');
+    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
     chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
     chartInstances.secondary1.render();
 
@@ -3052,7 +3047,6 @@ function renderTieredCharts(data) {
         title: { text: 'Total Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart2Container').classList.remove('hidden');
     chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
     chartInstances.secondary2.render();
 }
@@ -3107,7 +3101,7 @@ function renderPerSeatCharts(data) {
         title: { text: 'Avg Seats per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart1Container').classList.remove('hidden');
+    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
     chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
     chartInstances.secondary1.render();
 
@@ -3133,7 +3127,6 @@ function renderPerSeatCharts(data) {
         title: { text: 'Monthly Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChart2Container').classList.remove('hidden');
     chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
     chartInstances.secondary2.render();
 }
@@ -3261,8 +3254,7 @@ function onModelChange(event) {
         // Hide all charts and metrics
         document.getElementById('metricsPanel').classList.add('hidden');
         document.getElementById('primaryChartContainer').classList.add('hidden');
-        document.getElementById('secondaryChart1Container').classList.add('hidden');
-        document.getElementById('secondaryChart2Container').classList.add('hidden');
+        document.getElementById('secondaryChartsGrid').classList.add('hidden');
 
         return;
     }
@@ -3390,8 +3382,7 @@ function renderSingleModel(modelKey, results, inputs) {
 function renderComparison(allResults, allInputs, comparison) {
     // Hide single model views
     document.getElementById('primaryChartContainer').classList.add('hidden');
-    document.getElementById('secondaryChart1Container').classList.add('hidden');
-    document.getElementById('secondaryChart2Container').classList.add('hidden');
+    document.getElementById('secondaryChartsGrid').classList.add('hidden');
     document.getElementById('metricsPanel').classList.add('hidden');
 
     // Remove existing executive summary if present
