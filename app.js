@@ -749,12 +749,12 @@ const models = {
     'one-time': {
         name: 'One-Time Purchase (Perpetual License)',
         inputs: [
-            { name: 'unitPrice', label: 'Unit Price per License ($)', type: 'currency', default: 499, min: 0, step: 1, hint: 'One-time purchase price' },
+            { name: 'unitPrice', label: 'Unit Price per License (R)', type: 'currency', default: 15000, min: 0, step: 100, hint: 'One-time purchase price' },
             { name: 'unitsSold', label: 'Units Sold per Month', type: 'number', default: 25, min: 0, step: 1, hint: 'Number of licenses sold monthly' },
             { name: 'maintenanceFee', label: 'Annual Maintenance Fee (%)', type: 'percent', default: 20, min: 0, max: 100, step: 0.1, hint: 'Percentage of license price charged annually' },
             { name: 'maintenanceAttach', label: 'Maintenance Attach Rate (%)', type: 'percent', default: 60, min: 0, max: 100, step: 0.1, hint: 'Percentage of customers buying maintenance' },
             { name: 'customerLifetime', label: 'Customer Lifetime (years)', type: 'number', default: 5, min: 1, step: 1, hint: 'Average years customers remain active' },
-            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 300, min: 0, step: 1, hint: 'Sales and marketing cost per customer' }
+            { name: 'cac', label: 'Customer Acquisition Cost (R)', type: 'currency', default: 5000, min: 0, step: 100, hint: 'Sales and marketing cost per customer' }
         ],
         calculate: function(inputs, months) {
             // Apply Layer 2/3 framework modifiers
@@ -797,12 +797,12 @@ const models = {
     'subscription': {
         name: 'Subscription (SaaS)',
         inputs: [
-            { name: 'monthlyPrice', label: 'Monthly Subscription Price ($)', type: 'currency', default: 99, min: 0, step: 1, hint: 'Average monthly subscription fee per customer' },
+            { name: 'monthlyPrice', label: 'Monthly Subscription Price (R)', type: 'currency', default: 1800, min: 0, step: 50, hint: 'Average monthly subscription fee per customer' },
             { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 50, min: 0, step: 1, hint: 'Typical range for Early Stage SaaS: 20-100/month' },
             { name: 'churnRate', label: 'Monthly Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1, hint: 'Healthy SaaS churn: 3-7% monthly' },
             { name: 'startingCustomers', label: 'Starting Customer Base', type: 'number', default: 0, min: 0, step: 1, hint: 'Number of existing customers at start' },
             { name: 'expansionRate', label: 'Monthly Expansion Revenue (%)', type: 'percent', default: 2, min: 0, max: 100, step: 0.1, hint: 'Revenue growth from existing customers through upsells' },
-            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 200, min: 0, step: 1, hint: 'Average cost to acquire one new customer' }
+            { name: 'cac', label: 'Customer Acquisition Cost (R)', type: 'currency', default: 3500, min: 0, step: 100, hint: 'Average cost to acquire one new customer' }
         ],
         calculate: function(inputs, months) {
             // Apply Layer 2/3 framework modifiers
@@ -856,10 +856,10 @@ const models = {
             { name: 'freeUsers', label: 'Free Users Acquired per Month', type: 'number', default: 500, min: 0, step: 1, hint: 'High free user acquisition is key for freemium models' },
             { name: 'conversionRate', label: 'Free-to-Paid Conversion Rate (%)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1, hint: 'Typical freemium conversion: 2-5%' },
             { name: 'timeToConversion', label: 'Time to Conversion (months)', type: 'number', default: 2, min: 1, step: 1, hint: 'Average time before free users upgrade to paid' },
-            { name: 'paidPrice', label: 'Paid Subscription Price ($)', type: 'currency', default: 49, min: 0, step: 1, hint: 'Monthly price for paid tier' },
+            { name: 'paidPrice', label: 'Paid Subscription Price (R)', type: 'currency', default: 900, min: 0, step: 50, hint: 'Monthly price for paid tier' },
             { name: 'freeChurn', label: 'Free User Churn Rate (%)', type: 'percent', default: 15, min: 0, max: 100, step: 0.1, hint: 'Free users typically have higher churn' },
             { name: 'paidChurn', label: 'Paid User Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1, hint: 'Paid user churn should be low: 3-7%' },
-            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 50, min: 0, step: 1, hint: 'Cost to acquire free users (typically lower than paid)' }
+            { name: 'cac', label: 'Customer Acquisition Cost (R)', type: 'currency', default: 900, min: 0, step: 50, hint: 'Cost to acquire free users (typically lower than paid)' }
         ],
         calculate: function(inputs, months) {
             // Apply Layer 2/3 framework modifiers
@@ -925,13 +925,13 @@ const models = {
     'usage-based': {
         name: 'Usage-Based (Consumption)',
         inputs: [
-            { name: 'pricePerUnit', label: 'Price per Unit ($)', type: 'currency', default: 0.05, min: 0, step: 0.01, hint: 'Price per API call, GB, or other unit' },
+            { name: 'pricePerUnit', label: 'Price per Unit (R)', type: 'currency', default: 0.90, min: 0, step: 0.10, hint: 'Price per API call, GB, or other unit' },
             { name: 'avgUsage', label: 'Avg Usage per Customer per Month', type: 'number', default: 1000, min: 0, step: 1, hint: 'Starting usage level per customer' },
             { name: 'usageGrowth', label: 'Usage Growth per Customer (% monthly)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1, hint: 'Natural usage expansion as customers grow' },
             { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 20, min: 0, step: 1, hint: 'New customers onboarded each month' },
             { name: 'churnRate', label: 'Customer Churn Rate (%)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1, hint: 'Usage-based models often have lower churn: 2-5%' },
             { name: 'usageVariance', label: 'Usage Std Deviation (%)', type: 'percent', default: 20, min: 0, max: 100, step: 1, hint: 'Variability in monthly usage patterns' },
-            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 150, min: 0, step: 1, hint: 'Average cost to acquire one customer' }
+            { name: 'cac', label: 'Customer Acquisition Cost (R)', type: 'currency', default: 2700, min: 0, step: 100, hint: 'Average cost to acquire one customer' }
         ],
         calculate: function(inputs, months) {
             // Apply Layer 2/3 framework modifiers
@@ -984,9 +984,9 @@ const models = {
     'tiered': {
         name: 'Tiered Pricing',
         inputs: [
-            { name: 'starterPrice', label: 'Starter Tier Price ($)', type: 'currency', default: 29, min: 0, step: 1, hint: 'Entry-level pricing tier' },
-            { name: 'proPrice', label: 'Professional Tier Price ($)', type: 'currency', default: 99, min: 0, step: 1, hint: 'Mid-tier pricing for power users' },
-            { name: 'enterprisePrice', label: 'Enterprise Tier Price ($)', type: 'currency', default: 299, min: 0, step: 1, hint: 'Premium tier for large customers' },
+            { name: 'starterPrice', label: 'Starter Tier Price (R)', type: 'currency', default: 520, min: 0, step: 50, hint: 'Entry-level pricing tier' },
+            { name: 'proPrice', label: 'Professional Tier Price (R)', type: 'currency', default: 1800, min: 0, step: 50, hint: 'Mid-tier pricing for power users' },
+            { name: 'enterprisePrice', label: 'Enterprise Tier Price (R)', type: 'currency', default: 5400, min: 0, step: 100, hint: 'Premium tier for large customers' },
             { name: 'starterPct', label: 'Starter Tier % of New Customers', type: 'percent', default: 60, min: 0, max: 100, step: 1, hint: 'Most customers start in lower tier' },
             { name: 'proPct', label: 'Pro Tier % of New Customers', type: 'percent', default: 30, min: 0, max: 100, step: 1, hint: 'Percentage starting in middle tier' },
             { name: 'enterprisePct', label: 'Enterprise Tier % of New Customers', type: 'percent', default: 10, min: 0, max: 100, step: 1, hint: 'Few start at highest tier' },
@@ -994,7 +994,7 @@ const models = {
             { name: 'upgradeRate', label: 'Monthly Upgrade Rate (%)', type: 'percent', default: 2, min: 0, max: 100, step: 0.1, hint: 'Customers moving to higher tiers' },
             { name: 'downgradeRate', label: 'Monthly Downgrade Rate (%)', type: 'percent', default: 1, min: 0, max: 100, step: 0.1, hint: 'Customers moving to lower tiers' },
             { name: 'churnRate', label: 'Monthly Churn Rate (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1, hint: 'Customer churn across all tiers' },
-            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 180, min: 0, step: 1, hint: 'Blended CAC across all tiers' }
+            { name: 'cac', label: 'Customer Acquisition Cost (R)', type: 'currency', default: 3200, min: 0, step: 100, hint: 'Blended CAC across all tiers' }
         ],
         calculate: function(inputs, months) {
             // Apply Layer 2/3 framework modifiers to each tier
@@ -1071,13 +1071,13 @@ const models = {
     'per-seat': {
         name: 'Per-Seat/Per-User',
         inputs: [
-            { name: 'pricePerSeat', label: 'Price per Seat per Month ($)', type: 'currency', default: 25, min: 0, step: 1, hint: 'Price charged per user/seat' },
+            { name: 'pricePerSeat', label: 'Price per Seat per Month (R)', type: 'currency', default: 450, min: 0, step: 50, hint: 'Price charged per user/seat' },
             { name: 'avgSeats', label: 'Avg Seats per Customer at Signup', type: 'number', default: 5, min: 1, step: 1, hint: 'Initial team size for new customers' },
             { name: 'seatExpansion', label: 'Seat Expansion Rate (% monthly)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1, hint: 'Team growth rate within existing customers' },
             { name: 'customerChurn', label: 'Customer Churn Rate (%)', type: 'percent', default: 4, min: 0, max: 100, step: 0.1, hint: 'Account-level churn rate' },
             { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 30, min: 0, step: 1, hint: 'New accounts (not seats) per month' },
             { name: 'startingCustomers', label: 'Starting Customer Base', type: 'number', default: 0, min: 0, step: 1, hint: 'Number of existing customers at start' },
-            { name: 'cac', label: 'Customer Acquisition Cost ($)', type: 'currency', default: 250, min: 0, step: 1, hint: 'Cost to acquire one account' }
+            { name: 'cac', label: 'Customer Acquisition Cost (R)', type: 'currency', default: 4500, min: 0, step: 100, hint: 'Cost to acquire one account' }
         ],
         calculate: function(inputs, months) {
             // Apply Layer 2/3 framework modifiers
@@ -1137,11 +1137,11 @@ const models = {
     'retainer': {
         name: 'Retainer Agreements',
         inputs: [
-            { name: 'retainerFee', label: 'Monthly Retainer Fee ($)', type: 'currency', default: 5000, min: 0, step: 100 },
+            { name: 'retainerFee', label: 'Monthly Retainer Fee (R)', type: 'currency', default: 90000, min: 0, step: 5000 },
             { name: 'newClients', label: 'New Clients per Month', type: 'number', default: 2, min: 0, step: 1 },
             { name: 'clientChurn', label: 'Client Churn Rate (%)', type: 'percent', default: 10, min: 0, max: 100, step: 0.1 },
             { name: 'priceIncrease', label: 'Annual Price Increase (%)', type: 'percent', default: 5, min: 0, max: 100, step: 0.1 },
-            { name: 'overage', label: 'Avg Overage Revenue per Client ($)', type: 'currency', default: 500, min: 0, step: 50 }
+            { name: 'overage', label: 'Avg Overage Revenue per Client (R)', type: 'currency', default: 9000, min: 0, step: 500 }
         ],
         calculate: function(inputs, months) {
             // Apply Layer 2/3 framework modifiers
@@ -1195,11 +1195,11 @@ const models = {
     'managed-services': {
         name: 'Managed Services',
         inputs: [
-            { name: 'baseServiceFee', label: 'Base Service Fee per Month ($)', type: 'currency', default: 10000, min: 0, step: 100 },
+            { name: 'baseServiceFee', label: 'Base Service Fee per Month (R)', type: 'currency', default: 180000, min: 0, step: 5000 },
             { name: 'newAccounts', label: 'New Accounts per Month', type: 'number', default: 1, min: 0, step: 1 },
             { name: 'accountChurn', label: 'Account Churn Rate (%)', type: 'percent', default: 8, min: 0, max: 100, step: 0.1 },
             { name: 'expansionRate', label: 'Monthly Account Expansion (%)', type: 'percent', default: 3, min: 0, max: 100, step: 0.1 },
-            { name: 'setupFee', label: 'One-Time Setup Fee ($)', type: 'currency', default: 5000, min: 0, step: 100 }
+            { name: 'setupFee', label: 'One-Time Setup Fee (R)', type: 'currency', default: 90000, min: 0, step: 5000 }
         ],
         calculate: function(inputs, months) {
             // Apply Layer 2/3 framework modifiers
@@ -1251,7 +1251,7 @@ const models = {
     'pay-per-transaction': {
         name: 'Pay-Per-Transaction',
         inputs: [
-            { name: 'feePerTransaction', label: 'Fee per Transaction ($)', type: 'currency', default: 2.5, min: 0, step: 0.1 },
+            { name: 'feePerTransaction', label: 'Fee per Transaction (R)', type: 'currency', default: 45, min: 0, step: 5 },
             { name: 'transactionsMonth1', label: 'Transactions in Month 1', type: 'number', default: 1000, min: 0, step: 10 },
             { name: 'transactionGrowth', label: 'Transaction Growth (% monthly)', type: 'percent', default: 10, min: 0, max: 100, step: 0.1 },
             { name: 'activeCustomers', label: 'Active Customers Month 1', type: 'number', default: 50, min: 0, step: 1 },
@@ -1300,7 +1300,7 @@ const models = {
     'credits-token': {
         name: 'Credits/Token System',
         inputs: [
-            { name: 'pricePerCredit', label: 'Price per Credit ($)', type: 'currency', default: 0.10, min: 0, step: 0.01 },
+            { name: 'pricePerCredit', label: 'Price per Credit (R)', type: 'currency', default: 1.80, min: 0, step: 0.10 },
             { name: 'avgPurchaseSize', label: 'Avg Credits Purchased per Transaction', type: 'number', default: 100, min: 0, step: 10 },
             { name: 'newCustomers', label: 'New Customers per Month', type: 'number', default: 200, min: 0, step: 1 },
             { name: 'purchaseFrequency', label: 'Purchases per Customer per Month', type: 'number', default: 2, min: 0, step: 0.1 },
@@ -1359,7 +1359,7 @@ const models = {
     'time-materials': {
         name: 'Time and Materials (Hourly)',
         inputs: [
-            { name: 'hourlyRate', label: 'Average Hourly Rate ($)', type: 'currency', default: 150, min: 0, step: 5 },
+            { name: 'hourlyRate', label: 'Average Hourly Rate (R)', type: 'currency', default: 2700, min: 0, step: 100 },
             { name: 'billableResources', label: 'Billable Resources (People)', type: 'number', default: 5, min: 0, step: 1 },
             { name: 'utilization', label: 'Utilization Rate (%)', type: 'percent', default: 75, min: 0, max: 100, step: 1 },
             { name: 'hoursPerMonth', label: 'Work Hours per Month per Person', type: 'number', default: 160, min: 0, step: 10 },
@@ -1401,7 +1401,7 @@ const models = {
     'fixed-price': {
         name: 'Fixed-Price Projects',
         inputs: [
-            { name: 'avgProjectValue', label: 'Average Project Value ($)', type: 'currency', default: 50000, min: 0, step: 1000 },
+            { name: 'avgProjectValue', label: 'Average Project Value (R)', type: 'currency', default: 900000, min: 0, step: 10000 },
             { name: 'projectsPerMonth', label: 'New Projects per Month', type: 'number', default: 2, min: 0, step: 1 },
             { name: 'projectDuration', label: 'Average Project Duration (months)', type: 'number', default: 3, min: 1, step: 1 },
             { name: 'upfrontPayment', label: 'Upfront Payment (%)', type: 'percent', default: 30, min: 0, max: 100, step: 5 },
@@ -1468,7 +1468,7 @@ const models = {
     'outcome-based': {
         name: 'Outcome-Based/Milestone',
         inputs: [
-            { name: 'baseProjectValue', label: 'Base Project Value ($)', type: 'currency', default: 100000, min: 0, step: 1000 },
+            { name: 'baseProjectValue', label: 'Base Project Value (R)', type: 'currency', default: 1800000, min: 0, step: 10000 },
             { name: 'milestones', label: 'Number of Milestones', type: 'number', default: 4, min: 1, step: 1 },
             { name: 'projectsPerMonth', label: 'New Projects per Month', type: 'number', default: 1, min: 0, step: 1 },
             { name: 'successBonus', label: 'Success Bonus (%)', type: 'percent', default: 20, min: 0, max: 100, step: 5 },
@@ -1541,9 +1541,9 @@ const models = {
         name: 'Open Core',
         inputs: [
             { name: 'freeDownloads', label: 'Free Downloads per Month', type: 'number', default: 2000, min: 0, step: 100 },
-            { name: 'enterprisePrice', label: 'Enterprise License Price ($)', type: 'currency', default: 5000, min: 0, step: 100 },
+            { name: 'enterprisePrice', label: 'Enterprise License Price (R)', type: 'currency', default: 90000, min: 0, step: 5000 },
             { name: 'conversionRate', label: 'Free-to-Enterprise Conversion (%)', type: 'percent', default: 1, min: 0, max: 100, step: 0.1 },
-            { name: 'supportPrice', label: 'Support/Service Add-on Price ($)', type: 'currency', default: 1500, min: 0, step: 100 },
+            { name: 'supportPrice', label: 'Support/Service Add-on Price (R)', type: 'currency', default: 27000, min: 0, step: 1000 },
             { name: 'supportAttach', label: 'Support Attach Rate (%)', type: 'percent', default: 40, min: 0, max: 100, step: 1 },
             { name: 'churnRate', label: 'Enterprise Customer Churn (%)', type: 'percent', default: 8, min: 0, max: 100, step: 0.1 }
         ],
@@ -1599,7 +1599,7 @@ const models = {
     'marketplace': {
         name: 'Marketplace/Platform Fee',
         inputs: [
-            { name: 'transactionVolume', label: 'Monthly Transaction Volume ($)', type: 'currency', default: 100000, min: 0, step: 1000 },
+            { name: 'transactionVolume', label: 'Monthly Transaction Volume (R)', type: 'currency', default: 1800000, min: 0, step: 10000 },
             { name: 'takeRate', label: 'Platform Take Rate (%)', type: 'percent', default: 15, min: 0, max: 100, step: 0.5 },
             { name: 'volumeGrowth', label: 'Volume Growth (% monthly)', type: 'percent', default: 15, min: 0, max: 100, step: 1 },
             { name: 'activeBuyers', label: 'Active Buyers per Month', type: 'number', default: 500, min: 0, step: 10 },
@@ -1654,7 +1654,7 @@ const models = {
     'revenue-share': {
         name: 'Revenue Share Partnership',
         inputs: [
-            { name: 'partnerRevenue', label: 'Partner Generated Revenue ($)', type: 'currency', default: 200000, min: 0, step: 1000 },
+            { name: 'partnerRevenue', label: 'Partner Generated Revenue (R)', type: 'currency', default: 3600000, min: 0, step: 10000 },
             { name: 'sharePercentage', label: 'Your Share (%)', type: 'percent', default: 30, min: 0, max: 100, step: 1 },
             { name: 'revenueGrowth', label: 'Revenue Growth (% monthly)', type: 'percent', default: 8, min: 0, max: 100, step: 0.5 },
             { name: 'activePartners', label: 'Active Partners', type: 'number', default: 10, min: 0, step: 1 },
@@ -1711,10 +1711,10 @@ const models = {
         inputs: [
             { name: 'monthlyUsers', label: 'Monthly Active Users', type: 'number', default: 100000, min: 0, step: 1000 },
             { name: 'pageViewsPerUser', label: 'Page Views per User per Month', type: 'number', default: 20, min: 0, step: 1 },
-            { name: 'cpm', label: 'CPM (Cost per 1000 impressions) ($)', type: 'currency', default: 5, min: 0, step: 0.5 },
+            { name: 'cpm', label: 'CPM (Cost per 1000 impressions) (R)', type: 'currency', default: 90, min: 0, step: 10 },
             { name: 'userGrowth', label: 'User Growth (% monthly)', type: 'percent', default: 10, min: 0, max: 100, step: 1 },
             { name: 'premiumConversion', label: 'Premium Conversion Rate (%)', type: 'percent', default: 2, min: 0, max: 100, step: 0.1 },
-            { name: 'premiumPrice', label: 'Premium Subscription Price ($)', type: 'currency', default: 9.99, min: 0, step: 0.1 }
+            { name: 'premiumPrice', label: 'Premium Subscription Price (R)', type: 'currency', default: 180, min: 0, step: 10 }
         ],
         calculate: function(inputs, months) {
             // Apply Layer 2/3 framework modifiers
@@ -1772,7 +1772,7 @@ const models = {
     'ela': {
         name: 'Enterprise License Agreement (ELA)',
         inputs: [
-            { name: 'avgContractValue', label: 'Average Annual Contract Value ($)', type: 'currency', default: 500000, min: 0, step: 10000 },
+            { name: 'avgContractValue', label: 'Average Annual Contract Value (R)', type: 'currency', default: 9000000, min: 0, step: 100000 },
             { name: 'newDealsPerYear', label: 'New Deals per Year', type: 'number', default: 4, min: 0, step: 1 },
             { name: 'contractLength', label: 'Average Contract Length (years)', type: 'number', default: 3, min: 1, step: 1 },
             { name: 'renewalRate', label: 'Renewal Rate (%)', type: 'percent', default: 85, min: 0, max: 100, step: 1 },
@@ -1838,11 +1838,11 @@ const models = {
     'data-licensing': {
         name: 'Data Licensing',
         inputs: [
-            { name: 'licensePrice', label: 'License Price per Customer ($)', type: 'currency', default: 50000, min: 0, step: 1000 },
+            { name: 'licensePrice', label: 'License Price per Customer (R)', type: 'currency', default: 900000, min: 0, step: 10000 },
             { name: 'newLicensesPerMonth', label: 'New Licenses per Month', type: 'number', default: 2, min: 0, step: 1 },
-            { name: 'renewalPrice', label: 'Annual Renewal Price ($)', type: 'currency', default: 15000, min: 0, step: 1000 },
+            { name: 'renewalPrice', label: 'Annual Renewal Price (R)', type: 'currency', default: 270000, min: 0, step: 10000 },
             { name: 'renewalRate', label: 'Renewal Rate (%)', type: 'percent', default: 90, min: 0, max: 100, step: 1 },
-            { name: 'usageFeePerQuery', label: 'Usage Fee per 1000 Queries ($)', type: 'currency', default: 100, min: 0, step: 10 },
+            { name: 'usageFeePerQuery', label: 'Usage Fee per 1000 Queries (R)', type: 'currency', default: 1800, min: 0, step: 100 },
             { name: 'avgQueriesPerCustomer', label: 'Avg Queries per Customer (1000s)', type: 'number', default: 50, min: 0, step: 5 }
         ],
         calculate: function(inputs, months) {
@@ -1916,10 +1916,10 @@ const models = {
     'white-label': {
         name: 'White Label/OEM',
         inputs: [
-            { name: 'setupFee', label: 'Setup Fee per Partner ($)', type: 'currency', default: 100000, min: 0, step: 5000 },
-            { name: 'monthlyFee', label: 'Monthly Platform Fee ($)', type: 'currency', default: 10000, min: 0, step: 1000 },
+            { name: 'setupFee', label: 'Setup Fee per Partner (R)', type: 'currency', default: 1800000, min: 0, step: 50000 },
+            { name: 'monthlyFee', label: 'Monthly Platform Fee (R)', type: 'currency', default: 180000, min: 0, step: 10000 },
             { name: 'revenueShare', label: 'Revenue Share (%)', type: 'percent', default: 20, min: 0, max: 100, step: 1 },
-            { name: 'avgPartnerRevenue', label: 'Avg Partner Revenue per Month ($)', type: 'currency', default: 50000, min: 0, step: 1000 },
+            { name: 'avgPartnerRevenue', label: 'Avg Partner Revenue per Month (R)', type: 'currency', default: 900000, min: 0, step: 10000 },
             { name: 'newPartnersPerQuarter', label: 'New Partners per Quarter', type: 'number', default: 1, min: 0, step: 1 },
             { name: 'revenueGrowth', label: 'Partner Revenue Growth (% monthly)', type: 'percent', default: 5, min: 0, max: 100, step: 0.5 }
         ],
@@ -1999,9 +1999,9 @@ const models = {
  * Format currency value with proper decimals
  */
 function formatCurrency(value) {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-ZA', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'ZAR',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     }).format(value);
@@ -2591,7 +2591,7 @@ function renderOneTimePurchaseCharts(data) {
             }
         },
         yaxis: {
-            title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'Revenue (R)', style: { color: '#9CA3AF' } },
             labels: {
                 formatter: val => formatCurrency(val),
                 style: { colors: '#9CA3AF' }
@@ -2633,7 +2633,7 @@ function renderOneTimePurchaseCharts(data) {
             labels: { rotate: -45, style: { colors: '#9CA3AF' } }
         },
         yaxis: {
-            title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'Revenue (R)', style: { color: '#9CA3AF' } },
             labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
         },
         grid: { borderColor: '#374151' },
@@ -2696,7 +2696,7 @@ function renderSubscriptionCharts(data) {
             labels: { rotate: -45, style: { colors: '#9CA3AF' } }
         },
         yaxis: {
-            title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'Revenue (R)', style: { color: '#9CA3AF' } },
             labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
         },
         grid: { borderColor: '#374151' },
@@ -2760,7 +2760,7 @@ function renderSubscriptionCharts(data) {
             labels: { rotate: -45, style: { colors: '#9CA3AF' } }
         },
         yaxis: {
-            title: { text: 'MRR Change ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'MRR Change (R)', style: { color: '#9CA3AF' } },
             labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
         },
         grid: { borderColor: '#374151' },
@@ -2823,7 +2823,7 @@ function renderFreemiumCharts(data) {
             labels: { rotate: -45, style: { colors: '#9CA3AF' } }
         },
         yaxis: {
-            title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'Revenue (R)', style: { color: '#9CA3AF' } },
             labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
         },
         grid: { borderColor: '#374151' },
@@ -2887,7 +2887,7 @@ function renderUsageBasedCharts(data) {
             labels: { rotate: -45, style: { colors: '#9CA3AF' } }
         },
         yaxis: {
-            title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'Revenue (R)', style: { color: '#9CA3AF' } },
             labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
         },
         grid: { borderColor: '#374151' },
@@ -2941,7 +2941,7 @@ function renderUsageBasedCharts(data) {
             labels: { rotate: -45, style: { colors: '#9CA3AF' } }
         },
         yaxis: {
-            title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'Revenue (R)', style: { color: '#9CA3AF' } },
             labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
         },
         grid: { borderColor: '#374151' },
@@ -2980,7 +2980,7 @@ function renderTieredCharts(data) {
             labels: { rotate: -45, style: { colors: '#9CA3AF' } }
         },
         yaxis: {
-            title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'Revenue (R)', style: { color: '#9CA3AF' } },
             labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
         },
         grid: { borderColor: '#374151' },
@@ -3044,7 +3044,7 @@ function renderTieredCharts(data) {
             labels: { rotate: -45, style: { colors: '#9CA3AF' } }
         },
         yaxis: {
-            title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'Revenue (R)', style: { color: '#9CA3AF' } },
             labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
         },
         grid: { borderColor: '#374151' },
@@ -3125,7 +3125,7 @@ function renderPerSeatCharts(data) {
             labels: { rotate: -45, style: { colors: '#9CA3AF' } }
         },
         yaxis: {
-            title: { text: 'Revenue ($)', style: { color: '#9CA3AF' } },
+            title: { text: 'Revenue (R)', style: { color: '#9CA3AF' } },
             labels: { formatter: val => formatCurrency(val), style: { colors: '#9CA3AF' } }
         },
         grid: { borderColor: '#374151' },
