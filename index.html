@@ -189,19 +189,8 @@
 
                 <!-- Race Chart Visualization -->
                 <div id="raceChartContainer" class="bg-gray-800 shadow-sm rounded-lg p-6 mt-6 border border-gray-700 hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-semibold text-gray-100">Revenue Race Chart</h2>
-                        <div class="flex gap-2">
-                            <button id="raceChartPlay" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">Play</button>
-                            <button id="raceChartPause" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm hidden">Pause</button>
-                            <button id="raceChartReset" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm">Reset</button>
-                        </div>
-                    </div>
-                    <div id="raceChart" class="relative" style="height: 400px;"></div>
-                    <div class="mt-4 text-center">
-                        <div class="text-sm text-gray-400">Month: <span id="raceChartMonth" class="text-blue-400 font-semibold">1</span></div>
-                        <input type="range" id="raceChartSlider" min="1" max="24" value="1" class="w-full mt-2">
-                    </div>
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Cumulative Revenue Chart</h2>
+                    <div id="raceChart"></div>
                 </div>
 
                 <!-- Comparison Table -->
