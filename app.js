@@ -29,6 +29,9 @@ let storedInputValues = new Map();
 // Calculator mode: 'forward' or 'reverse'
 let currentMode = 'forward';
 
+// Input view mode: 'form' or 'table'
+let currentInputView = 'form';
+
 // Reverse calculator state
 let reverseCalculatorState = {
     targetRevenue: 0,
@@ -4596,6 +4599,9 @@ function setCalculatorMode(mode) {
         reverseInputsSection.classList.add('hidden');
         inputFormContainer.classList.remove('hidden');
     }
+
+    // Update view toggle visibility based on mode
+    updateViewToggleVisibility();
 }
 
 /**
@@ -4706,6 +4712,13 @@ function init() {
 
     forwardModeBtn.addEventListener('click', () => setCalculatorMode('forward'));
     reverseModeBtn.addEventListener('click', () => setCalculatorMode('reverse'));
+
+    // Add input view toggle event listeners
+    const formViewBtn = document.getElementById('formViewBtn');
+    const tableViewBtn = document.getElementById('tableViewBtn');
+
+    formViewBtn.addEventListener('click', () => setInputView('form'));
+    tableViewBtn.addEventListener('click', () => setInputView('table'));
 
     // Add category selector event listener
     const categorySelector = document.getElementById('categorySelector');
@@ -4942,11 +4955,12 @@ function updateInputForms() {
     if (selectedModels.size === 0) {
         tabsContainer.classList.add('hidden');
         formContainer.innerHTML = '<p class="text-gray-400 text-sm">Select models to configure inputs</p>';
+        updateViewToggleVisibility();
         return;
     }
 
-    // Show tabs if multiple models selected
-    if (selectedModels.size > 1) {
+    // Show tabs if multiple models selected (only in form view)
+    if (selectedModels.size > 1 && currentInputView === 'form') {
         tabsContainer.classList.remove('hidden');
         generateInputTabs();
     } else {
@@ -4955,6 +4969,14 @@ function updateInputForms() {
 
     // Generate ALL forms for ALL selected models
     generateAllForms();
+
+    // Update view toggle visibility
+    updateViewToggleVisibility();
+
+    // If we're in table view, regenerate the table
+    if (currentInputView === 'table') {
+        generateTableView();
+    }
 }
 
 /**
@@ -5112,6 +5134,332 @@ function generateInputTabs() {
 function updateCalculateButton() {
     const calculateBtn = document.getElementById('calculateBtn');
     calculateBtn.disabled = selectedModels.size === 0;
+}
+
+// ========== TABLE VIEW IMPLEMENTATION ==========
+
+/**
+ * Toggle between form and table view
+ */
+function setInputView(viewMode) {
+    currentInputView = viewMode;
+
+    const formViewBtn = document.getElementById('formViewBtn');
+    const tableViewBtn = document.getElementById('tableViewBtn');
+    const inputForm = document.getElementById('inputForm');
+    const inputTable = document.getElementById('inputTable');
+    const inputFormTabs = document.getElementById('inputFormTabs');
+
+    if (viewMode === 'form') {
+        // Update button styles
+        formViewBtn.className = 'py-2 px-3 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors';
+        tableViewBtn.className = 'py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors';
+
+        // Show form, hide table
+        inputForm.classList.remove('hidden');
+        inputTable.classList.add('hidden');
+        if (selectedModels.size > 1) {
+            inputFormTabs.classList.remove('hidden');
+        }
+    } else {
+        // Update button styles
+        formViewBtn.className = 'py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors';
+        tableViewBtn.className = 'py-2 px-3 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors';
+
+        // Hide form, show table
+        inputForm.classList.add('hidden');
+        inputTable.classList.remove('hidden');
+        inputFormTabs.classList.add('hidden');
+
+        // Generate table view
+        generateTableView();
+    }
+}
+
+/**
+ * Generate table view for input parameters
+ */
+function generateTableView() {
+    const tableContainer = document.getElementById('inputTable');
+
+    if (selectedModels.size === 0) {
+        tableContainer.innerHTML = '<p class="text-gray-400 text-sm">Select models to configure inputs</p>';
+        return;
+    }
+
+    if (selectedModels.size === 1) {
+        // Single model table view
+        generateSingleModelTable(Array.from(selectedModels)[0]);
+    } else {
+        // Multi-model comparison table view
+        generateMultiModelTable();
+    }
+}
+
+/**
+ * Generate table view for a single model
+ */
+function generateSingleModelTable(modelKey) {
+    const tableContainer = document.getElementById('inputTable');
+    const model = models[modelKey];
+
+    let tableHTML = `
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold text-gray-100 mb-3">${model.name} - Input Parameters</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-gray-300 border border-gray-600 rounded-lg">
+                    <thead class="bg-gray-700">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600">Parameter</th>
+                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600">Value</th>
+                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600">Unit</th>
+                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-gray-800">
+    `;
+
+    model.inputs.forEach((input, index) => {
+        const inputId = `${modelKey}-${input.name}`;
+        const inputElement = document.getElementById(inputId);
+        const currentValue = inputElement ? inputElement.value : input.default;
+
+        // Get category-specific defaults if available
+        const categoryDefaults = getCategoryDefaults(modelKey, selectedCategory);
+        let hintText = input.hint;
+
+        if (categoryDefaults) {
+            if (input.name === 'price' && categoryDefaults.range) {
+                hintText = `${categoryDefaults.range} (category-specific)`;
+            } else if (input.name === 'churnRate' && categoryDefaults.typicalChurn) {
+                hintText = `Typical for this category: ${categoryDefaults.typicalChurn}`;
+            } else if (input.name === 'conversionRate' && categoryDefaults.conversion) {
+                hintText = `Typical for this category: ${categoryDefaults.conversion}`;
+            }
+        }
+
+        const unit = input.type === 'currency' ? 'R' : input.type === 'percent' ? '%' : '#';
+        const rowClass = index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-750';
+
+        tableHTML += `
+            <tr class="${rowClass} hover:bg-gray-700 transition-colors">
+                <td class="px-4 py-3 font-medium border-b border-gray-700">${input.label}</td>
+                <td class="px-4 py-3 border-b border-gray-700">
+                    <input
+                        type="number"
+                        id="table-${inputId}"
+                        name="${input.name}"
+                        class="w-full px-2 py-1 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value="${currentValue}"
+                        min="${input.min !== undefined ? input.min : 0}"
+                        ${input.max !== undefined ? 'max="' + input.max + '"' : ''}
+                        step="${input.step}"
+                        data-type="${input.type}"
+                        data-model="${modelKey}"
+                        data-input-name="${input.name}"
+                    />
+                </td>
+                <td class="px-4 py-3 text-gray-400 border-b border-gray-700">${unit}</td>
+                <td class="px-4 py-3 text-gray-400 text-xs border-b border-gray-700">${hintText || '-'}</td>
+            </tr>
+        `;
+    });
+
+    tableHTML += `
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+    tableContainer.innerHTML = tableHTML;
+
+    // Add event listeners to table inputs
+    model.inputs.forEach(input => {
+        const tableInputId = `table-${modelKey}-${input.name}`;
+        const tableInputElement = document.getElementById(tableInputId);
+        if (tableInputElement) {
+            tableInputElement.addEventListener('input', onTableInputChange);
+        }
+    });
+}
+
+/**
+ * Generate table view for multiple models (side-by-side comparison)
+ */
+function generateMultiModelTable() {
+    const tableContainer = document.getElementById('inputTable');
+    const modelArray = Array.from(selectedModels);
+
+    // Collect all unique parameter names across models
+    const allParameters = new Map();
+
+    modelArray.forEach(modelKey => {
+        const model = models[modelKey];
+        model.inputs.forEach(input => {
+            if (!allParameters.has(input.name)) {
+                allParameters.set(input.name, {
+                    label: input.label,
+                    type: input.type,
+                    models: new Map()
+                });
+            }
+            allParameters.get(input.name).models.set(modelKey, input);
+        });
+    });
+
+    let tableHTML = `
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold text-gray-100 mb-3">Multi-Model Input Comparison</h3>
+            <p class="text-sm text-gray-400 mb-3">Compare and edit parameters across selected models</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-gray-300 border border-gray-600 rounded-lg">
+                    <thead class="bg-gray-700">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600 sticky left-0 bg-gray-700 z-10">Parameter</th>
+    `;
+
+    // Add header for each model
+    modelArray.forEach(modelKey => {
+        const model = models[modelKey];
+        tableHTML += `
+            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600 min-w-[200px]">
+                <div class="flex flex-col">
+                    <span class="text-white">${model.name}</span>
+                    <span class="text-xs text-gray-400 font-normal">Value / Unit</span>
+                </div>
+            </th>
+        `;
+    });
+
+    tableHTML += `
+                        </tr>
+                    </thead>
+                    <tbody class="bg-gray-800">
+    `;
+
+    // Add rows for each parameter
+    let rowIndex = 0;
+    allParameters.forEach((paramData, paramName) => {
+        const rowClass = rowIndex % 2 === 0 ? 'bg-gray-800' : 'bg-gray-750';
+        tableHTML += `
+            <tr class="${rowClass} hover:bg-gray-700 transition-colors">
+                <td class="px-4 py-3 font-medium border-b border-gray-700 sticky left-0 ${rowClass} z-10">${paramData.label}</td>
+        `;
+
+        // Add cell for each model
+        modelArray.forEach(modelKey => {
+            const input = paramData.models.get(modelKey);
+
+            if (input) {
+                const inputId = `${modelKey}-${input.name}`;
+                const inputElement = document.getElementById(inputId);
+                const currentValue = inputElement ? inputElement.value : input.default;
+                const unit = input.type === 'currency' ? 'R' : input.type === 'percent' ? '%' : '#';
+
+                tableHTML += `
+                    <td class="px-4 py-3 border-b border-gray-700">
+                        <div class="flex items-center gap-2">
+                            <input
+                                type="number"
+                                id="table-${inputId}"
+                                name="${input.name}"
+                                class="flex-1 px-2 py-1 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value="${currentValue}"
+                                min="${input.min !== undefined ? input.min : 0}"
+                                ${input.max !== undefined ? 'max="' + input.max + '"' : ''}
+                                step="${input.step}"
+                                data-type="${input.type}"
+                                data-model="${modelKey}"
+                                data-input-name="${input.name}"
+                            />
+                            <span class="text-gray-400 text-xs w-6">${unit}</span>
+                        </div>
+                        ${input.hint ? `<div class="text-xs text-gray-500 mt-1">${input.hint}</div>` : ''}
+                    </td>
+                `;
+            } else {
+                // Parameter not applicable to this model
+                tableHTML += `
+                    <td class="px-4 py-3 border-b border-gray-700">
+                        <span class="text-gray-600 text-xs italic">N/A</span>
+                    </td>
+                `;
+            }
+        });
+
+        tableHTML += `
+            </tr>
+        `;
+        rowIndex++;
+    });
+
+    tableHTML += `
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-gray-500 mt-3">💡 Tip: Use this view to quickly adjust parameters across multiple models and identify differences in required inputs.</p>
+        </div>
+    `;
+
+    tableContainer.innerHTML = tableHTML;
+
+    // Add event listeners to all table inputs
+    allParameters.forEach((paramData, paramName) => {
+        modelArray.forEach(modelKey => {
+            const input = paramData.models.get(modelKey);
+            if (input) {
+                const tableInputId = `table-${modelKey}-${input.name}`;
+                const tableInputElement = document.getElementById(tableInputId);
+                if (tableInputElement) {
+                    tableInputElement.addEventListener('input', onTableInputChange);
+                }
+            }
+        });
+    });
+}
+
+/**
+ * Handle table input changes and sync with form inputs
+ */
+function onTableInputChange(event) {
+    const tableInput = event.target;
+    const modelKey = tableInput.dataset.model;
+    const inputName = tableInput.dataset.inputName;
+    const value = tableInput.value;
+
+    // Update the corresponding form input
+    const formInputId = `${modelKey}-${inputName}`;
+    const formInput = document.getElementById(formInputId);
+    if (formInput) {
+        formInput.value = value;
+    }
+
+    // Store the value
+    if (!storedInputValues.has(modelKey)) {
+        storedInputValues.set(modelKey, {});
+    }
+    storedInputValues.get(modelKey)[inputName] = parseFloat(value) || 0;
+
+    // Trigger the standard input change handler
+    onInputChange(event);
+}
+
+/**
+ * Show or hide the view toggle based on model selection
+ */
+function updateViewToggleVisibility() {
+    const viewToggleContainer = document.getElementById('viewToggleContainer');
+
+    if (selectedModels.size > 0 && currentMode === 'forward') {
+        viewToggleContainer.classList.remove('hidden');
+    } else {
+        viewToggleContainer.classList.add('hidden');
+        // Reset to form view when hidden
+        if (currentInputView === 'table') {
+            setInputView('form');
+        }
+    }
 }
 
 // Start the application when DOM is ready
