@@ -103,6 +103,60 @@ Users can select and compare multiple revenue models simultaneously:
 - **Empty State Handling**: Friendly guidance when inputs produce zero revenue
 - **Input Hints**: Contextual ranges showing typical values for each parameter
 
+### 4. Calculator Modes
+**Status**: ✅ Complete (December 2024)
+
+The calculator supports three distinct modes, each serving a different user perspective:
+
+#### Vendor Mode (Forward Calculator)
+**Perspective**: Business/Vendor calculating potential revenue
+
+- **Input**: Pricing parameters (price, users, growth, churn, etc.)
+- **Output**: Revenue projections, MRR/ARR, customer growth
+- **Use Case**: "If I charge R250/user with 10% monthly growth, what revenue will I generate?"
+- **Metrics Shown**: Total revenue, MRR, ARR, LTV:CAC, payback period
+- **Supports**: Single and multi-model comparison
+
+#### Growth Mode (Reverse Calculator)
+**Perspective**: Business/Vendor with revenue targets
+
+- **Input**: Target revenue goal, target month, constraints
+- **Output**: Required input values to achieve target
+- **Use Case**: "What price do I need to charge to reach R100,000 MRR in 24 months?"
+- **Algorithm**: Binary search to solve for selected variable
+- **Scenarios**: Generates 3 alternative approaches (Recommended, Optimistic, Conservative)
+- **Supports**: Single model only
+
+#### Client Mode (Budget Calculator)
+**Perspective**: Client/Buyer with budget constraints
+
+- **Input**: Monthly budget, flexibility (strict/moderate/flexible), optimization priority
+- **Output**: Multiple pricing options within budget
+- **Use Case**: "I have R10,000/month. What's the best SaaS plan I can get?"
+- **Optimization Priorities**:
+  - **Maximum Capacity**: Get the most users/seats/storage
+  - **Best Value**: Optimize for lowest cost per unit
+  - **Premium Features**: Get the best tier within budget
+  - **Budget Conscious**: Leave a 20% buffer
+- **Budget Flexibility**:
+  - Strict: Stay within budget exactly
+  - Moderate: ±10% acceptable
+  - Flexible: ±20% acceptable
+- **Results**: Shows 3-6 options sorted by priority
+- **Each Option Shows**:
+  - Monthly cost and budget utilization %
+  - Capacity (users, seats, storage, etc.)
+  - Cost per unit for value comparison
+  - Budget buffer (remaining budget)
+  - Full configuration details
+- **Color Coding**:
+  - 🟢 Green = Within budget
+  - 🟡 Yellow = Within flexibility range
+  - 🔴 Red = Over budget (only if no options found)
+- **Supports**: Multiple models (shows best option per model)
+
+**Mode Switching**: Users can switch between modes via the 3-button toggle at the top of the interface.
+
 ## Universal Metrics (Cross-Model Comparison)
 
 All 20 models calculate these standardized metrics for comparison:
