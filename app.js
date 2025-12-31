@@ -2064,12 +2064,13 @@ function validateModelInputs(modelKey, inputs) {
 
     // Model-specific validation rules
     if (modelKey === 'subscription' || modelKey === 'per-seat' || modelKey === 'tiered') {
-        if (inputs.newCustomers === 0) {
+        // Allow zero newCustomers if there's a starting customer base
+        if (inputs.newCustomers === 0 && (!inputs.startingCustomers || inputs.startingCustomers === 0)) {
             warnings.push({
-                severity: 'error',
+                severity: 'warning',
                 field: 'newCustomers',
-                message: 'New customers must be > 0 to generate revenue',
-                suggestion: 'Try: 20-50 customers/month'
+                message: 'No new customers and no starting base - revenue will be zero',
+                suggestion: 'Add either new customers or a starting customer base'
             });
         }
 
@@ -2102,17 +2103,19 @@ function validateModelInputs(modelKey, inputs) {
             });
         }
 
+        // Allow zero freeUsers as warning only
         if (inputs.freeUsers === 0) {
             warnings.push({
-                severity: 'error',
+                severity: 'warning',
                 field: 'freeUsers',
-                message: 'Free users must be > 0 for freemium model',
-                suggestion: 'Try: 500-1000 free users/month'
+                message: 'Zero free users - freemium model requires user acquisition',
+                suggestion: 'Try: 500-1000 free users/month or consider different model'
             });
         }
     }
 
     if (modelKey === 'usage-based') {
+        // Price per unit = 0 is still an error (can't give away free service)
         if (inputs.pricePerUnit === 0) {
             warnings.push({
                 severity: 'error',
@@ -2122,22 +2125,24 @@ function validateModelInputs(modelKey, inputs) {
             });
         }
 
-        if (inputs.newCustomers === 0) {
+        // Allow zero newCustomers if there's a starting customer base
+        if (inputs.newCustomers === 0 && (!inputs.startingCustomers || inputs.startingCustomers === 0)) {
             warnings.push({
-                severity: 'error',
+                severity: 'warning',
                 field: 'newCustomers',
-                message: 'New customers must be > 0',
-                suggestion: 'Try: 10-30 customers/month'
+                message: 'No new customers and no starting base - revenue will be zero',
+                suggestion: 'Add either new customers or a starting customer base'
             });
         }
     }
 
     if (modelKey === 'one-time') {
+        // Allow zero unitsSold as warning
         if (inputs.unitsSold === 0) {
             warnings.push({
-                severity: 'error',
+                severity: 'warning',
                 field: 'unitsSold',
-                message: 'Units sold must be > 0',
+                message: 'Zero units sold - no revenue will be generated',
                 suggestion: 'Try: 10-50 units/month'
             });
         }
@@ -2239,6 +2244,180 @@ const METRIC_EXPLANATIONS = {
             '>18': '🔴 Poor - requires significant capital'
         },
         benchmark: '6-12 months is typical for SaaS'
+    }
+};
+
+/**
+ * Calculation methodology explanations for each revenue model
+ */
+const CALCULATION_EXPLANATIONS = {
+    'one-time': {
+        name: 'One-Time Purchase (Perpetual License)',
+        description: 'Traditional software licensing model with upfront payment and optional recurring maintenance fees',
+        formula: 'Revenue = (Units Sold × License Price) + (Total Customers × Maintenance Fee × Attach Rate)',
+        methodology: 'Calculates revenue from new license sales each month plus recurring maintenance revenue from the accumulated customer base. Maintenance is charged as a percentage of the license price annually, prorated monthly.',
+        keyMetrics: ['License Revenue', 'Maintenance Revenue', 'Total Customers'],
+        useCases: 'Enterprise software, desktop applications, specialized tools with long usage cycles'
+    },
+    'subscription': {
+        name: 'Subscription (SaaS)',
+        description: 'Recurring revenue model with monthly or annual subscriptions',
+        formula: 'MRR = (Customers × Price) + Expansion Revenue - Churned Revenue',
+        methodology: 'Tracks Monthly Recurring Revenue (MRR) by adding new customer revenue, applying churn to existing customers, and factoring in expansion revenue from upsells. Customer count evolves based on new acquisitions minus churned customers.',
+        keyMetrics: ['MRR', 'ARR', 'Customer Count', 'Churn Rate', 'Expansion Revenue'],
+        useCases: 'Cloud software, SaaS products, membership services'
+    },
+    'freemium': {
+        name: 'Freemium',
+        description: 'Free tier with conversion to paid subscriptions over time',
+        formula: 'Revenue = Paid Users × Price (Free users convert after delay)',
+        methodology: 'Manages two user pools: free and paid. Free users are acquired monthly and convert to paid at a specified rate after a time delay. Both pools experience churn. Revenue comes only from paid users.',
+        keyMetrics: ['Free Users', 'Paid Users', 'Conversion Rate', 'Revenue from Paid'],
+        useCases: 'Consumer apps, developer tools, collaboration platforms'
+    },
+    'usage-based': {
+        name: 'Usage-Based (Consumption)',
+        description: 'Pay-per-use pricing based on consumption metrics',
+        formula: 'Revenue = Total Usage × Price per Unit (Usage = Customers × Avg Usage)',
+        methodology: 'Calculates revenue from total consumption across all customers. Usage per customer grows monthly, and customer count changes with new acquisitions and churn. Includes variance modeling for usage fluctuations.',
+        keyMetrics: ['Total Usage', 'Revenue per Customer', 'Usage Growth'],
+        useCases: 'Cloud infrastructure (AWS, Azure), APIs, data processing services'
+    },
+    'tiered': {
+        name: 'Tiered Pricing',
+        description: 'Multiple price tiers with customer movement between tiers',
+        formula: 'Revenue = Σ(Customers in Each Tier × Tier Price)',
+        methodology: 'Tracks customers across three tiers (Starter, Pro, Enterprise). Customers join at different tier distributions, can upgrade or downgrade monthly, and churn is applied to each tier. Revenue is the sum of all tier revenues.',
+        keyMetrics: ['Customers per Tier', 'Upgrade Rate', 'Downgrade Rate', 'Blended ARPU'],
+        useCases: 'SaaS with feature differentiation, productivity tools, team collaboration software'
+    },
+    'per-seat': {
+        name: 'Per-Seat/Per-User',
+        description: 'Pricing based on number of users or seats',
+        formula: 'Revenue = Customers × Avg Seats per Customer × Price per Seat',
+        methodology: 'Calculates revenue from total seats across all customers. Seat count per customer expands over time, customers churn monthly, and new customers are added. Revenue scales with both customer and seat growth.',
+        keyMetrics: ['Total Seats', 'Seats per Customer', 'Seat Expansion Rate'],
+        useCases: 'Team collaboration tools, HR software, project management platforms'
+    },
+    'retainer': {
+        name: 'Retainer',
+        description: 'Fixed monthly fee for ongoing services or access',
+        formula: 'Revenue = Active Clients × Monthly Retainer Fee',
+        methodology: 'Simple recurring model where clients pay a fixed monthly fee. New clients are added each month, existing clients may churn, resulting in predictable recurring revenue from active client count.',
+        keyMetrics: ['Active Clients', 'Monthly Recurring Revenue', 'Client Retention'],
+        useCases: 'Consulting services, managed services, support contracts'
+    },
+    'managed-services': {
+        name: 'Managed Services',
+        description: 'Full-service offering with base fee plus variable component',
+        formula: 'Revenue = (Base Fee + Variable Fee) × Number of Clients',
+        methodology: 'Combines a fixed base fee with variable charges based on service scope or resources. Client count grows with new acquisitions and decreases with churn. Revenue reflects total service value delivered.',
+        keyMetrics: ['Client Count', 'Average Service Value', 'Service Margin'],
+        useCases: 'IT managed services, DevOps management, infrastructure management'
+    },
+    'pay-per-transaction': {
+        name: 'Pay-per-Transaction',
+        description: 'Fee charged per transaction or event processed',
+        formula: 'Revenue = Total Transactions × Fee per Transaction',
+        methodology: 'Calculates revenue from transaction volume. Customers process transactions at an average monthly rate that grows over time. Customer count changes with acquisitions and churn.',
+        keyMetrics: ['Transaction Volume', 'Transactions per Customer', 'Transaction Growth'],
+        useCases: 'Payment processing, e-commerce platforms, API transactions'
+    },
+    'credits-token': {
+        name: 'Credits/Token-Based',
+        description: 'Pre-purchased credits consumed over time',
+        formula: 'Revenue = Customers × Monthly Credits Purchased × Price per Credit',
+        methodology: 'Customers purchase credits monthly which are consumed for usage. Tracks customer count with churn, credits purchased per customer, and recognizes revenue as credits are bought (not necessarily when used).',
+        keyMetrics: ['Credits Sold', 'Credit Consumption Rate', 'Unused Credit Balance'],
+        useCases: 'AI/ML APIs, rendering services, communication platforms'
+    },
+    'time-materials': {
+        name: 'Time & Materials',
+        description: 'Billing based on hours worked and materials used',
+        formula: 'Revenue = (Billable Hours × Hourly Rate) + Materials Costs',
+        methodology: 'Calculates revenue from billable time and direct costs. Tracks number of active projects, average monthly hours per project, and hourly rates. Revenue varies with project load and resource utilization.',
+        keyMetrics: ['Billable Hours', 'Utilization Rate', 'Hourly Rate'],
+        useCases: 'Consulting projects, custom development, professional services'
+    },
+    'fixed-price': {
+        name: 'Fixed-Price Projects',
+        description: 'Fixed fee for defined scope of work',
+        formula: 'Revenue = Number of Projects × Average Project Value (recognized over duration)',
+        methodology: 'Projects have fixed price and duration. Revenue is recognized proportionally over project timeline. New projects start monthly, completed projects roll off. Models project pipeline and revenue recognition.',
+        keyMetrics: ['Active Projects', 'Project Value', 'Project Duration'],
+        useCases: 'Custom software development, implementation projects, design work'
+    },
+    'outcome-based': {
+        name: 'Outcome-Based Pricing',
+        description: 'Payment tied to results or performance metrics',
+        formula: 'Revenue = Base Fee + (Performance Achieved × Success Rate × Performance Fee)',
+        methodology: 'Combines base fees with performance-based payments. Success rate determines percentage of clients achieving targets. Revenue includes guaranteed base plus variable performance bonuses.',
+        keyMetrics: ['Success Rate', 'Performance Fees', 'Client Outcomes'],
+        useCases: 'Marketing services, recruitment, performance consulting'
+    },
+    'open-core': {
+        name: 'Open Core',
+        description: 'Free open-source core with paid premium features',
+        formula: 'Revenue = Enterprise Users × Enterprise Price',
+        methodology: 'Free open-source users adopt the core product, with a percentage converting to paid enterprise licenses for premium features. Tracks both free and paid users separately with different conversion and churn dynamics.',
+        keyMetrics: ['Community Users', 'Enterprise Conversion Rate', 'Enterprise Revenue'],
+        useCases: 'Developer tools, databases, infrastructure software'
+    },
+    'marketplace': {
+        name: 'Marketplace/Platform',
+        description: 'Commission on transactions between buyers and sellers',
+        formula: 'Revenue = Transaction Volume × Commission Rate',
+        methodology: 'Facilitates transactions between parties and takes a commission. Tracks total marketplace volume, number of active participants, and applies commission rate to calculate platform revenue.',
+        keyMetrics: ['Gross Marketplace Volume (GMV)', 'Take Rate', 'Active Participants'],
+        useCases: 'App stores, freelance platforms, B2B marketplaces'
+    },
+    'revenue-share': {
+        name: 'Revenue Share',
+        description: 'Percentage of partner or customer revenue',
+        formula: 'Revenue = Partner Revenue × Revenue Share Percentage',
+        methodology: 'Partners generate revenue and share a percentage with the platform. Tracks number of partners, their average revenue, and applies revenue share percentage. Partner revenue can grow over time.',
+        keyMetrics: ['Number of Partners', 'Partner Revenue', 'Revenue Share %'],
+        useCases: 'Reseller programs, affiliate networks, OEM partnerships'
+    },
+    'advertising': {
+        name: 'Advertising-Based',
+        description: 'Revenue from displaying ads to users',
+        formula: 'Revenue = Impressions × CPM / 1000 (or Clicks × CPC)',
+        methodology: 'Generates revenue from ad impressions or clicks. Tracks user base growth, engagement levels, and ad rates (CPM or CPC). Revenue scales with user count and engagement.',
+        keyMetrics: ['Active Users', 'Impressions/User', 'CPM or CPC'],
+        useCases: 'Social media, content platforms, mobile apps'
+    },
+    'ela': {
+        name: 'Enterprise License Agreement (ELA)',
+        description: 'Large enterprise contracts with unlimited usage',
+        formula: 'Revenue = Number of Accounts × Average Contract Value (amortized monthly)',
+        methodology: 'Multi-year enterprise contracts with large upfront values. Revenue is recognized monthly over contract term. New accounts are added periodically, existing contracts renew at intervals.',
+        keyMetrics: ['Active ELA Accounts', 'Average Contract Value', 'Renewal Rate'],
+        useCases: 'Enterprise software suites, infrastructure platforms, security solutions'
+    },
+    'data-licensing': {
+        name: 'Data Licensing',
+        description: 'Selling access to proprietary data or datasets',
+        formula: 'Revenue = Licenses Sold × Price per License',
+        methodology: 'Licenses data access to customers either as one-time purchases or subscriptions. Tracks number of active licenses and pricing tiers. May include recurring refresh fees for updated data.',
+        keyMetrics: ['Active Licenses', 'Data Refresh Revenue', 'Usage Volume'],
+        useCases: 'Market data, research databases, analytics platforms'
+    },
+    'white-label': {
+        name: 'White Label Licensing',
+        description: 'Licensing software for rebranding and resale',
+        formula: 'Revenue = Partners × (License Fee + Revenue Share)',
+        methodology: 'Partners license the platform to resell under their brand. Combines upfront license fees with ongoing revenue sharing based on partner success. Tracks partner count and their combined revenue.',
+        keyMetrics: ['Active Partners', 'Partner Revenue', 'License Revenue'],
+        useCases: 'SaaS platforms, payment solutions, communication infrastructure'
+    },
+    'professional-services': {
+        name: 'Professional Services',
+        description: 'Expert consulting and implementation services',
+        formula: 'Revenue = Billable Resources × Utilization × Hourly Rate',
+        methodology: 'Delivers expert services through consulting teams. Revenue based on number of billable resources, utilization percentage, and hourly rates. May combine with recurring support contracts.',
+        keyMetrics: ['Billable Resources', 'Utilization Rate', 'Average Rate'],
+        useCases: 'Implementation services, training, technical consulting'
     }
 };
 
@@ -2761,8 +2940,9 @@ function generateForm(modelKey) {
         const inputId = `${modelKey}-${input.name}`;
         formHTML += `
             <div class="mb-4">
-                <label for="${inputId}" class="block text-sm font-medium text-gray-300 mb-1">
-                    ${input.label}
+                <label for="${inputId}" class="flex items-center justify-between text-sm font-medium text-gray-300 mb-1">
+                    <span>${input.label}</span>
+                    <span class="text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition-colors" onclick="showInputInfo('${modelKey}', '${input.name}')">ⓘ</span>
                 </label>
                 <input
                     type="number"
@@ -4329,6 +4509,21 @@ function renderSingleModel(modelKey, results, inputs) {
         raceChartAnimation = null;
     }
 
+    // Remove existing executive summary if present
+    const existingSummary = document.getElementById('executive-summary');
+    if (existingSummary) {
+        existingSummary.remove();
+    }
+
+    // Display variables summary
+    const allInputs = new Map();
+    allInputs.set(modelKey, inputs);
+    const variablesSummary = displayVariablesSummary(new Set([modelKey]), allInputs);
+    const metricsPanel = document.getElementById('metricsPanel');
+    if (variablesSummary) {
+        metricsPanel.parentElement.insertBefore(variablesSummary, metricsPanel);
+    }
+
     // Show single model views
     renderCharts(modelKey, results);
     updateMetrics(modelKey, results);
@@ -4351,9 +4546,15 @@ function renderComparison(allResults, allInputs, comparison) {
 
     // Render executive summary and insert before universal metrics panel
     const executiveSummary = renderExecutiveSummary(allResults, allInputs);
+    const metricsPanel = document.getElementById('universalMetricsPanel');
     if (executiveSummary) {
-        const metricsPanel = document.getElementById('universalMetricsPanel');
         metricsPanel.parentElement.insertBefore(executiveSummary, metricsPanel);
+    }
+
+    // Display variables summary
+    const variablesSummary = displayVariablesSummary(new Set(allResults.keys()), allInputs);
+    if (variablesSummary) {
+        metricsPanel.parentElement.insertBefore(variablesSummary, metricsPanel);
     }
 
     // Show comparison views
@@ -4361,6 +4562,75 @@ function renderComparison(allResults, allInputs, comparison) {
     renderComparisonCharts(allResults, comparison);
     renderRaceChart(allResults);
     renderComparisonTable(allResults);
+}
+
+/**
+ * Display variables/inputs summary panel
+ */
+function displayVariablesSummary(modelKeys, allInputs) {
+    // Remove existing variables summary if present
+    const existingSummary = document.getElementById('variables-summary-panel');
+    if (existingSummary) {
+        existingSummary.remove();
+    }
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.id = 'variables-summary-panel';
+    summaryDiv.className = 'bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700';
+
+    let html = `
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-semibold text-gray-100">📋 Input Variables Used</h2>
+            <span class="text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition-colors" onclick="showCalculationInfo('${Array.from(modelKeys)[0]}')">ⓘ Calculation Details</span>
+        </div>
+    `;
+
+    // Display variables for each model
+    modelKeys.forEach(modelKey => {
+        const model = models[modelKey];
+        const inputs = allInputs.get(modelKey);
+        if (!inputs) return;
+
+        html += `
+            <div class="mb-4 last:mb-0">
+                <div class="flex items-center gap-2 mb-3">
+                    <h3 class="text-lg font-semibold text-gray-200">${model.name}</h3>
+                    ${modelKeys.size > 1 ? '' : `<span class="text-xs text-blue-400 cursor-pointer hover:text-blue-300" onclick="showCalculationInfo('${modelKey}')">ⓘ</span>`}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        `;
+
+        model.inputs.forEach(input => {
+            const value = inputs[input.name];
+            let formattedValue;
+
+            if (input.type === 'currency') {
+                formattedValue = formatCurrency(value);
+            } else if (input.type === 'percent') {
+                formattedValue = value.toFixed(2) + '%';
+            } else {
+                formattedValue = value.toLocaleString();
+            }
+
+            html += `
+                <div class="bg-gray-700 rounded-md p-3 border border-gray-600">
+                    <div class="flex items-center justify-between mb-1">
+                        <div class="text-xs text-gray-400">${input.label}</div>
+                        <span class="text-xs text-blue-400 cursor-pointer hover:text-blue-300" onclick="showInputInfo('${modelKey}', '${input.name}')">ⓘ</span>
+                    </div>
+                    <div class="text-lg font-semibold text-gray-100">${formattedValue}</div>
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+    });
+
+    summaryDiv.innerHTML = html;
+    return summaryDiv;
 }
 
 /**
@@ -4518,8 +4788,7 @@ function renderUniversalMetrics(allResults, allInputs) {
         }
 
         const card = document.createElement('div');
-        card.className = 'bg-gray-700 rounded-lg p-4 relative cursor-help metric-card';
-        card.title = metricInfo ? `${metricInfo.explanation}\n\nBenchmark: ${metricInfo.benchmark}` : '';
+        card.className = 'bg-gray-700 rounded-lg p-4 relative metric-card';
 
         // Metric label with info icon
         const labelContainer = document.createElement('div');
@@ -4530,9 +4799,9 @@ function renderUniversalMetrics(allResults, allInputs) {
         label.textContent = metric.label;
 
         const infoIcon = document.createElement('span');
-        infoIcon.className = 'text-xs text-blue-400 cursor-help';
+        infoIcon.className = 'text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition-colors';
         infoIcon.textContent = 'ⓘ';
-        infoIcon.title = metricInfo ? metricInfo.explanation : '';
+        infoIcon.onclick = () => showMetricInfo(metric.key);
 
         labelContainer.appendChild(label);
         labelContainer.appendChild(infoIcon);
@@ -5574,8 +5843,9 @@ function generateAllForms() {
 
             formHTML += `
                 <div class="mb-4">
-                    <label for="${inputId}" class="block text-sm font-medium text-gray-300 mb-1">
-                        ${input.label}
+                    <label for="${inputId}" class="flex items-center justify-between text-sm font-medium text-gray-300 mb-1">
+                        <span>${input.label}</span>
+                        <span class="text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition-colors" onclick="showInputInfo('${modelKey}', '${input.name}')">ⓘ</span>
                     </label>
                     <input
                         type="number"
@@ -5848,6 +6118,150 @@ function onAdminInputChange(event) {
         }
         storedInputValues.get(modelKey)[inputName] = value;
     }
+}
+
+// ========== TOOLTIP MODAL FUNCTIONS ==========
+
+/**
+ * Show tooltip modal with detailed information
+ */
+function showTooltipModal(title, content) {
+    const modal = document.getElementById('tooltipModal');
+    const titleEl = document.getElementById('tooltipTitle');
+    const contentEl = document.getElementById('tooltipContent');
+
+    titleEl.textContent = title;
+
+    // Build content HTML based on content object
+    let contentHTML = '';
+
+    if (content.explanation) {
+        contentHTML += `<p class="text-gray-300">${content.explanation}</p>`;
+    }
+
+    if (content.formula) {
+        contentHTML += `
+            <div class="bg-gray-750 p-3 rounded-md border border-gray-600">
+                <div class="text-xs text-gray-400 mb-1">Formula:</div>
+                <code class="text-blue-300 text-sm">${content.formula}</code>
+            </div>
+        `;
+    }
+
+    if (content.methodology) {
+        contentHTML += `
+            <div>
+                <div class="text-sm font-semibold text-gray-200 mb-1">How it works:</div>
+                <p class="text-sm text-gray-400">${content.methodology}</p>
+            </div>
+        `;
+    }
+
+    if (content.keyMetrics && content.keyMetrics.length > 0) {
+        contentHTML += `
+            <div>
+                <div class="text-sm font-semibold text-gray-200 mb-2">Key Metrics Tracked:</div>
+                <ul class="list-disc list-inside text-sm text-gray-400 space-y-1">
+                    ${content.keyMetrics.map(metric => `<li>${metric}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
+    if (content.useCases) {
+        contentHTML += `
+            <div>
+                <div class="text-sm font-semibold text-gray-200 mb-1">Common Use Cases:</div>
+                <p class="text-sm text-gray-400">${content.useCases}</p>
+            </div>
+        `;
+    }
+
+    if (content.benchmark) {
+        contentHTML += `
+            <div class="bg-blue-900 bg-opacity-30 p-3 rounded-md border border-blue-700">
+                <div class="text-xs text-blue-300 mb-1">Benchmark:</div>
+                <p class="text-sm text-gray-300">${content.benchmark}</p>
+            </div>
+        `;
+    }
+
+    if (content.interpretation) {
+        contentHTML += `
+            <div>
+                <div class="text-sm font-semibold text-gray-200 mb-2">Interpretation Guide:</div>
+                <div class="space-y-1 text-sm">
+                    ${Object.entries(content.interpretation).map(([range, meaning]) =>
+                        `<div class="flex items-start gap-2">
+                            <span class="text-gray-400 min-w-[80px]">${range}:</span>
+                            <span class="text-gray-300">${meaning}</span>
+                        </div>`
+                    ).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    contentEl.innerHTML = contentHTML;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+/**
+ * Close tooltip modal
+ */
+function closeTooltipModal(event) {
+    // If event is provided and target is not the modal background, don't close
+    if (event && event.target.id !== 'tooltipModal') {
+        return;
+    }
+
+    const modal = document.getElementById('tooltipModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+/**
+ * Show metric explanation in modal
+ */
+function showMetricInfo(metricKey) {
+    const info = METRIC_EXPLANATIONS[metricKey];
+    if (info) {
+        showTooltipModal(info.label, info);
+    }
+}
+
+/**
+ * Show calculation explanation in modal
+ */
+function showCalculationInfo(modelKey) {
+    const info = CALCULATION_EXPLANATIONS[modelKey];
+    if (info) {
+        showTooltipModal(info.name, info);
+    }
+}
+
+/**
+ * Show input field explanation in modal
+ */
+function showInputInfo(modelKey, inputName) {
+    const model = models[modelKey];
+    if (!model) return;
+
+    const input = model.inputs.find(inp => inp.name === inputName);
+    if (!input) return;
+
+    const content = {
+        explanation: input.hint || 'No additional information available',
+    };
+
+    // Add calculation context if available
+    const calcInfo = CALCULATION_EXPLANATIONS[modelKey];
+    if (calcInfo) {
+        content.methodology = calcInfo.methodology;
+    }
+
+    showTooltipModal(input.label, content);
 }
 
 // Start the application when DOM is ready

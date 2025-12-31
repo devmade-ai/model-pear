@@ -17,6 +17,11 @@ This tool helps analyze and visualize 20 different software revenue models throu
 - **Scenario Planning**: Generate multiple alternative scenarios to reach your targets
 - **Budget Optimization**: Find the best pricing plan within your budget constraints
 - **Interactive Charts**: Real-time visualization using ApexCharts
+- **Calculation Transparency**:
+  - **Clickable Tooltips**: Interactive info icons (ⓘ) on all inputs and metrics with detailed explanations
+  - **Formula Display**: View calculation methodology and formulas for each revenue model
+  - **Variables Summary**: See all input values used in calculations at a glance
+  - **Flexible Validation**: Support for zero values in appropriate scenarios (e.g., existing customer base, no new acquisitions)
 - **No Installation**: Runs entirely in the browser, no backend required
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
 - **Fast Performance**: Sub-second page loads, instant calculations
@@ -192,6 +197,52 @@ The admin panel provides a comprehensive spreadsheet-style interface for editing
 - "Set all pricing to my local currency defaults"
 - "Review and adjust acquisition costs across all models"
 - "Compare subscription vs usage-based default configurations"
+
+## Interactive Help & Tooltips
+
+The calculator includes comprehensive interactive help throughout the interface:
+
+### Clickable Information Icons (ⓘ)
+
+Look for blue info icons throughout the interface - click them to open detailed explanations:
+
+1. **Input Fields**: Each input parameter has an info icon that displays:
+   - Detailed explanation of the parameter
+   - How it affects the calculation
+   - Typical ranges and benchmarks
+   - Context within the revenue model
+
+2. **Metric Cards**: Results and metrics have info icons showing:
+   - Clear explanation of what the metric means
+   - How it's calculated
+   - Interpretation guidelines (e.g., what's a "good" LTV:CAC ratio)
+   - Industry benchmarks
+
+3. **Model Information**: Click the info icon next to model names to see:
+   - Revenue model description
+   - Calculation formula
+   - Step-by-step methodology
+   - Key metrics tracked
+   - Common use cases
+
+### Variables Summary Panel
+
+After running calculations, you'll see an "Input Variables Used" panel that shows:
+- All input values used in the calculation
+- Formatted and labeled for easy reference
+- Clickable info icons for each variable
+- Organized by model when comparing multiple models
+
+This transparency ensures you can always verify what assumptions went into your calculations.
+
+### Zero Values Support
+
+The calculator now intelligently handles zero values in scenarios where they make sense:
+- **Allowed**: Starting customer base = 0 (new business), New customers = 0 (existing base only), Expansion rate = 0 (no upsells)
+- **Warning**: Zero values that might indicate an issue (e.g., no acquisition and no existing customers)
+- **Error**: Zero values that don't make sense (e.g., pricing = 0 for paid products)
+
+This flexibility allows modeling realistic scenarios like focusing purely on existing customers or launching with a current user base.
 
 ## Deployment
 
