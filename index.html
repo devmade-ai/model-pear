@@ -394,6 +394,19 @@
         </footer>
     </div>
 
+    <!-- Tooltip Modal -->
+    <div id="tooltipModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" onclick="closeTooltipModal(event)">
+        <div class="bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 border border-gray-600 shadow-xl" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-start mb-4">
+                <h3 id="tooltipTitle" class="text-xl font-semibold text-gray-100"></h3>
+                <button onclick="closeTooltipModal()" class="text-gray-400 hover:text-gray-200 text-2xl leading-none">&times;</button>
+            </div>
+            <div id="tooltipContent" class="text-gray-300 space-y-3">
+                <!-- Dynamic content will be populated here -->
+            </div>
+        </div>
+    </div>
+
     <!-- Custom JavaScript -->
     <script src="app.js"></script>
 </body>
