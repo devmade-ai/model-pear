@@ -26,6 +26,18 @@ let selectedModels = new Set();
 // Store input values to preserve them when selection changes
 let storedInputValues = new Map();
 
+// Calculator mode: 'forward' or 'reverse'
+let currentMode = 'forward';
+
+// Reverse calculator state
+let reverseCalculatorState = {
+    targetRevenue: 0,
+    targetMonth: 24,
+    solveForVariable: '',
+    constraints: {},
+    generateScenarios: true
+};
+
 // ========== MODEL FAMILIES ==========
 const MODEL_FAMILIES = {
     subscription: {
@@ -2337,6 +2349,281 @@ function calculateUniversalMetrics(modelKey, results, inputs) {
 }
 
 /**
+ * Get bounds for a variable based on input definition
+ */
+function getVariableBounds(varName, model) {
+    const inputDef = model.inputs.find(i => i.name === varName);
+
+    if (inputDef) {
+        let min = inputDef.min !== undefined ? inputDef.min : 0;
+        let max = inputDef.max;
+
+        // If no max defined, set reasonable defaults based on type
+        if (max === undefined) {
+            if (inputDef.type === 'currency') {
+                max = 50000; // R50,000
+            } else if (inputDef.type === 'percent') {
+                max = 100;
+            } else if (inputDef.type === 'number') {
+                max = 10000;
+            } else {
+                max = 100000;
+            }
+        }
+
+        return { min, max };
+    }
+
+    // Fallback bounds
+    return { min: 0, max: 100000 };
+}
+
+/**
+ * Extract revenue from results at a specific month
+ */
+function extractRevenueFromResults(results, monthIndex) {
+    if (!results || !results[monthIndex]) return 0;
+
+    const monthData = results[monthIndex];
+    return monthData.totalRevenue
+        || monthData.revenue
+        || monthData.mrr
+        || 0;
+}
+
+/**
+ * Reverse calculation: Given a target revenue, solve for required input
+ * Uses binary search algorithm for monotonic relationships
+ */
+function reverseCalculate(modelKey, targetRevenue, targetMonth, solveForVar, constraints) {
+    const model = models[modelKey];
+
+    if (!model) {
+        return { success: false, error: 'Model not found' };
+    }
+
+    // Validate target month
+    if (targetMonth < 1 || targetMonth > 60) {
+        return { success: false, error: 'Target month must be between 1 and 60' };
+    }
+
+    // Define search bounds based on variable type
+    const bounds = getVariableBounds(solveForVar, model);
+
+    // Binary search for the solution
+    let low = bounds.min;
+    let high = bounds.max;
+    let iterations = 0;
+    const maxIterations = 50;
+    const tolerance = targetRevenue * 0.01; // 1% tolerance
+
+    let bestSolution = null;
+    let bestDifference = Infinity;
+
+    while (iterations < maxIterations && (high - low) > 0.01) {
+        const mid = (low + high) / 2;
+
+        // Create input object with solved variable
+        const testInputs = { ...constraints };
+        testInputs[solveForVar] = mid;
+
+        try {
+            // Run forward calculation
+            const results = model.calculate(testInputs, targetMonth);
+            const achievedRevenue = extractRevenueFromResults(results, targetMonth - 1);
+
+            const difference = Math.abs(achievedRevenue - targetRevenue);
+
+            // Track best solution
+            if (difference < bestDifference) {
+                bestDifference = difference;
+                bestSolution = {
+                    solvedValue: mid,
+                    achievedRevenue: achievedRevenue,
+                    inputs: { ...testInputs },
+                    results: results
+                };
+            }
+
+            // Check if within tolerance
+            if (difference < tolerance) {
+                return {
+                    success: true,
+                    solvedValue: mid,
+                    achievedRevenue: achievedRevenue,
+                    inputs: testInputs,
+                    results: results,
+                    iterations: iterations
+                };
+            }
+
+            // Adjust search bounds
+            if (achievedRevenue < targetRevenue) {
+                low = mid; // Need higher value
+            } else {
+                high = mid; // Need lower value
+            }
+        } catch (error) {
+            console.error('Error in reverse calculation:', error);
+            // If calculation fails, try narrowing from the other direction
+            high = mid;
+        }
+
+        iterations++;
+    }
+
+    // Return best approximation found
+    if (bestSolution) {
+        return {
+            success: iterations < maxIterations,
+            ...bestSolution,
+            iterations: iterations,
+            isApproximation: true
+        };
+    }
+
+    return {
+        success: false,
+        error: 'Could not find a solution within the allowed range',
+        iterations: iterations
+    };
+}
+
+/**
+ * Format variable name for display
+ */
+function formatVariableName(varName, model) {
+    const inputDef = model.inputs.find(i => i.name === varName);
+    return inputDef ? inputDef.label : varName;
+}
+
+/**
+ * Format solved value for display
+ */
+function formatSolvedValue(varName, value, model) {
+    const inputDef = model.inputs.find(i => i.name === varName);
+
+    if (!inputDef) return value.toFixed(2);
+
+    if (inputDef.type === 'currency') {
+        return formatCurrency(value);
+    } else if (inputDef.type === 'percent') {
+        return value.toFixed(2) + '%';
+    } else if (inputDef.type === 'number') {
+        return Math.round(value).toLocaleString();
+    }
+
+    return value.toFixed(2);
+}
+
+/**
+ * Generate multiple scenarios for achieving the target
+ * Creates 3 different approaches based on different assumptions
+ */
+function generateScenarios(modelKey, targetRevenue, targetMonth, baseConstraints) {
+    const model = models[modelKey];
+    const scenarios = [];
+
+    // Determine which variables to use for scenarios based on model type
+    // We'll try to create scenarios by varying different constraint assumptions
+
+    // Scenario 1: Balanced/Recommended approach
+    // Use the user's constraints or sensible defaults
+    const scenario1Constraints = { ...baseConstraints };
+
+    // Fill in missing constraints with defaults
+    model.inputs.forEach(input => {
+        if (scenario1Constraints[input.name] === undefined && input.name !== reverseCalculatorState.solveForVariable) {
+            scenario1Constraints[input.name] = input.default || 0;
+        }
+    });
+
+    const scenario1 = reverseCalculate(
+        modelKey,
+        targetRevenue,
+        targetMonth,
+        reverseCalculatorState.solveForVariable,
+        scenario1Constraints
+    );
+
+    if (scenario1.success) {
+        scenarios.push({
+            name: 'Recommended Approach',
+            description: 'Balanced assumptions based on industry standards',
+            ...scenario1
+        });
+    }
+
+    // Scenario 2: Aggressive/Growth-focused
+    // Lower churn, higher efficiency assumptions
+    const scenario2Constraints = { ...baseConstraints };
+    model.inputs.forEach(input => {
+        if (scenario2Constraints[input.name] === undefined && input.name !== reverseCalculatorState.solveForVariable) {
+            if (input.name.includes('churn') || input.name.includes('Churn')) {
+                scenario2Constraints[input.name] = Math.max((input.default || 5) * 0.6, input.min || 0);
+            } else if (input.name.includes('expansion') || input.name.includes('conversion')) {
+                scenario2Constraints[input.name] = Math.min((input.default || 2) * 1.5, input.max || 100);
+            } else if (input.name.includes('Price') || input.name.includes('price')) {
+                scenario2Constraints[input.name] = Math.min((input.default || 500) * 1.3, 50000);
+            } else {
+                scenario2Constraints[input.name] = input.default || 0;
+            }
+        }
+    });
+
+    const scenario2 = reverseCalculate(
+        modelKey,
+        targetRevenue,
+        targetMonth,
+        reverseCalculatorState.solveForVariable,
+        scenario2Constraints
+    );
+
+    if (scenario2.success) {
+        scenarios.push({
+            name: 'Optimistic Scenario',
+            description: 'Assumes better retention and higher efficiency',
+            ...scenario2
+        });
+    }
+
+    // Scenario 3: Conservative/Volume approach
+    // Higher churn, lower prices, volume-based
+    const scenario3Constraints = { ...baseConstraints };
+    model.inputs.forEach(input => {
+        if (scenario3Constraints[input.name] === undefined && input.name !== reverseCalculatorState.solveForVariable) {
+            if (input.name.includes('churn') || input.name.includes('Churn')) {
+                scenario3Constraints[input.name] = Math.min((input.default || 5) * 1.4, input.max || 100);
+            } else if (input.name.includes('expansion') || input.name.includes('conversion')) {
+                scenario3Constraints[input.name] = Math.max((input.default || 2) * 0.7, input.min || 0);
+            } else if (input.name.includes('Price') || input.name.includes('price')) {
+                scenario3Constraints[input.name] = Math.max((input.default || 500) * 0.7, input.min || 0);
+            } else {
+                scenario3Constraints[input.name] = input.default || 0;
+            }
+        }
+    });
+
+    const scenario3 = reverseCalculate(
+        modelKey,
+        targetRevenue,
+        targetMonth,
+        reverseCalculatorState.solveForVariable,
+        scenario3Constraints
+    );
+
+    if (scenario3.success) {
+        scenarios.push({
+            name: 'Conservative Scenario',
+            description: 'Higher churn tolerance, volume-focused approach',
+            ...scenario3
+        });
+    }
+
+    return scenarios;
+}
+
+/**
  * Debounce function for input handling
  */
 function debounce(func, delay) {
@@ -3290,7 +3577,11 @@ const onInputChange = debounce(function(event) {
  * Handle calculate button click
  */
 function onCalculate() {
-    performCalculation();
+    if (currentMode === 'reverse') {
+        performReverseCalculation();
+    } else {
+        performCalculation();
+    }
 }
 
 /**
@@ -3333,6 +3624,195 @@ function performCalculation() {
         // Multi-model comparison view
         renderComparison(allResults, allInputs, comparison);
     }
+}
+
+/**
+ * Perform reverse calculation
+ */
+function performReverseCalculation() {
+    if (selectedModels.size === 0) {
+        alert('Please select a revenue model first');
+        return;
+    }
+
+    if (selectedModels.size > 1) {
+        alert('Reverse calculator works with one model at a time. Please select only one model.');
+        return;
+    }
+
+    // Get reverse calculator inputs
+    const targetRevenue = parseFloat(document.getElementById('targetRevenue').value);
+    const targetMonth = parseInt(document.getElementById('targetMonth').value);
+    const solveForVariable = document.getElementById('solveForVariable').value;
+    const generateScenariosCheckbox = document.getElementById('generateScenarios').checked;
+
+    // Validation
+    if (!targetRevenue || targetRevenue <= 0) {
+        alert('Please enter a valid target revenue (greater than 0)');
+        return;
+    }
+
+    if (!targetMonth || targetMonth < 1 || targetMonth > 60) {
+        alert('Please enter a valid target month (1-60)');
+        return;
+    }
+
+    if (!solveForVariable) {
+        alert('Please select a variable to solve for');
+        return;
+    }
+
+    // Update state
+    reverseCalculatorState.targetRevenue = targetRevenue;
+    reverseCalculatorState.targetMonth = targetMonth;
+    reverseCalculatorState.solveForVariable = solveForVariable;
+    reverseCalculatorState.generateScenarios = generateScenariosCheckbox;
+
+    // Gather constraints
+    const constraints = gatherConstraints();
+    reverseCalculatorState.constraints = constraints;
+
+    const modelKey = Array.from(selectedModels)[0];
+
+    // Perform reverse calculation
+    const solution = reverseCalculate(modelKey, targetRevenue, targetMonth, solveForVariable, constraints);
+
+    if (!solution.success) {
+        alert(solution.error || 'Could not find a solution. Try adjusting your constraints or target.');
+        return;
+    }
+
+    // Generate scenarios if requested
+    let scenarios = [];
+    if (generateScenariosCheckbox) {
+        scenarios = generateScenarios(modelKey, targetRevenue, targetMonth, constraints);
+    }
+
+    // Display reverse results
+    displayReverseResults(modelKey, solution, scenarios);
+
+    // Also render the normal forward calculation with the solved inputs
+    // This shows the full projection and all charts
+    const results = solution.results;
+    const inputs = solution.inputs;
+    const allResults = new Map();
+    const allInputs = new Map();
+    allResults.set(modelKey, results);
+    allInputs.set(modelKey, inputs);
+
+    renderSingleModel(modelKey, results, inputs);
+}
+
+/**
+ * Display reverse calculation results
+ */
+function displayReverseResults(modelKey, solution, scenarios) {
+    const model = models[modelKey];
+    const panel = document.getElementById('reverseResultsPanel');
+    const content = document.getElementById('reverseResultsContent');
+
+    panel.classList.remove('hidden');
+
+    let html = '';
+
+    // Primary solution
+    html += `
+        <div class="bg-gradient-to-br from-green-900 to-green-800 rounded-lg p-5 border border-green-700 mb-4">
+            <div class="flex items-start justify-between mb-3">
+                <div>
+                    <div class="text-xs text-green-200 mb-1">Required ${formatVariableName(reverseCalculatorState.solveForVariable, model)}</div>
+                    <div class="text-3xl font-bold text-white">
+                        ${formatSolvedValue(reverseCalculatorState.solveForVariable, solution.solvedValue, model)}
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xs text-green-200 mb-1">Target Revenue</div>
+                    <div class="text-xl font-semibold text-green-100">
+                        ${formatCurrency(reverseCalculatorState.targetRevenue)}/mo
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between text-sm border-t border-green-700 pt-3 mt-3">
+                <div>
+                    <span class="text-green-200">Achieved:</span>
+                    <span class="text-white font-semibold ml-1">${formatCurrency(solution.achievedRevenue)}</span>
+                </div>
+                <div>
+                    <span class="text-green-200">By Month:</span>
+                    <span class="text-white font-semibold ml-1">${reverseCalculatorState.targetMonth}</span>
+                </div>
+                <div>
+                    <span class="text-green-200">Accuracy:</span>
+                    <span class="text-white font-semibold ml-1">${(100 - Math.abs((solution.achievedRevenue - reverseCalculatorState.targetRevenue) / reverseCalculatorState.targetRevenue * 100)).toFixed(1)}%</span>
+                </div>
+            </div>
+            ${solution.isApproximation ? '<div class="mt-2 text-xs text-green-300 italic">Note: This is an approximate solution</div>' : ''}
+        </div>
+    `;
+
+    // Show all input values used
+    html += `
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold text-gray-300 mb-2">All Input Values</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+    `;
+
+    model.inputs.forEach(input => {
+        const value = solution.inputs[input.name];
+        const isSolved = input.name === reverseCalculatorState.solveForVariable;
+
+        html += `
+            <div class="bg-gray-700 rounded p-2 ${isSolved ? 'border-2 border-green-500' : 'border border-gray-600'}">
+                <div class="text-xs text-gray-400 mb-1">${input.label}${isSolved ? ' (solved)' : ''}</div>
+                <div class="text-sm font-semibold text-gray-100">
+                    ${formatSolvedValue(input.name, value, model)}
+                </div>
+            </div>
+        `;
+    });
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    // Display scenarios if available
+    if (scenarios && scenarios.length > 0) {
+        html += `
+            <div>
+                <h3 class="text-sm font-semibold text-gray-300 mb-3">Alternative Scenarios</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        `;
+
+        scenarios.forEach((scenario, index) => {
+            const colors = [
+                'from-blue-900 to-blue-800 border-blue-700',
+                'from-purple-900 to-purple-800 border-purple-700',
+                'from-orange-900 to-orange-800 border-orange-700'
+            ];
+
+            html += `
+                <div class="bg-gradient-to-br ${colors[index]} rounded-lg p-4 border">
+                    <div class="font-semibold text-white mb-1">${scenario.name}</div>
+                    <div class="text-xs text-gray-300 mb-3">${scenario.description}</div>
+                    <div class="text-sm mb-2">
+                        <span class="text-gray-300">Required:</span>
+                        <span class="text-white font-semibold ml-1">${formatSolvedValue(reverseCalculatorState.solveForVariable, scenario.solvedValue, model)}</span>
+                    </div>
+                    <div class="text-xs text-gray-400">
+                        Achieves ${formatCurrency(scenario.achievedRevenue)}
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+    }
+
+    content.innerHTML = html;
 }
 
 /**
@@ -4077,9 +4557,156 @@ let selectedDelivery = 'cloud-saas';
 let selectedService = 'self-service';
 
 /**
+ * Set calculator mode (forward or reverse)
+ */
+function setCalculatorMode(mode) {
+    currentMode = mode;
+
+    const forwardModeBtn = document.getElementById('forwardModeBtn');
+    const reverseModeBtn = document.getElementById('reverseModeBtn');
+    const inputFormContainer = document.getElementById('inputFormContainer');
+    const reverseInputsSection = document.getElementById('reverseInputsSection');
+
+    if (mode === 'reverse') {
+        // Highlight reverse button
+        reverseModeBtn.classList.add('bg-blue-600', 'text-white');
+        reverseModeBtn.classList.remove('bg-gray-700', 'text-gray-300');
+        forwardModeBtn.classList.remove('bg-blue-600', 'text-white');
+        forwardModeBtn.classList.add('bg-gray-700', 'text-gray-300');
+
+        // Show reverse inputs, hide forward inputs
+        reverseInputsSection.classList.remove('hidden');
+        inputFormContainer.classList.add('hidden');
+
+        // Update reverse calculator options if a model is selected
+        updateReverseCalculatorOptions();
+
+        // Limit to single model selection in reverse mode
+        if (selectedModels.size > 1) {
+            alert('Reverse calculator works with one model at a time. Please select only one model.');
+        }
+    } else {
+        // Highlight forward button
+        forwardModeBtn.classList.add('bg-blue-600', 'text-white');
+        forwardModeBtn.classList.remove('bg-gray-700', 'text-gray-300');
+        reverseModeBtn.classList.remove('bg-blue-600', 'text-white');
+        reverseModeBtn.classList.add('bg-gray-700', 'text-gray-300');
+
+        // Show forward inputs, hide reverse inputs
+        reverseInputsSection.classList.add('hidden');
+        inputFormContainer.classList.remove('hidden');
+    }
+}
+
+/**
+ * Update reverse calculator options based on selected model
+ */
+function updateReverseCalculatorOptions() {
+    if (currentMode !== 'reverse' || selectedModels.size === 0) return;
+
+    const modelKey = Array.from(selectedModels)[0];
+    const model = models[modelKey];
+
+    if (!model) return;
+
+    // Update the "solve for" dropdown
+    const solveForSelect = document.getElementById('solveForVariable');
+    solveForSelect.innerHTML = '<option value="">-- Select variable to solve --</option>';
+
+    // Add all input variables as options
+    model.inputs.forEach(input => {
+        const option = document.createElement('option');
+        option.value = input.name;
+        option.textContent = input.label;
+        solveForSelect.appendChild(option);
+    });
+
+    // Update constraint inputs
+    const constraintInputs = document.getElementById('constraintInputs');
+    constraintInputs.innerHTML = '';
+
+    // Add event listener to solve-for dropdown to update constraints
+    solveForSelect.addEventListener('change', function() {
+        reverseCalculatorState.solveForVariable = this.value;
+        updateConstraintInputs(modelKey);
+    });
+}
+
+/**
+ * Update constraint inputs based on selected solve-for variable
+ */
+function updateConstraintInputs(modelKey) {
+    const model = models[modelKey];
+    const solveForVar = reverseCalculatorState.solveForVariable;
+    const constraintInputs = document.getElementById('constraintInputs');
+
+    constraintInputs.innerHTML = '';
+
+    if (!solveForVar) {
+        constraintInputs.innerHTML = '<p class="text-xs text-gray-500">Select a variable to solve for first</p>';
+        return;
+    }
+
+    // Add inputs for all other variables
+    model.inputs.forEach(input => {
+        if (input.name === solveForVar) return; // Skip the variable we're solving for
+
+        const inputDiv = document.createElement('div');
+        inputDiv.className = 'mb-3';
+
+        const label = document.createElement('label');
+        label.className = 'block text-xs font-medium text-gray-300 mb-1';
+        label.textContent = input.label;
+        label.htmlFor = `constraint-${input.name}`;
+
+        const inputElement = document.createElement('input');
+        inputElement.type = 'number';
+        inputElement.id = `constraint-${input.name}`;
+        inputElement.name = input.name;
+        inputElement.className = 'w-full px-2 py-1 bg-gray-600 text-gray-100 border border-gray-500 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500';
+        inputElement.value = input.default || 0;
+        inputElement.min = input.min !== undefined ? input.min : 0;
+        if (input.max !== undefined) inputElement.max = input.max;
+        if (input.step !== undefined) inputElement.step = input.step;
+
+        const hint = document.createElement('p');
+        hint.className = 'text-xs text-gray-500 mt-1';
+        hint.textContent = input.hint || '';
+
+        inputDiv.appendChild(label);
+        inputDiv.appendChild(inputElement);
+        inputDiv.appendChild(hint);
+
+        constraintInputs.appendChild(inputDiv);
+    });
+}
+
+/**
+ * Gather constraints from reverse calculator inputs
+ */
+function gatherConstraints() {
+    const constraints = {};
+    const constraintInputs = document.getElementById('constraintInputs');
+    const inputs = constraintInputs.querySelectorAll('input');
+
+    inputs.forEach(input => {
+        constraints[input.name] = parseFloat(input.value) || 0;
+    });
+
+    return constraints;
+}
+
+/**
  * Initialize the application
  */
 function init() {
+    // Add calculator mode toggle event listeners
+    const forwardModeBtn = document.getElementById('forwardModeBtn');
+    const reverseModeBtn = document.getElementById('reverseModeBtn');
+
+    forwardModeBtn.addEventListener('click', () => setCalculatorMode('forward'));
+    reverseModeBtn.addEventListener('click', () => setCalculatorMode('reverse'));
+
     // Add category selector event listener
     const categorySelector = document.getElementById('categorySelector');
     categorySelector.addEventListener('change', onCategoryChange);
@@ -4096,6 +4723,9 @@ function init() {
     // Add event listener to calculate button
     const calculateBtn = document.getElementById('calculateBtn');
     calculateBtn.addEventListener('click', onCalculate);
+
+    // Add event listener to model selection to update reverse calculator options
+    document.addEventListener('modelSelectionChanged', updateReverseCalculatorOptions);
 }
 
 /**

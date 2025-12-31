@@ -9,6 +9,10 @@ This tool helps analyze and visualize 20 different software revenue models throu
 ## Features
 
 - **20 Revenue Models**: From subscription to usage-based, freemium to enterprise licensing
+- **Dual Calculator Modes**:
+  - **Forward Mode**: Input parameters → Calculate revenue projections
+  - **Reverse Mode**: Set revenue target → Calculate required inputs
+- **Scenario Planning**: Generate multiple alternative scenarios to reach your targets
 - **Interactive Charts**: Real-time visualization using ApexCharts
 - **No Installation**: Runs entirely in the browser, no backend required
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
@@ -75,11 +79,35 @@ That's it! No build process or dependencies to install.
 
 ## Usage
 
+### Forward Calculator (Traditional Mode)
+
 1. Select a revenue model from the dropdown menu
 2. Enter your parameters (or use the provided defaults)
 3. View real-time calculations and charts
 4. Export charts as PNG images
 5. Switch between models to compare approaches
+
+### Reverse Calculator (Goal-Oriented Mode)
+
+The reverse calculator helps you answer questions like: "What price should I charge to reach R100,000/month in 24 months?"
+
+1. **Select Mode**: Click the "Reverse" button at the top
+2. **Choose Category & Model**: Select your software category and one revenue model
+3. **Set Your Target**:
+   - Enter your target monthly revenue (MRR)
+   - Choose by which month you want to achieve it (1-60 months)
+4. **Select Variable to Solve**: Choose which input variable to calculate (e.g., "New Customers per Month", "Monthly Price")
+5. **Set Constraints** (optional): Expand "Advanced" to set fixed values for other variables
+6. **Calculate**: Click "Calculate & Compare"
+7. **Review Results**:
+   - See the required value to hit your target
+   - View 3 alternative scenarios (Recommended, Optimistic, Conservative)
+   - See full projections, charts, and metrics
+
+**Example Use Cases:**
+- "How many customers do I need to acquire monthly to reach R50,000 MRR?"
+- "What should my pricing be to hit R100,000 MRR in 18 months?"
+- "With a 5% churn rate, how many new users do I need for R200,000 MRR?"
 
 ## Deployment
 
@@ -96,7 +124,9 @@ Changes deploy automatically within 2-3 minutes of pushing to the main branch.
 
 ```
 model-pear/
-├── index.html          # Main application (all code in one file)
+├── index.html          # Main HTML structure
+├── app.js              # Application logic & calculations
+├── styles.css          # Custom styles
 ├── README.md           # This file
 ├── claude.md           # Detailed project specification
 └── .gitignore          # Git ignore rules
