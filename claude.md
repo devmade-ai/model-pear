@@ -90,10 +90,11 @@ Users can select and compare multiple revenue models simultaneously:
 ### 3. Enhanced UX Features
 **Status**: ✅ Complete (December 2024)
 
-- **Dual Input Views**:
-  - **Form View**: Traditional guided input fields with hints and category-specific defaults
-  - **Table View**: Spreadsheet-style editing with side-by-side model comparison for power users
-  - Real-time synchronization between form and table inputs
+- **Four Calculator Modes**:
+  - **Vendor Mode (Forward)**: Traditional guided input fields with hints and category-specific defaults
+  - **Growth Mode (Reverse)**: Set revenue targets and calculate required inputs
+  - **Client Mode (Budget)**: Enter budget constraints to find optimal pricing options
+  - **Admin Mode**: Centralized spreadsheet-style editor for all 20 model defaults
 - **Real CAC Inputs**: Accurate Customer Acquisition Cost inputs across all models (replaces estimation)
 - **Quick-Start Templates**: Pre-configured scenarios (Early Stage SaaS, Enterprise SaaS, Consumer App, etc.)
 - **Smart Validation**: Pre-calculation warnings for problematic input combinations with actionable suggestions
@@ -106,7 +107,7 @@ Users can select and compare multiple revenue models simultaneously:
 ### 4. Calculator Modes
 **Status**: ✅ Complete (December 2024)
 
-The calculator supports three distinct modes, each serving a different user perspective:
+The calculator supports four distinct modes, each serving a different user perspective:
 
 #### Vendor Mode (Forward Calculator)
 **Perspective**: Business/Vendor calculating potential revenue
@@ -155,7 +156,29 @@ The calculator supports three distinct modes, each serving a different user pers
   - 🔴 Red = Over budget (only if no options found)
 - **Supports**: Multiple models (shows best option per model)
 
-**Mode Switching**: Users can switch between modes via the 3-button toggle at the top of the interface.
+#### Admin Mode (Model Configuration Editor)
+**Perspective**: Power user/Administrator managing model defaults
+
+- **Input**: Direct editing of all model default parameters
+- **Output**: Updated default values across all 20 models
+- **Use Case**: "Customize all model defaults to match my industry benchmarks"
+- **Interface**: Spreadsheet-style table with parameters as rows, models as columns
+- **Features**:
+  - **Centralized View**: All 20 models visible side-by-side
+  - **Sticky Headers**: Parameter names and model names stay visible while scrolling
+  - **Horizontal Scrolling**: Navigate through all models efficiently
+  - **Real-time Updates**: Changes immediately update model defaults
+  - **Parameter Tooltips**: Hover to see descriptions
+  - **N/A Indicators**: Shows which parameters don't apply to specific models
+- **Use Cases**:
+  - Batch updating parameters across multiple models
+  - Comparing default assumptions across pricing strategies
+  - Customizing defaults for specific industries/markets
+  - Quick auditing of all model configurations
+- **Behavior**: Changes made in admin mode persist when switching to other modes
+- **Access**: Available via "⚙️ Admin" button in calculator mode selector
+
+**Mode Switching**: Users can switch between modes via the 4-button grid at the top of the interface (2×2 layout).
 
 ## Universal Metrics (Cross-Model Comparison)
 

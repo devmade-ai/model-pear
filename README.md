@@ -9,13 +9,11 @@ This tool helps analyze and visualize 20 different software revenue models throu
 ## Features
 
 - **20 Revenue Models**: From subscription to usage-based, freemium to enterprise licensing
-- **Triple Calculator Modes**:
+- **Four Calculator Modes**:
   - **Vendor Mode** (Forward): Input parameters → Calculate revenue projections
   - **Growth Mode** (Reverse): Set revenue target → Calculate required inputs
   - **Client Mode** (Budget): Enter budget → Find optimal pricing options
-- **Dual Input Views**:
-  - **Form View**: Guided input fields with hints and category-specific defaults
-  - **Table View**: Quick table-based editing with side-by-side model comparison
+  - **Admin Mode**: Edit default parameters for all 20 models in one centralized view
 - **Scenario Planning**: Generate multiple alternative scenarios to reach your targets
 - **Budget Optimization**: Find the best pricing plan within your budget constraints
 - **Interactive Charts**: Real-time visualization using ApexCharts
@@ -89,34 +87,9 @@ That's it! No build process or dependencies to install.
 **Use this mode when:** You're a vendor/business wanting to project your revenue based on pricing and growth assumptions.
 
 1. **Select Category & Models**: Choose your software category and one or more revenue models
-2. **Choose Input View**:
-   - **Form View** (Default): Guided fields with hints and category-specific defaults - ideal for beginners
-   - **Table View**: Spreadsheet-style editing - ideal for power users and comparing multiple models
-3. **Enter Parameters**: Adjust values using either view (changes sync automatically)
-4. **Calculate & Visualize**: View real-time calculations and interactive charts
-5. **Compare Models**: Switch between selected models or view side-by-side in table view
-
-#### Using Table View
-
-The table view provides a streamlined interface for efficient parameter editing:
-
-**Single Model Table:**
-- Displays all parameters in a structured table format
-- Columns: Parameter | Value | Unit | Description
-- Quickly scan all inputs at once
-- Copy-paste values from spreadsheets
-
-**Multi-Model Comparison Table:**
-- Side-by-side parameter comparison across all selected models
-- Easily identify which parameters differ between models
-- Edit multiple model inputs without switching tabs
-- Highlights parameters not applicable to certain models (N/A)
-
-**When to Use Table View:**
-- Comparing multiple revenue models
-- Bulk parameter adjustments
-- Importing values from external sources (Excel, Google Sheets)
-- Quick scanning of all model inputs
+2. **Enter Parameters**: Adjust values using the guided input form with hints and category-specific defaults
+3. **Calculate & Visualize**: View real-time calculations and interactive charts
+4. **Compare Models**: Switch between selected models using tabs (when multiple models selected)
 
 ### Growth Mode - Reverse Calculator (Target Planning)
 
@@ -183,6 +156,42 @@ Each option shows:
 - **Cost per unit** for value comparison
 - **Budget buffer** (remaining budget if you choose this option)
 - **Configuration details** (expand to see all parameters)
+
+### Admin Mode - Model Configuration Editor
+
+**Use this mode when:** You want to customize default parameters across all revenue models or need a centralized view to manage model configurations.
+
+The admin panel provides a comprehensive spreadsheet-style interface for editing all 20 revenue models simultaneously.
+
+1. **Select Mode**: Click the "⚙️ Admin" button at the top
+2. **View All Models**: See all 20 revenue models in a side-by-side table
+3. **Edit Parameters**:
+   - Each row represents a parameter (Price, Customers, Churn, etc.)
+   - Each column represents a revenue model
+   - Edit any value directly in the table
+4. **Real-time Updates**: Changes immediately update model defaults
+5. **Return to Calculator**: Switch back to Vendor/Growth/Client mode to use the updated values
+
+**Features:**
+- **Centralized Configuration**: Edit all model defaults in one place
+- **Side-by-side Comparison**: Easily compare parameter values across models
+- **Horizontal Scrolling**: Navigate through all 20 models
+- **Parameter Tooltips**: Hover over inputs to see descriptions
+- **Sticky Headers**: Parameter names and model names stay visible while scrolling
+- **N/A Indicators**: Clearly shows which parameters don't apply to specific models
+
+**Use Cases:**
+- Customizing default values for your specific industry or market
+- Batch updating parameters across multiple models
+- Comparing default assumptions across different pricing strategies
+- Setting up consistent baseline values for team analysis
+- Quick auditing of all model parameters
+
+**Example Scenarios:**
+- "Update all churn rates to match my industry benchmarks"
+- "Set all pricing to my local currency defaults"
+- "Review and adjust acquisition costs across all models"
+- "Compare subscription vs usage-based default configurations"
 
 ## Deployment
 

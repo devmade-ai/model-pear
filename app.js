@@ -26,11 +26,8 @@ let selectedModels = new Set();
 // Store input values to preserve them when selection changes
 let storedInputValues = new Map();
 
-// Calculator mode: 'forward', 'reverse', or 'client-budget'
+// Calculator mode: 'forward', 'reverse', 'client-budget', or 'admin'
 let currentMode = 'forward';
-
-// Input view mode: 'form' or 'table'
-let currentInputView = 'form';
 
 // Reverse calculator state
 let reverseCalculatorState = {
@@ -5046,9 +5043,16 @@ function setCalculatorMode(mode) {
     const forwardModeBtn = document.getElementById('forwardModeBtn');
     const reverseModeBtn = document.getElementById('reverseModeBtn');
     const clientBudgetModeBtn = document.getElementById('clientBudgetModeBtn');
+    const adminModeBtn = document.getElementById('adminModeBtn');
     const inputFormContainer = document.getElementById('inputFormContainer');
     const reverseInputsSection = document.getElementById('reverseInputsSection');
     const clientBudgetInputsSection = document.getElementById('clientBudgetInputsSection');
+    const adminPanelContainer = document.getElementById('adminPanelContainer');
+    const categorySection = document.querySelector('.mb-6:has(#categorySelector)');
+    const modelSelectionSection = document.getElementById('modelSelectionSection');
+    const layerTwoThreeSection = document.getElementById('layerTwoThreeSection');
+    const selectedSummary = document.getElementById('selectedSummary');
+    const calculateBtn = document.getElementById('calculateBtn');
 
     // Reset all buttons
     forwardModeBtn.classList.remove('bg-blue-600', 'text-white');
@@ -5057,13 +5061,38 @@ function setCalculatorMode(mode) {
     reverseModeBtn.classList.add('bg-gray-700', 'text-gray-300');
     clientBudgetModeBtn.classList.remove('bg-blue-600', 'text-white');
     clientBudgetModeBtn.classList.add('bg-gray-700', 'text-gray-300');
+    adminModeBtn.classList.remove('bg-blue-600', 'text-white');
+    adminModeBtn.classList.add('bg-gray-700', 'text-gray-300');
 
     // Hide all input sections
     reverseInputsSection.classList.add('hidden');
     clientBudgetInputsSection.classList.add('hidden');
     inputFormContainer.classList.add('hidden');
+    adminPanelContainer.classList.add('hidden');
 
-    if (mode === 'reverse') {
+    if (mode === 'admin') {
+        // Highlight admin button
+        adminModeBtn.classList.add('bg-blue-600', 'text-white');
+        adminModeBtn.classList.remove('bg-gray-700', 'text-gray-300');
+
+        // Show admin panel
+        adminPanelContainer.classList.remove('hidden');
+
+        // Hide category selection, model selection, and other sections
+        if (categorySection) categorySection.classList.add('hidden');
+        if (modelSelectionSection) modelSelectionSection.classList.add('hidden');
+        if (layerTwoThreeSection) layerTwoThreeSection.classList.add('hidden');
+        if (selectedSummary) selectedSummary.classList.add('hidden');
+        if (calculateBtn.parentElement) calculateBtn.parentElement.classList.add('hidden');
+
+        // Generate admin panel
+        generateAdminPanel();
+    } else if (mode === 'reverse') {
+        // Show regular sections
+        if (categorySection) categorySection.classList.remove('hidden');
+        if (selectedSummary) selectedSummary.classList.remove('hidden');
+        if (calculateBtn.parentElement) calculateBtn.parentElement.classList.remove('hidden');
+
         // Highlight reverse button
         reverseModeBtn.classList.add('bg-blue-600', 'text-white');
         reverseModeBtn.classList.remove('bg-gray-700', 'text-gray-300');
@@ -5079,6 +5108,11 @@ function setCalculatorMode(mode) {
             alert('Reverse calculator works with one model at a time. Please select only one model.');
         }
     } else if (mode === 'client-budget') {
+        // Show regular sections
+        if (categorySection) categorySection.classList.remove('hidden');
+        if (selectedSummary) selectedSummary.classList.remove('hidden');
+        if (calculateBtn.parentElement) calculateBtn.parentElement.classList.remove('hidden');
+
         // Highlight client budget button
         clientBudgetModeBtn.classList.add('bg-blue-600', 'text-white');
         clientBudgetModeBtn.classList.remove('bg-gray-700', 'text-gray-300');
@@ -5089,6 +5123,11 @@ function setCalculatorMode(mode) {
         // Update client budget options if models are selected
         updateClientBudgetOptions();
     } else {
+        // Show regular sections
+        if (categorySection) categorySection.classList.remove('hidden');
+        if (selectedSummary) selectedSummary.classList.remove('hidden');
+        if (calculateBtn.parentElement) calculateBtn.parentElement.classList.remove('hidden');
+
         // Highlight forward button
         forwardModeBtn.classList.add('bg-blue-600', 'text-white');
         forwardModeBtn.classList.remove('bg-gray-700', 'text-gray-300');
@@ -5096,9 +5135,6 @@ function setCalculatorMode(mode) {
         // Show forward inputs
         inputFormContainer.classList.remove('hidden');
     }
-
-    // Update view toggle visibility based on mode
-    updateViewToggleVisibility();
 }
 
 /**
@@ -5207,17 +5243,12 @@ function init() {
     const forwardModeBtn = document.getElementById('forwardModeBtn');
     const reverseModeBtn = document.getElementById('reverseModeBtn');
     const clientBudgetModeBtn = document.getElementById('clientBudgetModeBtn');
+    const adminModeBtn = document.getElementById('adminModeBtn');
 
     forwardModeBtn.addEventListener('click', () => setCalculatorMode('forward'));
     reverseModeBtn.addEventListener('click', () => setCalculatorMode('reverse'));
     clientBudgetModeBtn.addEventListener('click', () => setCalculatorMode('client-budget'));
-
-    // Add input view toggle event listeners
-    const formViewBtn = document.getElementById('formViewBtn');
-    const tableViewBtn = document.getElementById('tableViewBtn');
-
-    formViewBtn.addEventListener('click', () => setInputView('form'));
-    tableViewBtn.addEventListener('click', () => setInputView('table'));
+    adminModeBtn.addEventListener('click', () => setCalculatorMode('admin'));
 
     // Add category selector event listener
     const categorySelector = document.getElementById('categorySelector');
@@ -5454,12 +5485,11 @@ function updateInputForms() {
     if (selectedModels.size === 0) {
         tabsContainer.classList.add('hidden');
         formContainer.innerHTML = '<p class="text-gray-400 text-sm">Select models to configure inputs</p>';
-        updateViewToggleVisibility();
         return;
     }
 
-    // Show tabs if multiple models selected (only in form view)
-    if (selectedModels.size > 1 && currentInputView === 'form') {
+    // Show tabs if multiple models selected
+    if (selectedModels.size > 1) {
         tabsContainer.classList.remove('hidden');
         generateInputTabs();
     } else {
@@ -5468,14 +5498,6 @@ function updateInputForms() {
 
     // Generate ALL forms for ALL selected models
     generateAllForms();
-
-    // Update view toggle visibility
-    updateViewToggleVisibility();
-
-    // If we're in table view, regenerate the table
-    if (currentInputView === 'table') {
-        generateTableView();
-    }
 }
 
 /**
@@ -5635,166 +5657,29 @@ function updateCalculateButton() {
     calculateBtn.disabled = selectedModels.size === 0;
 }
 
-// ========== TABLE VIEW IMPLEMENTATION ==========
+// ========== ADMIN PANEL IMPLEMENTATION ==========
 
 /**
- * Toggle between form and table view
+ * Generate admin panel for editing all model defaults
  */
-function setInputView(viewMode) {
-    currentInputView = viewMode;
+function generateAdminPanel() {
+    const adminPanelContent = document.getElementById('adminPanelContent');
 
-    const formViewBtn = document.getElementById('formViewBtn');
-    const tableViewBtn = document.getElementById('tableViewBtn');
-    const inputForm = document.getElementById('inputForm');
-    const inputTable = document.getElementById('inputTable');
-    const inputFormTabs = document.getElementById('inputFormTabs');
+    // Get all 20 main revenue models (excluding categories and framework options)
+    const mainModels = [
+        'one-time', 'subscription', 'freemium', 'usage-based', 'tiered', 'per-seat',
+        'retainer', 'managed-services', 'credits-token', 'time-materials', 'fixed-price',
+        'outcome-based', 'open-core', 'marketplace', 'revenue-share', 'advertising',
+        'ela', 'data-licensing', 'white-label'
+    ];
 
-    if (viewMode === 'form') {
-        // Update button styles
-        formViewBtn.className = 'py-2 px-3 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors';
-        tableViewBtn.className = 'py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors';
-
-        // Show form, hide table
-        inputForm.classList.remove('hidden');
-        inputTable.classList.add('hidden');
-        if (selectedModels.size > 1) {
-            inputFormTabs.classList.remove('hidden');
-        }
-    } else {
-        // Update button styles
-        formViewBtn.className = 'py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors';
-        tableViewBtn.className = 'py-2 px-3 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors';
-
-        // Hide form, show table
-        inputForm.classList.add('hidden');
-        inputTable.classList.remove('hidden');
-        inputFormTabs.classList.add('hidden');
-
-        // Generate table view
-        generateTableView();
-    }
-}
-
-/**
- * Generate table view for input parameters
- */
-function generateTableView() {
-    const tableContainer = document.getElementById('inputTable');
-
-    if (selectedModels.size === 0) {
-        tableContainer.innerHTML = '<p class="text-gray-400 text-sm">Select models to configure inputs</p>';
-        return;
-    }
-
-    if (selectedModels.size === 1) {
-        // Single model table view
-        generateSingleModelTable(Array.from(selectedModels)[0]);
-    } else {
-        // Multi-model comparison table view
-        generateMultiModelTable();
-    }
-}
-
-/**
- * Generate table view for a single model
- */
-function generateSingleModelTable(modelKey) {
-    const tableContainer = document.getElementById('inputTable');
-    const model = models[modelKey];
-
-    let tableHTML = `
-        <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-100 mb-3">${model.name} - Input Parameters</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-gray-300 border border-gray-600 rounded-lg">
-                    <thead class="bg-gray-700">
-                        <tr>
-                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600">Parameter</th>
-                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600">Value</th>
-                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600">Unit</th>
-                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-gray-800">
-    `;
-
-    model.inputs.forEach((input, index) => {
-        const inputId = `${modelKey}-${input.name}`;
-        const inputElement = document.getElementById(inputId);
-        const currentValue = inputElement ? inputElement.value : input.default;
-
-        // Get category-specific defaults if available
-        const categoryDefaults = getCategoryDefaults(modelKey, selectedCategory);
-        let hintText = input.hint;
-
-        if (categoryDefaults) {
-            if (input.name === 'price' && categoryDefaults.range) {
-                hintText = `${categoryDefaults.range} (category-specific)`;
-            } else if (input.name === 'churnRate' && categoryDefaults.typicalChurn) {
-                hintText = `Typical for this category: ${categoryDefaults.typicalChurn}`;
-            } else if (input.name === 'conversionRate' && categoryDefaults.conversion) {
-                hintText = `Typical for this category: ${categoryDefaults.conversion}`;
-            }
-        }
-
-        const unit = input.type === 'currency' ? 'R' : input.type === 'percent' ? '%' : '#';
-        const rowClass = index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-750';
-
-        tableHTML += `
-            <tr class="${rowClass} hover:bg-gray-700 transition-colors">
-                <td class="px-4 py-3 font-medium border-b border-gray-700">${input.label}</td>
-                <td class="px-4 py-3 border-b border-gray-700">
-                    <input
-                        type="number"
-                        id="table-${inputId}"
-                        name="${input.name}"
-                        class="w-full px-2 py-1 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value="${currentValue}"
-                        min="${input.min !== undefined ? input.min : 0}"
-                        ${input.max !== undefined ? 'max="' + input.max + '"' : ''}
-                        step="${input.step}"
-                        data-type="${input.type}"
-                        data-model="${modelKey}"
-                        data-input-name="${input.name}"
-                    />
-                </td>
-                <td class="px-4 py-3 text-gray-400 border-b border-gray-700">${unit}</td>
-                <td class="px-4 py-3 text-gray-400 text-xs border-b border-gray-700">${hintText || '-'}</td>
-            </tr>
-        `;
-    });
-
-    tableHTML += `
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-
-    tableContainer.innerHTML = tableHTML;
-
-    // Add event listeners to table inputs
-    model.inputs.forEach(input => {
-        const tableInputId = `table-${modelKey}-${input.name}`;
-        const tableInputElement = document.getElementById(tableInputId);
-        if (tableInputElement) {
-            tableInputElement.addEventListener('input', onTableInputChange);
-        }
-    });
-}
-
-/**
- * Generate table view for multiple models (side-by-side comparison)
- */
-function generateMultiModelTable() {
-    const tableContainer = document.getElementById('inputTable');
-    const modelArray = Array.from(selectedModels);
-
-    // Collect all unique parameter names across models
+    // Collect all unique parameter names across all models
     const allParameters = new Map();
 
-    modelArray.forEach(modelKey => {
+    mainModels.forEach(modelKey => {
         const model = models[modelKey];
+        if (!model || !model.inputs) return;
+
         model.inputs.forEach(input => {
             if (!allParameters.has(input.name)) {
                 allParameters.set(input.name, {
@@ -5808,33 +5693,35 @@ function generateMultiModelTable() {
     });
 
     let tableHTML = `
-        <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-100 mb-3">Multi-Model Input Comparison</h3>
-            <p class="text-sm text-gray-400 mb-3">Compare and edit parameters across selected models</p>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-gray-300 border border-gray-600 rounded-lg">
-                    <thead class="bg-gray-700">
-                        <tr>
-                            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600 sticky left-0 bg-gray-700 z-10">Parameter</th>
+        <div class="overflow-x-auto max-h-[calc(100vh-300px)]">
+            <table class="w-full text-xs text-gray-300 border border-gray-600 rounded-lg">
+                <thead class="bg-gray-700 sticky top-0 z-20">
+                    <tr>
+                        <th class="px-3 py-2 text-left font-semibold border-b border-gray-600 sticky left-0 bg-gray-700 z-30 min-w-[180px]">Parameter</th>
     `;
 
     // Add header for each model
-    modelArray.forEach(modelKey => {
+    mainModels.forEach(modelKey => {
         const model = models[modelKey];
+        if (!model) return;
+
+        // Shorten model names for table headers
+        let shortName = model.name;
+        if (shortName.length > 20) {
+            shortName = shortName.substring(0, 18) + '...';
+        }
+
         tableHTML += `
-            <th class="px-4 py-3 text-left font-semibold border-b border-gray-600 min-w-[200px]">
-                <div class="flex flex-col">
-                    <span class="text-white">${model.name}</span>
-                    <span class="text-xs text-gray-400 font-normal">Value / Unit</span>
-                </div>
+            <th class="px-2 py-2 text-left font-semibold border-b border-gray-600 min-w-[120px]" title="${model.name}">
+                <div class="text-white text-xs">${shortName}</div>
             </th>
         `;
     });
 
     tableHTML += `
-                        </tr>
-                    </thead>
-                    <tbody class="bg-gray-800">
+                    </tr>
+                </thead>
+                <tbody class="bg-gray-800">
     `;
 
     // Add rows for each parameter
@@ -5843,27 +5730,28 @@ function generateMultiModelTable() {
         const rowClass = rowIndex % 2 === 0 ? 'bg-gray-800' : 'bg-gray-750';
         tableHTML += `
             <tr class="${rowClass} hover:bg-gray-700 transition-colors">
-                <td class="px-4 py-3 font-medium border-b border-gray-700 sticky left-0 ${rowClass} z-10">${paramData.label}</td>
+                <td class="px-3 py-2 font-medium border-b border-gray-700 sticky left-0 ${rowClass} z-10">
+                    <div class="text-gray-100">${paramData.label}</div>
+                    <div class="text-xs text-gray-500 mt-1">${paramData.type === 'currency' ? 'R' : paramData.type === 'percent' ? '%' : '#'}</div>
+                </td>
         `;
 
         // Add cell for each model
-        modelArray.forEach(modelKey => {
+        mainModels.forEach(modelKey => {
             const input = paramData.models.get(modelKey);
 
             if (input) {
-                const inputId = `${modelKey}-${input.name}`;
-                const inputElement = document.getElementById(inputId);
-                const currentValue = inputElement ? inputElement.value : input.default;
-                const unit = input.type === 'currency' ? 'R' : input.type === 'percent' ? '%' : '#';
+                const currentValue = input.default;
+                const unit = input.type === 'currency' ? 'R' : input.type === 'percent' ? '%' : '';
 
                 tableHTML += `
-                    <td class="px-4 py-3 border-b border-gray-700">
-                        <div class="flex items-center gap-2">
+                    <td class="px-2 py-2 border-b border-gray-700">
+                        <div class="flex items-center gap-1">
                             <input
                                 type="number"
-                                id="table-${inputId}"
+                                id="admin-${modelKey}-${input.name}"
                                 name="${input.name}"
-                                class="flex-1 px-2 py-1 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="w-full px-2 py-1 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
                                 value="${currentValue}"
                                 min="${input.min !== undefined ? input.min : 0}"
                                 ${input.max !== undefined ? 'max="' + input.max + '"' : ''}
@@ -5871,16 +5759,16 @@ function generateMultiModelTable() {
                                 data-type="${input.type}"
                                 data-model="${modelKey}"
                                 data-input-name="${input.name}"
+                                title="${input.hint || input.label}"
                             />
-                            <span class="text-gray-400 text-xs w-6">${unit}</span>
+                            ${unit ? `<span class="text-gray-500 text-xs">${unit}</span>` : ''}
                         </div>
-                        ${input.hint ? `<div class="text-xs text-gray-500 mt-1">${input.hint}</div>` : ''}
                     </td>
                 `;
             } else {
                 // Parameter not applicable to this model
                 tableHTML += `
-                    <td class="px-4 py-3 border-b border-gray-700">
+                    <td class="px-2 py-2 border-b border-gray-700 text-center">
                         <span class="text-gray-600 text-xs italic">N/A</span>
                     </td>
                 `;
@@ -5894,24 +5782,34 @@ function generateMultiModelTable() {
     });
 
     tableHTML += `
-                    </tbody>
-                </table>
-            </div>
-            <p class="text-xs text-gray-500 mt-3">💡 Tip: Use this view to quickly adjust parameters across multiple models and identify differences in required inputs.</p>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 p-3 bg-gray-700 rounded-lg border border-gray-600">
+            <p class="text-xs text-gray-300 mb-2">
+                <strong>💡 Admin Panel Instructions:</strong>
+            </p>
+            <ul class="text-xs text-gray-400 space-y-1 list-disc list-inside">
+                <li>Edit default values for all 20 revenue models in one place</li>
+                <li>Changes update model defaults immediately</li>
+                <li>Scroll horizontally to see all models</li>
+                <li>Hover over inputs to see parameter descriptions</li>
+                <li>Switch back to Vendor/Growth/Client mode to use the calculator</li>
+            </ul>
         </div>
     `;
 
-    tableContainer.innerHTML = tableHTML;
+    adminPanelContent.innerHTML = tableHTML;
 
-    // Add event listeners to all table inputs
+    // Add event listeners to all admin inputs
     allParameters.forEach((paramData, paramName) => {
-        modelArray.forEach(modelKey => {
+        mainModels.forEach(modelKey => {
             const input = paramData.models.get(modelKey);
             if (input) {
-                const tableInputId = `table-${modelKey}-${input.name}`;
-                const tableInputElement = document.getElementById(tableInputId);
-                if (tableInputElement) {
-                    tableInputElement.addEventListener('input', onTableInputChange);
+                const adminInputId = `admin-${modelKey}-${input.name}`;
+                const adminInputElement = document.getElementById(adminInputId);
+                if (adminInputElement) {
+                    adminInputElement.addEventListener('input', onAdminInputChange);
                 }
             }
         });
@@ -5919,45 +5817,36 @@ function generateMultiModelTable() {
 }
 
 /**
- * Handle table input changes and sync with form inputs
+ * Handle admin panel input changes and update model defaults
  */
-function onTableInputChange(event) {
-    const tableInput = event.target;
-    const modelKey = tableInput.dataset.model;
-    const inputName = tableInput.dataset.inputName;
-    const value = tableInput.value;
+function onAdminInputChange(event) {
+    const adminInput = event.target;
+    const modelKey = adminInput.dataset.model;
+    const inputName = adminInput.dataset.inputName;
+    const value = parseFloat(adminInput.value) || 0;
 
-    // Update the corresponding form input
+    // Update the model's default value
+    const model = models[modelKey];
+    if (model && model.inputs) {
+        const input = model.inputs.find(inp => inp.name === inputName);
+        if (input) {
+            input.default = value;
+        }
+    }
+
+    // If this model is currently selected and has a form input, update it
     const formInputId = `${modelKey}-${inputName}`;
     const formInput = document.getElementById(formInputId);
     if (formInput) {
         formInput.value = value;
     }
 
-    // Store the value
-    if (!storedInputValues.has(modelKey)) {
-        storedInputValues.set(modelKey, {});
-    }
-    storedInputValues.get(modelKey)[inputName] = parseFloat(value) || 0;
-
-    // Trigger the standard input change handler
-    onInputChange(event);
-}
-
-/**
- * Show or hide the view toggle based on model selection
- */
-function updateViewToggleVisibility() {
-    const viewToggleContainer = document.getElementById('viewToggleContainer');
-
-    if (selectedModels.size > 0 && currentMode === 'forward') {
-        viewToggleContainer.classList.remove('hidden');
-    } else {
-        viewToggleContainer.classList.add('hidden');
-        // Reset to form view when hidden
-        if (currentInputView === 'table') {
-            setInputView('form');
+    // Update stored values if this model is selected
+    if (selectedModels.has(modelKey)) {
+        if (!storedInputValues.has(modelKey)) {
+            storedInputValues.set(modelKey, {});
         }
+        storedInputValues.get(modelKey)[inputName] = value;
     }
 }
 
