@@ -12,6 +12,9 @@ This tool helps analyze and visualize 20 different software revenue models throu
 - **Dual Calculator Modes**:
   - **Forward Mode**: Input parameters → Calculate revenue projections
   - **Reverse Mode**: Set revenue target → Calculate required inputs
+- **Dual Input Views**:
+  - **Form View**: Guided input fields with hints and category-specific defaults
+  - **Table View**: Quick table-based editing with side-by-side model comparison
 - **Scenario Planning**: Generate multiple alternative scenarios to reach your targets
 - **Interactive Charts**: Real-time visualization using ApexCharts
 - **No Installation**: Runs entirely in the browser, no backend required
@@ -81,11 +84,35 @@ That's it! No build process or dependencies to install.
 
 ### Forward Calculator (Traditional Mode)
 
-1. Select a revenue model from the dropdown menu
-2. Enter your parameters (or use the provided defaults)
-3. View real-time calculations and charts
-4. Export charts as PNG images
-5. Switch between models to compare approaches
+1. **Select Category & Models**: Choose your software category and one or more revenue models
+2. **Choose Input View**:
+   - **Form View** (Default): Guided fields with hints and category-specific defaults - ideal for beginners
+   - **Table View**: Spreadsheet-style editing - ideal for power users and comparing multiple models
+3. **Enter Parameters**: Adjust values using either view (changes sync automatically)
+4. **Calculate & Visualize**: View real-time calculations and interactive charts
+5. **Compare Models**: Switch between selected models or view side-by-side in table view
+
+#### Using Table View
+
+The table view provides a streamlined interface for efficient parameter editing:
+
+**Single Model Table:**
+- Displays all parameters in a structured table format
+- Columns: Parameter | Value | Unit | Description
+- Quickly scan all inputs at once
+- Copy-paste values from spreadsheets
+
+**Multi-Model Comparison Table:**
+- Side-by-side parameter comparison across all selected models
+- Easily identify which parameters differ between models
+- Edit multiple model inputs without switching tabs
+- Highlights parameters not applicable to certain models (N/A)
+
+**When to Use Table View:**
+- Comparing multiple revenue models
+- Bulk parameter adjustments
+- Importing values from external sources (Excel, Google Sheets)
+- Quick scanning of all model inputs
 
 ### Reverse Calculator (Goal-Oriented Mode)
 

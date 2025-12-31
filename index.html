@@ -204,11 +204,28 @@
 
                     <!-- Dynamic Input Forms (Tabbed) -->
                     <div id="inputFormContainer">
+                        <!-- View Toggle (Form/Table) -->
+                        <div id="viewToggleContainer" class="mb-4 pb-4 border-b border-gray-700 hidden">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Input View</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button id="formViewBtn" class="py-2 px-3 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors">
+                                    <span>📝 Form View</span>
+                                </button>
+                                <button id="tableViewBtn" class="py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors">
+                                    <span>📊 Table View</span>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Switch between guided form inputs or quick table editing</p>
+                        </div>
+
                         <div id="inputFormTabs" class="flex flex-wrap gap-2 mb-4 hidden">
                             <!-- Tabs will be dynamically generated -->
                         </div>
                         <div id="inputForm">
                             <p class="text-gray-400 text-sm">Select models to configure inputs</p>
+                        </div>
+                        <div id="inputTable" class="hidden">
+                            <!-- Table view will be dynamically generated -->
                         </div>
                     </div>
 

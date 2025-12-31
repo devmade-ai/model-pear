@@ -90,6 +90,10 @@ Users can select and compare multiple revenue models simultaneously:
 ### 3. Enhanced UX Features
 **Status**: ✅ Complete (December 2024)
 
+- **Dual Input Views**:
+  - **Form View**: Traditional guided input fields with hints and category-specific defaults
+  - **Table View**: Spreadsheet-style editing with side-by-side model comparison for power users
+  - Real-time synchronization between form and table inputs
 - **Real CAC Inputs**: Accurate Customer Acquisition Cost inputs across all models (replaces estimation)
 - **Quick-Start Templates**: Pre-configured scenarios (Early Stage SaaS, Enterprise SaaS, Consumer App, etc.)
 - **Smart Validation**: Pre-calculation warnings for problematic input combinations with actionable suggestions
