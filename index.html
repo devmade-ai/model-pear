@@ -32,15 +32,19 @@
                     <!-- Calculator Mode Toggle -->
                     <div class="mb-6 pb-6 border-b border-gray-700">
                         <h2 class="text-xl font-semibold text-gray-100 mb-3">Calculator Mode</h2>
-                        <p class="text-sm text-gray-400 mb-3">Choose how you want to calculate</p>
-                        <div class="grid grid-cols-2 gap-2">
+                        <p class="text-sm text-gray-400 mb-3">Choose your perspective</p>
+                        <div class="grid grid-cols-3 gap-2">
                             <button id="forwardModeBtn" class="py-2 px-3 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors">
-                                <div class="font-semibold">Forward</div>
-                                <div class="text-xs opacity-90">Inputs → Budget</div>
+                                <div class="font-semibold">Vendor</div>
+                                <div class="text-xs opacity-90">Revenue Calc</div>
                             </button>
                             <button id="reverseModeBtn" class="py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors">
-                                <div class="font-semibold">Reverse</div>
-                                <div class="text-xs opacity-90">Budget → Inputs</div>
+                                <div class="font-semibold">Growth</div>
+                                <div class="text-xs opacity-90">Target Goals</div>
+                            </button>
+                            <button id="clientBudgetModeBtn" class="py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors">
+                                <div class="font-semibold">Client</div>
+                                <div class="text-xs opacity-90">Budget Options</div>
                             </button>
                         </div>
                     </div>
@@ -140,6 +144,80 @@
                     </div>
 
                     <!-- STEP 4: Model-Specific Inputs (existing) -->
+
+                    <!-- Client Budget Calculator Inputs -->
+                    <div id="clientBudgetInputsSection" class="hidden mb-6 pb-6 border-b border-gray-700">
+                        <h2 class="text-xl font-semibold text-gray-100 mb-4">Step 4: Budget & Requirements</h2>
+
+                        <!-- Monthly Budget -->
+                        <div class="mb-4">
+                            <label for="clientBudget" class="block text-sm font-medium text-gray-300 mb-2">
+                                Monthly Budget Available
+                            </label>
+                            <input type="number" id="clientBudget" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10000" min="0" step="100" value="10000">
+                            <p class="text-xs text-gray-500 mt-1">How much can you spend per month? (in Rands)</p>
+                        </div>
+
+                        <!-- Budget Flexibility -->
+                        <div class="mb-4">
+                            <label for="budgetFlexibility" class="block text-sm font-medium text-gray-300 mb-2">
+                                Budget Flexibility
+                            </label>
+                            <select id="budgetFlexibility" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="strict">Strict - Stay within budget</option>
+                                <option value="moderate" selected>Moderate - ±10% acceptable</option>
+                                <option value="flexible">Flexible - ±20% acceptable</option>
+                            </select>
+                            <p class="text-xs text-gray-500 mt-1">How flexible is your budget?</p>
+                        </div>
+
+                        <!-- Optimization Priority -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Optimization Priority
+                            </label>
+                            <div class="space-y-2">
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="clientPriority" value="max-users" checked class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Maximum Users/Capacity <span class="text-gray-500">(get the most)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="clientPriority" value="best-value" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Best Value <span class="text-gray-500">(lowest cost per unit)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="clientPriority" value="premium-features" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Premium Features <span class="text-gray-500">(best tier)</span></span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                    <input type="radio" name="clientPriority" value="budget-conscious" class="mr-2 text-blue-600 focus:ring-blue-500">
+                                    <span>Budget Conscious <span class="text-gray-500">(leave buffer)</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Requirements (Optional) -->
+                        <details class="mb-4 bg-gray-700 rounded-lg">
+                            <summary class="text-sm font-medium text-gray-300 cursor-pointer p-3 hover:bg-gray-600 rounded-lg transition-colors">
+                                ⚙️ Advanced: Specific Requirements
+                            </summary>
+                            <div id="clientRequirementsContainer" class="p-3 pt-2 space-y-3 border-t border-gray-600">
+                                <p class="text-xs text-gray-400 mb-2">Set minimum requirements (optional)</p>
+                                <div id="clientRequirements">
+                                    <!-- Dynamic requirement inputs will be populated here -->
+                                </div>
+                            </div>
+                        </details>
+
+                        <!-- Show Multiple Options -->
+                        <div class="mb-4">
+                            <label class="flex items-center text-sm text-gray-300 cursor-pointer">
+                                <input type="checkbox" id="showMultipleOptions" class="mr-2 text-blue-600 focus:ring-blue-500 bg-gray-700 border-gray-600 rounded" checked>
+                                <span>Show multiple pricing options</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1 ml-6">Display 3-4 different pricing plans within your budget</p>
+                        </div>
+                    </div>
 
                     <!-- Reverse Calculator Inputs -->
                     <div id="reverseInputsSection" class="hidden mb-6 pb-6 border-b border-gray-700">
@@ -245,6 +323,14 @@
                     <h2 class="text-xl font-semibold text-gray-100 mb-4">🎯 Solution to Reach Your Target</h2>
                     <div id="reverseResultsContent">
                         <!-- Reverse results will be dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Client Budget Results -->
+                <div id="clientBudgetResultsPanel" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4">💰 Pricing Options Within Your Budget</h2>
+                    <div id="clientBudgetResultsContent">
+                        <!-- Client budget results will be dynamically populated -->
                     </div>
                 </div>
 

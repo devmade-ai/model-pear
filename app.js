@@ -26,7 +26,7 @@ let selectedModels = new Set();
 // Store input values to preserve them when selection changes
 let storedInputValues = new Map();
 
-// Calculator mode: 'forward' or 'reverse'
+// Calculator mode: 'forward', 'reverse', or 'client-budget'
 let currentMode = 'forward';
 
 // Input view mode: 'form' or 'table'
@@ -39,6 +39,15 @@ let reverseCalculatorState = {
     solveForVariable: '',
     constraints: {},
     generateScenarios: true
+};
+
+// Client budget calculator state
+let clientBudgetState = {
+    budget: 10000,
+    flexibility: 'moderate',
+    priority: 'max-users',
+    requirements: {},
+    showMultipleOptions: true
 };
 
 // ========== MODEL FAMILIES ==========
@@ -3582,6 +3591,8 @@ const onInputChange = debounce(function(event) {
 function onCalculate() {
     if (currentMode === 'reverse') {
         performReverseCalculation();
+    } else if (currentMode === 'client-budget') {
+        performClientBudgetCalculation();
     } else {
         performCalculation();
     }
@@ -3814,6 +3825,473 @@ function displayReverseResults(modelKey, solution, scenarios) {
             </div>
         `;
     }
+
+    content.innerHTML = html;
+}
+
+// ========== CLIENT BUDGET CALCULATOR ==========
+
+/**
+ * Update client budget calculator options based on selected models
+ */
+function updateClientBudgetOptions() {
+    if (currentMode !== 'client-budget' || selectedModels.size === 0) return;
+
+    const clientRequirements = document.getElementById('clientRequirements');
+    clientRequirements.innerHTML = '';
+
+    // For each selected model, add requirement inputs
+    for (const modelKey of selectedModels) {
+        const model = models[modelKey];
+        if (!model) continue;
+
+        // Add a section for this model
+        const modelSection = document.createElement('div');
+        modelSection.className = 'mb-3 pb-3 border-b border-gray-600 last:border-0';
+
+        const modelLabel = document.createElement('div');
+        modelLabel.className = 'text-xs font-medium text-blue-400 mb-2';
+        modelLabel.textContent = model.name;
+        modelSection.appendChild(modelLabel);
+
+        // Add key inputs as requirements
+        model.inputs.forEach(input => {
+            const inputDiv = document.createElement('div');
+            inputDiv.className = 'mb-2';
+
+            const label = document.createElement('label');
+            label.className = 'block text-xs text-gray-400 mb-1';
+            label.textContent = `Min ${input.label}`;
+
+            const inputElement = document.createElement('input');
+            inputElement.type = 'number';
+            inputElement.name = `req-${modelKey}-${input.name}`;
+            inputElement.className = 'w-full px-2 py-1 text-sm bg-gray-600 border border-gray-500 rounded text-gray-100';
+            inputElement.placeholder = input.default || 0;
+            inputElement.min = input.min || 0;
+            inputElement.step = input.step || 1;
+
+            inputDiv.appendChild(label);
+            inputDiv.appendChild(inputElement);
+            modelSection.appendChild(inputDiv);
+        });
+
+        clientRequirements.appendChild(modelSection);
+    }
+}
+
+/**
+ * Perform client budget calculation
+ */
+function performClientBudgetCalculation() {
+    if (selectedModels.size === 0) {
+        alert('Please select at least one pricing model first');
+        return;
+    }
+
+    // Get client budget inputs
+    const budget = parseFloat(document.getElementById('clientBudget').value);
+    const flexibility = document.getElementById('budgetFlexibility').value;
+    const priority = document.querySelector('input[name="clientPriority"]:checked').value;
+    const showMultiple = document.getElementById('showMultipleOptions').checked;
+
+    if (!budget || budget <= 0) {
+        alert('Please enter a valid budget amount');
+        return;
+    }
+
+    // Update state
+    clientBudgetState.budget = budget;
+    clientBudgetState.flexibility = flexibility;
+    clientBudgetState.priority = priority;
+    clientBudgetState.showMultipleOptions = showMultiple;
+
+    // Gather requirements
+    const requirements = {};
+    const reqInputs = document.querySelectorAll('[name^="req-"]');
+    reqInputs.forEach(input => {
+        const value = parseFloat(input.value);
+        if (value && value > 0) {
+            requirements[input.name] = value;
+        }
+    });
+    clientBudgetState.requirements = requirements;
+
+    // Calculate budget flexibility range
+    let flexibilityMultiplier = 1.0;
+    if (flexibility === 'moderate') {
+        flexibilityMultiplier = 1.1;
+    } else if (flexibility === 'flexible') {
+        flexibilityMultiplier = 1.2;
+    }
+    const maxBudget = budget * flexibilityMultiplier;
+
+    // Calculate options for each model
+    const allOptions = [];
+
+    for (const modelKey of selectedModels) {
+        const options = calculateClientBudgetOptions(modelKey, budget, maxBudget, priority, requirements);
+        allOptions.push(...options);
+    }
+
+    // Sort options based on priority
+    const sortedOptions = sortOptionsByPriority(allOptions, priority, budget);
+
+    // Display results
+    displayClientBudgetResults(sortedOptions, budget, maxBudget);
+}
+
+/**
+ * Calculate pricing options for a model within budget
+ */
+function calculateClientBudgetOptions(modelKey, budget, maxBudget, priority, requirements) {
+    const model = models[modelKey];
+    if (!model) return [];
+
+    const options = [];
+
+    // Strategy 1: Maximum capacity/users
+    const maxOption = findMaximumCapacity(modelKey, model, budget, maxBudget, requirements);
+    if (maxOption) {
+        options.push({
+            ...maxOption,
+            modelKey,
+            modelName: model.name,
+            strategy: 'max-capacity',
+            strategyLabel: 'Maximum Capacity'
+        });
+    }
+
+    // Strategy 2: Best value (lowest cost per unit)
+    const valueOption = findBestValue(modelKey, model, budget, maxBudget, requirements);
+    if (valueOption) {
+        options.push({
+            ...valueOption,
+            modelKey,
+            modelName: model.name,
+            strategy: 'best-value',
+            strategyLabel: 'Best Value'
+        });
+    }
+
+    // Strategy 3: Budget conscious (leave buffer)
+    const conservativeOption = findConservativeOption(modelKey, model, budget * 0.8, budget, requirements);
+    if (conservativeOption) {
+        options.push({
+            ...conservativeOption,
+            modelKey,
+            modelName: model.name,
+            strategy: 'budget-conscious',
+            strategyLabel: 'Budget Conscious'
+        });
+    }
+
+    return options;
+}
+
+/**
+ * Find maximum capacity within budget
+ */
+function findMaximumCapacity(modelKey, model, budget, maxBudget, requirements) {
+    // Find the primary capacity variable (users, seats, storage, etc.)
+    const capacityInputs = model.inputs.filter(input =>
+        input.name.includes('users') ||
+        input.name.includes('seats') ||
+        input.name.includes('customers') ||
+        input.name.includes('startingUsers') ||
+        input.name.includes('initial')
+    );
+
+    if (capacityInputs.length === 0) return null;
+
+    const capacityInput = capacityInputs[0];
+
+    // Binary search for maximum capacity
+    let low = requirements[`req-${modelKey}-${capacityInput.name}`] || capacityInput.min || 1;
+    let high = 10000;
+    let bestCapacity = null;
+
+    for (let i = 0; i < 50; i++) {
+        const mid = Math.floor((low + high) / 2);
+
+        // Create inputs with this capacity
+        const testInputs = { ...getDefaultInputs(model) };
+        testInputs[capacityInput.name] = mid;
+
+        // Calculate monthly cost
+        const monthlyCost = calculateMonthlyCost(modelKey, testInputs);
+
+        if (monthlyCost <= maxBudget) {
+            bestCapacity = {
+                inputs: { ...testInputs },
+                monthlyCost,
+                capacity: mid,
+                capacityLabel: capacityInput.label,
+                budgetUtilization: (monthlyCost / budget) * 100
+            };
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return bestCapacity;
+}
+
+/**
+ * Find best value option (optimize cost per unit)
+ */
+function findBestValue(modelKey, model, budget, maxBudget, requirements) {
+    // Similar to max capacity but optimize for cost efficiency
+    const capacityInputs = model.inputs.filter(input =>
+        input.name.includes('users') ||
+        input.name.includes('seats') ||
+        input.name.includes('customers') ||
+        input.name.includes('startingUsers')
+    );
+
+    if (capacityInputs.length === 0) return null;
+
+    const capacityInput = capacityInputs[0];
+
+    // Try different capacity levels and find best cost per unit
+    let bestOption = null;
+    let bestCostPerUnit = Infinity;
+
+    for (let capacity = 10; capacity <= 1000; capacity += 10) {
+        const testInputs = { ...getDefaultInputs(model) };
+        testInputs[capacityInput.name] = capacity;
+
+        const monthlyCost = calculateMonthlyCost(modelKey, testInputs);
+
+        if (monthlyCost <= maxBudget) {
+            const costPerUnit = monthlyCost / capacity;
+
+            if (costPerUnit < bestCostPerUnit) {
+                bestCostPerUnit = costPerUnit;
+                bestOption = {
+                    inputs: { ...testInputs },
+                    monthlyCost,
+                    capacity,
+                    capacityLabel: capacityInput.label,
+                    costPerUnit,
+                    budgetUtilization: (monthlyCost / budget) * 100
+                };
+            }
+        }
+    }
+
+    return bestOption;
+}
+
+/**
+ * Find conservative option (leave budget buffer)
+ */
+function findConservativeOption(modelKey, model, targetBudget, maxBudget, requirements) {
+    // Similar to max capacity but target lower budget
+    const capacityInputs = model.inputs.filter(input =>
+        input.name.includes('users') ||
+        input.name.includes('seats') ||
+        input.name.includes('customers') ||
+        input.name.includes('startingUsers')
+    );
+
+    if (capacityInputs.length === 0) return null;
+
+    const capacityInput = capacityInputs[0];
+
+    let bestOption = null;
+    let bestDiff = Infinity;
+
+    for (let capacity = 5; capacity <= 500; capacity += 5) {
+        const testInputs = { ...getDefaultInputs(model) };
+        testInputs[capacityInput.name] = capacity;
+
+        const monthlyCost = calculateMonthlyCost(modelKey, testInputs);
+
+        if (monthlyCost <= targetBudget) {
+            const diff = Math.abs(monthlyCost - targetBudget);
+
+            if (diff < bestDiff) {
+                bestDiff = diff;
+                bestOption = {
+                    inputs: { ...testInputs },
+                    monthlyCost,
+                    capacity,
+                    capacityLabel: capacityInput.label,
+                    budgetUtilization: (monthlyCost / maxBudget) * 100,
+                    bufferAmount: maxBudget - monthlyCost
+                };
+            }
+        }
+    }
+
+    return bestOption;
+}
+
+/**
+ * Get default inputs for a model
+ */
+function getDefaultInputs(model) {
+    const inputs = {};
+    model.inputs.forEach(input => {
+        inputs[input.name] = input.default || 0;
+    });
+    return inputs;
+}
+
+/**
+ * Calculate monthly cost for given inputs
+ */
+function calculateMonthlyCost(modelKey, inputs) {
+    const model = models[modelKey];
+    if (!model) return 0;
+
+    // Run calculation for just first month
+    const results = model.calculate(inputs, 1);
+    if (!results || results.length === 0) return 0;
+
+    // Extract monthly revenue/cost
+    const firstMonth = results[0];
+    return firstMonth.totalRevenue || firstMonth.revenue || firstMonth.mrr || 0;
+}
+
+/**
+ * Sort options by priority
+ */
+function sortOptionsByPriority(options, priority, budget) {
+    if (priority === 'max-users') {
+        return options.sort((a, b) => (b.capacity || 0) - (a.capacity || 0));
+    } else if (priority === 'best-value') {
+        return options.sort((a, b) => (a.costPerUnit || Infinity) - (b.costPerUnit || Infinity));
+    } else if (priority === 'budget-conscious') {
+        return options.sort((a, b) => (b.bufferAmount || 0) - (a.bufferAmount || 0));
+    } else {
+        // Default: sort by utilization closest to budget
+        return options.sort((a, b) => {
+            const aDiff = Math.abs(a.budgetUtilization - 100);
+            const bDiff = Math.abs(b.budgetUtilization - 100);
+            return aDiff - bDiff;
+        });
+    }
+}
+
+/**
+ * Display client budget results
+ */
+function displayClientBudgetResults(options, budget, maxBudget) {
+    const panel = document.getElementById('clientBudgetResultsPanel');
+    const content = document.getElementById('clientBudgetResultsContent');
+
+    // Hide other result panels
+    document.getElementById('reverseResultsPanel').classList.add('hidden');
+    document.getElementById('universalMetricsPanel').classList.add('hidden');
+    document.getElementById('metricsPanel').classList.add('hidden');
+    document.getElementById('primaryChartContainer').classList.add('hidden');
+    document.getElementById('secondaryChartsGrid').classList.add('hidden');
+    document.getElementById('comparisonChartsContainer').classList.add('hidden');
+    document.getElementById('raceChartContainer').classList.add('hidden');
+    document.getElementById('comparisonTableContainer').classList.add('hidden');
+
+    // Show client budget panel
+    panel.classList.remove('hidden');
+
+    if (options.length === 0) {
+        content.innerHTML = `
+            <div class="text-center py-8">
+                <p class="text-gray-400">No options found within your budget. Try increasing your budget or adjusting requirements.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Build HTML for options
+    let html = `
+        <div class="mb-6 p-4 bg-gray-700 rounded-lg border border-gray-600">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <div class="text-xs text-gray-400">Your Budget</div>
+                    <div class="text-xl font-bold text-white">${formatCurrency(budget)}/mo</div>
+                </div>
+                <div>
+                    <div class="text-xs text-gray-400">Maximum (with flexibility)</div>
+                    <div class="text-xl font-bold text-gray-300">${formatCurrency(maxBudget)}/mo</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+    `;
+
+    // Show top options (limit to 4-6 options)
+    const displayOptions = clientBudgetState.showMultipleOptions ? options.slice(0, 6) : options.slice(0, 1);
+
+    displayOptions.forEach((option, index) => {
+        const isOverBudget = option.monthlyCost > budget;
+        const isWithinFlex = option.monthlyCost <= maxBudget;
+        const borderColor = isOverBudget ? (isWithinFlex ? 'border-yellow-600' : 'border-red-600') : 'border-green-600';
+        const badgeColor = isOverBudget ? (isWithinFlex ? 'bg-yellow-900 text-yellow-200' : 'bg-red-900 text-red-200') : 'bg-green-900 text-green-200';
+        const badgeText = isOverBudget ? (isWithinFlex ? 'Within Flexibility' : 'Over Budget') : 'Within Budget';
+
+        html += `
+            <div class="bg-gray-700 rounded-lg p-5 border-2 ${borderColor}">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-lg font-semibold text-white">${option.modelName}</h3>
+                            <span class="text-xs px-2 py-1 rounded ${badgeColor}">${badgeText}</span>
+                        </div>
+                        <div class="text-sm text-gray-400">${option.strategyLabel}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-white">${formatCurrency(option.monthlyCost)}</div>
+                        <div class="text-xs text-gray-400">per month</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-3">
+                    ${option.capacity ? `
+                    <div>
+                        <div class="text-xs text-gray-400">${option.capacityLabel}</div>
+                        <div class="text-lg font-semibold text-blue-400">${formatNumber(option.capacity)}</div>
+                    </div>
+                    ` : ''}
+                    ${option.costPerUnit ? `
+                    <div>
+                        <div class="text-xs text-gray-400">Cost Per Unit</div>
+                        <div class="text-lg font-semibold text-blue-400">${formatCurrency(option.costPerUnit)}</div>
+                    </div>
+                    ` : ''}
+                    <div>
+                        <div class="text-xs text-gray-400">Budget Utilization</div>
+                        <div class="text-lg font-semibold text-blue-400">${option.budgetUtilization.toFixed(1)}%</div>
+                    </div>
+                    ${option.bufferAmount ? `
+                    <div>
+                        <div class="text-xs text-gray-400">Budget Buffer</div>
+                        <div class="text-lg font-semibold text-green-400">${formatCurrency(option.bufferAmount)}</div>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <details class="mt-3">
+                    <summary class="text-sm text-blue-400 cursor-pointer hover:text-blue-300">View Configuration Details</summary>
+                    <div class="mt-2 p-3 bg-gray-800 rounded text-xs">
+                        <div class="grid grid-cols-2 gap-2">
+                            ${Object.entries(option.inputs).map(([key, value]) => `
+                                <div>
+                                    <span class="text-gray-400">${key}:</span>
+                                    <span class="text-gray-200">${formatNumber(value)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </details>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
 
     content.innerHTML = html;
 }
@@ -4560,26 +5038,38 @@ let selectedDelivery = 'cloud-saas';
 let selectedService = 'self-service';
 
 /**
- * Set calculator mode (forward or reverse)
+ * Set calculator mode (forward, reverse, or client-budget)
  */
 function setCalculatorMode(mode) {
     currentMode = mode;
 
     const forwardModeBtn = document.getElementById('forwardModeBtn');
     const reverseModeBtn = document.getElementById('reverseModeBtn');
+    const clientBudgetModeBtn = document.getElementById('clientBudgetModeBtn');
     const inputFormContainer = document.getElementById('inputFormContainer');
     const reverseInputsSection = document.getElementById('reverseInputsSection');
+    const clientBudgetInputsSection = document.getElementById('clientBudgetInputsSection');
+
+    // Reset all buttons
+    forwardModeBtn.classList.remove('bg-blue-600', 'text-white');
+    forwardModeBtn.classList.add('bg-gray-700', 'text-gray-300');
+    reverseModeBtn.classList.remove('bg-blue-600', 'text-white');
+    reverseModeBtn.classList.add('bg-gray-700', 'text-gray-300');
+    clientBudgetModeBtn.classList.remove('bg-blue-600', 'text-white');
+    clientBudgetModeBtn.classList.add('bg-gray-700', 'text-gray-300');
+
+    // Hide all input sections
+    reverseInputsSection.classList.add('hidden');
+    clientBudgetInputsSection.classList.add('hidden');
+    inputFormContainer.classList.add('hidden');
 
     if (mode === 'reverse') {
         // Highlight reverse button
         reverseModeBtn.classList.add('bg-blue-600', 'text-white');
         reverseModeBtn.classList.remove('bg-gray-700', 'text-gray-300');
-        forwardModeBtn.classList.remove('bg-blue-600', 'text-white');
-        forwardModeBtn.classList.add('bg-gray-700', 'text-gray-300');
 
-        // Show reverse inputs, hide forward inputs
+        // Show reverse inputs
         reverseInputsSection.classList.remove('hidden');
-        inputFormContainer.classList.add('hidden');
 
         // Update reverse calculator options if a model is selected
         updateReverseCalculatorOptions();
@@ -4588,15 +5078,22 @@ function setCalculatorMode(mode) {
         if (selectedModels.size > 1) {
             alert('Reverse calculator works with one model at a time. Please select only one model.');
         }
+    } else if (mode === 'client-budget') {
+        // Highlight client budget button
+        clientBudgetModeBtn.classList.add('bg-blue-600', 'text-white');
+        clientBudgetModeBtn.classList.remove('bg-gray-700', 'text-gray-300');
+
+        // Show client budget inputs
+        clientBudgetInputsSection.classList.remove('hidden');
+
+        // Update client budget options if models are selected
+        updateClientBudgetOptions();
     } else {
         // Highlight forward button
         forwardModeBtn.classList.add('bg-blue-600', 'text-white');
         forwardModeBtn.classList.remove('bg-gray-700', 'text-gray-300');
-        reverseModeBtn.classList.remove('bg-blue-600', 'text-white');
-        reverseModeBtn.classList.add('bg-gray-700', 'text-gray-300');
 
-        // Show forward inputs, hide reverse inputs
-        reverseInputsSection.classList.add('hidden');
+        // Show forward inputs
         inputFormContainer.classList.remove('hidden');
     }
 
@@ -4709,9 +5206,11 @@ function init() {
     // Add calculator mode toggle event listeners
     const forwardModeBtn = document.getElementById('forwardModeBtn');
     const reverseModeBtn = document.getElementById('reverseModeBtn');
+    const clientBudgetModeBtn = document.getElementById('clientBudgetModeBtn');
 
     forwardModeBtn.addEventListener('click', () => setCalculatorMode('forward'));
     reverseModeBtn.addEventListener('click', () => setCalculatorMode('reverse'));
+    clientBudgetModeBtn.addEventListener('click', () => setCalculatorMode('client-budget'));
 
     // Add input view toggle event listeners
     const formViewBtn = document.getElementById('formViewBtn');
