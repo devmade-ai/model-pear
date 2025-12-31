@@ -33,7 +33,7 @@
                     <div class="mb-6 pb-6 border-b border-gray-700">
                         <h2 class="text-xl font-semibold text-gray-100 mb-3">Calculator Mode</h2>
                         <p class="text-sm text-gray-400 mb-3">Choose your perspective</p>
-                        <div class="grid grid-cols-3 gap-2">
+                        <div class="grid grid-cols-2 gap-2 mb-2">
                             <button id="forwardModeBtn" class="py-2 px-3 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors">
                                 <div class="font-semibold">Vendor</div>
                                 <div class="text-xs opacity-90">Revenue Calc</div>
@@ -42,9 +42,15 @@
                                 <div class="font-semibold">Growth</div>
                                 <div class="text-xs opacity-90">Target Goals</div>
                             </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
                             <button id="clientBudgetModeBtn" class="py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors">
                                 <div class="font-semibold">Client</div>
                                 <div class="text-xs opacity-90">Budget Options</div>
+                            </button>
+                            <button id="adminModeBtn" class="py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors">
+                                <div class="font-semibold">⚙️ Admin</div>
+                                <div class="text-xs opacity-90">Edit All Models</div>
                             </button>
                         </div>
                     </div>
@@ -282,28 +288,22 @@
 
                     <!-- Dynamic Input Forms (Tabbed) -->
                     <div id="inputFormContainer">
-                        <!-- View Toggle (Form/Table) -->
-                        <div id="viewToggleContainer" class="mb-4 pb-4 border-b border-gray-700 hidden">
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Input View</label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button id="formViewBtn" class="py-2 px-3 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors">
-                                    <span>📝 Form View</span>
-                                </button>
-                                <button id="tableViewBtn" class="py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors">
-                                    <span>📊 Table View</span>
-                                </button>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-2">Switch between guided form inputs or quick table editing</p>
-                        </div>
-
                         <div id="inputFormTabs" class="flex flex-wrap gap-2 mb-4 hidden">
                             <!-- Tabs will be dynamically generated -->
                         </div>
                         <div id="inputForm">
                             <p class="text-gray-400 text-sm">Select models to configure inputs</p>
                         </div>
-                        <div id="inputTable" class="hidden">
-                            <!-- Table view will be dynamically generated -->
+                    </div>
+
+                    <!-- Admin Panel Content -->
+                    <div id="adminPanelContainer" class="hidden">
+                        <div class="mb-4">
+                            <h3 class="text-lg font-semibold text-gray-100 mb-2">Model Configuration Editor</h3>
+                            <p class="text-sm text-gray-400 mb-3">Edit default parameters for all 20 revenue models. Changes will apply when models are selected.</p>
+                        </div>
+                        <div id="adminPanelContent">
+                            <!-- Admin panel table will be dynamically generated -->
                         </div>
                     </div>
 
