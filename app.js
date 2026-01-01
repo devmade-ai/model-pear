@@ -5569,6 +5569,12 @@ function init() {
     const categorySelector = document.getElementById('categorySelector');
     categorySelector.addEventListener('change', onCategoryChange);
 
+    // Add event listener for compare multiple models toggle
+    const compareMultipleModels = document.getElementById('compareMultipleModels');
+    if (compareMultipleModels) {
+        compareMultipleModels.addEventListener('change', onCompareMultipleToggle);
+    }
+
     // Add Layer 2/3 event listeners
     document.querySelectorAll('input[name="deliveryMechanism"]').forEach(radio => {
         radio.addEventListener('change', onDeliveryChange);
@@ -5584,6 +5590,15 @@ function init() {
 
     // Add event listener to model selection to update reverse calculator options
     document.addEventListener('modelSelectionChanged', updateReverseCalculatorOptions);
+}
+
+/**
+ * Handle compare multiple models toggle
+ */
+function onCompareMultipleToggle(event) {
+    // When toggling between single and multiple selection modes,
+    // regenerate the model selector to switch between radio and checkbox inputs
+    generateModelCheckboxes();
 }
 
 /**
@@ -5646,7 +5661,7 @@ function onServiceChange(event) {
 }
 
 /**
- * Generate checkboxes for model selection - filtered by category if selected
+ * Generate checkboxes or radio buttons for model selection - filtered by category if selected
  */
 function generateModelCheckboxes() {
     const container = document.getElementById('modelSelector');
@@ -5662,6 +5677,10 @@ function generateModelCheckboxes() {
         container.innerHTML = '<p class="text-gray-400 text-sm">Select a software category first</p>';
         return;
     }
+
+    // Check if multiple model comparison is enabled
+    const compareMultiple = document.getElementById('compareMultipleModels')?.checked ?? false;
+    const inputType = compareMultiple ? 'checkbox' : 'radio';
 
     // Show category-specific intro
     const category = LAYER_1_CATEGORIES[selectedCategory];
@@ -5686,12 +5705,23 @@ function generateModelCheckboxes() {
         const label = document.createElement('label');
         label.className = 'flex items-start space-x-2 cursor-pointer';
 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = modelKey;
-        checkbox.id = `model-${modelKey}`;
-        checkbox.className = 'mt-1 rounded bg-gray-600 border-gray-500 text-blue-600 focus:ring-blue-500';
-        checkbox.addEventListener('change', onModelSelectionChange);
+        const inputElement = document.createElement('input');
+        inputElement.type = inputType;
+        inputElement.value = modelKey;
+        inputElement.id = `model-${modelKey}`;
+        inputElement.className = 'mt-1 rounded bg-gray-600 border-gray-500 text-blue-600 focus:ring-blue-500';
+
+        // For radio buttons, add a shared name attribute
+        if (inputType === 'radio') {
+            inputElement.name = 'modelSelection';
+        }
+
+        // Check if this model is currently selected
+        if (selectedModels.has(modelKey)) {
+            inputElement.checked = true;
+        }
+
+        inputElement.addEventListener('change', onModelSelectionChange);
 
         const contentDiv = document.createElement('div');
         contentDiv.className = 'flex-1';
@@ -5749,7 +5779,7 @@ function generateModelCheckboxes() {
         contentDiv.appendChild(nameDiv);
         contentDiv.appendChild(contextDiv);
 
-        label.appendChild(checkbox);
+        label.appendChild(inputElement);
         label.appendChild(contentDiv);
         modelDiv.appendChild(label);
 
@@ -5762,11 +5792,21 @@ function generateModelCheckboxes() {
  */
 function onModelSelectionChange(event) {
     const modelKey = event.target.value;
+    const isRadio = event.target.type === 'radio';
 
-    if (event.target.checked) {
-        selectedModels.add(modelKey);
+    if (isRadio) {
+        // For radio buttons: clear all selections and select only this one
+        if (event.target.checked) {
+            selectedModels.clear();
+            selectedModels.add(modelKey);
+        }
     } else {
-        selectedModels.delete(modelKey);
+        // For checkboxes: add or remove from selection
+        if (event.target.checked) {
+            selectedModels.add(modelKey);
+        } else {
+            selectedModels.delete(modelKey);
+        }
     }
 
     updateSelectedSummary();
