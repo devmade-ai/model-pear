@@ -48,7 +48,7 @@ export function setCalculatorMode(mode) {
     const reverseInputsSection = document.getElementById('reverseInputsSection');
     const clientBudgetInputsSection = document.getElementById('clientBudgetInputsSection');
     const adminPanelContainer = document.getElementById('adminPanelContainer');
-    const categorySection = document.querySelector('.mb-6:has(#categorySelector)');
+    const categorySection = document.getElementById('categorySection');
     const modelSelectionSection = document.getElementById('modelSelectionSection');
     const layerTwoThreeSection = document.getElementById('layerTwoThreeSection');
     const selectedSummary = document.getElementById('selectedSummary');
@@ -79,19 +79,25 @@ export function setCalculatorMode(mode) {
         adminPanelContainer.classList.remove('hidden');
 
         // Hide category selection, model selection, and other sections
-        if (categorySection) categorySection.classList.add('hidden');
-        if (modelSelectionSection) modelSelectionSection.classList.add('hidden');
-        if (layerTwoThreeSection) layerTwoThreeSection.classList.add('hidden');
-        if (selectedSummary) selectedSummary.classList.add('hidden');
-        if (calculateBtn.parentElement) calculateBtn.parentElement.classList.add('hidden');
+        categorySection.classList.add('hidden');
+        modelSelectionSection.classList.add('hidden');
+        layerTwoThreeSection.classList.add('hidden');
+        selectedSummary.classList.add('hidden');
+        calculateBtn.parentElement.classList.add('hidden');
 
         // Generate admin panel
         generateAdminPanel();
     } else if (mode === 'reverse') {
         // Show regular sections
-        if (categorySection) categorySection.classList.remove('hidden');
-        if (selectedSummary) selectedSummary.classList.remove('hidden');
-        if (calculateBtn.parentElement) calculateBtn.parentElement.classList.remove('hidden');
+        categorySection.classList.remove('hidden');
+        selectedSummary.classList.remove('hidden');
+        calculateBtn.parentElement.classList.remove('hidden');
+
+        // Show model selection sections if category is selected
+        if (selectedCategory) {
+            modelSelectionSection.classList.remove('hidden');
+            layerTwoThreeSection.classList.remove('hidden');
+        }
 
         // Highlight reverse button
         reverseModeBtn.classList.add('bg-blue-600', 'text-white');
@@ -109,9 +115,15 @@ export function setCalculatorMode(mode) {
         }
     } else if (mode === 'client-budget') {
         // Show regular sections
-        if (categorySection) categorySection.classList.remove('hidden');
-        if (selectedSummary) selectedSummary.classList.remove('hidden');
-        if (calculateBtn.parentElement) calculateBtn.parentElement.classList.remove('hidden');
+        categorySection.classList.remove('hidden');
+        selectedSummary.classList.remove('hidden');
+        calculateBtn.parentElement.classList.remove('hidden');
+
+        // Show model selection sections if category is selected
+        if (selectedCategory) {
+            modelSelectionSection.classList.remove('hidden');
+            layerTwoThreeSection.classList.remove('hidden');
+        }
 
         // Highlight client budget button
         clientBudgetModeBtn.classList.add('bg-blue-600', 'text-white');
@@ -124,9 +136,15 @@ export function setCalculatorMode(mode) {
         updateClientBudgetOptions();
     } else {
         // Show regular sections
-        if (categorySection) categorySection.classList.remove('hidden');
-        if (selectedSummary) selectedSummary.classList.remove('hidden');
-        if (calculateBtn.parentElement) calculateBtn.parentElement.classList.remove('hidden');
+        categorySection.classList.remove('hidden');
+        selectedSummary.classList.remove('hidden');
+        calculateBtn.parentElement.classList.remove('hidden');
+
+        // Show model selection sections if category is selected
+        if (selectedCategory) {
+            modelSelectionSection.classList.remove('hidden');
+            layerTwoThreeSection.classList.remove('hidden');
+        }
 
         // Highlight forward button
         forwardModeBtn.classList.add('bg-blue-600', 'text-white');
