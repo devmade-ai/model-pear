@@ -38,7 +38,7 @@ export let selectedService = 'self-service';
  * Set calculator mode (forward, reverse, or client-budget)
  */
 export function setCalculatorMode(mode) {
-    currentMode = mode;
+    setCurrentMode(mode);
 
     const forwardModeBtn = document.getElementById('forwardModeBtn');
     const reverseModeBtn = document.getElementById('reverseModeBtn');
@@ -271,7 +271,7 @@ export function init() {
 
     // Add event listener to calculate button
     const calculateBtn = document.getElementById('calculateBtn');
-    calculateBtn.addEventListener('click', onCalculate);
+    calculateBtn.addEventListener('click', onCalculateHandler);
 
     // Add event listener to model selection to update reverse calculator options
     document.addEventListener('modelSelectionChanged', updateReverseCalculatorOptions);
