@@ -4226,25 +4226,51 @@ function calculateClientBudgetOptions(modelKey, budget, maxBudget, priority, req
 }
 
 /**
+ * Helper function to find capacity-related inputs
+ * Improved to be more flexible and catch more input types
+ */
+function findCapacityInput(model) {
+    // Look for inputs that represent capacity/scale (case-insensitive)
+    const capacityKeywords = [
+        'users', 'seats', 'customers', 'members', 'subscribers',
+        'startingusers', 'startingcustomers', 'freeusers', 'paidusers',
+        'newcustomers', 'initial', 'activeusers', 'licenses'
+    ];
+
+    const capacityInput = model.inputs.find(input => {
+        const nameLower = input.name.toLowerCase();
+        return capacityKeywords.some(keyword => nameLower.includes(keyword));
+    });
+
+    return capacityInput || null;
+}
+
+/**
+ * Calculate dynamic capacity limit based on budget
+ * Ensures we search high enough for large budgets
+ */
+function calculateCapacityLimit(budget, minPriceEstimate = 5) {
+    // Estimate maximum possible capacity based on budget
+    // Assume minimum price per unit is around R5-10
+    const estimatedMax = Math.floor(budget / minPriceEstimate);
+
+    // Cap at reasonable limits to avoid infinite searches
+    // But ensure we go high enough for large budgets
+    return Math.min(Math.max(estimatedMax, 10000), 1000000);
+}
+
+/**
  * Find maximum capacity within budget
  */
 function findMaximumCapacity(modelKey, model, budget, maxBudget, requirements) {
-    // Find the primary capacity variable (users, seats, storage, etc.)
-    const capacityInputs = model.inputs.filter(input =>
-        input.name.includes('users') ||
-        input.name.includes('seats') ||
-        input.name.includes('customers') ||
-        input.name.includes('startingUsers') ||
-        input.name.includes('initial')
-    );
+    // Find the primary capacity variable using improved detection
+    const capacityInput = findCapacityInput(model);
 
-    if (capacityInputs.length === 0) return null;
+    if (!capacityInput) return null;
 
-    const capacityInput = capacityInputs[0];
-
-    // Binary search for maximum capacity
+    // Binary search for maximum capacity with dynamic limit
     let low = requirements[`req-${modelKey}-${capacityInput.name}`] || capacityInput.min || 1;
-    let high = 10000;
+    let high = calculateCapacityLimit(maxBudget);
     let bestCapacity = null;
 
     for (let i = 0; i < 50; i++) {
@@ -4278,23 +4304,20 @@ function findMaximumCapacity(modelKey, model, budget, maxBudget, requirements) {
  * Find best value option (optimize cost per unit)
  */
 function findBestValue(modelKey, model, budget, maxBudget, requirements) {
-    // Similar to max capacity but optimize for cost efficiency
-    const capacityInputs = model.inputs.filter(input =>
-        input.name.includes('users') ||
-        input.name.includes('seats') ||
-        input.name.includes('customers') ||
-        input.name.includes('startingUsers')
-    );
+    // Use improved capacity detection
+    const capacityInput = findCapacityInput(model);
 
-    if (capacityInputs.length === 0) return null;
-
-    const capacityInput = capacityInputs[0];
+    if (!capacityInput) return null;
 
     // Try different capacity levels and find best cost per unit
     let bestOption = null;
     let bestCostPerUnit = Infinity;
 
-    for (let capacity = 10; capacity <= 1000; capacity += 10) {
+    // Dynamic limit based on budget
+    const maxCapacity = Math.min(calculateCapacityLimit(maxBudget), 50000);
+    const step = Math.max(Math.floor(maxCapacity / 100), 10); // Adaptive step size
+
+    for (let capacity = 10; capacity <= maxCapacity; capacity += step) {
         const testInputs = { ...getDefaultInputs(model) };
         testInputs[capacityInput.name] = capacity;
 
@@ -4324,22 +4347,19 @@ function findBestValue(modelKey, model, budget, maxBudget, requirements) {
  * Find conservative option (leave budget buffer)
  */
 function findConservativeOption(modelKey, model, targetBudget, maxBudget, requirements) {
-    // Similar to max capacity but target lower budget
-    const capacityInputs = model.inputs.filter(input =>
-        input.name.includes('users') ||
-        input.name.includes('seats') ||
-        input.name.includes('customers') ||
-        input.name.includes('startingUsers')
-    );
+    // Use improved capacity detection
+    const capacityInput = findCapacityInput(model);
 
-    if (capacityInputs.length === 0) return null;
-
-    const capacityInput = capacityInputs[0];
+    if (!capacityInput) return null;
 
     let bestOption = null;
     let bestDiff = Infinity;
 
-    for (let capacity = 5; capacity <= 500; capacity += 5) {
+    // Dynamic limit based on target budget
+    const maxCapacity = Math.min(calculateCapacityLimit(targetBudget), 25000);
+    const step = Math.max(Math.floor(maxCapacity / 100), 5); // Adaptive step size
+
+    for (let capacity = 5; capacity <= maxCapacity; capacity += step) {
         const testInputs = { ...getDefaultInputs(model) };
         testInputs[capacityInput.name] = capacity;
 
