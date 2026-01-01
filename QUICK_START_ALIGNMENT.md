@@ -154,19 +154,23 @@ Example:
 
 ## Code Structure Changes
 
-### New Constants (app.js)
+### Modular Architecture (January 2026)
+
+The codebase has been refactored from a monolithic app.js file into a modular structure:
+
+**Framework Constants:**
+- `framework/categories.js` - LAYER_1_CATEGORIES (~430 lines)
+- `framework/delivery.js` - LAYER_2_DELIVERY (~55 lines)
+- `framework/services.js` - LAYER_3_SERVICE (~160 lines)
+- `framework/model-families.js` - MODEL_FAMILIES (~70 lines)
+
+**Model Definitions:**
+- `models/index.js` - All 20 revenue models with pricingByCategory structure (~1,250 lines)
+
+**Example Model Structure:**
 ```javascript
-// Add ~500 lines
-const LAYER_1_CATEGORIES = { ... };
-
-// Add ~150 lines
-const LAYER_2_DELIVERY = { ... };
-
-// Add ~100 lines
-const LAYER_3_SERVICE = { ... };
-
-// Update existing
-const models = {
+// In models/index.js
+export const models = {
   'per-seat': {
     name: 'Per-Seat/Per-User',
     applicableCategories: ['dev-devops', 'business-ops', 'productivity', 'data-analytics', 'security', 'customer-support'],
@@ -187,6 +191,14 @@ const models = {
   }
 };
 ```
+
+**Other Modules:**
+- `config/constants.js` - Configuration and global state
+- `utils/index.js` - Utility functions (~810 lines)
+- `charts/index.js` - Chart rendering (~730 lines)
+- `calculators/` - Calculation engines (~1,300 lines)
+- `ui/` - User interface logic (~1,600 lines)
+- `app.js` - Main orchestrator (~500 lines)
 
 ### New UI Elements (index.html)
 ```html
