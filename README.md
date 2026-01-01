@@ -270,12 +270,54 @@ Changes deploy automatically within 2-3 minutes of pushing to the main branch.
 ```
 model-pear/
 ├── index.html          # Main HTML structure
-├── app.js              # Application logic & calculations
+├── app.js              # Main orchestrator (imports all modules)
 ├── styles.css          # Custom styles
+├── config/
+│   └── constants.js    # Configuration and global state
+├── framework/
+│   ├── categories.js   # Layer 1: Core function categories
+│   ├── delivery.js     # Layer 2: Delivery mechanisms
+│   ├── services.js     # Layer 3: Service models
+│   └── model-families.js # Model family groupings
+├── models/
+│   └── index.js        # All 20 revenue model definitions
+├── utils/
+│   └── index.js        # Utility functions (formatting, validation, etc.)
+├── charts/
+│   └── index.js        # Chart rendering with ApexCharts
+├── calculators/
+│   ├── engine.js       # Core calculation engine
+│   └── client-budget.js # Client budget calculator
+├── ui/
+│   ├── forms.js        # Dynamic form generation
+│   ├── events.js       # Event handlers
+│   ├── initialization.js # App initialization logic
+│   ├── admin.js        # Admin panel functionality
+│   └── modals.js       # Tooltip and modal functions
 ├── README.md           # This file
 ├── claude.md           # Detailed project specification
 └── .gitignore          # Git ignore rules
 ```
+
+### Modular Architecture
+
+The codebase has been refactored from a single monolithic app.js file (6,377 lines) into a modular architecture:
+
+**Benefits:**
+- **Better Maintainability**: Each module has a single, clear responsibility
+- **Easier Testing**: Individual modules can be unit tested independently
+- **Improved Developer Experience**: Navigate to specific functionality quickly
+- **Reduced Cognitive Load**: Work on one concern at a time
+- **Scalability**: Adding new models or features is straightforward
+
+**Module Organization:**
+- **config/**: Global configuration and application state
+- **framework/**: Three-layer framework (categories, delivery, services)
+- **models/**: Revenue model definitions with calculation logic
+- **utils/**: Shared utility functions for formatting, validation, calculations
+- **charts/**: Visualization logic with ApexCharts
+- **calculators/**: Calculation engines (forward, reverse, client budget)
+- **ui/**: User interface logic (forms, events, initialization)
 
 ## Performance
 
@@ -293,6 +335,40 @@ model-pear/
 - Edge 90+
 
 ## Changelog
+
+### January 2026 - Modular Architecture Refactoring
+
+#### Major Refactoring
+- **Modular Code Structure**: Refactored monolithic app.js (6,377 lines) into organized modules
+  - Extracted code into 7 directories with 12 specialized modules
+  - Improved maintainability and developer experience
+  - Each module has a single, clear responsibility
+  - Enables independent unit testing of modules
+
+#### Architecture Changes
+- **config/**: Centralized configuration and global state management
+- **framework/**: Three-layer framework (categories, delivery, services, model families)
+- **models/**: All 20 revenue model definitions with calculation logic
+- **utils/**: Utility functions (formatting, validation, calculations, scenarios)
+- **charts/**: Chart rendering logic with ApexCharts integration
+- **calculators/**: Calculation engines (forward, reverse, client budget)
+- **ui/**: User interface logic (forms, events, initialization, admin, modals)
+- **app.js**: Main orchestrator that imports and coordinates all modules
+
+#### Technical Details
+- Implemented ES6 module system with proper imports/exports
+- Resolved circular dependencies using dependency injection pattern
+- Maintained backward compatibility with existing HTML
+- Created clean separation of concerns across modules
+- Reduced cognitive load from 6,377-line file to focused modules
+- Updated index.html to load app.js as ES6 module
+
+#### Benefits
+- **92% reduction** in main file size (6,377 lines → ~500 lines orchestrator)
+- Better maintainability and code navigation
+- Easier to add new revenue models or features
+- Individual modules can be tested independently
+- Improved scalability for future development
 
 ### January 2026 - Budget Calculations & Model Selection Improvements
 

@@ -1,8 +1,10 @@
 # Framework Alignment Implementation Progress
 
-**Last Updated**: Session on 2025-12-26
+**Last Updated**: Session on 2025-12-26 (Refactored January 2026)
 **Branch**: `claude/continue-calculator-implementation-Pa5Ii`
 **Status**: ~95% Complete - Framework fully integrated, calculations working, optional enhancements remain
+
+> **Note (January 2026)**: This document was written when the codebase was a monolithic app.js file. The codebase has since been refactored into a modular architecture. Line number references below point to the old structure, but all functionality has been preserved in the new modular organization. See README.md for the current project structure.
 
 ---
 

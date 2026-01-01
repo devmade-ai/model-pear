@@ -1,5 +1,7 @@
 # Framework Alignment Plan
 
+> **Note (January 2026)**: This plan has been implemented and the codebase has been refactored into a modular architecture. See README.md for the current project structure and IMPLEMENTATION_PROGRESS.md for completion status.
+
 ## Executive Summary
 
 **Current State**: Generic revenue model calculator with 20 models organized by revenue type
