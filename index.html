@@ -86,10 +86,19 @@
                     <div id="modelSelectionSection" class="hidden">
                         <h2 class="text-xl font-semibold text-gray-100 mb-4">Step 2: Select Revenue Models</h2>
 
+                        <!-- Selection Mode Toggle -->
+                        <div class="mb-4 p-3 bg-gray-750 rounded-md border border-gray-600">
+                            <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
+                                <input type="checkbox" id="compareMultipleModels" class="mr-2 rounded bg-gray-600 border-gray-500 text-blue-600 focus:ring-blue-500">
+                                <span>Compare multiple models</span>
+                                <span class="ml-2 text-xs text-gray-500">(uncheck to select only one model)</span>
+                            </label>
+                        </div>
+
                         <!-- Model Selector -->
                         <div class="mb-6 max-h-96 overflow-y-auto">
                             <div id="modelSelector">
-                                <!-- Checkboxes will be dynamically populated based on selected category -->
+                                <!-- Radio buttons or checkboxes will be dynamically populated based on selected category -->
                             </div>
                         </div>
                     </div>

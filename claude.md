@@ -515,6 +515,35 @@ When working on this project:
 - Added `variables-summary` class to dynamic summary elements for consistent cleanup
 - Improved separation of concerns between UI state management and rendering
 
+### Budget Calculation Improvements (Large Budget Support)
+**Issue**: Budgets above R1M showed "no options in budget" due to hardcoded capacity limits
+**Fix**: Implemented dynamic budget scaling system:
+- Created `findCapacityInput()` helper with case-insensitive keyword matching
+  - Expanded keyword list: users, seats, customers, members, subscribers, startingusers, startingcustomers, freeusers, paidusers, newcustomers, etc.
+  - Case-insensitive matching catches more input variations
+- Created `calculateCapacityLimit()` to dynamically scale search limits based on budget
+  - Estimates maximum capacity as `budget / minPriceEstimate`
+  - Caps at 1M to prevent infinite searches while supporting large budgets
+- Updated `findMaximumCapacity()`: Binary search up to 1M capacity (was 10k)
+- Updated `findBestValue()`: Adaptive step sizes up to 50k capacity (was 1k with fixed steps)
+- Updated `findConservativeOption()`: Dynamic limits up to 25k capacity (was 500 with fixed steps)
+**Result**: Budget calculator now supports budgets from R100 to R10M+ with accurate results
+
+### Model Selection Flexibility
+**Issue**: Users couldn't toggle between single model focus and multi-model comparison
+**Fix**: Added "Compare multiple models" toggle checkbox:
+- HTML: Added toggle checkbox in `index.html` before model selector
+- JavaScript: Enhanced `generateModelCheckboxes()` to check toggle state
+  - When checked: Uses checkboxes for multi-select (existing behavior)
+  - When unchecked: Uses radio buttons for single-select
+  - Preserves current selections when regenerating UI
+- Updated `onModelSelectionChange()` to handle both input types:
+  - Radio: Clears all selections and selects only the clicked model
+  - Checkbox: Adds/removes from selection set
+- Added `onCompareMultipleToggle()` event handler to regenerate selector on toggle
+- Added event listener in `init()` function
+**Result**: Users can now easily switch between single model analysis and multi-model comparison
+
 ## Questions & Decisions
 
 ### Resolved
@@ -527,6 +556,8 @@ When working on this project:
 - ✅ Section visibility: Centralized panel management system
 - ✅ Chart descriptions: Added contextual subtitles
 - ✅ Tooltip specificity: Conditional display based on complexity
+- ✅ Large budget support: Dynamic capacity limits scale from R100 to R10M+
+- ✅ Model selection modes: Toggle between single-model focus and multi-model comparison
 
 ### Open
 - ⏳ Scenario persistence: localStorage vs. session-only? (Lean toward session-only for simplicity)

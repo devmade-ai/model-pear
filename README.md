@@ -91,10 +91,14 @@ That's it! No build process or dependencies to install.
 
 **Use this mode when:** You're a vendor/business wanting to project your revenue based on pricing and growth assumptions.
 
-1. **Select Category & Models**: Choose your software category and one or more revenue models
-2. **Enter Parameters**: Adjust values using the guided input form with hints and category-specific defaults
-3. **Calculate & Visualize**: View real-time calculations and interactive charts
-4. **Compare Models**: Switch between selected models using tabs (when multiple models selected)
+1. **Select Category**: Choose your software category
+2. **Choose Selection Mode**:
+   - Check "Compare multiple models" to analyze multiple pricing models side-by-side
+   - Leave unchecked to focus on a single model
+3. **Select Models**: Pick one or more revenue models (depending on your selection mode)
+4. **Enter Parameters**: Adjust values using the guided input form with hints and category-specific defaults
+5. **Calculate & Visualize**: View real-time calculations and interactive charts
+6. **Compare Models**: Switch between selected models using tabs (when multiple models selected)
 
 ### Growth Mode - Reverse Calculator (Target Planning)
 
@@ -126,19 +130,25 @@ The reverse calculator helps you answer questions like: "What price should I cha
 
 The client budget calculator helps you answer questions like: "What can I get for R10,000/month?" or "Which plan gives me the most users within my budget?"
 
+**Now supports budgets from R100 to R10M+** with dynamic scaling for accurate results at any budget level.
+
 1. **Select Mode**: Click the "Client" button at the top
-2. **Choose Category & Models**: Select your software category and one or more pricing models to explore
-3. **Set Your Budget**:
+2. **Choose Category**: Select your software category
+3. **Choose Selection Mode**:
+   - Check "Compare multiple models" to see options across different pricing models
+   - Leave unchecked to focus on a single pricing model
+4. **Select Models**: Pick one or more pricing models to explore (depending on your selection mode)
+5. **Set Your Budget**:
    - Enter your monthly budget (how much you can spend)
    - Choose budget flexibility (strict, moderate ±10%, flexible ±20%)
-4. **Choose Priority**: Select what's most important to you:
+6. **Choose Priority**: Select what's most important to you:
    - **Maximum Users/Capacity**: Get the most seats/users/storage
    - **Best Value**: Optimize for lowest cost per unit
    - **Premium Features**: Get the best tier/features
    - **Budget Conscious**: Leave a buffer (uses ~80% of budget)
-5. **Set Requirements** (optional): Expand "Advanced" to set minimum requirements (e.g., "at least 20 users")
-6. **Calculate**: Click "Calculate & Compare"
-7. **Review Options**:
+7. **Set Requirements** (optional): Expand "Advanced" to set minimum requirements (e.g., "at least 20 users")
+8. **Calculate**: Click "Calculate & Compare"
+9. **Review Options**:
    - See 3-6 different pricing configurations within your budget
    - Compare monthly cost, capacity, and value metrics
    - View budget utilization and remaining buffer
@@ -283,6 +293,39 @@ model-pear/
 - Edge 90+
 
 ## Changelog
+
+### January 2026 - Budget Calculations & Model Selection Improvements
+
+#### Fixed
+- **Large Budget Support**: Fixed issue where budgets above R1M would show "no options in budget"
+  - Replaced hardcoded capacity limits (10k, 1k, 500) with dynamic scaling based on budget size
+  - Maximum capacity now scales up to 1M users for very large budgets
+  - Best value and conservative searches now use adaptive step sizes for better performance
+- **Capacity Detection**: Improved model input detection to catch more capacity-related fields
+  - Now recognizes `startingCustomers`, `freeUsers`, `paidUsers`, `newCustomers`, etc.
+  - Case-insensitive keyword matching for broader compatibility
+  - Added `findCapacityInput()` helper function for consistent detection across all budget strategies
+
+#### New Features
+- **Flexible Model Selection**: Added toggle to switch between single and multiple model selection
+  - Check "Compare multiple models" to select multiple models (checkboxes)
+  - Uncheck to select only one model (radio buttons)
+  - Automatically switches UI between radio buttons and checkboxes
+  - Preserves selections when toggling modes
+
+#### Improved
+- **Budget Calculator Performance**: Adaptive step sizes reduce calculation time for large budgets
+- **Budget Flexibility**: All three pricing strategies (max capacity, best value, budget conscious) now support budgets from R100 to R10M+
+
+#### Technical Details
+- Added `findCapacityInput()` function with expanded keyword list and case-insensitive matching
+- Added `calculateCapacityLimit()` function to dynamically scale search limits based on budget
+- Updated `findMaximumCapacity()` to support up to 1M capacity with binary search
+- Updated `findBestValue()` with adaptive step sizes (up to 50k capacity)
+- Updated `findConservativeOption()` with dynamic limits (up to 25k capacity)
+- Enhanced `generateModelCheckboxes()` to switch between radio and checkbox input types
+- Modified `onModelSelectionChange()` to handle both radio and checkbox selection logic
+- Added `onCompareMultipleToggle()` event handler to regenerate model selector on toggle
 
 ### January 2026 - Bug Fixes & UX Improvements
 
