@@ -547,6 +547,32 @@ When working on this project:
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Critical Bug Fixes: Perspective Buttons & Calculate Handler
+**Date**: January 1, 2026
+**Impact**: Restored functionality for calculator mode switching and calculations
+
+**Issues Fixed**:
+1. **Perspective Buttons Not Working**: Calculator mode buttons (Vendor, Growth, Client, Admin) were unresponsive
+   - **Root Cause**: `setCalculatorMode()` was directly assigning to imported `currentMode` variable instead of using setter function
+   - **Fix**: Changed `currentMode = mode` to `setCurrentMode(mode)` in `ui/initialization.js:41`
+   - **Impact**: All four perspective buttons now work correctly, mode switching is functional
+
+2. **Calculate Button Not Working**: Calculate & Compare button was not triggering calculations
+   - **Root Cause**: Event listener referenced undefined `onCalculate` instead of injected `onCalculateHandler`
+   - **Fix**: Changed `addEventListener('click', onCalculate)` to `addEventListener('click', onCalculateHandler)` in `ui/initialization.js:274`
+   - **Impact**: Calculate button now properly routes to correct calculation function based on current mode
+
+**Technical Details**:
+- ES6 module imports create read-only bindings - cannot reassign imported variables directly
+- Proper use of setter functions maintains module encapsulation and state consistency
+- Dependency injection pattern requires using injected handler names, not external function names
+- Both bugs prevented core functionality from working after modular refactoring
+
+**Files Modified**:
+- `ui/initialization.js` (2 lines changed)
+
+**Testing**: Verified all four calculator modes (Vendor, Growth, Client, Admin) and calculation functions work correctly
+
 ### Major Refactoring: Monolithic to Modular Architecture
 **Date**: January 1, 2026
 **Impact**: Complete codebase restructuring

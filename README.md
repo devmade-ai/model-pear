@@ -338,6 +338,24 @@ Requires modern browsers with ES6 module support:
 
 ## Changelog
 
+### January 2026 - Critical Bug Fixes
+
+#### Fixed
+- **Perspective Buttons Not Working**: Calculator mode buttons (Vendor, Growth, Client, Admin) were unresponsive after modular refactoring
+  - Fixed incorrect variable assignment in `setCalculatorMode()` function
+  - Changed direct assignment to use proper setter function (`setCurrentMode()`)
+  - All four perspective buttons now switch modes correctly
+- **Calculate Button Not Working**: Calculate & Compare button was not triggering calculations
+  - Fixed event listener to reference correct injected handler function
+  - Changed `onCalculate` to `onCalculateHandler` in event listener
+  - Calculate button now properly routes to appropriate calculation based on current mode
+
+#### Technical Details
+- ES6 module imports create read-only bindings that cannot be reassigned directly
+- Dependency injection pattern requires using injected handler names
+- Fixed in `ui/initialization.js` (2 lines changed)
+- Restored full functionality after modular architecture refactoring
+
 ### January 2026 - Modular Architecture Refactoring
 
 #### Major Refactoring
