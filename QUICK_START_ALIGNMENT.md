@@ -193,12 +193,12 @@ export const models = {
 ```
 
 **Other Modules:**
-- `config/constants.js` - Configuration and global state
-- `utils/index.js` - Utility functions (~810 lines)
-- `charts/index.js` - Chart rendering (~730 lines)
-- `calculators/` - Calculation engines (~1,300 lines)
+- `app.js` - Main orchestrator (~243 lines)
+- `config/constants.js` - Configuration and global state (~82 lines)
+- `utils/index.js` - Utility functions (~811 lines)
+- `charts/index.js` - Chart rendering (~732 lines)
+- `calculators/` - Calculation engines (~1,345 lines)
 - `ui/` - User interface logic (~1,600 lines)
-- `app.js` - Main orchestrator (~500 lines)
 
 ### New UI Elements (index.html)
 ```html

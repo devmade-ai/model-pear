@@ -530,22 +530,24 @@ const LAYER_3_SERVICE = {
 
 ## Migration Checklist
 
+> **Note (January 2026)**: The codebase has been refactored into a modular architecture. References to `app.js` below now correspond to specialized modules in the new structure.
+
 ### Code Changes
-- [ ] `app.js`: Add LAYER_1_CATEGORIES constant (~500 lines)
-- [ ] `app.js`: Add LAYER_2_DELIVERY constant (~150 lines)
-- [ ] `app.js`: Add LAYER_3_SERVICE constant (~100 lines)
-- [ ] `app.js`: Update model definitions with category mappings
-- [ ] `app.js`: Add filtering logic for applicable models
-- [ ] `app.js`: Add modifier calculation functions
-- [ ] `app.js`: Update UI generation for stepped flow
-- [ ] `index.html`: Update layout for stepped approach
-- [ ] `styles.css`: Add styles for category selector, step indicators
+- [x] `framework/categories.js`: Add LAYER_1_CATEGORIES constant (~435 lines)
+- [x] `framework/delivery.js`: Add LAYER_2_DELIVERY constant (~55 lines)
+- [x] `framework/services.js`: Add LAYER_3_SERVICE constant (~175 lines)
+- [x] `models/index.js`: Update model definitions with category mappings
+- [x] `ui/initialization.js`: Add filtering logic for applicable models
+- [x] `framework/services.js`: Add modifier calculation functions
+- [x] `ui/initialization.js`: Update UI generation for stepped flow
+- [x] `index.html`: Update layout for stepped approach
+- [x] `styles.css`: Add styles for category selector, step indicators
 
 ### Documentation
-- [ ] Update `claude.md` with new architecture
-- [ ] Update `README.md` with framework explanation
-- [ ] Create `FRAMEWORK_ALIGNMENT_PLAN.md` (this document)
-- [ ] Add inline code comments for Layer 1/2/3 logic
+- [x] Update `claude.md` with new architecture
+- [x] Update `README.md` with framework explanation
+- [x] Create `FRAMEWORK_ALIGNMENT_PLAN.md` (this document)
+- [x] Add inline code comments for Layer 1/2/3 logic
 
 ### Testing
 - [ ] Test each Layer 1 category with applicable models

@@ -10,12 +10,13 @@
 
 **Goal**: Help founders, product managers, and finance teams evaluate different pricing strategies by comparing 20+ revenue models side-by-side with accurate financial projections
 
-**Deployment**: Single-file static web app hosted on GitHub Pages (no backend, no build process)
+**Deployment**: Modular static web app hosted on GitHub Pages (no backend, no build process, ES6 modules)
 
 ## Architecture
 
 ### Tech Stack
-- **Frontend**: Single HTML file with embedded CSS/JS
+- **Frontend**: HTML + Modular ES6 JavaScript
+- **Architecture**: 16 modules across 7 directories (~6,800 lines total)
 - **Styling**: Tailwind CSS (Play CDN)
 - **Charts**: ApexCharts 3.x (CDN)
 - **Hosting**: GitHub Pages (free HTTPS)
@@ -24,20 +25,58 @@
 ### File Structure
 ```
 model-pear/
-├── index.html          # Complete application (HTML + CSS + JS)
-├── styles.css          # Additional custom styles
-├── app.js              # Main application logic (linked from index.html)
-├── README.md           # User-facing documentation
-└── claude.md           # This file (AI context)
+├── index.html                    # Main HTML entry point
+├── styles.css                    # Additional custom styles
+├── app.js                        # Main orchestrator (~243 lines)
+├── config/
+│   └── constants.js              # Global configuration & state (~82 lines)
+├── framework/
+│   ├── model-families.js         # Model family groupings (~70 lines)
+│   ├── categories.js             # Layer 1: Core function categories (~435 lines)
+│   ├── delivery.js               # Layer 2: Delivery mechanisms (~55 lines)
+│   └── services.js               # Layer 3: Service models (~175 lines)
+├── models/
+│   └── index.js                  # All 20 revenue model definitions (~1,251 lines)
+├── utils/
+│   └── index.js                  # Utilities: formatting, validation, calculations (~811 lines)
+├── charts/
+│   └── index.js                  # ApexCharts rendering logic (~732 lines)
+├── calculators/
+│   ├── engine.js                 # Core calculation engine (~29 lines)
+│   └── client-budget.js          # Client budget calculator (~1,316 lines)
+├── ui/
+│   ├── forms.js                  # Dynamic form generation (~171 lines)
+│   ├── events.js                 # Event handlers (~347 lines)
+│   ├── initialization.js         # App initialization logic (~723 lines)
+│   ├── admin.js                  # Admin panel functionality (~203 lines)
+│   └── modals.js                 # Tooltip and modal functions (~156 lines)
+├── README.md                     # User-facing documentation
+└── claude.md                     # This file (AI context)
 ```
 
-### Code Organization (app.js)
-- **Line 1-95**: Configuration & constants
-- **Line 97-1100**: 20 revenue model definitions with input schemas
-- **Line 1102-2400**: Calculation engines (model-specific + universal metrics)
-- **Line 2402-3200**: Chart rendering (overlay, side-by-side, comparison)
-- **Line 3202-3800**: UI generation (forms, tabs, selectors)
-- **Line 3802-4000**: Event handlers & initialization
+### Modular Architecture
+**Status**: ✅ Refactored (January 2026)
+
+The codebase has been refactored from a monolithic 6,377-line app.js into a modular architecture with 16 specialized modules across 7 directories:
+
+**Benefits**:
+- **96% reduction** in main file size (6,377 → 243 lines)
+- **Clear separation of concerns** - each module has single responsibility
+- **Independent testability** - modules can be unit tested in isolation
+- **Maintainability** - easier to navigate and modify specific features
+- **Scalability** - simpler to add new models or features
+
+**Module Organization**:
+- **config/** - Configuration constants and global state management
+- **framework/** - Three-layer pricing framework (categories → delivery → services)
+- **models/** - Revenue model definitions with calculation logic
+- **utils/** - Shared utilities (formatting, validation, metrics)
+- **charts/** - Chart rendering and visualization
+- **calculators/** - Calculation engines (forward, reverse, budget)
+- **ui/** - User interface components (forms, events, admin panel, modals)
+
+**Dependency Injection**:
+The main app.js orchestrator sets up circular dependency resolution using dependency injection patterns, ensuring clean module boundaries while maintaining functionality.
 
 ## Core Features
 
@@ -346,42 +385,51 @@ Pre-configured input sets for common use cases:
 
 ## Performance Targets
 
-- **Initial Page Load**: <1 second
+- **Initial Page Load**: <1 second (including ES6 module loading)
 - **Model Selection**: <100ms UI update
 - **Calculation**: <200ms for 24-month projection
 - **Chart Render**: <300ms including animations
 - **Input Change to Update**: <300ms (debounced)
-- **Total File Size**: ~150 KB (well under 200 KB target)
+- **Total JavaScript Size**: ~180 KB (~6,800 lines across 16 modules)
 
 ## Browser Compatibility
 
-**Target**: Modern evergreen browsers
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
+**Target**: Modern evergreen browsers with ES6 module support
+- Chrome 90+ (ES6 modules supported)
+- Firefox 88+ (ES6 modules supported)
+- Safari 14+ (ES6 modules supported)
+- Edge 90+ (ES6 modules supported)
 
 **Required APIs**:
-- ES6 JavaScript (arrow functions, const/let, template literals)
+- ES6 Modules (import/export statements)
+- ES6 JavaScript (arrow functions, const/let, template literals, destructuring)
 - Canvas for ApexCharts
 - LocalStorage (optional, for scenario persistence)
 
 ## Development Workflow
 
 ### Making Changes
-1. Edit `index.html`, `app.js`, or `styles.css`
-2. Test locally by opening `index.html` in browser
-3. Commit changes to branch `claude/refactor-claude-md-c94Pq`
+1. **Edit relevant module files**:
+   - Models: `models/index.js`
+   - UI changes: `ui/*.js`
+   - Charts: `charts/index.js`
+   - Calculations: `calculators/*.js`
+   - Configuration: `config/constants.js`
+   - Styles: `styles.css`
+   - HTML: `index.html`
+2. Test locally by opening `index.html` in browser (supports ES6 modules)
+3. Commit changes to your feature branch
 4. Push to origin
 5. Changes auto-deploy to GitHub Pages (2-3 min delay)
 
 ### Adding a New Model
-1. Define model in `app.js` models object (~50 lines)
+1. Define model in `models/index.js` (~50 lines)
 2. Implement `calculate()` function with monthly projections
 3. Define input schema with defaults and hints
-4. Assign to appropriate family
-5. Test validation rules
-6. Update this file's model count
+4. Assign to appropriate family in `framework/model-families.js`
+5. Add validation rules in `utils/index.js` if needed
+6. Test with all calculator modes (vendor, growth, client, admin)
+7. Update this file's model count and documentation
 
 ### Testing Checklist
 - [ ] Model renders in selector with correct family
@@ -398,26 +446,39 @@ Pre-configured input sets for common use cases:
 ## Common Tasks
 
 ### Update Metric Interpretation Ranges
-Location: `app.js:1272-1350` (METRIC_EXPLANATIONS constant)
+**Location**: `utils/index.js` (METRIC_EXPLANATIONS constant)
 
 ### Add New Scenario Template
-Location: `app.js:1251-1330` (SCENARIO_TEMPLATES constant)
+**Location**: `ui/forms.js` (SCENARIO_TEMPLATES constant)
 
 ### Modify Chart Colors
-Location: `app.js:1-95` (CONFIG.chartColors)
+**Location**: `config/constants.js` (CONFIG.chartColors)
 
 ### Adjust Validation Rules
-Location: `app.js:1146-1267` (validateModelInputs function)
+**Location**: `utils/index.js` (validateModelInputs function)
 
 ### Change Default Forecast Period
-Location: `app.js:1-95` (CONFIG.defaultForecastMonths)
+**Location**: `config/constants.js` (CONFIG.defaultForecastMonths)
+
+### Add New Revenue Model
+**Location**: `models/index.js` (add to models object and export)
+
+### Modify Calculator Logic
+**Location**: `calculators/engine.js` (forward calculations) or `calculators/client-budget.js` (budget/reverse calculations)
+
+### Update UI Components
+**Location**: `ui/*.js` (forms, events, initialization, admin, modals)
+
+### Add Chart Visualizations
+**Location**: `charts/index.js` (chart rendering functions)
 
 ## Known Limitations & Trade-offs
 
-### Single-File Architecture
-- **Pro**: Zero build process, instant deployment, easy to understand
-- **Con**: File size growing (~4000 lines in app.js), harder to navigate
-- **Decision**: Keep single-file until exceeds 5000 lines, then split
+### Modular Architecture
+- **Pro**: Clean separation, easy navigation, testable modules, scalable codebase
+- **Pro**: No build process required (ES6 modules work natively in modern browsers)
+- **Con**: Slightly more complex for beginners (16 files vs 1 file)
+- **Decision**: Modular structure improves maintainability significantly, worth the small learning curve
 
 ### Client-Side Only
 - **Pro**: Free hosting, infinite scale, no server costs
@@ -447,8 +508,9 @@ Location: `app.js:1-95` (CONFIG.defaultForecastMonths)
 ### Technical Improvements
 - **Web Workers**: Offload calculations for 36+ month forecasts
 - **Service Worker**: Offline functionality via PWA
-- **Build Process**: Consider Vite/Rollup if file exceeds 5000 lines
-- **TypeScript**: Add type safety if codebase grows significantly
+- **TypeScript**: Add type safety and better IDE support
+- **Unit Tests**: Add test coverage for calculation modules
+- **Build Process**: Consider bundler (Vite/Rollup) only if deployment optimization needed
 
 ## Troubleshooting
 
@@ -472,15 +534,48 @@ Location: `app.js:1-95` (CONFIG.defaultForecastMonths)
 When working on this project:
 
 1. **Read Before Writing**: Always read files before editing to preserve exact formatting
-2. **Test Calculations**: Verify mathematical accuracy with manual spot-checks
-3. **Preserve Structure**: Maintain existing code organization and patterns
-4. **Update This File**: Keep claude.md current when making architectural changes
-5. **Validate Inputs**: Add validation rules for any new model inputs
-6. **Mobile-First**: Test responsive behavior on small screens
-7. **Accessibility**: Use semantic HTML and ARIA labels where appropriate
-8. **Performance**: Profile any changes that add computation (keep <300ms)
+2. **Understand Module Structure**: Familiarize yourself with the 7-directory modular organization
+3. **Find the Right Module**: Changes to models go in `models/`, UI in `ui/`, charts in `charts/`, etc.
+4. **Test Calculations**: Verify mathematical accuracy with manual spot-checks
+5. **Preserve Structure**: Maintain existing code organization and patterns
+6. **Update This File**: Keep claude.md current when making architectural changes
+7. **Validate Inputs**: Add validation rules in `utils/index.js` for any new model inputs
+8. **Mobile-First**: Test responsive behavior on small screens
+9. **Accessibility**: Use semantic HTML and ARIA labels where appropriate
+10. **Performance**: Profile any changes that add computation (keep <300ms)
+11. **Module Dependencies**: Be aware of circular dependencies; use dependency injection pattern when needed
 
 ## Recent Bug Fixes & Improvements (January 2026)
+
+### Major Refactoring: Monolithic to Modular Architecture
+**Date**: January 1, 2026
+**Impact**: Complete codebase restructuring
+
+**Changes**:
+- Refactored 6,377-line monolithic `app.js` into 16 specialized modules
+- Created 7-directory structure: `config/`, `framework/`, `models/`, `utils/`, `charts/`, `calculators/`, `ui/`
+- Reduced main orchestrator file to 243 lines (96% reduction)
+- Implemented ES6 module system with import/export
+- Added dependency injection pattern to resolve circular dependencies
+- Maintained 100% backward compatibility with existing HTML
+
+**Benefits**:
+- Dramatically improved code maintainability and navigation
+- Each module has single, clear responsibility
+- Modules can be tested independently
+- Easier onboarding for new developers
+- Simpler to add new features and models
+- Better separation of concerns
+
+**Files Created**:
+- `config/constants.js` - Global configuration and state
+- `framework/*.js` - Three-layer pricing framework (4 files)
+- `models/index.js` - All 20 revenue model definitions
+- `utils/index.js` - Shared utilities
+- `charts/index.js` - Chart rendering logic
+- `calculators/engine.js` - Core calculation engine
+- `calculators/client-budget.js` - Budget calculator
+- `ui/*.js` - UI components (5 files: forms, events, initialization, admin, modals)
 
 ### Client Budget Calculator Fixes
 **Issue**: Budget calculation options not appearing when models changed
@@ -574,4 +669,4 @@ When working on this project:
 
 ---
 
-**Note to AI Assistants**: This file is your source of truth for understanding the project's architecture, goals, and current state. Keep it concise and up-to-date. When in doubt about implementation details, refer to the actual code in `app.js` and `index.html`.
+**Note to AI Assistants**: This file is your source of truth for understanding the project's architecture, goals, and current state. Keep it concise and up-to-date. When in doubt about implementation details, refer to the modular code in the appropriate directories: `models/`, `ui/`, `charts/`, `calculators/`, `utils/`, `config/`, or `framework/`. The main `app.js` file is now just an orchestrator that sets up dependency injection and exports to window for backward compatibility.
