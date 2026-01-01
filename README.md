@@ -1,6 +1,6 @@
 # Revenue Model Calculator
 
-A static web application for visualizing and comparing different software revenue models. Built as a single HTML file with embedded JavaScript and CSS for easy deployment on GitHub Pages.
+A static web application for visualizing and comparing different software revenue models. Built with a modular ES6 JavaScript architecture for easy deployment on GitHub Pages - no backend or build process required.
 
 ## Overview
 
@@ -52,7 +52,7 @@ This tool helps analyze and visualize 20 different software revenue models throu
 ## Technology Stack
 
 - **HTML5** - Structure and content
-- **JavaScript** - Calculation engine and interactivity
+- **ES6 JavaScript** - Modular architecture (16 modules across 7 directories)
 - **Tailwind CSS** - Styling via Play CDN
 - **ApexCharts** - Data visualization
 - **GitHub Pages** - Hosting (free HTTPS included)
@@ -329,6 +329,8 @@ The codebase has been refactored from a single monolithic app.js file (6,377 lin
 
 ## Browser Support
 
+Requires modern browsers with ES6 module support:
+
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
@@ -364,7 +366,7 @@ The codebase has been refactored from a single monolithic app.js file (6,377 lin
 - Updated index.html to load app.js as ES6 module
 
 #### Benefits
-- **92% reduction** in main file size (6,377 lines → ~500 lines orchestrator)
+- **96% reduction** in main file size (6,377 lines → 243 lines orchestrator)
 - Better maintainability and code navigation
 - Easier to add new revenue models or features
 - Individual modules can be tested independently
