@@ -2938,11 +2938,24 @@ function generateForm(modelKey) {
 
     model.inputs.forEach(input => {
         const inputId = `${modelKey}-${input.name}`;
+        // Show tooltip icon only for complex inputs (long hints or containing specific keywords)
+        const needsTooltip = input.hint && (
+            input.hint.length > 50 ||
+            input.hint.includes('churn') ||
+            input.hint.includes('conversion') ||
+            input.hint.includes('rate') ||
+            input.hint.includes('CAC') ||
+            input.hint.includes('LTV') ||
+            input.hint.includes('multiplier') ||
+            input.hint.includes('percentage') ||
+            input.hint.includes('ratio')
+        );
+
         formHTML += `
             <div class="mb-4">
                 <label for="${inputId}" class="flex items-center justify-between text-sm font-medium text-gray-300 mb-1">
                     <span>${input.label}</span>
-                    <span class="text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition-colors" onclick="showInputInfo('${modelKey}', '${input.name}')">ⓘ</span>
+                    ${needsTooltip ? `<span class="text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition-colors" onclick="showInputInfo('${modelKey}', '${input.name}')">ⓘ</span>` : ''}
                 </label>
                 <input
                     type="number"
@@ -3088,6 +3101,11 @@ function renderOneTimePurchaseCharts(data) {
             text: 'Revenue Breakdown: License vs Maintenance',
             align: 'center',
             style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' }
+        },
+        subtitle: {
+            text: 'License revenue declines while maintenance provides recurring stability',
+            align: 'center',
+            style: { fontSize: '12px', color: '#9CA3AF' }
         }
     };
 
@@ -3114,7 +3132,8 @@ function renderOneTimePurchaseCharts(data) {
         },
         grid: { borderColor: '#374151' },
         tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
-        title: { text: 'Total Monthly Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
+        title: { text: 'Total Monthly Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } },
+        subtitle: { text: 'Combined license and maintenance revenue over time', align: 'center', style: { fontSize: '11px', color: '#9CA3AF' } }
     };
 
     document.getElementById('secondaryChartsGrid').classList.remove('hidden');
@@ -3176,7 +3195,8 @@ function renderSubscriptionCharts(data) {
         grid: { borderColor: '#374151' },
         tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
         legend: { position: 'top', labels: { colors: '#9CA3AF' } },
-        title: { text: 'MRR and ARR Growth', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
+        title: { text: 'MRR and ARR Growth', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } },
+        subtitle: { text: 'Monthly and annual recurring revenue trends', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
     document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -3275,7 +3295,8 @@ function renderFreemiumCharts(data) {
         grid: { borderColor: '#374151' },
         tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) } },
         legend: { position: 'top', labels: { colors: '#9CA3AF' } },
-        title: { text: 'Free vs Paid Users', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
+        title: { text: 'Free vs Paid Users', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } },
+        subtitle: { text: 'User base growth and conversion funnel visualization', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
     document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -3365,7 +3386,8 @@ function renderUsageBasedCharts(data) {
         grid: { borderColor: '#374151' },
         tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
         legend: { position: 'top', labels: { colors: '#9CA3AF' } },
-        title: { text: 'Revenue with Usage Variance', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
+        title: { text: 'Revenue with Usage Variance', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } },
+        subtitle: { text: 'Revenue fluctuations based on customer usage patterns', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
     document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -3457,7 +3479,8 @@ function renderTieredCharts(data) {
         grid: { borderColor: '#374151' },
         tooltip: { theme: 'dark', y: { formatter: val => formatCurrency(val) } },
         legend: { position: 'top', labels: { colors: '#9CA3AF' } },
-        title: { text: 'Revenue by Tier', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
+        title: { text: 'Revenue by Tier', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } },
+        subtitle: { text: 'Revenue contribution from each pricing tier', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
     document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -3548,7 +3571,8 @@ function renderPerSeatCharts(data) {
         },
         grid: { borderColor: '#374151' },
         tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) + ' seats' } },
-        title: { text: 'Total Seats Over Time', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } }
+        title: { text: 'Total Seats Over Time', align: 'center', style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' } },
+        subtitle: { text: 'Growth in total seats across all customers', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
     document.getElementById('primaryChartContainer').classList.remove('hidden');
@@ -3763,6 +3787,32 @@ const onInputChange = debounce(function(event) {
 }, CONFIG.debounceDelay);
 
 /**
+ * Hide all result panels and clean up dynamic elements
+ */
+function hideAllResultPanels() {
+    // Hide all result panels
+    document.getElementById('reverseResultsPanel').classList.add('hidden');
+    document.getElementById('clientBudgetResultsPanel').classList.add('hidden');
+    document.getElementById('universalMetricsPanel').classList.add('hidden');
+    document.getElementById('metricsPanel').classList.add('hidden');
+    document.getElementById('primaryChartContainer').classList.add('hidden');
+    document.getElementById('secondaryChartsGrid').classList.add('hidden');
+    document.getElementById('comparisonChartsContainer').classList.add('hidden');
+    document.getElementById('raceChartContainer').classList.add('hidden');
+    document.getElementById('comparisonTableContainer').classList.add('hidden');
+
+    // Remove dynamically created summary elements
+    const executiveSummary = document.getElementById('executive-summary');
+    if (executiveSummary) {
+        executiveSummary.remove();
+    }
+
+    // Remove all variables summary elements
+    const variablesSummaries = document.querySelectorAll('.variables-summary');
+    variablesSummaries.forEach(elem => elem.remove());
+}
+
+/**
  * Handle calculate button click
  */
 function onCalculate() {
@@ -3780,6 +3830,9 @@ function onCalculate() {
  */
 function performCalculation() {
     if (selectedModels.size === 0) return;
+
+    // Hide all result panels from other modes
+    hideAllResultPanels();
 
     // Validate inputs and collect warnings
     const allWarnings = [];
@@ -3830,6 +3883,9 @@ function performReverseCalculation() {
         alert('Reverse calculator works with one model at a time. Please select only one model.');
         return;
     }
+
+    // Hide all result panels from other modes
+    hideAllResultPanels();
 
     // Get reverse calculator inputs
     const targetRevenue = parseFloat(document.getElementById('targetRevenue').value);
@@ -4065,6 +4121,9 @@ function performClientBudgetCalculation() {
         alert('Please select at least one pricing model first');
         return;
     }
+
+    // Hide all result panels from other modes
+    hideAllResultPanels();
 
     // Get client budget inputs
     const budget = parseFloat(document.getElementById('clientBudget').value);
@@ -4360,17 +4419,7 @@ function displayClientBudgetResults(options, budget, maxBudget) {
     const panel = document.getElementById('clientBudgetResultsPanel');
     const content = document.getElementById('clientBudgetResultsContent');
 
-    // Hide other result panels
-    document.getElementById('reverseResultsPanel').classList.add('hidden');
-    document.getElementById('universalMetricsPanel').classList.add('hidden');
-    document.getElementById('metricsPanel').classList.add('hidden');
-    document.getElementById('primaryChartContainer').classList.add('hidden');
-    document.getElementById('secondaryChartsGrid').classList.add('hidden');
-    document.getElementById('comparisonChartsContainer').classList.add('hidden');
-    document.getElementById('raceChartContainer').classList.add('hidden');
-    document.getElementById('comparisonTableContainer').classList.add('hidden');
-
-    // Show client budget panel
+    // Show client budget panel (other panels already hidden by hideAllResultPanels)
     panel.classList.remove('hidden');
 
     if (options.length === 0) {
@@ -4497,22 +4546,10 @@ function gatherInputs(modelKey) {
  * Render single model view
  */
 function renderSingleModel(modelKey, results, inputs) {
-    // Hide comparison views
-    document.getElementById('universalMetricsPanel').classList.add('hidden');
-    document.getElementById('comparisonChartsContainer').classList.add('hidden');
-    document.getElementById('raceChartContainer').classList.add('hidden');
-    document.getElementById('comparisonTableContainer').classList.add('hidden');
-
     // Clear any running race chart animation
     if (raceChartAnimation) {
         clearInterval(raceChartAnimation);
         raceChartAnimation = null;
-    }
-
-    // Remove existing executive summary if present
-    const existingSummary = document.getElementById('executive-summary');
-    if (existingSummary) {
-        existingSummary.remove();
     }
 
     // Display variables summary
@@ -4533,17 +4570,6 @@ function renderSingleModel(modelKey, results, inputs) {
  * Render multi-model comparison view
  */
 function renderComparison(allResults, allInputs, comparison) {
-    // Hide single model views
-    document.getElementById('primaryChartContainer').classList.add('hidden');
-    document.getElementById('secondaryChartsGrid').classList.add('hidden');
-    document.getElementById('metricsPanel').classList.add('hidden');
-
-    // Remove existing executive summary if present
-    const existingSummary = document.getElementById('executive-summary');
-    if (existingSummary) {
-        existingSummary.remove();
-    }
-
     // Render executive summary and insert before universal metrics panel
     const executiveSummary = renderExecutiveSummary(allResults, allInputs);
     const metricsPanel = document.getElementById('universalMetricsPanel');
@@ -4576,7 +4602,7 @@ function displayVariablesSummary(modelKeys, allInputs) {
 
     const summaryDiv = document.createElement('div');
     summaryDiv.id = 'variables-summary-panel';
-    summaryDiv.className = 'bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700';
+    summaryDiv.className = 'variables-summary bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700';
 
     let html = `
         <div class="flex items-center justify-between mb-4">
@@ -5726,6 +5752,16 @@ function onModelSelectionChange(event) {
     updateSelectedSummary();
     updateInputForms();
     updateCalculateButton();
+
+    // Update client budget options if in client-budget mode
+    if (currentMode === 'client-budget') {
+        updateClientBudgetOptions();
+    }
+
+    // Update reverse calculator options if in reverse mode
+    if (currentMode === 'reverse') {
+        updateReverseCalculatorOptions();
+    }
 }
 
 /**
@@ -5841,11 +5877,24 @@ function generateAllForms() {
                 defaultValue = minValue;
             }
 
+            // Show tooltip icon only for complex inputs
+            const needsTooltip = hintText && (
+                hintText.length > 50 ||
+                hintText.includes('churn') ||
+                hintText.includes('conversion') ||
+                hintText.includes('rate') ||
+                hintText.includes('CAC') ||
+                hintText.includes('LTV') ||
+                hintText.includes('multiplier') ||
+                hintText.includes('percentage') ||
+                hintText.includes('ratio')
+            );
+
             formHTML += `
                 <div class="mb-4">
                     <label for="${inputId}" class="flex items-center justify-between text-sm font-medium text-gray-300 mb-1">
                         <span>${input.label}</span>
-                        <span class="text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition-colors" onclick="showInputInfo('${modelKey}', '${input.name}')">ⓘ</span>
+                        ${needsTooltip ? `<span class="text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition-colors" onclick="showInputInfo('${modelKey}', '${input.name}')">ⓘ</span>` : ''}
                     </label>
                     <input
                         type="number"

@@ -1,8 +1,8 @@
 # Revenue Model Calculator
 
 > **Purpose**: AI assistant context file for the Revenue Model Calculator project
-> **Last Updated**: December 2024
-> **Status**: Active Development - All 20 models implemented with comparison features
+> **Last Updated**: January 2026
+> **Status**: Active Development - All 20 models implemented with comparison features and bug fixes
 
 ## Project Overview
 
@@ -480,6 +480,41 @@ When working on this project:
 7. **Accessibility**: Use semantic HTML and ARIA labels where appropriate
 8. **Performance**: Profile any changes that add computation (keep <300ms)
 
+## Recent Bug Fixes & Improvements (January 2026)
+
+### Client Budget Calculator Fixes
+**Issue**: Budget calculation options not appearing when models changed
+**Fix**: Added `updateClientBudgetOptions()` call in `onModelSelectionChange()` to refresh budget options when models are selected/deselected in client-budget mode
+
+### Section Visibility Management
+**Issue**: Empty sections remained visible after switching modes or calculations
+**Fix**: Created centralized `hideAllResultPanels()` function that:
+- Hides all result panels (reverse, client-budget, universal metrics, charts, etc.)
+- Removes dynamically created elements (executive summary, variables summary)
+- Called at start of all calculation functions to ensure clean state
+- Eliminated redundant hiding code across multiple functions
+
+### Chart Descriptions
+**Issue**: Charts lacked context and descriptions
+**Fix**: Added `subtitle` property to all major charts with descriptive text:
+- "License revenue declines while maintenance provides recurring stability"
+- "Monthly and annual recurring revenue trends"
+- "User base growth and conversion funnel visualization"
+- "Revenue fluctuations based on customer usage patterns"
+- And more model-specific descriptions
+
+### Tooltip Improvements
+**Issue**: Info icons (ⓘ) appeared on every input field, even simple ones
+**Fix**: Made tooltips conditional - only show for complex inputs:
+- Displays ⓘ icon only when hint is >50 chars OR contains complex keywords (churn, conversion, CAC, LTV, ratio, multiplier, percentage)
+- Simple inputs like "Number of Users" no longer show redundant tooltip icons
+- Keeps inline hint text for all inputs as quick reference
+
+### Code Quality
+- Removed 50+ lines of redundant panel-hiding code
+- Added `variables-summary` class to dynamic summary elements for consistent cleanup
+- Improved separation of concerns between UI state management and rendering
+
 ## Questions & Decisions
 
 ### Resolved
@@ -488,6 +523,10 @@ When working on this project:
 - ✅ Winner indicators: Implemented with trophy icons and green highlighting
 - ✅ Metric explanations: Added with industry benchmarks and tooltips
 - ✅ Input validation: Comprehensive pre-calculation warnings
+- ✅ Budget calculator: Fixed dynamic updates when models change
+- ✅ Section visibility: Centralized panel management system
+- ✅ Chart descriptions: Added contextual subtitles
+- ✅ Tooltip specificity: Conditional display based on complexity
 
 ### Open
 - ⏳ Scenario persistence: localStorage vs. session-only? (Lean toward session-only for simplicity)

@@ -282,6 +282,26 @@ model-pear/
 - Safari 14+
 - Edge 90+
 
+## Changelog
+
+### January 2026 - Bug Fixes & UX Improvements
+
+#### Fixed
+- **Client Budget Calculator**: Budget options now update correctly when models are selected/deselected in Client Mode
+- **Section Visibility**: Eliminated empty sections that appeared after switching between modes or running calculations
+- **Dynamic Elements Cleanup**: Executive summaries and variable summaries are now properly removed when switching contexts
+
+#### Improved
+- **Chart Descriptions**: Added contextual subtitles to all major charts explaining what each visualization shows
+- **Tooltip Clarity**: Info icons (ⓘ) now only appear on complex inputs, reducing visual clutter
+- **Code Quality**: Removed 50+ lines of redundant code by centralizing panel visibility management
+
+#### Technical Details
+- Created `hideAllResultPanels()` function for centralized UI state management
+- Enhanced `onModelSelectionChange()` to update budget and reverse calculator options dynamically
+- Made tooltip display conditional based on hint complexity and keywords
+- Added `subtitle` configuration to ApexCharts for better chart context
+
 ## Contributing
 
 Contributions welcome! Please feel free to submit a Pull Request.
