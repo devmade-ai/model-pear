@@ -28,6 +28,7 @@ model-pear/
 ├── index.html                    # Main HTML entry point
 ├── styles.css                    # Additional custom styles
 ├── app.js                        # Main orchestrator (~243 lines)
+├── .nojekyll                     # Disables Jekyll on GitHub Pages (critical for ES6 modules)
 ├── config/
 │   └── constants.js              # Global configuration & state (~82 lines)
 ├── framework/
@@ -421,6 +422,26 @@ Pre-configured input sets for common use cases:
 3. Commit changes to your feature branch
 4. Push to origin
 5. Changes auto-deploy to GitHub Pages (2-3 min delay)
+
+### GitHub Pages Configuration
+
+**Critical Requirements:**
+- `.nojekyll` file MUST exist in root directory (already included)
+- This file disables Jekyll processing which can break ES6 module imports
+- Without it, modules fail with MIME type errors: "Expected a JavaScript module script but the server responded with a MIME type of 'text/html'"
+
+**Why .nojekyll is Required:**
+- GitHub Pages uses Jekyll by default to process static sites
+- Jekyll can interfere with JavaScript module MIME types
+- Jekyll may ignore or alter files in subdirectories (config/, ui/, etc.)
+- ES6 modules require exact file serving without processing
+- The `.nojekyll` file bypasses Jekyll entirely
+
+**Deployment Settings:**
+- Source: Deploy from branch (usually `main`)
+- Directory: `/ (root)` - DO NOT use `/docs`
+- All JavaScript files use relative imports with `.js` extensions
+- No build process required
 
 ### Adding a New Model
 1. Define model in `models/index.js` (~50 lines)
