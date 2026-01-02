@@ -258,12 +258,35 @@ This flexibility allows modeling realistic scenarios like focusing purely on exi
 
 ### GitHub Pages
 
+This project is configured for seamless deployment on GitHub Pages with ES6 modules support.
+
+**Prerequisites:**
+- `.nojekyll` file in root (✅ included) - Bypasses Jekyll processing to ensure ES6 modules work correctly
+- All JavaScript files use relative imports with `.js` extensions
+- No build process required
+
+**Deployment Steps:**
+
 1. Push changes to the main branch
 2. Go to repository Settings > Pages
-3. Set source to "Deploy from branch: main"
+3. Set source to "Deploy from branch: main" and root directory "/ (root)"
 4. Site will be live at `https://[username].github.io/model-pear`
 
 Changes deploy automatically within 2-3 minutes of pushing to the main branch.
+
+**Important:** The `.nojekyll` file is critical for this project because:
+- It disables Jekyll processing on GitHub Pages
+- Ensures JavaScript modules are served with correct MIME types
+- Prevents Jekyll from interfering with subdirectory imports
+- Without it, you'll get "Expected a JavaScript module script but the server responded with a MIME type of 'text/html'" errors
+
+### Other Hosting Options
+
+You can deploy this on any static hosting service:
+- **Netlify**: Drag and drop the entire folder
+- **Vercel**: Import from GitHub (no configuration needed)
+- **CloudFlare Pages**: Connect repository and deploy
+- **Local Server**: Use `python -m http.server` or any static file server
 
 ## Project Structure
 
@@ -272,6 +295,7 @@ model-pear/
 ├── index.html          # Main HTML structure
 ├── app.js              # Main orchestrator (imports all modules)
 ├── styles.css          # Custom styles
+├── .nojekyll           # Disables Jekyll on GitHub Pages (required for ES6 modules)
 ├── config/
 │   └── constants.js    # Configuration and global state
 ├── framework/
