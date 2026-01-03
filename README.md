@@ -365,6 +365,13 @@ Requires modern browsers with ES6 module support:
 ### January 2026 - Critical Bug Fixes
 
 #### Fixed
+- **DOMContentLoaded Race Condition** (January 3, 2026): Complete initialization failure on mobile and cached pages
+  - Fixed race condition where `init()` function was undefined when DOMContentLoaded event fired
+  - Moved event listener registration from module load time to inside `setInitFunction()`
+  - Added `document.readyState` check to handle already-loaded DOM
+  - Resolved issue where no event listeners were attached, making entire app unresponsive
+  - Particularly affected mobile browsers and cached pages where DOMContentLoaded fires before modules load
+  - Fixed in `ui/modals.js`
 - **Perspective Buttons Not Working**: Calculator mode buttons (Vendor, Growth, Client, Admin) were unresponsive after modular refactoring
   - Fixed incorrect variable assignment in `setCalculatorMode()` function
   - Changed direct assignment to use proper setter function (`setCurrentMode()`)
@@ -375,10 +382,11 @@ Requires modern browsers with ES6 module support:
   - Calculate button now properly routes to appropriate calculation based on current mode
 
 #### Technical Details
+- ES6 modules execute synchronously at load time, creating timing dependencies with DOM events
+- Forward declaration pattern (`let init;`) doesn't work with immediate event listener registration
 - ES6 module imports create read-only bindings that cannot be reassigned directly
 - Dependency injection pattern requires using injected handler names
-- Fixed in `ui/initialization.js` (2 lines changed)
-- Restored full functionality after modular architecture refactoring
+- All bugs related to modular architecture refactoring, now fully resolved
 
 ### January 2026 - Modular Architecture Refactoring
 
