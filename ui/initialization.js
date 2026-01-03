@@ -38,6 +38,7 @@ export let selectedService = 'self-service';
  * Set calculator mode (forward, reverse, or client-budget)
  */
 export function setCalculatorMode(mode) {
+    console.log('🔄 setCalculatorMode called with mode:', mode);
     setCurrentMode(mode);
 
     const forwardModeBtn = document.getElementById('forwardModeBtn');
@@ -257,16 +258,30 @@ export function gatherConstraints() {
  * Initialize the application
  */
 export function init() {
+    console.log('🚀 Initializing Model Pear Calculator...');
+
     // Add calculator mode toggle event listeners
     const forwardModeBtn = document.getElementById('forwardModeBtn');
     const reverseModeBtn = document.getElementById('reverseModeBtn');
     const clientBudgetModeBtn = document.getElementById('clientBudgetModeBtn');
     const adminModeBtn = document.getElementById('adminModeBtn');
 
-    forwardModeBtn.addEventListener('click', () => setCalculatorMode('forward'));
-    reverseModeBtn.addEventListener('click', () => setCalculatorMode('reverse'));
-    clientBudgetModeBtn.addEventListener('click', () => setCalculatorMode('client-budget'));
-    adminModeBtn.addEventListener('click', () => setCalculatorMode('admin'));
+    forwardModeBtn.addEventListener('click', () => {
+        console.log('👆 Forward mode button clicked');
+        setCalculatorMode('forward');
+    });
+    reverseModeBtn.addEventListener('click', () => {
+        console.log('👆 Reverse mode button clicked');
+        setCalculatorMode('reverse');
+    });
+    clientBudgetModeBtn.addEventListener('click', () => {
+        console.log('👆 Client budget mode button clicked');
+        setCalculatorMode('client-budget');
+    });
+    adminModeBtn.addEventListener('click', () => {
+        console.log('👆 Admin mode button clicked');
+        setCalculatorMode('admin');
+    });
 
     // Add category selector event listener
     const categorySelector = document.getElementById('categorySelector');
@@ -293,6 +308,10 @@ export function init() {
 
     // Add event listener to model selection to update reverse calculator options
     document.addEventListener('modelSelectionChanged', updateReverseCalculatorOptions);
+
+    // Initialize the default calculator mode
+    console.log('🎯 Initializing default calculator mode: forward');
+    setCalculatorMode('forward');
 }
 
 /**
@@ -309,6 +328,7 @@ export function onCompareMultipleToggle(event) {
  */
 export function onCategoryChange(event) {
     selectedCategory = event.target.value;
+    console.log('📂 Category changed to:', selectedCategory);
 
     const categoryDescription = document.getElementById('categoryDescription');
     const categoryExamples = document.getElementById('categoryExamples');
@@ -317,6 +337,7 @@ export function onCategoryChange(event) {
 
     if (!selectedCategory) {
         // Hide everything if no category selected
+        console.log('⚠️ No category selected, hiding model selection');
         categoryDescription.classList.add('hidden');
         categoryExamples.classList.add('hidden');
         modelSelectionSection.classList.add('hidden');
@@ -336,6 +357,7 @@ export function onCategoryChange(event) {
     categoryExamples.classList.remove('hidden');
 
     // Show model selection section
+    console.log('✅ Showing model selection section');
     modelSelectionSection.classList.remove('hidden');
     layerTwoThreeSection.classList.remove('hidden');
 
@@ -345,6 +367,7 @@ export function onCategoryChange(event) {
     updateSelectedSummary();
 
     // Generate filtered model checkboxes
+    console.log('🔧 Generating model checkboxes for category:', selectedCategory);
     generateModelCheckboxes();
     updateCalculateButton();
 }
@@ -367,6 +390,7 @@ export function onServiceChange(event) {
  * Generate checkboxes or radio buttons for model selection - filtered by category if selected
  */
 export function generateModelCheckboxes() {
+    console.log('📋 generateModelCheckboxes called, selectedCategory:', selectedCategory);
     const container = document.getElementById('modelSelector');
     container.innerHTML = '';
 
@@ -375,8 +399,11 @@ export function generateModelCheckboxes() {
         ? LAYER_1_CATEGORIES[selectedCategory].applicableModels
         : Object.keys(models);
 
+    console.log('📊 Applicable models for category:', applicableModelKeys);
+
     // If no category selected, show a message
     if (!selectedCategory) {
+        console.log('⚠️ No category selected in generateModelCheckboxes');
         container.innerHTML = '<p class="text-gray-400 text-sm">Select a software category first</p>';
         return;
     }
