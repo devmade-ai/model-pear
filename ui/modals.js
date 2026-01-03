@@ -6,6 +6,14 @@ let init;
 
 export function setInitFunction(initFn) {
     init = initFn;
+    // Register the DOMContentLoaded listener AFTER init is set to avoid race condition
+    // This ensures init is defined when the event fires
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        // DOM already ready (common on mobile/cached pages), call immediately
+        init();
+    }
 }
 
 // ========== TOOLTIP MODAL FUNCTIONS ==========
@@ -151,6 +159,3 @@ export function showInputInfo(modelKey, inputName) {
 
     showTooltipModal(input.label, content);
 }
-
-// Start the application when DOM is ready
-document.addEventListener('DOMContentLoaded', init);

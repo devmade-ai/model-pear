@@ -568,6 +568,33 @@ When working on this project:
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Critical Bug Fix: DOMContentLoaded Race Condition
+**Date**: January 3, 2026
+**Impact**: Fixed complete application initialization failure on mobile devices and cached pages
+
+**Issue**: Models not loading, mode selection not working, all interactive features unresponsive
+- **Root Cause**: Race condition in app initialization - `document.addEventListener('DOMContentLoaded', init)` was called at ES6 module load time with `init` being `undefined`
+- **Sequence**:
+  1. `modals.js` loads and immediately registers DOMContentLoaded listener with undefined function
+  2. `app.js` later calls `setInitFunction(initialization.init)` to set the actual init function
+  3. If DOMContentLoaded already fired (common on mobile/cached pages), init() never executes
+  4. No event listeners attached → entire app non-functional
+- **Fix**: Moved listener registration inside `setInitFunction()` after init is defined, with readyState check
+  - If DOM still loading: register listener
+  - If DOM already ready: call init() immediately
+- **Impact**: Restored all interactive functionality on mobile devices and cached pages
+
+**Technical Details**:
+- ES6 modules execute synchronously at load time, creating timing dependencies
+- Mobile browsers and cached pages often have DOMContentLoaded fire before module imports complete
+- The forward declaration pattern (`let init;`) doesn't work with immediate event listener registration
+- Solution handles both cases: DOM loading vs already loaded via `document.readyState` check
+
+**Files Modified**:
+- `ui/modals.js` (moved DOMContentLoaded listener into setInitFunction, added readyState check)
+
+**Testing**: Verified initialization works correctly on both desktop and mobile, with and without cached content
+
 ### Critical Bug Fixes: Perspective Buttons & Calculate Handler
 **Date**: January 1, 2026
 **Impact**: Restored functionality for calculator mode switching and calculations
