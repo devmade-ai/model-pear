@@ -365,6 +365,13 @@ Requires modern browsers with ES6 module support:
 ### January 2026 - Critical Bug Fixes
 
 #### Fixed
+- **Mode Selection Not Initializing** (January 3, 2026): Calculator mode buttons were not working after page load
+  - Added explicit `setCalculatorMode('forward')` call in `init()` function to initialize default state
+  - Previously, HTML showed forward mode as active but JavaScript never ran initialization logic
+  - This caused mode buttons to only show hover effects without actually switching modes
+  - Models would not load properly after category selection due to inconsistent UI state
+  - Added comprehensive console logging throughout initialization process for debugging
+  - Fixed in `ui/initialization.js`
 - **DOMContentLoaded Race Condition** (January 3, 2026): Complete initialization failure on mobile and cached pages
   - Fixed race condition where `init()` function was undefined when DOMContentLoaded event fired
   - Moved event listener registration from module load time to inside `setInitFunction()`
