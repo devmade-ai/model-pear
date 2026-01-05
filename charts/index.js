@@ -730,3 +730,106 @@ export function updateMetrics(modelKey, data) {
     metricsPanel.classList.remove('hidden');
 }
 
+/**
+ * Render equilibrium chart - shows seller floor, suggested price, and buyer ceiling
+ */
+export function renderEquilibriumChart(results) {
+    const chartContainer = document.getElementById('equilibriumChart');
+    if (!chartContainer) return;
+
+    // Destroy existing chart
+    destroyChart('equilibrium');
+
+    if (!results.equilibriumExists || !results.equilibriumRange) {
+        chartContainer.innerHTML = '<div class="text-center text-gray-400 p-8">No equilibrium zone to visualize</div>';
+        return;
+    }
+
+    const range = results.equilibriumRange;
+    const isRate = results.sellerMinimumRate !== undefined;
+    const formatter = isRate ? formatPercentage : formatCurrency;
+
+    // Create bar chart showing the three key price points
+    const options = {
+        series: [{
+            name: 'Price Point',
+            data: [
+                { x: 'Seller Floor', y: range.floor, fillColor: '#10B981' },
+                { x: 'Suggested Price', y: range.suggested, fillColor: '#FBBF24' },
+                { x: 'Buyer Ceiling', y: range.ceiling, fillColor: '#A855F7' }
+            ]
+        }],
+        chart: {
+            type: 'bar',
+            height: 300,
+            toolbar: { show: false },
+            background: 'transparent'
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                distributed: true,
+                borderRadius: 8,
+                dataLabels: {
+                    position: 'top'
+                }
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: val => formatter(val),
+            offsetY: -20,
+            style: {
+                fontSize: '14px',
+                colors: ['#F3F4F6']
+            }
+        },
+        xaxis: {
+            categories: ['Seller Floor', 'Suggested Price', 'Buyer Ceiling'],
+            labels: {
+                style: { colors: '#9CA3AF', fontSize: '12px' }
+            }
+        },
+        yaxis: {
+            title: {
+                text: isRate ? 'Commission Rate (%)' : 'Price (R)',
+                style: { color: '#9CA3AF' }
+            },
+            labels: {
+                formatter: val => formatter(val),
+                style: { colors: '#9CA3AF' }
+            }
+        },
+        grid: {
+            borderColor: '#374151',
+            yaxis: { lines: { show: true } }
+        },
+        tooltip: {
+            theme: 'dark',
+            y: {
+                formatter: val => formatter(val),
+                title: {
+                    formatter: () => ''
+                }
+            }
+        },
+        legend: {
+            show: false
+        },
+        title: {
+            text: 'Equilibrium Price Range',
+            align: 'center',
+            style: { fontSize: '16px', fontWeight: 600, color: '#F3F4F6' }
+        },
+        subtitle: {
+            text: 'The win-win zone between seller minimum and buyer maximum',
+            align: 'center',
+            style: { fontSize: '12px', color: '#9CA3AF' }
+        }
+    };
+
+    const chart = new ApexCharts(chartContainer, options);
+    chart.render();
+    setChartInstance('equilibrium', chart);
+}
+
