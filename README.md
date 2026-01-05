@@ -1,67 +1,92 @@
-# Revenue Model Calculator
+# Pricing Equilibrium Calculator
 
-A static web application for visualizing and comparing different software revenue models. Built with a modular ES6 JavaScript architecture for easy deployment on GitHub Pages - no backend or build process required.
+A simple, focused pricing tool for South African B2B software businesses to find equilibrium between seller costs and buyer value.
 
 ## Overview
 
-This tool helps analyze and visualize 20 different software revenue models through interactive charts and calculations. Perfect for founders, product managers, and finance teams exploring different pricing strategies.
+This tool helps you find the **sweet spot** in pricing by showing you:
+- **Seller Perspective**: Minimum price needed to meet your margin goals
+- **Buyer Perspective**: Maximum price buyers will pay based on value received
+- **Equilibrium Zone**: The range where both seller and buyer win
 
-## Features
+No growth projections, no complicated forecasting - just clear unit economics to help you price realistically.
 
-- **20 Revenue Models**: From subscription to usage-based, freemium to enterprise licensing
-- **Four Calculator Modes**:
-  - **Vendor Mode** (Forward): Input parameters → Calculate revenue projections
-  - **Growth Mode** (Reverse): Set revenue target → Calculate required inputs
-  - **Client Mode** (Budget): Enter budget → Find optimal pricing options
-  - **Admin Mode**: Edit default parameters for all 20 models in one centralized view
-- **Scenario Planning**: Generate multiple alternative scenarios to reach your targets
-- **Budget Optimization**: Find the best pricing plan within your budget constraints
-- **Interactive Charts**: Real-time visualization using ApexCharts
-- **Calculation Transparency**:
-  - **Clickable Tooltips**: Interactive info icons (ⓘ) on all inputs and metrics with detailed explanations
-  - **Formula Display**: View calculation methodology and formulas for each revenue model
-  - **Variables Summary**: See all input values used in calculations at a glance
-  - **Flexible Validation**: Support for zero values in appropriate scenarios (e.g., existing customer base, no new acquisitions)
-- **No Installation**: Runs entirely in the browser, no backend required
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
-- **Fast Performance**: Sub-second page loads, instant calculations
+## Key Features
 
-## Revenue Models Included
+- **5 Core Pricing Models**: Subscription, Usage-Based, Per-Seat, One-Time License, Marketplace
+- **Three-Perspective View**:
+  - Revenue & Profit Overview
+  - Seller Economics (cost + margin analysis)
+  - Buyer Economics (value + ROI analysis)
+  - Equilibrium Analysis (floor vs ceiling pricing)
+- **South African Defaults**: Realistic ZAR pricing across all models
+- **Static Unit Economics**: No month-by-month projections - just simple math
+- **No Installation**: Runs entirely in the browser
 
-1. One-Time Purchase (Perpetual License)
-2. Subscription (SaaS)
-3. Freemium
-4. Usage-Based (Consumption)
-5. Tiered Pricing
-6. Per-Seat/Per-User
-7. Credits/Token System
-8. Time and Materials (Hourly)
-9. Fixed-Price Projects
-10. Retainer Agreements
-11. Managed Services
-12. Outcome-Based/Milestone
-13. Open Core
-14. Marketplace/Platform Fee
-15. Revenue Share
-16. Enterprise License Agreement (ELA)
-17. Pay-Per-Transaction
-18. Advertising Supported
-19. Data Licensing
-20. White Label/OEM
+## The 5 Pricing Models
 
-## Technology Stack
+### 1. Subscription (SaaS)
+Monthly recurring revenue per customer.
+- **Example**: R500/month × 100 customers = R50,000 MRR
+- **Use for**: SaaS platforms, cloud software, recurring services
 
-- **HTML5** - Structure and content
-- **ES6 JavaScript** - Modular architecture (16 modules across 7 directories)
-- **Tailwind CSS** - Styling via Play CDN
-- **ApexCharts** - Data visualization
-- **GitHub Pages** - Hosting (free HTTPS included)
+### 2. Usage-Based
+Pay per unit consumed (API calls, transactions, build minutes).
+- **Example**: R2 per 1,000 API calls × 10,000 units = R20,000/month
+- **Use for**: APIs, CI/CD platforms, payment processing
+
+### 3. Per-Seat (Per User)
+Price per active user or seat.
+- **Example**: R250/seat × 25 users = R6,250/month
+- **Use for**: Collaboration tools, business software, developer tools
+
+### 4. One-Time Purchase (Perpetual License)
+Upfront license fee + optional annual maintenance.
+- **Example**: R5,000 license + 20% annual maintenance
+- **Use for**: Desktop software, enterprise platforms, accounting software
+
+### 5. Marketplace (Two-Sided)
+Commission-based marketplace connecting buyers and sellers.
+- **Example**: 10% commission on R500 avg transaction
+- **Use for**: Freelance platforms, supplier marketplaces, service booking
+
+## How It Works
+
+### Seller Inputs
+- Cost to serve/deliver per unit
+- Desired gross margin %
+
+### Buyer Inputs
+- Value received per unit (revenue enabled or cost saved)
+
+### The Calculator Shows You
+1. **Seller Floor**: Minimum price to meet your margin (e.g., R350/month)
+2. **Buyer Ceiling**: Maximum price buyer will pay based on value (e.g., R2,000/month)
+3. **Equilibrium Zone**: R350 - R2,000
+4. **Suggested Price**: R1,175 (midpoint)
+
+### Example: Subscription SaaS
+
+**Your costs:**
+- Cost to serve: R150/customer/month
+- Desired margin: 70%
+→ **Minimum price: R500/month**
+
+**Buyer value:**
+- Value received: R5,000/month (cost savings)
+- Acceptable ROI: 2.5x minimum
+→ **Maximum price: R2,000/month**
+
+**Equilibrium:**
+- Floor: R500 (your minimum)
+- Ceiling: R2,000 (buyer's maximum)
+- **Suggested: R1,250** (balanced pricing)
+- Result: 75% margin for you, 4x ROI for buyer = win-win
 
 ## Getting Started
 
-### View Live Demo
-
-Once deployed, the calculator will be available at: `https://[username].github.io/model-pear`
+### Online
+Visit: `https://[your-username].github.io/model-pear`
 
 ### Local Development
 
@@ -71,7 +96,7 @@ Once deployed, the calculator will be available at: `https://[username].github.i
    cd model-pear
    ```
 
-2. Open `index.html` in your browser:
+2. Open in your browser:
    ```bash
    # macOS
    open index.html
@@ -83,424 +108,117 @@ Once deployed, the calculator will be available at: `https://[username].github.i
    start index.html
    ```
 
-That's it! No build process or dependencies to install.
+No build process needed - it's pure HTML/CSS/JS.
 
-## Usage
+## Quick Start Guide
 
-### Vendor Mode - Forward Calculator (Revenue Projection)
+1. **Select a pricing model** from the 5 options
+2. **Choose a tier** (e.g., Basic, Standard, Enterprise for SaaS)
+3. **Enter your inputs**:
+   - **Pricing**: Current price and volume
+   - **Seller Costs**: Cost to serve/deliver + desired margin
+   - **Buyer Value**: Value your product delivers to customers
+4. **Click Calculate**
+5. **View results** across three perspectives:
+   - Revenue & profit overview
+   - Seller perspective (are you meeting margin goals?)
+   - Buyer perspective (is ROI compelling?)
+   - Equilibrium analysis (is there a pricing sweet spot?)
 
-**Use this mode when:** You're a vendor/business wanting to project your revenue based on pricing and growth assumptions.
+## South African Pricing Defaults
 
-1. **Select Category**: Choose your software category
-2. **Choose Selection Mode**:
-   - Check "Compare multiple models" to analyze multiple pricing models side-by-side
-   - Leave unchecked to focus on a single model
-3. **Select Models**: Pick one or more revenue models (depending on your selection mode)
-4. **Enter Parameters**: Adjust values using the guided input form with hints and category-specific defaults
-5. **Calculate & Visualize**: View real-time calculations and interactive charts
-6. **Compare Models**: Switch between selected models using tabs (when multiple models selected)
+All defaults are calibrated for the South African B2B software market (in ZAR):
 
-### Growth Mode - Reverse Calculator (Target Planning)
+- **Subscription SaaS**: R250-R1,500/month per customer
+- **API/Usage**: R0.50-R15 per unit
+- **Per-Seat**: R150-R350/user/month
+- **One-Time License**: R5,000-R50,000 + 20% annual maintenance
+- **Marketplace**: 5-10% commission
 
-**Use this mode when:** You're a vendor/business with a revenue target and want to know what inputs are needed to achieve it.
+## Technology Stack
 
-The reverse calculator helps you answer questions like: "What price should I charge to reach R100,000/month in 24 months?"
-
-1. **Select Mode**: Click the "Growth" button at the top
-2. **Choose Category & Model**: Select your software category and one revenue model
-3. **Set Your Target**:
-   - Enter your target monthly revenue (MRR)
-   - Choose by which month you want to achieve it (1-60 months)
-4. **Select Variable to Solve**: Choose which input variable to calculate (e.g., "New Customers per Month", "Monthly Price")
-5. **Set Constraints** (optional): Expand "Advanced" to set fixed values for other variables
-6. **Calculate**: Click "Calculate & Compare"
-7. **Review Results**:
-   - See the required value to hit your target
-   - View 3 alternative scenarios (Recommended, Optimistic, Conservative)
-   - See full projections, charts, and metrics
-
-**Example Use Cases:**
-- "How many customers do I need to acquire monthly to reach R50,000 MRR?"
-- "What should my pricing be to hit R100,000 MRR in 18 months?"
-- "With a 5% churn rate, how many new users do I need for R200,000 MRR?"
-
-### Client Mode - Budget Calculator (Pricing Options Finder)
-
-**Use this mode when:** You're a client/buyer with a budget and want to see what pricing options are available within your constraints.
-
-The client budget calculator helps you answer questions like: "What can I get for R10,000/month?" or "Which plan gives me the most users within my budget?"
-
-**Now supports budgets from R100 to R10M+** with dynamic scaling for accurate results at any budget level.
-
-1. **Select Mode**: Click the "Client" button at the top
-2. **Choose Category**: Select your software category
-3. **Choose Selection Mode**:
-   - Check "Compare multiple models" to see options across different pricing models
-   - Leave unchecked to focus on a single pricing model
-4. **Select Models**: Pick one or more pricing models to explore (depending on your selection mode)
-5. **Set Your Budget**:
-   - Enter your monthly budget (how much you can spend)
-   - Choose budget flexibility (strict, moderate ±10%, flexible ±20%)
-6. **Choose Priority**: Select what's most important to you:
-   - **Maximum Users/Capacity**: Get the most seats/users/storage
-   - **Best Value**: Optimize for lowest cost per unit
-   - **Premium Features**: Get the best tier/features
-   - **Budget Conscious**: Leave a buffer (uses ~80% of budget)
-7. **Set Requirements** (optional): Expand "Advanced" to set minimum requirements (e.g., "at least 20 users")
-8. **Calculate**: Click "Calculate & Compare"
-9. **Review Options**:
-   - See 3-6 different pricing configurations within your budget
-   - Compare monthly cost, capacity, and value metrics
-   - View budget utilization and remaining buffer
-   - Explore configuration details for each option
-
-**Example Use Cases:**
-- "I have R15,000/month. Which SaaS plan gets me the most users?"
-- "Show me all pricing options between R8,000-R12,000/month"
-- "What's the best value plan for my R20,000 budget?"
-- "I need at least 50 users. What options are within R25,000/month?"
-
-**Understanding the Results:**
-- 🟢 **Green badge** = Within budget
-- 🟡 **Yellow badge** = Within your flexibility range (e.g., budget + 10%)
-- 🔴 **Red badge** = Over budget (only shown if no options found within budget)
-
-Each option shows:
-- **Monthly cost** and budget utilization percentage
-- **Capacity** (users, seats, storage, etc.)
-- **Cost per unit** for value comparison
-- **Budget buffer** (remaining budget if you choose this option)
-- **Configuration details** (expand to see all parameters)
-
-### Admin Mode - Model Configuration Editor
-
-**Use this mode when:** You want to customize default parameters across all revenue models or need a centralized view to manage model configurations.
-
-The admin panel provides a comprehensive spreadsheet-style interface for editing all 20 revenue models simultaneously.
-
-1. **Select Mode**: Click the "⚙️ Admin" button at the top
-2. **View All Models**: See all 20 revenue models in a side-by-side table
-3. **Edit Parameters**:
-   - Each row represents a parameter (Price, Customers, Churn, etc.)
-   - Each column represents a revenue model
-   - Edit any value directly in the table
-4. **Real-time Updates**: Changes immediately update model defaults
-5. **Return to Calculator**: Switch back to Vendor/Growth/Client mode to use the updated values
-
-**Features:**
-- **Centralized Configuration**: Edit all model defaults in one place
-- **Side-by-side Comparison**: Easily compare parameter values across models
-- **Horizontal Scrolling**: Navigate through all 20 models
-- **Parameter Tooltips**: Hover over inputs to see descriptions
-- **Sticky Headers**: Parameter names and model names stay visible while scrolling
-- **N/A Indicators**: Clearly shows which parameters don't apply to specific models
-
-**Use Cases:**
-- Customizing default values for your specific industry or market
-- Batch updating parameters across multiple models
-- Comparing default assumptions across different pricing strategies
-- Setting up consistent baseline values for team analysis
-- Quick auditing of all model parameters
-
-**Example Scenarios:**
-- "Update all churn rates to match my industry benchmarks"
-- "Set all pricing to my local currency defaults"
-- "Review and adjust acquisition costs across all models"
-- "Compare subscription vs usage-based default configurations"
-
-## Interactive Help & Tooltips
-
-The calculator includes comprehensive interactive help throughout the interface:
-
-### Clickable Information Icons (ⓘ)
-
-Look for blue info icons throughout the interface - click them to open detailed explanations:
-
-1. **Input Fields**: Each input parameter has an info icon that displays:
-   - Detailed explanation of the parameter
-   - How it affects the calculation
-   - Typical ranges and benchmarks
-   - Context within the revenue model
-
-2. **Metric Cards**: Results and metrics have info icons showing:
-   - Clear explanation of what the metric means
-   - How it's calculated
-   - Interpretation guidelines (e.g., what's a "good" LTV:CAC ratio)
-   - Industry benchmarks
-
-3. **Model Information**: Click the info icon next to model names to see:
-   - Revenue model description
-   - Calculation formula
-   - Step-by-step methodology
-   - Key metrics tracked
-   - Common use cases
-
-### Variables Summary Panel
-
-After running calculations, you'll see an "Input Variables Used" panel that shows:
-- All input values used in the calculation
-- Formatted and labeled for easy reference
-- Clickable info icons for each variable
-- Organized by model when comparing multiple models
-
-This transparency ensures you can always verify what assumptions went into your calculations.
-
-### Zero Values Support
-
-The calculator now intelligently handles zero values in scenarios where they make sense:
-- **Allowed**: Starting customer base = 0 (new business), New customers = 0 (existing base only), Expansion rate = 0 (no upsells)
-- **Warning**: Zero values that might indicate an issue (e.g., no acquisition and no existing customers)
-- **Error**: Zero values that don't make sense (e.g., pricing = 0 for paid products)
-
-This flexibility allows modeling realistic scenarios like focusing purely on existing customers or launching with a current user base.
-
-## Deployment
-
-### GitHub Pages
-
-This project is configured for seamless deployment on GitHub Pages with ES6 modules support.
-
-**Prerequisites:**
-- `.nojekyll` file in root (✅ included) - Bypasses Jekyll processing to ensure ES6 modules work correctly
-- All JavaScript files use relative imports with `.js` extensions
-- No build process required
-
-**Deployment Steps:**
-
-1. Push changes to the main branch
-2. Go to repository Settings > Pages
-3. Set source to "Deploy from branch: main" and root directory "/ (root)"
-4. Site will be live at `https://[username].github.io/model-pear`
-
-Changes deploy automatically within 2-3 minutes of pushing to the main branch.
-
-**Important:** The `.nojekyll` file is critical for this project because:
-- It disables Jekyll processing on GitHub Pages
-- Ensures JavaScript modules are served with correct MIME types
-- Prevents Jekyll from interfering with subdirectory imports
-- Without it, you'll get "Expected a JavaScript module script but the server responded with a MIME type of 'text/html'" errors
-
-### Other Hosting Options
-
-You can deploy this on any static hosting service:
-- **Netlify**: Drag and drop the entire folder
-- **Vercel**: Import from GitHub (no configuration needed)
-- **CloudFlare Pages**: Connect repository and deploy
-- **Local Server**: Use `python -m http.server` or any static file server
+- **HTML5** - Structure
+- **ES6 JavaScript** - Modular architecture
+- **Tailwind CSS** - Styling (via CDN)
+- **ApexCharts** - Data visualization
+- **GitHub Pages** - Free hosting
 
 ## Project Structure
 
 ```
 model-pear/
-├── index.html          # Main HTML structure
-├── app.js              # Main orchestrator (imports all modules)
-├── styles.css          # Custom styles
-├── .nojekyll           # Disables Jekyll on GitHub Pages (required for ES6 modules)
+├── index.html              # Main page
+├── app.js                  # Application initialization
 ├── config/
-│   └── constants.js    # Configuration and global state
-├── framework/
-│   ├── categories.js   # Layer 1: Core function categories
-│   ├── delivery.js     # Layer 2: Delivery mechanisms
-│   ├── services.js     # Layer 3: Service models
-│   └── model-families.js # Model family groupings
+│   ├── constants.js        # Global configuration
+│   └── sa-pricing-defaults.js  # South African pricing data
 ├── models/
-│   └── index.js        # All 20 revenue model definitions
-├── utils/
-│   └── index.js        # Utility functions (formatting, validation, etc.)
-├── charts/
-│   └── index.js        # Chart rendering with ApexCharts
+│   └── index.js            # 5 pricing model definitions
 ├── calculators/
-│   ├── engine.js       # Core calculation engine
-│   └── client-budget.js # Client budget calculator
+│   └── engine.js           # Calculation engine
 ├── ui/
-│   ├── forms.js        # Dynamic form generation
-│   ├── events.js       # Event handlers
-│   ├── initialization.js # App initialization logic
-│   ├── admin.js        # Admin panel functionality
-│   └── modals.js       # Tooltip and modal functions
-├── README.md           # This file
-├── claude.md           # Detailed project specification
-└── .gitignore          # Git ignore rules
+│   ├── forms.js            # Input form generation
+│   ├── results-display.js  # Results visualization
+│   └── initialization.js   # UI setup
+├── charts/
+│   └── index.js            # Chart rendering
+└── utils/
+    └── index.js            # Formatting & utilities
 ```
 
-### Modular Architecture
+## Key Differences from Complex Calculators
 
-The codebase has been refactored from a single monolithic app.js file (6,377 lines) into a modular architecture:
+### What This Tool DOESN'T Have (By Design)
+- ❌ Month-by-month revenue projections
+- ❌ Growth rate assumptions
+- ❌ Churn rate modeling
+- ❌ Customer acquisition cost calculations
+- ❌ Complex scenario planning
+- ❌ 20+ pricing models to choose from
+- ❌ Multiple calculator modes
 
-**Benefits:**
-- **Better Maintainability**: Each module has a single, clear responsibility
-- **Easier Testing**: Individual modules can be unit tested independently
-- **Improved Developer Experience**: Navigate to specific functionality quickly
-- **Reduced Cognitive Load**: Work on one concern at a time
-- **Scalability**: Adding new models or features is straightforward
+### What This Tool DOES Have (Intentionally Simple)
+- ✅ Static unit economics (units × price = revenue)
+- ✅ Seller cost + margin analysis
+- ✅ Buyer value + ROI analysis
+- ✅ Equilibrium pricing (seller floor vs buyer ceiling)
+- ✅ 5 core pricing models only
+- ✅ South African defaults
+- ✅ Single, focused calculator mode
 
-**Module Organization:**
-- **config/**: Global configuration and application state
-- **framework/**: Three-layer framework (categories, delivery, services)
-- **models/**: Revenue model definitions with calculation logic
-- **utils/**: Shared utility functions for formatting, validation, calculations
-- **charts/**: Visualization logic with ApexCharts
-- **calculators/**: Calculation engines (forward, reverse, client budget)
-- **ui/**: User interface logic (forms, events, initialization)
+## Use Cases
 
-## Performance
+### For Founders
+- "What should I charge for my SaaS product?"
+- "Is my pricing sustainable given my costs?"
+- "Will buyers find my pricing compelling?"
 
-- **Page Load**: < 1 second
-- **Model Switch**: < 100ms
-- **Calculation + Chart**: < 200ms
-- **Input to Update**: < 300ms
-- **Total File Size**: < 200 KB
+### For Product Managers
+- "Which pricing model makes sense for this feature?"
+- "How do I price to create a win-win?"
 
-## Browser Support
+### For Finance Teams
+- "What's our minimum viable price?"
+- "What margin are we actually achieving?"
 
-Requires modern browsers with ES6 module support:
+## Philosophy
 
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
+**Pricing should be simple:**
+1. Know your costs
+2. Set a margin target
+3. Understand buyer value
+4. Find the equilibrium
 
-## Changelog
-
-> For complete development history and detailed bug fix information, see [HISTORY.md](./HISTORY.md)
-
-### January 2026 - Critical Bug Fixes
-
-#### Fixed
-- **Vendor Mode Comparison Charts** (January 5, 2026): Comparison graphs now display by default in vendor mode
-  - Fixed "Compare multiple models" checkbox to be checked by default
-  - Users can now select and compare multiple models immediately without toggling
-  - Enables side-by-side visualization and metric comparison in vendor/forward mode
-  - Users can still uncheck the box to focus on a single model
-- **Mode Selection Not Initializing** (January 3, 2026): Calculator mode buttons were not working after page load
-  - Added explicit `setCalculatorMode('forward')` call in `init()` function to initialize default state
-  - Previously, HTML showed forward mode as active but JavaScript never ran initialization logic
-  - This caused mode buttons to only show hover effects without actually switching modes
-  - Models would not load properly after category selection due to inconsistent UI state
-  - Added comprehensive console logging throughout initialization process for debugging
-  - Fixed in `ui/initialization.js`
-- **DOMContentLoaded Race Condition** (January 3, 2026): Complete initialization failure on mobile and cached pages
-  - Fixed race condition where `init()` function was undefined when DOMContentLoaded event fired
-  - Moved event listener registration from module load time to inside `setInitFunction()`
-  - Added `document.readyState` check to handle already-loaded DOM
-  - Resolved issue where no event listeners were attached, making entire app unresponsive
-  - Particularly affected mobile browsers and cached pages where DOMContentLoaded fires before modules load
-  - Fixed in `ui/modals.js`
-- **Perspective Buttons Not Working**: Calculator mode buttons (Vendor, Growth, Client, Admin) were unresponsive after modular refactoring
-  - Fixed incorrect variable assignment in `setCalculatorMode()` function
-  - Changed direct assignment to use proper setter function (`setCurrentMode()`)
-  - All four perspective buttons now switch modes correctly
-- **Calculate Button Not Working**: Calculate & Compare button was not triggering calculations
-  - Fixed event listener to reference correct injected handler function
-  - Changed `onCalculate` to `onCalculateHandler` in event listener
-  - Calculate button now properly routes to appropriate calculation based on current mode
-
-#### Technical Details
-- ES6 modules execute synchronously at load time, creating timing dependencies with DOM events
-- Forward declaration pattern (`let init;`) doesn't work with immediate event listener registration
-- ES6 module imports create read-only bindings that cannot be reassigned directly
-- Dependency injection pattern requires using injected handler names
-- All bugs related to modular architecture refactoring, now fully resolved
-
-### January 2026 - Modular Architecture Refactoring
-
-#### Major Refactoring
-- **Modular Code Structure**: Refactored monolithic app.js (6,377 lines) into organized modules
-  - Extracted code into 7 directories with 12 specialized modules
-  - Improved maintainability and developer experience
-  - Each module has a single, clear responsibility
-  - Enables independent unit testing of modules
-
-#### Architecture Changes
-- **config/**: Centralized configuration and global state management
-- **framework/**: Three-layer framework (categories, delivery, services, model families)
-- **models/**: All 20 revenue model definitions with calculation logic
-- **utils/**: Utility functions (formatting, validation, calculations, scenarios)
-- **charts/**: Chart rendering logic with ApexCharts integration
-- **calculators/**: Calculation engines (forward, reverse, client budget)
-- **ui/**: User interface logic (forms, events, initialization, admin, modals)
-- **app.js**: Main orchestrator that imports and coordinates all modules
-
-#### Technical Details
-- Implemented ES6 module system with proper imports/exports
-- Resolved circular dependencies using dependency injection pattern
-- Maintained backward compatibility with existing HTML
-- Created clean separation of concerns across modules
-- Reduced cognitive load from 6,377-line file to focused modules
-- Updated index.html to load app.js as ES6 module
-
-#### Benefits
-- **96% reduction** in main file size (6,377 lines → 243 lines orchestrator)
-- Better maintainability and code navigation
-- Easier to add new revenue models or features
-- Individual modules can be tested independently
-- Improved scalability for future development
-
-### January 2026 - Budget Calculations & Model Selection Improvements
-
-#### Fixed
-- **Large Budget Support**: Fixed issue where budgets above R1M would show "no options in budget"
-  - Replaced hardcoded capacity limits (10k, 1k, 500) with dynamic scaling based on budget size
-  - Maximum capacity now scales up to 1M users for very large budgets
-  - Best value and conservative searches now use adaptive step sizes for better performance
-- **Capacity Detection**: Improved model input detection to catch more capacity-related fields
-  - Now recognizes `startingCustomers`, `freeUsers`, `paidUsers`, `newCustomers`, etc.
-  - Case-insensitive keyword matching for broader compatibility
-  - Added `findCapacityInput()` helper function for consistent detection across all budget strategies
-
-#### New Features
-- **Flexible Model Selection**: Added toggle to switch between single and multiple model selection
-  - Check "Compare multiple models" to select multiple models (checkboxes)
-  - Uncheck to select only one model (radio buttons)
-  - Automatically switches UI between radio buttons and checkboxes
-  - Preserves selections when toggling modes
-
-#### Improved
-- **Budget Calculator Performance**: Adaptive step sizes reduce calculation time for large budgets
-- **Budget Flexibility**: All three pricing strategies (max capacity, best value, budget conscious) now support budgets from R100 to R10M+
-
-#### Technical Details
-- Added `findCapacityInput()` function with expanded keyword list and case-insensitive matching
-- Added `calculateCapacityLimit()` function to dynamically scale search limits based on budget
-- Updated `findMaximumCapacity()` to support up to 1M capacity with binary search
-- Updated `findBestValue()` with adaptive step sizes (up to 50k capacity)
-- Updated `findConservativeOption()` with dynamic limits (up to 25k capacity)
-- Enhanced `generateModelCheckboxes()` to switch between radio and checkbox input types
-- Modified `onModelSelectionChange()` to handle both radio and checkbox selection logic
-- Added `onCompareMultipleToggle()` event handler to regenerate model selector on toggle
-
-### January 2026 - Bug Fixes & UX Improvements
-
-#### Fixed
-- **Client Budget Calculator**: Budget options now update correctly when models are selected/deselected in Client Mode
-- **Section Visibility**: Eliminated empty sections that appeared after switching between modes or running calculations
-- **Dynamic Elements Cleanup**: Executive summaries and variable summaries are now properly removed when switching contexts
-
-#### Improved
-- **Chart Descriptions**: Added contextual subtitles to all major charts explaining what each visualization shows
-- **Tooltip Clarity**: Info icons (ⓘ) now only appear on complex inputs, reducing visual clutter
-- **Code Quality**: Removed 50+ lines of redundant code by centralizing panel visibility management
-
-#### Technical Details
-- Created `hideAllResultPanels()` function for centralized UI state management
-- Enhanced `onModelSelectionChange()` to update budget and reverse calculator options dynamically
-- Made tooltip display conditional based on hint complexity and keywords
-- Added `subtitle` configuration to ApexCharts for better chart context
+This tool helps you do exactly that - no more, no less.
 
 ## Contributing
 
-Contributions welcome! Please feel free to submit a Pull Request.
+This is an open-source project. Contributions welcome!
 
 ## License
 
-MIT License - feel free to use this project for personal or commercial purposes.
+MIT License - see LICENSE file for details
 
-## Questions or Issues?
+## Support
 
-- Review the detailed specification in `claude.md`
-- Open an issue on GitHub
-- Check the inline code comments in `index.html`
-
----
-
-Built with ❤️ for the developer community
+For issues or questions, please open a GitHub issue.
