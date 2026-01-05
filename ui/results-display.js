@@ -7,7 +7,7 @@ import { formatCurrency, formatNumber, formatPercentage } from '../utils/index.j
  * Render complete results display with all three perspectives
  */
 export function renderResults(modelKey, results) {
-    const resultsContainer = document.getElementById('results');
+    const resultsContainer = document.getElementById('resultsContainer');
     if (!resultsContainer) return;
 
     resultsContainer.innerHTML = '';

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Interactive revenue model calculator for visualizing 20+ different software pricing strategies">
-    <title>Revenue Model Calculator</title>
+    <meta name="description" content="Find the sweet spot between seller costs and buyer value with equilibrium pricing analysis">
+    <title>Pricing Equilibrium Calculator</title>
 
     <!-- Tailwind CSS via Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,8 +20,8 @@
     <div class="container-custom">
         <!-- Header -->
         <header class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700">
-            <h1 class="text-3xl font-bold text-gray-100">Revenue Model Calculator</h1>
-            <p class="text-gray-400 mt-2">Visualize and compare different software revenue models</p>
+            <h1 class="text-3xl font-bold text-gray-100">Pricing Equilibrium Calculator</h1>
+            <p class="text-gray-400 mt-2">Find the sweet spot between seller costs and buyer value</p>
         </header>
 
         <!-- Main Content Grid -->
@@ -29,369 +29,91 @@
             <!-- Left Sidebar: Model Selection & Input Form -->
             <div class="lg:col-span-1">
                 <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
-                    <!-- Calculator Mode Toggle -->
-                    <div class="mb-6 pb-6 border-b border-gray-700">
-                        <h2 class="text-xl font-semibold text-gray-100 mb-3">Calculator Mode</h2>
-                        <p class="text-sm text-gray-400 mb-3">Choose your perspective</p>
-                        <div class="grid grid-cols-2 gap-2 mb-2">
-                            <button id="forwardModeBtn" class="py-2 px-3 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors">
-                                <div class="font-semibold">Vendor</div>
-                                <div class="text-xs opacity-90">Revenue Calc</div>
+                    <!-- Model Selection -->
+                    <div class="mb-6">
+                        <h2 class="text-xl font-semibold text-gray-100 mb-3">Select Pricing Model</h2>
+                        <p class="text-sm text-gray-400 mb-4">Choose the model that best fits your business</p>
+
+                        <div class="space-y-2">
+                            <button id="model-subscription" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
+                                <div class="font-semibold">Subscription (SaaS)</div>
+                                <div class="text-xs opacity-75">Monthly recurring revenue</div>
                             </button>
-                            <button id="reverseModeBtn" class="py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors">
-                                <div class="font-semibold">Growth</div>
-                                <div class="text-xs opacity-90">Target Goals</div>
+                            <button id="model-usage-based" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
+                                <div class="font-semibold">Usage-Based</div>
+                                <div class="text-xs opacity-75">Pay per API call, transaction, build minute</div>
                             </button>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button id="clientBudgetModeBtn" class="py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors">
-                                <div class="font-semibold">Client</div>
-                                <div class="text-xs opacity-90">Budget Options</div>
+                            <button id="model-per-seat" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
+                                <div class="font-semibold">Per-Seat</div>
+                                <div class="text-xs opacity-75">Price per user/seat</div>
                             </button>
-                            <button id="adminModeBtn" class="py-2 px-3 rounded-md bg-gray-700 text-gray-300 font-medium text-sm hover:bg-gray-600 transition-colors">
-                                <div class="font-semibold">⚙️ Admin</div>
-                                <div class="text-xs opacity-90">Edit All Models</div>
+                            <button id="model-one-time" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
+                                <div class="font-semibold">One-Time</div>
+                                <div class="text-xs opacity-75">Perpetual license + maintenance</div>
+                            </button>
+                            <button id="model-marketplace" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
+                                <div class="font-semibold">Marketplace</div>
+                                <div class="text-xs opacity-75">Commission-based two-sided platform</div>
                             </button>
                         </div>
                     </div>
 
-                    <!-- STEP 1: Category Selection -->
-                    <div id="categorySection" class="mb-6">
-                        <h2 class="text-xl font-semibold text-gray-100 mb-2">Step 1: What type of software?</h2>
-                        <label for="categorySelector" class="block text-sm font-medium text-gray-300 mb-2">
-                            Select software category
+                    <!-- Tier Selection -->
+                    <div id="tierSection" class="mb-6 pb-6 border-b border-gray-700 hidden">
+                        <label for="tierSelector" class="block text-sm font-medium text-gray-300 mb-2">
+                            Pricing Tier (Optional)
                         </label>
-                        <select id="categorySelector" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">-- Select a category --</option>
-                            <option value="dev-devops">Development & DevOps Infrastructure</option>
-                            <option value="business-ops">Business Operations Software</option>
-                            <option value="marketing">Marketing & Customer Engagement</option>
-                            <option value="productivity">Workplace Productivity & Collaboration</option>
-                            <option value="data-analytics">Data & Analytics</option>
-                            <option value="security">Security & Compliance</option>
-                            <option value="content-media">Content & Media Management</option>
-                            <option value="customer-support">Customer Support & Service</option>
-                            <option value="ecommerce-payments">E-commerce & Payments</option>
-                            <option value="industry-specific">Industry-Specific Solutions</option>
+                        <select id="tierSelector" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Select a tier or enter custom values --</option>
+                            <option value="basic">Basic</option>
+                            <option value="standard">Standard</option>
+                            <option value="enterprise">Enterprise</option>
                         </select>
-                        <div id="categoryDescription" class="mt-2 text-sm text-gray-400 hidden">
-                            <!-- Category description will be populated here -->
-                        </div>
-                        <div id="categoryExamples" class="mt-1 text-xs text-gray-500 hidden">
-                            <!-- Category examples will be populated here -->
-                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Load South African pricing defaults for the selected tier</p>
                     </div>
 
-                    <!-- STEP 2: Model Selection -->
-                    <div id="modelSelectionSection" class="hidden">
-                        <h2 class="text-xl font-semibold text-gray-100 mb-4">Step 2: Select Revenue Models</h2>
-
-                        <!-- Selection Mode Toggle -->
-                        <div class="mb-4 p-3 bg-gray-750 rounded-md border border-gray-600">
-                            <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                <input type="checkbox" id="compareMultipleModels" class="mr-2 rounded bg-gray-600 border-gray-500 text-blue-600 focus:ring-blue-500" checked>
-                                <span>Compare multiple models</span>
-                                <span class="ml-2 text-xs text-gray-500">(uncheck to select only one model)</span>
-                            </label>
-                        </div>
-
-                        <!-- Model Selector -->
-                        <div class="mb-6 max-h-96 overflow-y-auto">
-                            <div id="modelSelector">
-                                <!-- Radio buttons or checkboxes will be dynamically populated based on selected category -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- STEP 3: Delivery & Service Options -->
-                    <div id="layerTwoThreeSection" class="hidden mb-6 pb-6 border-b border-gray-700">
-                        <h2 class="text-xl font-semibold text-gray-100 mb-4">Step 3: Delivery & Service Options</h2>
-
-                        <!-- Layer 2: Delivery Mechanism -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Delivery Mechanism</label>
-                            <div class="space-y-2">
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="deliveryMechanism" value="cloud-saas" checked class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Cloud-Hosted SaaS <span class="text-gray-500">(baseline)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="deliveryMechanism" value="self-hosted" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Self-Hosted/On-Premise <span class="text-gray-500">(higher upfront)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="deliveryMechanism" value="hybrid" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Hybrid Cloud <span class="text-gray-500">(+40% premium)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="deliveryMechanism" value="mobile" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Mobile Apps <span class="text-gray-500">(-15% for app store fees)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="deliveryMechanism" value="api-embedded" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>API/Embedded <span class="text-gray-500">(+20% for support)</span></span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Layer 3: Service Model -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Service Model</label>
-                            <div class="space-y-2">
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="serviceModel" value="self-service" checked class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Self-Service <span class="text-gray-500">(-30% price, higher churn)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="serviceModel" value="managed-services" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Managed Services <span class="text-gray-500">(+R1,500-R5,000/mo)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="serviceModel" value="professional-services" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Professional Services <span class="text-gray-500">(R500-R2,500/hr)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="serviceModel" value="hybrid-modular" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Hybrid/Modular <span class="text-gray-500">(flexible pricing)</span></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- STEP 4: Model-Specific Inputs (existing) -->
-
-                    <!-- Client Budget Calculator Inputs -->
-                    <div id="clientBudgetInputsSection" class="hidden mb-6 pb-6 border-b border-gray-700">
-                        <h2 class="text-xl font-semibold text-gray-100 mb-4">Step 4: Budget & Requirements</h2>
-
-                        <!-- Monthly Budget -->
-                        <div class="mb-4">
-                            <label for="clientBudget" class="block text-sm font-medium text-gray-300 mb-2">
-                                Monthly Budget Available
-                            </label>
-                            <input type="number" id="clientBudget" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10000" min="0" step="100" value="10000">
-                            <p class="text-xs text-gray-500 mt-1">How much can you spend per month? (in Rands)</p>
-                        </div>
-
-                        <!-- Budget Flexibility -->
-                        <div class="mb-4">
-                            <label for="budgetFlexibility" class="block text-sm font-medium text-gray-300 mb-2">
-                                Budget Flexibility
-                            </label>
-                            <select id="budgetFlexibility" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="strict">Strict - Stay within budget</option>
-                                <option value="moderate" selected>Moderate - ±10% acceptable</option>
-                                <option value="flexible">Flexible - ±20% acceptable</option>
-                            </select>
-                            <p class="text-xs text-gray-500 mt-1">How flexible is your budget?</p>
-                        </div>
-
-                        <!-- Optimization Priority -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-300 mb-2">
-                                Optimization Priority
-                            </label>
-                            <div class="space-y-2">
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="clientPriority" value="max-users" checked class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Maximum Users/Capacity <span class="text-gray-500">(get the most)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="clientPriority" value="best-value" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Best Value <span class="text-gray-500">(lowest cost per unit)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="clientPriority" value="premium-features" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Premium Features <span class="text-gray-500">(best tier)</span></span>
-                                </label>
-                                <label class="flex items-center text-sm text-gray-300 cursor-pointer hover:text-gray-100">
-                                    <input type="radio" name="clientPriority" value="budget-conscious" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                    <span>Budget Conscious <span class="text-gray-500">(leave buffer)</span></span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Requirements (Optional) -->
-                        <details class="mb-4 bg-gray-700 rounded-lg">
-                            <summary class="text-sm font-medium text-gray-300 cursor-pointer p-3 hover:bg-gray-600 rounded-lg transition-colors">
-                                ⚙️ Advanced: Specific Requirements
-                            </summary>
-                            <div id="clientRequirementsContainer" class="p-3 pt-2 space-y-3 border-t border-gray-600">
-                                <p class="text-xs text-gray-400 mb-2">Set minimum requirements (optional)</p>
-                                <div id="clientRequirements">
-                                    <!-- Dynamic requirement inputs will be populated here -->
-                                </div>
-                            </div>
-                        </details>
-
-                        <!-- Show Multiple Options -->
-                        <div class="mb-4">
-                            <label class="flex items-center text-sm text-gray-300 cursor-pointer">
-                                <input type="checkbox" id="showMultipleOptions" class="mr-2 text-blue-600 focus:ring-blue-500 bg-gray-700 border-gray-600 rounded" checked>
-                                <span>Show multiple pricing options</span>
-                            </label>
-                            <p class="text-xs text-gray-500 mt-1 ml-6">Display 3-4 different pricing plans within your budget</p>
-                        </div>
-                    </div>
-
-                    <!-- Reverse Calculator Inputs -->
-                    <div id="reverseInputsSection" class="hidden mb-6 pb-6 border-b border-gray-700">
-                        <h2 class="text-xl font-semibold text-gray-100 mb-4">Step 4: Target Settings</h2>
-
-                        <!-- Target Revenue -->
-                        <div class="mb-4">
-                            <label for="targetRevenue" class="block text-sm font-medium text-gray-300 mb-2">
-                                Target Monthly Revenue (MRR)
-                            </label>
-                            <input type="number" id="targetRevenue" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="100000" min="0" step="1000">
-                            <p class="text-xs text-gray-500 mt-1">The revenue goal you want to achieve (in Rands)</p>
-                        </div>
-
-                        <!-- Target Month -->
-                        <div class="mb-4">
-                            <label for="targetMonth" class="block text-sm font-medium text-gray-300 mb-2">
-                                Achieve Target by Month
-                            </label>
-                            <input type="number" id="targetMonth" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" value="24" min="1" max="60" step="1">
-                            <p class="text-xs text-gray-500 mt-1">How many months to reach your target (1-60)</p>
-                        </div>
-
-                        <!-- Variable to Solve For -->
-                        <div class="mb-4">
-                            <label for="solveForVariable" class="block text-sm font-medium text-gray-300 mb-2">
-                                What should we calculate?
-                            </label>
-                            <select id="solveForVariable" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">-- Select variable to solve --</option>
-                            </select>
-                            <p class="text-xs text-gray-500 mt-1">The input variable we'll calculate to hit your target</p>
-                        </div>
-
-                        <!-- Constraints/Assumptions -->
-                        <details class="mb-4 bg-gray-700 rounded-lg">
-                            <summary class="text-sm font-medium text-gray-300 cursor-pointer p-3 hover:bg-gray-600 rounded-lg transition-colors">
-                                ⚙️ Advanced: Set Constraints & Assumptions
-                            </summary>
-                            <div id="constraintInputsContainer" class="p-3 pt-2 space-y-3 border-t border-gray-600">
-                                <p class="text-xs text-gray-400 mb-2">Set fixed values for other variables (optional)</p>
-                                <div id="constraintInputs">
-                                    <!-- Dynamic inputs for other variables will be populated here -->
-                                </div>
-                            </div>
-                        </details>
-
-                        <!-- Scenario Options -->
-                        <div class="mb-4">
-                            <label class="flex items-center text-sm text-gray-300 cursor-pointer">
-                                <input type="checkbox" id="generateScenarios" class="mr-2 text-blue-600 focus:ring-blue-500 bg-gray-700 border-gray-600 rounded" checked>
-                                <span>Generate alternative scenarios</span>
-                            </label>
-                            <p class="text-xs text-gray-500 mt-1 ml-6">Show 3 different approaches to reach your target</p>
-                        </div>
-                    </div>
-
-                    <!-- Selected Models Summary -->
-                    <div id="selectedSummary" class="mb-4 text-sm text-gray-400">
-                        No models selected
-                    </div>
-
-                    <!-- Dynamic Input Forms (Tabbed) -->
-                    <div id="inputFormContainer">
-                        <div id="inputFormTabs" class="flex flex-wrap gap-2 mb-4 hidden">
-                            <!-- Tabs will be dynamically generated -->
-                        </div>
+                    <!-- Dynamic Input Forms -->
+                    <div id="inputFormContainer" class="hidden">
                         <div id="inputForm">
-                            <p class="text-gray-400 text-sm">Select models to configure inputs</p>
-                        </div>
-                    </div>
-
-                    <!-- Admin Panel Content -->
-                    <div id="adminPanelContainer" class="hidden">
-                        <div class="mb-4">
-                            <h3 class="text-lg font-semibold text-gray-100 mb-2">Model Configuration Editor</h3>
-                            <p class="text-sm text-gray-400 mb-3">Edit default parameters for all 20 revenue models. Changes will apply when models are selected.</p>
-                        </div>
-                        <div id="adminPanelContent">
-                            <!-- Admin panel table will be dynamically generated -->
+                            <!-- Dynamic inputs will be populated here -->
                         </div>
                     </div>
 
                     <!-- Calculate Button -->
-                    <div class="mt-6">
-                        <button id="calculateBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>
-                            Calculate & Compare
+                    <div id="calculateBtnContainer" class="mt-6 hidden">
+                        <button id="calculateBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+                            Calculate Equilibrium
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Content: Charts & Metrics -->
+            <!-- Right Content: Results -->
             <div class="lg:col-span-2">
-                <!-- Reverse Calculator Results -->
-                <div id="reverseResultsPanel" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">🎯 Solution to Reach Your Target</h2>
-                    <div id="reverseResultsContent">
-                        <!-- Reverse results will be dynamically populated -->
+                <!-- Welcome Message -->
+                <div id="welcomeMessage" class="bg-gray-800 shadow-sm rounded-lg p-8 mb-6 border border-gray-700 text-center">
+                    <h2 class="text-2xl font-semibold text-gray-100 mb-3">Welcome to the Pricing Equilibrium Calculator</h2>
+                    <p class="text-gray-400 mb-4">Select a pricing model to get started</p>
+                    <div class="text-left max-w-2xl mx-auto">
+                        <p class="text-sm text-gray-400 mb-3">This calculator helps you find the sweet spot between:</p>
+                        <ul class="list-disc list-inside text-sm text-gray-400 space-y-1 mb-4">
+                            <li><strong class="text-gray-300">Seller Floor:</strong> Minimum price to meet your margin goals</li>
+                            <li><strong class="text-gray-300">Buyer Ceiling:</strong> Maximum price buyers will accept based on value</li>
+                            <li><strong class="text-gray-300">Equilibrium Zone:</strong> The win-win pricing range</li>
+                        </ul>
+                        <p class="text-sm text-gray-400">Choose a pricing model from the left to begin your analysis.</p>
                     </div>
                 </div>
 
-                <!-- Client Budget Results -->
-                <div id="clientBudgetResultsPanel" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">💰 Pricing Options Within Your Budget</h2>
-                    <div id="clientBudgetResultsContent">
-                        <!-- Client budget results will be dynamically populated -->
-                    </div>
+                <!-- Results Container (will be populated by results-display.js) -->
+                <div id="resultsContainer" class="hidden">
+                    <!-- Results will be dynamically populated here -->
                 </div>
 
-                <!-- Universal Metrics Comparison (shown when multiple models selected) -->
-                <div id="universalMetricsPanel" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Universal Metrics Comparison</h2>
-                    <div id="universalMetricsContent">
-                        <!-- Universal metrics cards will be dynamically populated -->
-                    </div>
-                </div>
-
-                <!-- Model-Specific Metrics Panel -->
-                <div id="metricsPanel" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Key Metrics</h2>
-                    <div id="metricsContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <!-- Metrics will be dynamically populated -->
-                    </div>
-                </div>
-
-                <!-- Comparison Charts Container -->
-                <div id="comparisonChartsContainer" class="mb-6 hidden">
-                    <!-- Comparison charts will be dynamically populated -->
-                </div>
-
-                <!-- Primary Chart -->
-                <div id="primaryChartContainer" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700 hidden">
-                    <div id="primaryChart"></div>
-                </div>
-
-                <!-- Secondary Charts -->
-                <div id="secondaryChartsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
-                    <div id="secondaryChart1Container" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
-                        <div id="secondaryChart1"></div>
-                    </div>
-                    <div id="secondaryChart2Container" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
-                        <div id="secondaryChart2"></div>
-                    </div>
-                </div>
-
-                <!-- Race Chart Visualization -->
-                <div id="raceChartContainer" class="bg-gray-800 shadow-sm rounded-lg p-6 mt-6 border border-gray-700 hidden">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Cumulative Revenue Chart</h2>
-                    <div id="raceChart"></div>
-                </div>
-
-                <!-- Comparison Table -->
-                <div id="comparisonTableContainer" class="bg-gray-800 shadow-sm rounded-lg p-6 mt-6 border border-gray-700 hidden">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">Month-by-Month Comparison</h2>
-                    <div class="overflow-x-auto">
-                        <table id="comparisonTable" class="w-full text-sm text-gray-300">
-                            <!-- Table will be dynamically populated -->
-                        </table>
+                <!-- Charts Container -->
+                <div id="chartsContainer" class="hidden">
+                    <div id="equilibriumChart" class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700">
+                        <!-- Equilibrium visualization chart -->
                     </div>
                 </div>
             </div>
@@ -399,7 +121,7 @@
 
         <!-- Footer -->
         <footer class="mt-8 text-center text-gray-400 text-sm">
-            <p>Revenue Model Calculator | Open Source | Built with ApexCharts & Tailwind CSS</p>
+            <p>Pricing Equilibrium Calculator | Open Source | Built with ApexCharts & Tailwind CSS</p>
         </footer>
     </div>
 
