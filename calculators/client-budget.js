@@ -1,12 +1,12 @@
 import { models } from '../models/index.js';
 import { currentMode, selectedModels, clientBudgetState, CONFIG } from '../config/constants.js';
-import { formatCurrency, formatNumber, calculateUniversalMetrics, getMetricInterpretation, METRIC_EXPLANATIONS, CALCULATION_EXPLANATIONS } from '../utils/index.js';
+import { formatCurrency, formatNumber, formatPercentage, calculateUniversalMetrics, getMetricInterpretation, METRIC_EXPLANATIONS, CALCULATION_EXPLANATIONS } from '../utils/index.js';
 import { canCompareModels } from '../framework/model-families.js';
 import { calculateModel } from './engine.js';
 
 // Forward declarations for functions that will be provided by app.js
 let hideAllResultPanels, renderCharts, updateMetrics,
-    renderExecutiveSummary, renderUniversalMetrics, renderComparisonCharts,
+    renderUniversalMetrics, renderComparisonCharts,
     renderRaceChart, renderComparisonTable, showCalculationInfo, showInputInfo,
     showMetricInfo, raceChartAnimation, selectedCategory, LAYER_1_CATEGORIES,
     selectedDelivery, selectedService, LAYER_2_DELIVERY, LAYER_3_SERVICE;
@@ -16,7 +16,6 @@ export function setUIFunctions(functions) {
     hideAllResultPanels = functions.hideAllResultPanels;
     renderCharts = functions.renderCharts;
     updateMetrics = functions.updateMetrics;
-    renderExecutiveSummary = functions.renderExecutiveSummary;
     renderUniversalMetrics = functions.renderUniversalMetrics;
     renderComparisonCharts = functions.renderComparisonCharts;
     renderRaceChart = functions.renderRaceChart;
