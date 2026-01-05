@@ -362,9 +362,16 @@ Requires modern browsers with ES6 module support:
 
 ## Changelog
 
+> For complete development history and detailed bug fix information, see [HISTORY.md](./HISTORY.md)
+
 ### January 2026 - Critical Bug Fixes
 
 #### Fixed
+- **Vendor Mode Comparison Charts** (January 5, 2026): Comparison graphs now display by default in vendor mode
+  - Fixed "Compare multiple models" checkbox to be checked by default
+  - Users can now select and compare multiple models immediately without toggling
+  - Enables side-by-side visualization and metric comparison in vendor/forward mode
+  - Users can still uncheck the box to focus on a single model
 - **Mode Selection Not Initializing** (January 3, 2026): Calculator mode buttons were not working after page load
   - Added explicit `setCalculatorMode('forward')` call in `init()` function to initialize default state
   - Previously, HTML showed forward mode as active but JavaScript never ran initialization logic
