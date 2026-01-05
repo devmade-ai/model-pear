@@ -7,9 +7,7 @@ import { SCENARIO_TEMPLATES } from './forms.js';
 // Forward declarations for functions that will be provided by app.js
 let generateAdminPanel, updateClientBudgetOptions, onCategoryChangeHandler,
     onCompareMultipleToggleHandler, onDeliveryChangeHandler,
-    onServiceChangeHandler, onCalculateHandler,
-    updateSelectedSummary, updateCalculateButton,
-    onInputChange, onModelSelectionChange, updateInputForms;
+    onServiceChangeHandler, onCalculateHandler, onInputChange;
 
 export function setUIHandlers(handlers) {
     generateAdminPanel = handlers.generateAdminPanel;
@@ -19,11 +17,7 @@ export function setUIHandlers(handlers) {
     onDeliveryChangeHandler = handlers.onDeliveryChange;
     onServiceChangeHandler = handlers.onServiceChange;
     onCalculateHandler = handlers.onCalculate;
-    updateSelectedSummary = handlers.updateSelectedSummary;
-    updateCalculateButton = handlers.updateCalculateButton;
     onInputChange = handlers.onInputChange;
-    onModelSelectionChange = handlers.onModelSelectionChange;
-    updateInputForms = handlers.updateInputForms;
 }
 
 // ========== INITIALIZATION ==========

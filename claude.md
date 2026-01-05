@@ -633,34 +633,43 @@ When working on this project:
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
-### Critical Bug Fix: Duplicate Declaration Errors (Part 2)
+### Critical Bug Fix: Comprehensive Duplicate Declaration Resolution
 
 **Date**: January 5, 2026
-**Impact**: Fixed SyntaxError preventing application from loading
+**Impact**: Fixed multiple SyntaxError instances preventing application from loading
 
-**Issue**: `Uncaught SyntaxError: Identifier 'generateModelCheckboxes' has already been declared`
+**Issue**: `Uncaught SyntaxError: Identifier has already been declared` for multiple functions
 
-- **Root Cause**: The function `generateModelCheckboxes` was both forward-declared for dependency injection AND exported as a local function in `ui/initialization.js`
-- **Affected Function**:
-  - `generateModelCheckboxes` (line 11 forward declaration, line 22 assignment, line 392 export)
-- **Why It Happened**: Circular dependency injection pattern was incorrectly applied - the module was trying to inject its own function into itself via `app.js`
-- **Fix**: Removed `generateModelCheckboxes` from:
-  - Forward declaration list (line 11)
-  - `setUIHandlers()` assignment (line 22)
-- **Impact**: Function remains as locally exported function, called directly within module
+- **Root Cause**: Multiple functions were both forward-declared for dependency injection AND exported as local functions in `ui/initialization.js`
+- **Affected Functions**:
+  - `generateModelCheckboxes` - forward-declared AND exported locally (line 391)
+  - `updateSelectedSummary` - forward-declared AND exported locally (line 559)
+  - `updateCalculateButton` - forward-declared AND exported locally (line 763)
+  - `onModelSelectionChange` - forward-declared AND exported locally (line 522)
+  - `updateInputForms` - forward-declared AND exported locally (line 575)
+- **Why It Happened**: Circular dependency injection pattern was incorrectly applied - the module was trying to inject its own functions into itself via `app.js`
+- **Fix**: Removed all self-referencing functions from:
+  - Forward declaration list (lines 8-12)
+  - `setUIHandlers()` assignment (lines 14-27)
+  - `app.js` dependency injection (lines 53-67)
+- **Impact**: All functions remain as locally exported functions, called directly within module
 
 **Technical Details**:
 
-- Same root cause as previous duplicate declaration bug in `calculators/client-budget.js`
+- Same root cause as previous duplicate declaration bugs in `calculators/client-budget.js`
 - JavaScript doesn't allow the same identifier to be declared twice in the same scope
-- `let generateModelCheckboxes` creates a variable declaration
-- `export function generateModelCheckboxes` creates a function declaration
+- `let functionName` creates a variable declaration
+- `export function functionName` creates a function declaration
 - A function defined and exported in a module should NOT also be forward-declared for injection back into itself
-- Pattern: Use dependency injection only for functions from OTHER modules, not self-references
+- **Correct Pattern**: Use dependency injection ONLY for functions from OTHER modules, not self-references
+  - ✅ Inject `admin.generateAdminPanel` into `initialization.js` (cross-module)
+  - ✅ Inject `events.onInputChange` into `initialization.js` (cross-module)
+  - ❌ Inject `initialization.generateModelCheckboxes` into `initialization.js` (self-reference)
 
 **Files Modified**:
 
-- `ui/initialization.js` (removed 1 duplicate declaration from forward declarations and setter function)
+- `ui/initialization.js` (removed 5 duplicate declarations from forward declarations and setter function)
+- `app.js` (removed 5 self-injection calls from initialization.setUIHandlers)
 
 **Testing**: Verified application loads without errors in browser console, model selection works correctly
 

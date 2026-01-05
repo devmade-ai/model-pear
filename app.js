@@ -58,12 +58,7 @@ initialization.setUIHandlers({
     onDeliveryChange: initialization.onDeliveryChange,
     onServiceChange: initialization.onServiceChange,
     onCalculate: events.onCalculate,
-    generateModelCheckboxes: initialization.generateModelCheckboxes,
-    updateSelectedSummary: initialization.updateSelectedSummary,
-    updateCalculateButton: initialization.updateCalculateButton,
-    onInputChange: events.onInputChange,
-    onModelSelectionChange: initialization.onModelSelectionChange,
-    updateInputForms: initialization.updateInputForms
+    onInputChange: events.onInputChange
 });
 
 admin.setAdminHandlers({
