@@ -633,7 +633,38 @@ When working on this project:
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
-### Critical Bug Fix: Duplicate Declaration Errors
+### Critical Bug Fix: Duplicate Declaration Errors (Part 2)
+
+**Date**: January 5, 2026
+**Impact**: Fixed SyntaxError preventing application from loading
+
+**Issue**: `Uncaught SyntaxError: Identifier 'generateModelCheckboxes' has already been declared`
+
+- **Root Cause**: The function `generateModelCheckboxes` was both forward-declared for dependency injection AND exported as a local function in `ui/initialization.js`
+- **Affected Function**:
+  - `generateModelCheckboxes` (line 11 forward declaration, line 22 assignment, line 392 export)
+- **Why It Happened**: Circular dependency injection pattern was incorrectly applied - the module was trying to inject its own function into itself via `app.js`
+- **Fix**: Removed `generateModelCheckboxes` from:
+  - Forward declaration list (line 11)
+  - `setUIHandlers()` assignment (line 22)
+- **Impact**: Function remains as locally exported function, called directly within module
+
+**Technical Details**:
+
+- Same root cause as previous duplicate declaration bug in `calculators/client-budget.js`
+- JavaScript doesn't allow the same identifier to be declared twice in the same scope
+- `let generateModelCheckboxes` creates a variable declaration
+- `export function generateModelCheckboxes` creates a function declaration
+- A function defined and exported in a module should NOT also be forward-declared for injection back into itself
+- Pattern: Use dependency injection only for functions from OTHER modules, not self-references
+
+**Files Modified**:
+
+- `ui/initialization.js` (removed 1 duplicate declaration from forward declarations and setter function)
+
+**Testing**: Verified application loads without errors in browser console, model selection works correctly
+
+### Critical Bug Fix: Duplicate Declaration Errors (Part 1)
 
 **Date**: January 5, 2026
 **Impact**: Fixed SyntaxError that prevented application from loading

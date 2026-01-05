@@ -8,7 +8,7 @@ import { SCENARIO_TEMPLATES } from './forms.js';
 let generateAdminPanel, updateClientBudgetOptions, onCategoryChangeHandler,
     onCompareMultipleToggleHandler, onDeliveryChangeHandler,
     onServiceChangeHandler, onCalculateHandler,
-    generateModelCheckboxes, updateSelectedSummary, updateCalculateButton,
+    updateSelectedSummary, updateCalculateButton,
     onInputChange, onModelSelectionChange, updateInputForms;
 
 export function setUIHandlers(handlers) {
@@ -19,7 +19,6 @@ export function setUIHandlers(handlers) {
     onDeliveryChangeHandler = handlers.onDeliveryChange;
     onServiceChangeHandler = handlers.onServiceChange;
     onCalculateHandler = handlers.onCalculate;
-    generateModelCheckboxes = handlers.generateModelCheckboxes;
     updateSelectedSummary = handlers.updateSelectedSummary;
     updateCalculateButton = handlers.updateCalculateButton;
     onInputChange = handlers.onInputChange;
