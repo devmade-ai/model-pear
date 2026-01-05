@@ -633,6 +633,37 @@ When working on this project:
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Critical Bug Fix: Duplicate Declaration Errors
+
+**Date**: January 5, 2026
+**Impact**: Fixed SyntaxError that prevented application from loading
+
+**Issue**: `Uncaught SyntaxError: Identifier 'renderUniversalMetrics' has already been declared`
+
+- **Root Cause**: Multiple functions were both forward-declared as dependency injection variables AND exported as local functions in `calculators/client-budget.js`
+- **Affected Functions**:
+  - `renderUniversalMetrics` (line 9 forward declaration, line 726 export)
+  - `renderComparisonCharts` (line 9 forward declaration, line 907 export)
+  - `renderRaceChart` (line 10 forward declaration, line 1188 export)
+  - `renderComparisonTable` (line 10 forward declaration, line 1123 export)
+- **Why It Happened**: During modular refactoring, these functions were moved from app.js to client-budget.js but the forward declarations weren't removed
+- **Fix**: Removed duplicate function names from forward declarations (lines 8-11) and from setUIFunctions (lines 19-22)
+- **Impact**: Application now loads without SyntaxError, all calculator modes functional
+
+**Technical Details**:
+
+- JavaScript doesn't allow the same identifier to be declared twice in the same scope
+- `let renderUniversalMetrics` creates a variable declaration
+- `export function renderUniversalMetrics` creates a function declaration
+- Both in the same module scope → SyntaxError
+- The pattern should be: either forward-declare for injection OR export your own implementation, not both
+
+**Files Modified**:
+
+- `calculators/client-budget.js` (removed 4 duplicate declarations from forward declaration block and setter function)
+
+**Testing**: Verified application loads without errors in browser console
+
 ### Critical Bug Fix: DOMContentLoaded Race Condition
 
 **Date**: January 3, 2026
