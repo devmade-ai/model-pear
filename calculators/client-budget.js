@@ -5,7 +5,7 @@ import { canCompareModels } from '../framework/model-families.js';
 import { calculateModel } from './engine.js';
 
 // Forward declarations for functions that will be provided by app.js
-let hideAllResultPanels, renderCharts, updateMetrics, displayVariablesSummary,
+let hideAllResultPanels, renderCharts, updateMetrics,
     renderExecutiveSummary, renderUniversalMetrics, renderComparisonCharts,
     renderRaceChart, renderComparisonTable, showCalculationInfo, showInputInfo,
     showMetricInfo, raceChartAnimation, selectedCategory, LAYER_1_CATEGORIES,
@@ -16,7 +16,6 @@ export function setUIFunctions(functions) {
     hideAllResultPanels = functions.hideAllResultPanels;
     renderCharts = functions.renderCharts;
     updateMetrics = functions.updateMetrics;
-    displayVariablesSummary = functions.displayVariablesSummary;
     renderExecutiveSummary = functions.renderExecutiveSummary;
     renderUniversalMetrics = functions.renderUniversalMetrics;
     renderComparisonCharts = functions.renderComparisonCharts;

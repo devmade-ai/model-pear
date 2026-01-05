@@ -15,6 +15,7 @@
 ## Architecture
 
 ### Tech Stack
+
 - **Frontend**: HTML + Modular ES6 JavaScript
 - **Architecture**: 16 modules across 7 directories (~6,800 lines total)
 - **Styling**: Tailwind CSS (Play CDN)
@@ -23,6 +24,7 @@
 - **Performance**: <1s page load, <300ms updates
 
 ### File Structure
+
 ```
 model-pear/
 ├── index.html                    # Main HTML entry point
@@ -56,11 +58,13 @@ model-pear/
 ```
 
 ### Modular Architecture
+
 **Status**: ✅ Refactored (January 2026)
 
 The codebase has been refactored from a monolithic 6,377-line app.js into a modular architecture with 16 specialized modules across 7 directories:
 
 **Benefits**:
+
 - **96% reduction** in main file size (6,377 → 243 lines)
 - **Clear separation of concerns** - each module has single responsibility
 - **Independent testability** - modules can be unit tested in isolation
@@ -68,6 +72,7 @@ The codebase has been refactored from a monolithic 6,377-line app.js into a modu
 - **Scalability** - simpler to add new models or features
 
 **Module Organization**:
+
 - **config/** - Configuration constants and global state management
 - **framework/** - Three-layer pricing framework (categories → delivery → services)
 - **models/** - Revenue model definitions with calculation logic
@@ -82,52 +87,63 @@ The main app.js orchestrator sets up circular dependency resolution using depend
 ## Core Features
 
 ### 1. Multi-Model Comparison System
+
 **Status**: ✅ Complete
 
 Users can select and compare multiple revenue models simultaneously:
+
 - **Model Families**: 7 families grouping similar models (e.g., Subscription Family: SaaS, Per-Seat, Retainer, Managed Services)
 - **Family Overlay Charts**: Models in same family overlay on identical charts
 - **Universal Metrics**: All models calculate CAC, LTV, LTV:CAC, payback period for cross-family comparison
 - **Dynamic UI**: Page updates in real-time as models are selected/deselected
 
 ### 2. Revenue Models (20 Total)
+
 **Status**: ✅ All Implemented
 
 #### Subscription Model Family
+
 - Subscription (SaaS)
 - Per-Seat/Per-User
 - Retainer Agreements
 - Managed Services
 
 #### Usage-Based Consumption Family
+
 - Usage-Based (Consumption)
 - Pay-Per-Transaction
 - Credits/Token System
 
 #### Project Delivery Family
+
 - Time and Materials (Hourly)
 - Fixed-Price Projects
 - Outcome-Based/Milestone
 
 #### Free-to-Paid Conversion Family
+
 - Freemium
 - Open Core
 
 #### Platform/Intermediary Family
+
 - Marketplace/Platform Fee
 - Revenue Share Partnership
 - Advertising Supported
 
 #### Enterprise License Family
+
 - Enterprise License Agreement (ELA)
 - Data Licensing
 - White Label/OEM
 
 #### Standalone Models
+
 - One-Time Purchase (Perpetual License)
 - Tiered Pricing
 
 ### 3. Enhanced UX Features
+
 **Status**: ✅ Complete (December 2024)
 
 - **Four Calculator Modes**:
@@ -145,11 +161,13 @@ Users can select and compare multiple revenue models simultaneously:
 - **Input Hints**: Contextual ranges showing typical values for each parameter
 
 ### 4. Calculator Modes
+
 **Status**: ✅ Complete (December 2024)
 
 The calculator supports four distinct modes, each serving a different user perspective:
 
 #### Vendor Mode (Forward Calculator)
+
 **Perspective**: Business/Vendor calculating potential revenue
 
 - **Input**: Pricing parameters (price, users, growth, churn, etc.)
@@ -159,6 +177,7 @@ The calculator supports four distinct modes, each serving a different user persp
 - **Supports**: Single and multi-model comparison
 
 #### Growth Mode (Reverse Calculator)
+
 **Perspective**: Business/Vendor with revenue targets
 
 - **Input**: Target revenue goal, target month, constraints
@@ -169,6 +188,7 @@ The calculator supports four distinct modes, each serving a different user persp
 - **Supports**: Single model only
 
 #### Client Mode (Budget Calculator)
+
 **Perspective**: Client/Buyer with budget constraints
 
 - **Input**: Monthly budget, flexibility (strict/moderate/flexible), optimization priority
@@ -197,6 +217,7 @@ The calculator supports four distinct modes, each serving a different user persp
 - **Supports**: Multiple models (shows best option per model)
 
 #### Admin Mode (Model Configuration Editor)
+
 **Perspective**: Power user/Administrator managing model defaults
 
 - **Input**: Direct editing of all model default parameters
@@ -225,22 +246,26 @@ The calculator supports four distinct modes, each serving a different user persp
 All 20 models calculate these standardized metrics for comparison:
 
 ### Customer Economics
+
 - **CAC** (Customer Acquisition Cost): Input-based, not estimated
 - **LTV** (Lifetime Value): Total revenue per customer over lifetime
 - **LTV:CAC Ratio**: Industry benchmarks: <1 unsustainable, 3-5 healthy, >5 excellent
 - **Payback Period**: Months to recover CAC (lower is better)
 
 ### Growth Metrics
+
 - **MoM Growth Rate**: Month-over-month revenue growth percentage
 - **Customer Growth**: New customers/units acquired per period
 - **Revenue Growth**: Total revenue trajectory
 
 ### Efficiency Metrics
+
 - **Revenue per Customer**: Average revenue generated per customer/unit
 - **Gross Margin**: If applicable to model type
 - **Retention Rate**: Customer/unit retention over time
 
 ### Financial Performance
+
 - **Total Revenue**: Sum over forecast period (default: 24 months)
 - **Revenue Run Rate**: Annualized current revenue
 - **Cash Flow Patterns**: Revenue recognition vs. cash received
@@ -248,6 +273,7 @@ All 20 models calculate these standardized metrics for comparison:
 ## Key Implementation Patterns
 
 ### Model Definition Schema
+
 ```javascript
 {
   name: "Model Name",
@@ -268,6 +294,7 @@ All 20 models calculate these standardized metrics for comparison:
 ```
 
 ### Universal Metrics Calculation
+
 ```javascript
 calculateUniversalMetrics(modelData, inputs) {
   return {
@@ -282,6 +309,7 @@ calculateUniversalMetrics(modelData, inputs) {
 ```
 
 ### Comparison View Logic
+
 ```javascript
 if (selectedModels.length === 0) {
   // Show empty state
@@ -298,6 +326,7 @@ if (selectedModels.length === 0) {
 ## Input Validation Rules
 
 ### Validation Framework
+
 Pre-calculation checks to prevent zero-revenue scenarios and guide users:
 
 - **Zero Inputs**: Warn if customers/units = 0
@@ -307,6 +336,7 @@ Pre-calculation checks to prevent zero-revenue scenarios and guide users:
 - **Model-Specific Rules**: Each model has custom validation logic
 
 ### Example Validation
+
 ```javascript
 validateModelInputs(modelKey, inputs) {
   const warnings = [];
@@ -334,25 +364,31 @@ validateModelInputs(modelKey, inputs) {
 ## Chart Visualization Strategy
 
 ### Family Overlay Charts
+
 When models from **same family** selected:
+
 - Single chart with multiple colored series
 - Shared Y-axis (MRR, Revenue, etc.)
 - Shared X-axis (months)
 - Legend to toggle series visibility
 
 ### Side-by-Side Charts
+
 When models from **different families** selected:
+
 - Separate charts per model
 - Universal metrics panel above for cross-comparison
 - Consistent styling across charts
 
 ### Chart Types by Model
+
 - **Line Charts**: Revenue trends, customer growth (all models)
 - **Stacked Area**: Revenue composition (Subscription, Tiered, Marketplace)
 - **Bar Charts**: Period comparisons (Fixed-Price, Outcome-Based)
 - **Waterfall**: MRR components (Subscription family)
 
 ### Empty State Handling
+
 ```javascript
 if (allSeriesEmpty(chartData)) {
   renderEmptyState({
@@ -373,14 +409,17 @@ if (allSeriesEmpty(chartData)) {
 Pre-configured input sets for common use cases:
 
 ### Subscription Model
+
 - **Early Stage SaaS**: $49 price, 25 customers/month, 5% churn, $200 CAC
 - **Enterprise SaaS**: $499 price, 5 customers/month, 3% churn, $2000 CAC
 
 ### Freemium Model
+
 - **Consumer App**: 1000 free users/month, 2% conversion, 15% free churn
 - **B2B Freemium**: 200 free users/month, 8% conversion, 10% free churn
 
 ### Usage-Based Model
+
 - **API Service**: $0.01/unit, 10k units/customer, 15% usage growth
 - **Cloud Infrastructure**: $0.05/unit, 5k units/customer, 20% usage growth
 
@@ -396,12 +435,14 @@ Pre-configured input sets for common use cases:
 ## Browser Compatibility
 
 **Target**: Modern evergreen browsers with ES6 module support
+
 - Chrome 90+ (ES6 modules supported)
 - Firefox 88+ (ES6 modules supported)
 - Safari 14+ (ES6 modules supported)
 - Edge 90+ (ES6 modules supported)
 
 **Required APIs**:
+
 - ES6 Modules (import/export statements)
 - ES6 JavaScript (arrow functions, const/let, template literals, destructuring)
 - Canvas for ApexCharts
@@ -410,6 +451,7 @@ Pre-configured input sets for common use cases:
 ## Development Workflow
 
 ### Making Changes
+
 1. **Edit relevant module files**:
    - Models: `models/index.js`
    - UI changes: `ui/*.js`
@@ -426,11 +468,13 @@ Pre-configured input sets for common use cases:
 ### GitHub Pages Configuration
 
 **Critical Requirements:**
+
 - `.nojekyll` file MUST exist in root directory (already included)
 - This file disables Jekyll processing which can break ES6 module imports
 - Without it, modules fail with MIME type errors: "Expected a JavaScript module script but the server responded with a MIME type of 'text/html'"
 
 **Why .nojekyll is Required:**
+
 - GitHub Pages uses Jekyll by default to process static sites
 - Jekyll can interfere with JavaScript module MIME types
 - Jekyll may ignore or alter files in subdirectories (config/, ui/, etc.)
@@ -438,12 +482,14 @@ Pre-configured input sets for common use cases:
 - The `.nojekyll` file bypasses Jekyll entirely
 
 **Deployment Settings:**
+
 - Source: Deploy from branch (usually `main`)
 - Directory: `/ (root)` - DO NOT use `/docs`
 - All JavaScript files use relative imports with `.js` extensions
 - No build process required
 
 ### Adding a New Model
+
 1. Define model in `models/index.js` (~50 lines)
 2. Implement `calculate()` function with monthly projections
 3. Define input schema with defaults and hints
@@ -453,6 +499,7 @@ Pre-configured input sets for common use cases:
 7. Update this file's model count and documentation
 
 ### Testing Checklist
+
 - [ ] Model renders in selector with correct family
 - [ ] Input form generates with all fields
 - [ ] Default values populate correctly
@@ -467,51 +514,64 @@ Pre-configured input sets for common use cases:
 ## Common Tasks
 
 ### Update Metric Interpretation Ranges
+
 **Location**: `utils/index.js` (METRIC_EXPLANATIONS constant)
 
 ### Add New Scenario Template
+
 **Location**: `ui/forms.js` (SCENARIO_TEMPLATES constant)
 
 ### Modify Chart Colors
+
 **Location**: `config/constants.js` (CONFIG.chartColors)
 
 ### Adjust Validation Rules
+
 **Location**: `utils/index.js` (validateModelInputs function)
 
 ### Change Default Forecast Period
+
 **Location**: `config/constants.js` (CONFIG.defaultForecastMonths)
 
 ### Add New Revenue Model
+
 **Location**: `models/index.js` (add to models object and export)
 
 ### Modify Calculator Logic
+
 **Location**: `calculators/engine.js` (forward calculations) or `calculators/client-budget.js` (budget/reverse calculations)
 
 ### Update UI Components
+
 **Location**: `ui/*.js` (forms, events, initialization, admin, modals)
 
 ### Add Chart Visualizations
+
 **Location**: `charts/index.js` (chart rendering functions)
 
 ## Known Limitations & Trade-offs
 
 ### Modular Architecture
+
 - **Pro**: Clean separation, easy navigation, testable modules, scalable codebase
 - **Pro**: No build process required (ES6 modules work natively in modern browsers)
 - **Con**: Slightly more complex for beginners (16 files vs 1 file)
 - **Decision**: Modular structure improves maintainability significantly, worth the small learning curve
 
 ### Client-Side Only
+
 - **Pro**: Free hosting, infinite scale, no server costs
 - **Con**: Can't persist scenarios across devices, no user accounts
 - **Solution**: Optional localStorage for single-device persistence
 
 ### CDN Dependencies
+
 - **Risk**: ApexCharts or Tailwind CDN outage breaks app
 - **Mitigation**: CDNs have 99.9% uptime, can vendor libraries if needed
 - **Decision**: Accept CDN dependency for simplicity, add fallback if issues arise
 
 ### No Real-Time Collaboration
+
 - **Limitation**: Can't share live scenarios with team members
 - **Workaround**: Export/import JSON, or share URL parameters
 - **Decision**: Out of scope for v1, focus on individual analysis
@@ -519,6 +579,7 @@ Pre-configured input sets for common use cases:
 ## Future Enhancements (Not Committed)
 
 ### Potential Features
+
 - **Scenario Persistence**: Save/load scenarios via localStorage or export JSON
 - **URL Parameters**: Shareable links with encoded inputs
 - **CSV Export**: Download monthly projections as spreadsheet
@@ -527,6 +588,7 @@ Pre-configured input sets for common use cases:
 - **Custom Model Builder**: Let users define custom revenue models
 
 ### Technical Improvements
+
 - **Web Workers**: Offload calculations for 36+ month forecasts
 - **Service Worker**: Offline functionality via PWA
 - **TypeScript**: Add type safety and better IDE support
@@ -536,16 +598,19 @@ Pre-configured input sets for common use cases:
 ## Troubleshooting
 
 ### Charts Not Rendering
+
 - Check browser console for ApexCharts CDN load errors
 - Verify data array has correct format: `[{month: 0, revenue: 100}, ...]`
 - Ensure chart container div exists in DOM
 
 ### Calculations Returning Zero
+
 - Run validation warnings to check input combinations
 - Verify churn rate not exceeding acquisition rate
 - Check for division by zero in custom model logic
 
 ### Performance Degradation
+
 - Reduce forecast months from 36 to 24
 - Disable animations in chart config
 - Debounce input changes (already implemented at 300ms)
@@ -569,10 +634,12 @@ When working on this project:
 ## Recent Bug Fixes & Improvements (January 2026)
 
 ### Critical Bug Fix: DOMContentLoaded Race Condition
+
 **Date**: January 3, 2026
 **Impact**: Fixed complete application initialization failure on mobile devices and cached pages
 
 **Issue**: Models not loading, mode selection not working, all interactive features unresponsive
+
 - **Root Cause**: Race condition in app initialization - `document.addEventListener('DOMContentLoaded', init)` was called at ES6 module load time with `init` being `undefined`
 - **Sequence**:
   1. `modals.js` loads and immediately registers DOMContentLoaded listener with undefined function
@@ -585,21 +652,25 @@ When working on this project:
 - **Impact**: Restored all interactive functionality on mobile devices and cached pages
 
 **Technical Details**:
+
 - ES6 modules execute synchronously at load time, creating timing dependencies
 - Mobile browsers and cached pages often have DOMContentLoaded fire before module imports complete
 - The forward declaration pattern (`let init;`) doesn't work with immediate event listener registration
 - Solution handles both cases: DOM loading vs already loaded via `document.readyState` check
 
 **Files Modified**:
+
 - `ui/modals.js` (moved DOMContentLoaded listener into setInitFunction, added readyState check)
 
 **Testing**: Verified initialization works correctly on both desktop and mobile, with and without cached content
 
 ### Critical Bug Fixes: Perspective Buttons & Calculate Handler
+
 **Date**: January 1, 2026
 **Impact**: Restored functionality for calculator mode switching and calculations
 
 **Issues Fixed**:
+
 1. **Perspective Buttons Not Working**: Calculator mode buttons (Vendor, Growth, Client, Admin) were unresponsive
    - **Root Cause**: `setCalculatorMode()` was directly assigning to imported `currentMode` variable instead of using setter function
    - **Fix**: Changed `currentMode = mode` to `setCurrentMode(mode)` in `ui/initialization.js:41`
@@ -611,21 +682,25 @@ When working on this project:
    - **Impact**: Calculate button now properly routes to correct calculation function based on current mode
 
 **Technical Details**:
+
 - ES6 module imports create read-only bindings - cannot reassign imported variables directly
 - Proper use of setter functions maintains module encapsulation and state consistency
 - Dependency injection pattern requires using injected handler names, not external function names
 - Both bugs prevented core functionality from working after modular refactoring
 
 **Files Modified**:
+
 - `ui/initialization.js` (2 lines changed)
 
 **Testing**: Verified all four calculator modes (Vendor, Growth, Client, Admin) and calculation functions work correctly
 
 ### Major Refactoring: Monolithic to Modular Architecture
+
 **Date**: January 1, 2026
 **Impact**: Complete codebase restructuring
 
 **Changes**:
+
 - Refactored 6,377-line monolithic `app.js` into 16 specialized modules
 - Created 7-directory structure: `config/`, `framework/`, `models/`, `utils/`, `charts/`, `calculators/`, `ui/`
 - Reduced main orchestrator file to 243 lines (96% reduction)
@@ -634,6 +709,7 @@ When working on this project:
 - Maintained 100% backward compatibility with existing HTML
 
 **Benefits**:
+
 - Dramatically improved code maintainability and navigation
 - Each module has single, clear responsibility
 - Modules can be tested independently
@@ -642,6 +718,7 @@ When working on this project:
 - Better separation of concerns
 
 **Files Created**:
+
 - `config/constants.js` - Global configuration and state
 - `framework/*.js` - Three-layer pricing framework (4 files)
 - `models/index.js` - All 20 revenue model definitions
@@ -652,20 +729,25 @@ When working on this project:
 - `ui/*.js` - UI components (5 files: forms, events, initialization, admin, modals)
 
 ### Client Budget Calculator Fixes
+
 **Issue**: Budget calculation options not appearing when models changed
 **Fix**: Added `updateClientBudgetOptions()` call in `onModelSelectionChange()` to refresh budget options when models are selected/deselected in client-budget mode
 
 ### Section Visibility Management
+
 **Issue**: Empty sections remained visible after switching modes or calculations
 **Fix**: Created centralized `hideAllResultPanels()` function that:
+
 - Hides all result panels (reverse, client-budget, universal metrics, charts, etc.)
 - Removes dynamically created elements (executive summary, variables summary)
 - Called at start of all calculation functions to ensure clean state
 - Eliminated redundant hiding code across multiple functions
 
 ### Chart Descriptions
+
 **Issue**: Charts lacked context and descriptions
 **Fix**: Added `subtitle` property to all major charts with descriptive text:
+
 - "License revenue declines while maintenance provides recurring stability"
 - "Monthly and annual recurring revenue trends"
 - "User base growth and conversion funnel visualization"
@@ -673,20 +755,25 @@ When working on this project:
 - And more model-specific descriptions
 
 ### Tooltip Improvements
+
 **Issue**: Info icons (ⓘ) appeared on every input field, even simple ones
 **Fix**: Made tooltips conditional - only show for complex inputs:
+
 - Displays ⓘ icon only when hint is >50 chars OR contains complex keywords (churn, conversion, CAC, LTV, ratio, multiplier, percentage)
 - Simple inputs like "Number of Users" no longer show redundant tooltip icons
 - Keeps inline hint text for all inputs as quick reference
 
 ### Code Quality
+
 - Removed 50+ lines of redundant panel-hiding code
 - Added `variables-summary` class to dynamic summary elements for consistent cleanup
 - Improved separation of concerns between UI state management and rendering
 
 ### Budget Calculation Improvements (Large Budget Support)
+
 **Issue**: Budgets above R1M showed "no options in budget" due to hardcoded capacity limits
 **Fix**: Implemented dynamic budget scaling system:
+
 - Created `findCapacityInput()` helper with case-insensitive keyword matching
   - Expanded keyword list: users, seats, customers, members, subscribers, startingusers, startingcustomers, freeusers, paidusers, newcustomers, etc.
   - Case-insensitive matching catches more input variations
@@ -699,8 +786,10 @@ When working on this project:
 **Result**: Budget calculator now supports budgets from R100 to R10M+ with accurate results
 
 ### Model Selection Flexibility
+
 **Issue**: Users couldn't toggle between single model focus and multi-model comparison
 **Fix**: Added "Compare multiple models" toggle checkbox:
+
 - HTML: Added toggle checkbox in `index.html` before model selector
 - JavaScript: Enhanced `generateModelCheckboxes()` to check toggle state
   - When checked: Uses checkboxes for multi-select (existing behavior)
@@ -716,6 +805,7 @@ When working on this project:
 ## Questions & Decisions
 
 ### Resolved
+
 - ✅ Multi-model comparison: Implemented with family overlay + universal metrics
 - ✅ All 20 models: Complete with full calculation logic
 - ✅ Winner indicators: Implemented with trophy icons and green highlighting
@@ -729,6 +819,7 @@ When working on this project:
 - ✅ Model selection modes: Toggle between single-model focus and multi-model comparison
 
 ### Open
+
 - ⏳ Scenario persistence: localStorage vs. session-only? (Lean toward session-only for simplicity)
 - ⏳ Data export: CSV export priority? (Low priority, charts are primary value)
 - ⏳ Custom models: Allow user-defined models? (Out of scope for v1)
@@ -736,8 +827,8 @@ When working on this project:
 
 ## Contact & Resources
 
-- **Repository**: https://github.com/devmade-ai/model-pear
-- **Live Demo**: https://devmade-ai.github.io/model-pear
+- **Repository**: <https://github.com/devmade-ai/model-pear>
+- **Live Demo**: <https://devmade-ai.github.io/model-pear>
 - **Issues**: Report bugs via GitHub Issues
 - **Documentation**: This file + inline code comments
 
