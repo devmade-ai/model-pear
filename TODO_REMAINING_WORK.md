@@ -11,6 +11,7 @@
 8. Created new results display component (seller/buyer/equilibrium views)
 9. Updated README with new simplified approach
 10. Created documentation summaries
+11. Created CALCULATIONS.md - comprehensive documentation of all formulas and rationale
 
 ## ⏳ Remaining Tasks
 
@@ -52,7 +53,9 @@
    - `calculators/client-budget.js` - Merged into main view
    - Can simplify or remove `framework/categories.js`
 
-7. **Update remaining documentation**
+7. **Update remaining documentation** ✅ PARTIALLY COMPLETE
+   - ✅ Created `CALCULATIONS.md` - Complete formula documentation
+   - ✅ Updated `README.md` to reference CALCULATIONS.md
    - `IMPLEMENTATION_PROGRESS.md` - Mark old features as deprecated
    - `HISTORY.md` - Add simplification entry
    - Remove or update `QUICK_START_ALIGNMENT.md`
