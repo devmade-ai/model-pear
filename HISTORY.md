@@ -9,6 +9,34 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Documentation: Comprehensive Calculations Guide
+
+**Date**: January 5, 2026
+**Impact**: Complete mathematical documentation for all pricing calculations
+
+**Addition**: Created CALCULATIONS.md - a comprehensive guide explaining all formulas, rationale, and economic theory
+
+- **Content**:
+  - Core calculation philosophy (static unit economics)
+  - Universal formulas applicable to all models
+  - Model-specific calculations with examples for all 5 pricing models
+  - Equilibrium theory explanation (seller floor vs buyer ceiling)
+  - ROI thresholds and assumptions with detailed rationale
+  - South African market calibration details
+  - Formula quick reference table
+  - Multiple worked examples and scenarios
+- **Purpose**: Help users understand the "why" behind every calculation
+- **Benefits**:
+  - Transparency in pricing logic
+  - Educational resource for founders/PMs/finance teams
+  - Reference for understanding economic principles
+  - Trust building through clear explanations
+
+**Files Modified**:
+- `CALCULATIONS.md` (new file - 1000+ lines)
+- `README.md` (added documentation section and quick start reference)
+- `TODO_REMAINING_WORK.md` (marked documentation as completed)
+
 ### UX Fix: Vendor Mode Comparison Charts Default State
 
 **Date**: January 5, 2026

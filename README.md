@@ -125,6 +125,8 @@ No build process needed - it's pure HTML/CSS/JS.
    - Buyer perspective (is ROI compelling?)
    - Equilibrium analysis (is there a pricing sweet spot?)
 
+💡 **Want to understand the math?** See [CALCULATIONS.md](CALCULATIONS.md) for detailed explanations of all formulas and rationale.
+
 ## South African Pricing Defaults
 
 All defaults are calibrated for the South African B2B software market (in ZAR):
@@ -210,6 +212,16 @@ model-pear/
 4. Find the equilibrium
 
 This tool helps you do exactly that - no more, no less.
+
+## Documentation
+
+### For Users
+- **[README.md](README.md)** (this file) - Overview and quick start guide
+- **[CALCULATIONS.md](CALCULATIONS.md)** - Complete explanation of all formulas, rationale, and examples
+
+### For Developers
+- **[SIMPLIFICATION_SUMMARY.md](SIMPLIFICATION_SUMMARY.md)** - Transition from old to new system
+- **[TODO_REMAINING_WORK.md](TODO_REMAINING_WORK.md)** - Development progress tracking
 
 ## Contributing
 
