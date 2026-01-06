@@ -55,22 +55,33 @@ function generateInputHTML(modelKey, input, isCalculated = false) {
         <div class="mb-4 ${isCalculated ? 'relative' : ''}">
             <label for="${inputId}" class="block text-sm font-medium text-gray-300 mb-1">
                 ${input.label}
-                ${isCalculated ? '<span class="ml-2 text-xs px-2 py-0.5 bg-yellow-600 rounded">Auto-calculated</span>' : ''}
+                ${isCalculated ? '<span class="ml-2 text-xs px-2 py-0.5 bg-yellow-600 rounded" role="status">Auto-calculated</span>' : ''}
             </label>
-            <input
-                type="${inputType}"
-                id="${inputId}"
-                name="${input.name}"
-                class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isCalculated ? 'bg-yellow-900/20 border-yellow-600' : ''}"
-                value="${input.default}"
-                ${inputType === 'number' ? `min="${input.min !== undefined ? input.min : 0}"` : ''}
-                ${inputType === 'number' && input.max !== undefined ? `max="${input.max}"` : ''}
-                ${inputType === 'number' ? `step="${input.step}"` : ''}
-                data-type="${input.type}"
-                data-model="${modelKey}"
-                ${isCalculated ? 'readonly' : ''}
-            />
-            ${input.hint ? `<small class="text-xs text-gray-500 mt-1 block">${input.hint}</small>` : ''}
+            <div class="relative">
+                <input
+                    type="${inputType}"
+                    id="${inputId}"
+                    name="${input.name}"
+                    class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isCalculated ? 'bg-yellow-900/20 border-yellow-600' : ''}"
+                    value="${input.default}"
+                    ${inputType === 'number' ? `min="${input.min !== undefined ? input.min : 0}"` : ''}
+                    ${inputType === 'number' && input.max !== undefined ? `max="${input.max}"` : ''}
+                    ${inputType === 'number' ? `step="${input.step}"` : ''}
+                    data-type="${input.type}"
+                    data-model="${modelKey}"
+                    ${isCalculated ? 'readonly' : ''}
+                    ${input.hint ? `aria-describedby="${inputId}-hint"` : ''}
+                    aria-required="${!isCalculated}"
+                />
+                <span id="${inputId}-validation" class="success-indicator hidden" aria-live="polite">✓</span>
+            </div>
+            ${input.hint ? `
+                <div id="${inputId}-hint" class="hint-with-icon">
+                    <span class="hint-icon" aria-hidden="true">💡</span>
+                    <small class="text-xs text-gray-400">${input.hint}</small>
+                </div>
+            ` : ''}
+            <div id="${inputId}-error" class="error-message hidden" role="alert"></div>
         </div>
     `;
 }
@@ -121,33 +132,45 @@ export function generateForm(modelKey) {
     // PRICING SECTION
     if (grouped.pricing.length > 0) {
         formHTML += `
-            <div class="mb-6">
-                <h3 class="text-lg font-semibold text-gray-100 mb-1">Pricing</h3>
-                <p class="text-xs text-gray-400 mb-3">Current price and volume</p>
-                ${grouped.pricing.map(input => generateInputHTML(modelKey, input, false)).join('')}
-            </div>
+            <details class="mb-4" open>
+                <summary class="text-lg font-semibold text-gray-100">
+                    <span>Pricing Inputs</span>
+                </summary>
+                <div>
+                    <p class="text-xs text-gray-400 mb-3">Current price and volume</p>
+                    ${grouped.pricing.map(input => generateInputHTML(modelKey, input, false)).join('')}
+                </div>
+            </details>
         `;
     }
 
     // SELLER COSTS SECTION
     if (grouped.seller.length > 0) {
         formHTML += `
-            <div class="mb-6 pb-6 border-b border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-100 mb-1">Seller Costs</h3>
-                <p class="text-xs text-gray-400 mb-3">Your costs and margin goals</p>
-                ${grouped.seller.map(input => generateInputHTML(modelKey, input, false)).join('')}
-            </div>
+            <details class="mb-4" open>
+                <summary class="text-lg font-semibold text-gray-100">
+                    <span>Seller Costs</span>
+                </summary>
+                <div>
+                    <p class="text-xs text-gray-400 mb-3">Your costs and margin goals</p>
+                    ${grouped.seller.map(input => generateInputHTML(modelKey, input, false)).join('')}
+                </div>
+            </details>
         `;
     }
 
     // BUYER VALUE SECTION
     if (grouped.buyer.length > 0) {
         formHTML += `
-            <div class="mb-6">
-                <h3 class="text-lg font-semibold text-gray-100 mb-1">Buyer Value</h3>
-                <p class="text-xs text-gray-400 mb-3">Value delivered to customers</p>
-                ${grouped.buyer.map(input => generateInputHTML(modelKey, input, false)).join('')}
-            </div>
+            <details class="mb-4" open>
+                <summary class="text-lg font-semibold text-gray-100">
+                    <span>Buyer Value</span>
+                </summary>
+                <div>
+                    <p class="text-xs text-gray-400 mb-3">Value delivered to customers</p>
+                    ${grouped.buyer.map(input => generateInputHTML(modelKey, input, false)).join('')}
+                </div>
+            </details>
         `;
     }
 

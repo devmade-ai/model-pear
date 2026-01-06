@@ -18,6 +18,9 @@ export function setInitFunction(initFn) {
 
 // ========== TOOLTIP MODAL FUNCTIONS ==========
 
+// Store previously focused element for focus restoration
+let previouslyFocusedElement = null;
+
 /**
  * Show tooltip modal with detailed information
  */
@@ -25,6 +28,9 @@ export function showTooltipModal(title, content) {
     const modal = document.getElementById('tooltipModal');
     const titleEl = document.getElementById('tooltipTitle');
     const contentEl = document.getElementById('tooltipContent');
+
+    // Store currently focused element
+    previouslyFocusedElement = document.activeElement;
 
     titleEl.textContent = title;
 
@@ -101,6 +107,14 @@ export function showTooltipModal(title, content) {
     contentEl.innerHTML = contentHTML;
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+
+    // Set focus to close button for keyboard accessibility
+    setTimeout(() => {
+        const closeButton = modal.querySelector('button[aria-label="Close dialog"]');
+        if (closeButton) {
+            closeButton.focus();
+        }
+    }, 100);
 }
 
 /**
@@ -115,6 +129,29 @@ export function closeTooltipModal(event) {
     const modal = document.getElementById('tooltipModal');
     modal.classList.add('hidden');
     modal.classList.remove('flex');
+
+    // Restore focus to previously focused element
+    if (previouslyFocusedElement) {
+        previouslyFocusedElement.focus();
+        previouslyFocusedElement = null;
+    }
+}
+
+/**
+ * Handle keyboard events for modal
+ */
+function handleModalKeydown(event) {
+    const modal = document.getElementById('tooltipModal');
+
+    // Close on Escape key
+    if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+        closeTooltipModal();
+    }
+}
+
+// Add keyboard event listener
+if (typeof document !== 'undefined') {
+    document.addEventListener('keydown', handleModalKeydown);
 }
 
 /**
