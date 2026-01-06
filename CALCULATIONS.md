@@ -54,10 +54,24 @@ The calculator now supports **auto-calculating missing inputs** based on other k
 ### How It Works
 
 Select a calculation mode from the dropdown at the top of the form. The calculator will:
-- Hide or lock the field being calculated
+- Lock the field being calculated (read-only with yellow styling)
 - Show an "Auto-calculated" badge on that field
 - Automatically compute the missing value based on other inputs
 - Update in real-time as you change other values
+
+### Field State Management
+
+**When switching between calculation modes:**
+- The previously calculated field is automatically unlocked and becomes editable again
+- Only ONE field is ever locked at a time (the current calculation target)
+- Switching to "Enter All Inputs Manually" unlocks all fields
+
+**Example:**
+1. Select "Calculate Optimal Price" → Price field locks (yellow, read-only)
+2. Switch to "Calculate Margin" → Price unlocks, Margin locks
+3. Switch to "Manual Entry" → All fields unlock
+
+This ensures you always know which field is being auto-calculated and prevents confusion about field states.
 
 ### Calculation Mode Options
 
