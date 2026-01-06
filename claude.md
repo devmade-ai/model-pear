@@ -448,6 +448,30 @@ Pre-configured input sets for common use cases:
 - Canvas for ApexCharts
 - LocalStorage (optional, for scenario persistence)
 
+## Documentation Structure
+
+The project uses a streamlined documentation approach with **claude.md** and **HISTORY.md** as the primary living documents:
+
+### For Business Users & Product Teams
+- **[README.md](README.md)** - Quick overview and getting started
+- **[BUSINESS_GUIDE.md](BUSINESS_GUIDE.md)** - Comprehensive user guide with tutorials and examples
+
+### For Understanding the Math
+- **[CALCULATIONS.md](CALCULATIONS.md)** - Complete explanation of all formulas, rationale, and examples
+
+### For Developers & AI Assistants
+- **[claude.md](claude.md)** (this file) - Primary technical documentation and architecture reference
+- **[HISTORY.md](HISTORY.md)** - Ongoing changelog, bug fixes, and development history
+
+### Documentation Maintenance Guidelines
+- **claude.md**: Update when architecture, features, or technical patterns change
+- **HISTORY.md**: Add entries for all bug fixes, improvements, and refactoring work
+- **README.md**: Keep concise, update only for major feature changes
+- **BUSINESS_GUIDE.md**: Update when user workflows or features change
+- **CALCULATIONS.md**: Update when formulas or pricing logic changes
+
+---
+
 ## Development Workflow
 
 ### Making Changes
