@@ -1,5 +1,4 @@
 import { models } from '../models/index.js';
-import { getDefaults } from '../config/sa-pricing-defaults.js';
 import { generateForm } from './forms.js';
 
 // Forward declarations for functions that will be provided by app.js
@@ -13,7 +12,6 @@ export function setUIHandlers(handlers) {
 // ========== STATE ==========
 
 export let selectedModel = null;
-export let selectedTier = null;
 
 /**
  * Initialize the application
@@ -29,12 +27,6 @@ export function init() {
             selectModel(modelKey);
         });
     });
-
-    // Add event listener to tier selector
-    const tierSelector = document.getElementById('tierSelector');
-    if (tierSelector) {
-        tierSelector.addEventListener('change', onTierChange);
-    }
 
     // Add event listener to calculate button
     const calculateBtn = document.getElementById('calculateBtn');
@@ -52,7 +44,6 @@ function selectModel(modelKey) {
     console.log('📊 Model selected:', modelKey);
 
     selectedModel = modelKey;
-    selectedTier = null;
 
     // Update button styles
     const modelButtons = document.querySelectorAll('.model-btn');
@@ -65,18 +56,6 @@ function selectModel(modelKey) {
     if (selectedBtn) {
         selectedBtn.classList.remove('bg-gray-700', 'text-gray-300', 'border-transparent');
         selectedBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-500');
-    }
-
-    // Show tier section
-    const tierSection = document.getElementById('tierSection');
-    if (tierSection) {
-        tierSection.classList.remove('hidden');
-
-        // Reset tier selector
-        const tierSelector = document.getElementById('tierSelector');
-        if (tierSelector) {
-            tierSelector.value = '';
-        }
     }
 
     // Show input form container
@@ -98,41 +77,6 @@ function selectModel(modelKey) {
     const welcomeMessage = document.getElementById('welcomeMessage');
     if (welcomeMessage) {
         welcomeMessage.classList.remove('hidden');
-    }
-}
-
-/**
- * Handle tier selection change
- */
-function onTierChange(event) {
-    selectedTier = event.target.value;
-
-    if (!selectedTier || !selectedModel) return;
-
-    console.log('🎯 Tier selected:', selectedTier, 'for model:', selectedModel);
-
-    // Get defaults for this tier and model
-    const defaults = getDefaults(selectedModel, selectedTier);
-
-    if (!defaults) {
-        console.warn('No defaults found for', selectedModel, selectedTier);
-        return;
-    }
-
-    // Apply defaults to form inputs
-    const model = models[selectedModel];
-    model.inputs.forEach(input => {
-        const inputId = `${selectedModel}-${input.name}`;
-        const inputElement = document.getElementById(inputId);
-
-        if (inputElement && defaults[input.name] !== undefined) {
-            inputElement.value = defaults[input.name];
-        }
-    });
-
-    // Trigger recalculation if handler is available
-    if (onInputChange) {
-        onInputChange();
     }
 }
 

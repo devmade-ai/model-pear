@@ -4,6 +4,9 @@ import { calculateMissingInput } from './reverse-calculations.js';
 
 // ========== CALCULATION ENGINE ==========
 
+// Track previous calculation mode per model to properly unlock fields
+const previousCalculationModes = {};
+
 /**
  * Calculate results for the selected model
  * Simplified for static unit economics (no month-by-month projections)
@@ -32,6 +35,12 @@ export function calculateModel(modelKey, calculationMode = 'none', pricingStrate
     // Calculate missing input if calculation mode is active
     if (calculationMode && calculationMode !== 'none') {
         try {
+            // Unlock the PREVIOUS calculated field when switching modes
+            const previousMode = previousCalculationModes[modelKey];
+            if (previousMode && previousMode !== 'none' && previousMode !== calculationMode) {
+                updateCalculatedFieldStyling(modelKey, previousMode, false);
+            }
+
             const calculatedValue = calculateMissingInput(modelKey, calculationMode, inputs, pricingStrategy);
             inputs[calculationMode] = calculatedValue;
 
@@ -42,16 +51,20 @@ export function calculateModel(modelKey, calculationMode = 'none', pricingStrate
                 calculatedElement.value = calculatedValue.toFixed(2);
             }
 
-            // Update input styling to show it's calculated
+            // Lock and style the NEW calculated field
             updateCalculatedFieldStyling(modelKey, calculationMode, true);
+
+            // Remember this mode for next time
+            previousCalculationModes[modelKey] = calculationMode;
         } catch (error) {
             console.error('Error calculating missing input:', error);
         }
     } else {
-        // Reset all field styling when in manual mode
+        // Reset all field styling when switching to manual mode
         model.inputs.forEach(input => {
             updateCalculatedFieldStyling(modelKey, input.name, false);
         });
+        previousCalculationModes[modelKey] = 'none';
     }
 
     // Run calculation (no longer needs months parameter - static calculation)

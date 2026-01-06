@@ -161,15 +161,13 @@ No build process needed - it's pure HTML/CSS/JS.
 
 💡 **Want to understand the math?** See [CALCULATIONS.md](CALCULATIONS.md) for detailed explanations of all formulas and rationale.
 
-## South African Pricing Defaults
+## Field State Management
 
-All defaults are calibrated for the South African B2B software market (in ZAR):
-
-- **Subscription SaaS**: R250-R1,500/month per customer
-- **API/Usage**: R0.50-R15 per unit
-- **Per-Seat**: R150-R350/user/month
-- **One-Time License**: R5,000-R50,000 + 20% annual maintenance
-- **Marketplace**: 5-10% commission
+When using calculation modes:
+- Only ONE field is ever auto-calculated and locked at a time
+- Switching between modes automatically unlocks the previous field
+- The locked field shows yellow styling and an "Auto-calculated" badge
+- Switching to "Manual Entry" unlocks all fields
 
 ## Technology Stack
 
