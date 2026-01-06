@@ -40,6 +40,175 @@ This ensures pricing decisions consider both sides of the transaction.
 
 ---
 
+## Reverse Calculations (Calculate Missing Inputs)
+
+### Overview
+
+The calculator now supports **auto-calculating missing inputs** based on other known values. Instead of manually entering all values, you can:
+
+1. **Calculate Optimal Price** - Find the best price based on your costs and buyer value
+2. **Calculate Required Buyer Value** - Determine how much value you need to deliver
+3. **Calculate Achievable Margin** - See what margin is possible with your costs
+4. **Calculate Maximum Cost** - Find your cost ceiling to maintain target margins
+
+### How It Works
+
+Select a calculation mode from the dropdown at the top of the form. The calculator will:
+- Hide or lock the field being calculated
+- Show an "Auto-calculated" badge on that field
+- Automatically compute the missing value based on other inputs
+- Update in real-time as you change other values
+
+### Calculation Mode Options
+
+#### 1. Calculate Optimal Price
+
+**What you provide:**
+- Cost to serve (or equivalent for your model)
+- Desired margin
+- Buyer value
+
+**What the calculator finds:**
+- Seller floor (minimum viable price)
+- Buyer ceiling (maximum compelling price)
+- **Suggested price** based on your chosen strategy
+
+**Pricing Strategies:**
+- **Minimum Viable** (Seller Floor): Most competitive, meets your margin target
+- **Balanced** (Midpoint): Recommended - fair to both parties
+- **Maximum Capture** (Buyer Ceiling): Highest profit while maintaining buyer ROI
+
+**Example:**
+```
+Cost: R150/month
+Desired Margin: 70%
+Buyer Value: R5,000/month
+
+Results:
+- Seller Floor: R500 (70% margin achieved)
+- Buyer Ceiling: R2,000 (2.5x ROI maintained)
+- Balanced Price: R1,250 (88% margin, 4x ROI - win-win!)
+```
+
+#### 2. Calculate Required Buyer Value
+
+**What you provide:**
+- Target price
+- Cost to serve
+- Desired margin
+
+**What the calculator finds:**
+- Minimum buyer value needed for compelling ROI
+
+**Use case:** "I want to charge R1,500/month - how much value must I deliver?"
+
+**Example:**
+```
+Target Price: R1,500/month
+
+Result:
+Required Buyer Value: R3,750/month (for 2.5x ROI threshold)
+
+Action: Ensure your solution delivers at least R3,750/month value
+```
+
+#### 3. Calculate Achievable Margin
+
+**What you provide:**
+- Current market price
+- Cost to serve
+- Buyer value
+
+**What the calculator finds:**
+- Actual margin percentage at this price
+
+**Use case:** "The market rate is R600 - what margin can I achieve?"
+
+**Example:**
+```
+Market Price: R600/month
+Cost: R150/month
+
+Result:
+Achievable Margin: 75%
+
+Analysis: Exceeds typical 70% target - good market positioning
+```
+
+#### 4. Calculate Maximum Cost
+
+**What you provide:**
+- Target price
+- Desired margin
+- Buyer value
+
+**What the calculator finds:**
+- Maximum cost to serve ceiling
+
+**Use case:** "I want R800 pricing with 70% margin - what's my cost budget?"
+
+**Example:**
+```
+Target Price: R800/month
+Desired Margin: 70%
+
+Result:
+Maximum Cost: R240/month
+
+Action: Keep infrastructure + support below R240/customer
+```
+
+### Reverse Calculation Formulas
+
+#### For Subscription, Usage-Based, and Per-Seat Models:
+
+**Price Calculation:**
+```
+Seller Floor = Cost / (1 - Margin/100)
+Buyer Ceiling = Value × 0.4 (for 2.5x ROI)
+Balanced Price = (Floor + Ceiling) / 2
+```
+
+**Buyer Value Calculation:**
+```
+Required Value = Price / 0.4
+```
+
+**Margin Calculation:**
+```
+Achievable Margin = (1 - Cost/Price) × 100
+```
+
+**Cost Calculation:**
+```
+Maximum Cost = Price × (1 - Margin/100)
+```
+
+#### For One-Time Purchase Model:
+
+**Price Calculation:**
+```
+Seller Floor = Delivery Cost / (1 - Margin/100)
+Buyer Ceiling = Annual Value × 0.5 (for 2x ROI year 1)
+Balanced Price = (Floor + Ceiling) / 2
+```
+
+**Buyer Value Calculation:**
+```
+Required Annual Value = License Price / 0.5
+```
+
+#### For Marketplace Model:
+
+**Commission Rate Calculation:**
+```
+Min Rate = (Cost per Tx / Avg Tx Value) / (1 - Margin/100) × 100
+Max Rate = (Seller Profit × 0.3) / Avg Tx Value × 100
+Balanced Rate = (Min Rate + Max Rate) / 2
+```
+
+---
+
 ## Universal Formulas (All Models)
 
 These calculations apply to all five pricing models.
