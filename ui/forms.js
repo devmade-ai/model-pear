@@ -1,10 +1,25 @@
 import { models } from '../models/index.js';
+import { getCalculationOptions } from '../calculators/reverse-calculations.js';
 
 // Forward declaration - will be set by app.js
 let onInputChange;
+let onCalculationModeChange;
+
+// Store current calculation mode
+let currentCalculationMode = 'none';
+let currentPricingStrategy = 'balanced';
 
 export function setEventHandlers(handlers) {
     onInputChange = handlers.onInputChange;
+    onCalculationModeChange = handlers.onCalculationModeChange;
+}
+
+export function getCurrentCalculationMode() {
+    return currentCalculationMode;
+}
+
+export function getCurrentPricingStrategy() {
+    return currentPricingStrategy;
 }
 
 // ========== FORM GENERATION ==========
@@ -32,26 +47,28 @@ function groupInputsByCategory(inputs) {
 /**
  * Generate HTML for a single input field
  */
-function generateInputHTML(modelKey, input) {
+function generateInputHTML(modelKey, input, isCalculated = false) {
     const inputId = `${modelKey}-${input.name}`;
     const inputType = input.type === 'text' ? 'text' : 'number';
 
     return `
-        <div class="mb-4">
+        <div class="mb-4 ${isCalculated ? 'relative' : ''}">
             <label for="${inputId}" class="block text-sm font-medium text-gray-300 mb-1">
                 ${input.label}
+                ${isCalculated ? '<span class="ml-2 text-xs px-2 py-0.5 bg-yellow-600 rounded">Auto-calculated</span>' : ''}
             </label>
             <input
                 type="${inputType}"
                 id="${inputId}"
                 name="${input.name}"
-                class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isCalculated ? 'bg-yellow-900/20 border-yellow-600' : ''}"
                 value="${input.default}"
                 ${inputType === 'number' ? `min="${input.min !== undefined ? input.min : 0}"` : ''}
                 ${inputType === 'number' && input.max !== undefined ? `max="${input.max}"` : ''}
                 ${inputType === 'number' ? `step="${input.step}"` : ''}
                 data-type="${input.type}"
                 data-model="${modelKey}"
+                ${isCalculated ? 'readonly' : ''}
             />
             ${input.hint ? `<small class="text-xs text-gray-500 mt-1 block">${input.hint}</small>` : ''}
         </div>
@@ -65,8 +82,41 @@ export function generateForm(modelKey) {
     const model = models[modelKey];
     const formContainer = document.getElementById('inputForm');
     const grouped = groupInputsByCategory(model.inputs);
+    const calculationOptions = getCalculationOptions(modelKey);
 
     let formHTML = '';
+
+    // CALCULATION MODE SELECTOR
+    formHTML += `
+        <div class="mb-6 pb-6 border-b border-gray-700">
+            <h3 class="text-lg font-semibold text-yellow-400 mb-1">Calculation Mode</h3>
+            <p class="text-xs text-gray-400 mb-3">Choose what you want to calculate</p>
+            <select
+                id="calculation-mode"
+                class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 mb-3"
+            >
+                ${calculationOptions.map(opt => `
+                    <option value="${opt.value}">${opt.label}</option>
+                `).join('')}
+            </select>
+            <div id="calculation-mode-description" class="text-xs text-gray-400 italic"></div>
+
+            <div id="pricing-strategy-container" class="mt-4 hidden">
+                <label for="pricing-strategy" class="block text-sm font-medium text-gray-300 mb-1">
+                    Pricing Strategy
+                </label>
+                <select
+                    id="pricing-strategy"
+                    class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                >
+                    <option value="minimum">Minimum Viable (Seller Floor) - Most competitive</option>
+                    <option value="balanced" selected>Balanced (Midpoint) - Recommended</option>
+                    <option value="maximum">Maximum Capture (Buyer Ceiling) - Highest profit</option>
+                </select>
+                <small class="text-xs text-gray-500 mt-1 block">Choose where in the equilibrium zone to price</small>
+            </div>
+        </div>
+    `;
 
     // PRICING SECTION
     if (grouped.pricing.length > 0) {
@@ -74,7 +124,7 @@ export function generateForm(modelKey) {
             <div class="mb-6">
                 <h3 class="text-lg font-semibold text-gray-100 mb-1">Pricing</h3>
                 <p class="text-xs text-gray-400 mb-3">Current price and volume</p>
-                ${grouped.pricing.map(input => generateInputHTML(modelKey, input)).join('')}
+                ${grouped.pricing.map(input => generateInputHTML(modelKey, input, false)).join('')}
             </div>
         `;
     }
@@ -85,7 +135,7 @@ export function generateForm(modelKey) {
             <div class="mb-6 pb-6 border-b border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-100 mb-1">Seller Costs</h3>
                 <p class="text-xs text-gray-400 mb-3">Your costs and margin goals</p>
-                ${grouped.seller.map(input => generateInputHTML(modelKey, input)).join('')}
+                ${grouped.seller.map(input => generateInputHTML(modelKey, input, false)).join('')}
             </div>
         `;
     }
@@ -96,12 +146,56 @@ export function generateForm(modelKey) {
             <div class="mb-6">
                 <h3 class="text-lg font-semibold text-gray-100 mb-1">Buyer Value</h3>
                 <p class="text-xs text-gray-400 mb-3">Value delivered to customers</p>
-                ${grouped.buyer.map(input => generateInputHTML(modelKey, input)).join('')}
+                ${grouped.buyer.map(input => generateInputHTML(modelKey, input, false)).join('')}
             </div>
         `;
     }
 
     formContainer.innerHTML = formHTML;
+
+    // Add calculation mode event listener
+    const calculationModeSelect = document.getElementById('calculation-mode');
+    const pricingStrategyContainer = document.getElementById('pricing-strategy-container');
+    const pricingStrategySelect = document.getElementById('pricing-strategy');
+    const descriptionDiv = document.getElementById('calculation-mode-description');
+
+    if (calculationModeSelect) {
+        calculationModeSelect.addEventListener('change', (e) => {
+            currentCalculationMode = e.target.value;
+
+            // Update description
+            const selectedOption = calculationOptions.find(opt => opt.value === currentCalculationMode);
+            if (selectedOption) {
+                descriptionDiv.textContent = selectedOption.description;
+
+                // Show/hide pricing strategy selector
+                if (selectedOption.requiresStrategy) {
+                    pricingStrategyContainer.classList.remove('hidden');
+                } else {
+                    pricingStrategyContainer.classList.add('hidden');
+                }
+            }
+
+            // Trigger recalculation
+            if (onCalculationModeChange) {
+                onCalculationModeChange(modelKey);
+            }
+        });
+
+        // Initialize description
+        calculationModeSelect.dispatchEvent(new Event('change'));
+    }
+
+    if (pricingStrategySelect) {
+        pricingStrategySelect.addEventListener('change', (e) => {
+            currentPricingStrategy = e.target.value;
+
+            // Trigger recalculation
+            if (onCalculationModeChange) {
+                onCalculationModeChange(modelKey);
+            }
+        });
+    }
 
     // Add input event listeners
     model.inputs.forEach(input => {

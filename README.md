@@ -14,6 +14,11 @@ No growth projections, no complicated forecasting - just clear unit economics to
 ## Key Features
 
 - **5 Core Pricing Models**: Subscription, Usage-Based, Per-Seat, One-Time License, Marketplace
+- **Reverse Calculations**: Auto-calculate missing inputs
+  - Calculate optimal price from costs and buyer value
+  - Calculate required buyer value from target price
+  - Calculate achievable margin from current pricing
+  - Calculate maximum cost ceiling from pricing targets
 - **Three-Perspective View**:
   - Revenue & Profit Overview
   - Seller Economics (cost + margin analysis)
@@ -112,8 +117,10 @@ No build process needed - it's pure HTML/CSS/JS.
 
 ## Quick Start Guide
 
+### Option 1: Manual Entry (Traditional)
+
 1. **Select a pricing model** from the 5 options
-2. **Choose a tier** (e.g., Basic, Standard, Enterprise for SaaS)
+2. **Choose calculation mode**: "Enter All Inputs Manually"
 3. **Enter your inputs**:
    - **Pricing**: Current price and volume
    - **Seller Costs**: Cost to serve/deliver + desired margin
@@ -124,6 +131,33 @@ No build process needed - it's pure HTML/CSS/JS.
    - Seller perspective (are you meeting margin goals?)
    - Buyer perspective (is ROI compelling?)
    - Equilibrium analysis (is there a pricing sweet spot?)
+
+### Option 2: Calculate Missing Input (NEW!)
+
+1. **Select a pricing model** from the 5 options
+2. **Choose what to calculate**:
+   - **Calculate Optimal Price**: Find best price from costs & buyer value
+   - **Calculate Required Buyer Value**: How much value to deliver?
+   - **Calculate Achievable Margin**: What margin at current price?
+   - **Calculate Maximum Cost**: What's your cost ceiling?
+3. **For price calculation, select pricing strategy**:
+   - Minimum Viable (seller floor - most competitive)
+   - Balanced (midpoint - recommended)
+   - Maximum Capture (buyer ceiling - highest profit)
+4. **Enter your known inputs** (calculator auto-fills the missing one)
+5. **View results** - the calculated field updates in real-time
+
+### Example: Calculate Optimal Price
+
+**You know:**
+- Cost to serve: R150/month
+- Desired margin: 70%
+- Buyer value: R5,000/month
+
+**Calculator finds:**
+- Seller floor: R500 (meets your 70% margin)
+- Buyer ceiling: R2,000 (maintains 2.5x ROI)
+- **Balanced price: R1,250** (88% margin, 4x ROI - win-win!)
 
 💡 **Want to understand the math?** See [CALCULATIONS.md](CALCULATIONS.md) for detailed explanations of all formulas and rationale.
 
@@ -157,7 +191,8 @@ model-pear/
 ├── models/
 │   └── index.js            # 5 pricing model definitions
 ├── calculators/
-│   └── engine.js           # Calculation engine
+│   ├── engine.js           # Calculation engine
+│   └── reverse-calculations.js  # Auto-calculate missing inputs
 ├── ui/
 │   ├── forms.js            # Input form generation
 │   ├── results-display.js  # Results visualization

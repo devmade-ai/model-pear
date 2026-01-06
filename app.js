@@ -4,6 +4,9 @@
 // ===== MODELS =====
 import { models } from './models/index.js';
 
+// ===== CALCULATORS =====
+import { calculateModel } from './calculators/engine.js';
+
 // ===== UTILS =====
 import { formatCurrency, formatPercentage, formatNumber } from './utils/index.js';
 
@@ -31,13 +34,12 @@ function onCalculate() {
         return;
     }
 
-    // Gather inputs
-    const inputs = initialization.gatherInputs();
-    console.log('📥 Inputs:', inputs);
+    // Get calculation mode and pricing strategy
+    const calculationMode = forms.getCurrentCalculationMode();
+    const pricingStrategy = forms.getCurrentPricingStrategy();
 
-    // Perform calculation
-    const model = models[selectedModel];
-    const results = model.calculate(inputs);
+    // Perform calculation with reverse calculation support
+    const results = calculateModel(selectedModel, calculationMode, pricingStrategy);
     console.log('📊 Results:', results);
 
     // Display results
@@ -51,6 +53,23 @@ function onInputChange() {
     // For now, we'll only calculate when the button is clicked
     // Could add debounced auto-calculation here later
     console.log('📝 Input changed');
+}
+
+/**
+ * Handle calculation mode change (triggers recalculation)
+ */
+function onCalculationModeChange(modelKey) {
+    console.log('🔄 Calculation mode changed');
+
+    // Get calculation mode and pricing strategy
+    const calculationMode = forms.getCurrentCalculationMode();
+    const pricingStrategy = forms.getCurrentPricingStrategy();
+
+    // Perform calculation with new mode
+    const results = calculateModel(modelKey, calculationMode, pricingStrategy);
+
+    // Display results
+    displayResults(modelKey, results);
 }
 
 /**
@@ -88,7 +107,8 @@ function displayResults(modelKey, results) {
 
 // Set up handlers for UI components
 forms.setEventHandlers({
-    onInputChange: onInputChange
+    onInputChange: onInputChange,
+    onCalculationModeChange: onCalculationModeChange
 });
 
 initialization.setUIHandlers({
