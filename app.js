@@ -8,7 +8,7 @@ import { models } from './models/index.js';
 import { calculateModel } from './calculators/engine.js';
 
 // ===== UTILS =====
-import { formatCurrency, formatPercentage, formatNumber } from './utils/index.js';
+import { formatCurrency, formatPercentage, formatNumber, showToast, validateInputField } from './utils/index.js';
 
 // ===== UI =====
 import * as forms from './ui/forms.js';
@@ -22,6 +22,38 @@ import * as charts from './charts/index.js';
 // ========== EVENT HANDLERS ==========
 
 /**
+ * Show loading state
+ */
+function showLoadingState() {
+    const btn = document.getElementById('calculateBtn');
+    const btnText = document.getElementById('calculateBtnText');
+    const btnLoader = document.getElementById('calculateBtnLoader');
+
+    if (btn && btnText && btnLoader) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+        btnText.classList.add('hidden');
+        btnLoader.classList.remove('hidden');
+    }
+}
+
+/**
+ * Hide loading state
+ */
+function hideLoadingState() {
+    const btn = document.getElementById('calculateBtn');
+    const btnText = document.getElementById('calculateBtnText');
+    const btnLoader = document.getElementById('calculateBtnLoader');
+
+    if (btn && btnText && btnLoader) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        btnText.classList.remove('hidden');
+        btnLoader.classList.add('hidden');
+    }
+}
+
+/**
  * Handle calculate button click
  */
 function onCalculate() {
@@ -31,28 +63,49 @@ function onCalculate() {
 
     if (!selectedModel) {
         console.warn('No model selected');
+        showToast('Please select a pricing model first', 'warning');
         return;
     }
 
-    // Get calculation mode and pricing strategy
-    const calculationMode = forms.getCurrentCalculationMode();
-    const pricingStrategy = forms.getCurrentPricingStrategy();
+    // Show loading state
+    showLoadingState();
 
-    // Perform calculation with reverse calculation support
-    const results = calculateModel(selectedModel, calculationMode, pricingStrategy);
-    console.log('📊 Results:', results);
+    // Use setTimeout to allow UI to update before calculation
+    setTimeout(() => {
+        try {
+            // Get calculation mode and pricing strategy
+            const calculationMode = forms.getCurrentCalculationMode();
+            const pricingStrategy = forms.getCurrentPricingStrategy();
 
-    // Display results
-    displayResults(selectedModel, results);
+            // Perform calculation with reverse calculation support
+            const results = calculateModel(selectedModel, calculationMode, pricingStrategy);
+            console.log('📊 Results:', results);
+
+            // Display results
+            displayResults(selectedModel, results);
+
+            // Show success toast
+            showToast('Calculation completed successfully!', 'success', 3000);
+        } catch (error) {
+            console.error('Calculation error:', error);
+            showToast('An error occurred during calculation', 'error');
+        } finally {
+            // Hide loading state
+            hideLoadingState();
+        }
+    }, 100);
 }
 
 /**
- * Handle input change (for real-time calculation)
+ * Handle input change (for real-time calculation and validation)
  */
-function onInputChange() {
-    // For now, we'll only calculate when the button is clicked
-    // Could add debounced auto-calculation here later
+function onInputChange(event) {
     console.log('📝 Input changed');
+
+    // Validate the input field
+    if (event && event.target && event.target.tagName === 'INPUT') {
+        validateInputField(event.target);
+    }
 }
 
 /**
@@ -130,6 +183,52 @@ window.formatNumber = formatNumber;
 // UI Functions
 window.init = initialization.init;
 
+// ========== KEYBOARD SHORTCUTS ==========
+
+/**
+ * Handle global keyboard shortcuts
+ */
+function handleKeyboardShortcuts(event) {
+    // Ctrl/Cmd + Enter: Calculate
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        event.preventDefault();
+        const calculateBtn = document.getElementById('calculateBtn');
+        if (calculateBtn && !calculateBtn.disabled) {
+            onCalculate();
+            showToast('Keyboard shortcut: Ctrl+Enter to calculate', 'info', 2000);
+        }
+    }
+
+    // ? key: Show keyboard shortcuts help
+    if (event.key === '?' && !event.target.matches('input, textarea, select')) {
+        event.preventDefault();
+        showKeyboardShortcutsHelp();
+    }
+}
+
+/**
+ * Show keyboard shortcuts help
+ */
+function showKeyboardShortcutsHelp() {
+    const shortcuts = {
+        explanation: 'Use these keyboard shortcuts to navigate the calculator more efficiently:',
+        keyMetrics: [
+            '<kbd>Ctrl/Cmd + Enter</kbd> - Calculate equilibrium',
+            '<kbd>Esc</kbd> - Close modal dialogs',
+            '<kbd>Tab</kbd> - Navigate between fields',
+            '<kbd>?</kbd> - Show this help'
+        ]
+    };
+
+    // Use the modal system to show shortcuts
+    import('./ui/modals.js').then(modals => {
+        modals.showTooltipModal('⌨️ Keyboard Shortcuts', shortcuts);
+    });
+}
+
+// Add keyboard event listener
+document.addEventListener('keydown', handleKeyboardShortcuts);
+
 // ========== AUTO-INITIALIZE ==========
 
 // Initialize when DOM is ready
@@ -140,3 +239,4 @@ if (document.readyState === 'loading') {
 }
 
 console.log('🚀 Pricing Equilibrium Calculator loaded successfully!');
+console.log('💡 Tip: Press Ctrl+Enter to calculate or ? for keyboard shortcuts');

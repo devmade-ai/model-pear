@@ -1,12 +1,33 @@
 /* Custom styles and overrides */
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    scroll-behavior: smooth;
 }
 
 .container-custom {
     max-width: 1920px;
     margin: 0 auto;
     padding: 1rem;
+}
+
+/* ========== IMPROVED FOCUS STATES ========== */
+*:focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+button:focus-visible,
+.model-btn:focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+input:focus-visible,
+select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
 /* Custom background colors for new UI components */
@@ -78,4 +99,187 @@ select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+}
+
+/* ========== VISUAL HIERARCHY IMPROVEMENTS ========== */
+.section-divider {
+    border-top: 2px solid rgba(75, 85, 99, 0.3);
+    margin: 2rem 0;
+}
+
+.result-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* ========== TOAST NOTIFICATIONS ========== */
+.toast {
+    animation: slideInRight 0.3s ease-out;
+    pointer-events: auto;
+}
+
+.toast.toast-exit {
+    animation: slideOutRight 0.3s ease-in forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* ========== MOBILE OPTIMIZATIONS ========== */
+@media (max-width: 1024px) {
+    /* Sticky calculate button on mobile */
+    #calculateBtnContainer {
+        position: sticky;
+        bottom: 0;
+        background: linear-gradient(to top, #111827 80%, transparent);
+        padding: 1.5rem 0 1rem 0;
+        margin-top: 1rem;
+        z-index: 10;
+    }
+
+    /* Larger touch targets for mobile */
+    .model-btn {
+        min-height: 3.5rem;
+        padding: 1rem;
+    }
+
+    button {
+        min-height: 2.75rem;
+    }
+
+    input,
+    select {
+        min-height: 2.75rem;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    /* Better spacing for mobile */
+    .container-custom {
+        padding: 0.75rem;
+    }
+}
+
+/* ========== INPUT VALIDATION STATES ========== */
+.input-error {
+    border-color: #EF4444 !important;
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+.input-success {
+    border-color: #10B981 !important;
+}
+
+.input-warning {
+    border-color: #F59E0B !important;
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.error-message {
+    color: #FCA5A5;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items-start;
+    gap: 0.25rem;
+}
+
+.success-indicator {
+    color: #10B981;
+    margin-left: 0.5rem;
+}
+
+/* ========== COLLAPSIBLE SECTIONS ========== */
+details {
+    border: 1px solid rgba(75, 85, 99, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+details summary {
+    cursor: pointer;
+    user-select: none;
+    font-weight: 600;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+details summary:hover {
+    background-color: rgba(75, 85, 99, 0.2);
+}
+
+details summary::after {
+    content: '▼';
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+    color: #9CA3AF;
+}
+
+details[open] summary::after {
+    transform: rotate(-180deg);
+}
+
+details[open] {
+    padding-bottom: 1rem;
+}
+
+details > div {
+    padding-top: 1rem;
+}
+
+/* ========== LOADING SPINNER ========== */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* ========== IMPROVED HINT STYLING ========== */
+.hint-with-icon {
+    display: flex;
+    align-items: start;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+}
+
+.hint-icon {
+    color: #3B82F6;
+    flex-shrink: 0;
+}
+
+/* ========== EMPTY STATE IMPROVEMENTS ========== */
+.empty-state-icon {
+    opacity: 0.4;
+    margin: 0 auto 1.5rem;
 }

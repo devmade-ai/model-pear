@@ -154,6 +154,7 @@ export function displayValidationWarnings(warnings) {
     const warningsDiv = document.createElement('div');
     warningsDiv.id = 'validation-warnings';
     warningsDiv.className = 'mb-4 space-y-2';
+    warningsDiv.setAttribute('role', 'alert');
 
     warnings.forEach(w => {
         const alertDiv = document.createElement('div');
@@ -172,6 +173,112 @@ export function displayValidationWarnings(warnings) {
     // Insert warnings before calculate button
     const calculateBtn = document.getElementById('calculateBtn');
     calculateBtn.parentElement.insertBefore(warningsDiv, calculateBtn);
+}
+
+/**
+ * Show toast notification
+ * @param {string} message - The message to display
+ * @param {string} type - Type of toast: 'success', 'error', 'warning', 'info'
+ * @param {number} duration - Duration in milliseconds (default: 4000)
+ */
+export function showToast(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    const toastId = `toast-${Date.now()}`;
+    toast.id = toastId;
+
+    const bgColors = {
+        success: 'bg-green-600',
+        error: 'bg-red-600',
+        warning: 'bg-yellow-600',
+        info: 'bg-blue-600'
+    };
+
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+    };
+
+    toast.className = `toast ${bgColors[type] || bgColors.info} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 min-w-[280px] max-w-md`;
+
+    toast.innerHTML = `
+        <span class="text-xl" aria-hidden="true">${icons[type] || icons.info}</span>
+        <span class="flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" aria-label="Dismiss notification" class="text-white hover:text-gray-200 text-xl leading-none">×</button>
+    `;
+
+    container.appendChild(toast);
+
+    // Auto-dismiss
+    setTimeout(() => {
+        toast.classList.add('toast-exit');
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+/**
+ * Validate single input field and show inline feedback
+ * @param {HTMLInputElement} input - The input element to validate
+ * @returns {boolean} - Whether the input is valid
+ */
+export function validateInputField(input) {
+    const inputId = input.id;
+    const value = parseFloat(input.value);
+    const type = input.dataset.type;
+    const errorContainer = document.getElementById(`${inputId}-error`);
+    const validationIndicator = document.getElementById(`${inputId}-validation`);
+
+    if (!errorContainer) return true;
+
+    // Clear previous validation state
+    input.classList.remove('input-error', 'input-success', 'input-warning');
+    errorContainer.classList.add('hidden');
+    errorContainer.textContent = '';
+    if (validationIndicator) {
+        validationIndicator.classList.add('hidden');
+    }
+
+    // Skip validation for readonly fields
+    if (input.readOnly) return true;
+
+    // Check for empty value
+    if (input.value === '' || isNaN(value)) {
+        input.classList.add('input-warning');
+        errorContainer.innerHTML = '<span aria-hidden="true">⚠</span> <span>This field is required</span>';
+        errorContainer.classList.remove('hidden');
+        input.setAttribute('aria-invalid', 'true');
+        return false;
+    }
+
+    // Check for negative values
+    if (value < 0) {
+        input.classList.add('input-error');
+        errorContainer.innerHTML = '<span aria-hidden="true">✕</span> <span>Value cannot be negative</span>';
+        errorContainer.classList.remove('hidden');
+        input.setAttribute('aria-invalid', 'true');
+        return false;
+    }
+
+    // Check percentage bounds
+    if (type === 'percent' && value > 100) {
+        input.classList.add('input-error');
+        errorContainer.innerHTML = '<span aria-hidden="true">✕</span> <span>Percentage cannot exceed 100%</span>';
+        errorContainer.classList.remove('hidden');
+        input.setAttribute('aria-invalid', 'true');
+        return false;
+    }
+
+    // Valid input
+    input.classList.add('input-success');
+    if (validationIndicator) {
+        validationIndicator.classList.remove('hidden');
+    }
+    input.setAttribute('aria-invalid', 'false');
+    return true;
 }
 
 /**

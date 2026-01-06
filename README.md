@@ -26,6 +26,9 @@ No growth projections, no complicated forecasting - just clear unit economics to
 - **South African Defaults**: Realistic ZAR pricing across all models
 - **Static Unit Economics**: No month-by-month projections - just simple math
 - **No Installation**: Runs entirely in the browser
+- **Accessibility First**: Full keyboard navigation, ARIA support, screen reader friendly
+- **Mobile Optimized**: Responsive design with touch-friendly controls
+- **Real-time Validation**: Inline feedback as you type with helpful suggestions
 
 ## Quick Start
 
@@ -66,6 +69,7 @@ No build process needed - it's pure HTML/CSS/JS.
 
 **For Business Users & Product Teams:**
 - **[BUSINESS_GUIDE.md](BUSINESS_GUIDE.md)** - Complete user guide with tutorials and examples
+- **[UI_UX_GUIDE.md](UI_UX_GUIDE.md)** - Accessibility, keyboard shortcuts, and UX features
 
 **For Understanding the Math:**
 - **[CALCULATIONS.md](CALCULATIONS.md)** - All formulas, rationale, and economic theory explained

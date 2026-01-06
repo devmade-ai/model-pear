@@ -67,8 +67,14 @@
 
                     <!-- Calculate Button -->
                     <div id="calculateBtnContainer" class="mt-6 hidden">
-                        <button id="calculateBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
-                            Calculate Equilibrium
+                        <button id="calculateBtn" class="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-semibold" aria-label="Calculate pricing equilibrium">
+                            <span id="calculateBtnText">Calculate Equilibrium</span>
+                            <span id="calculateBtnLoader" class="hidden">
+                                <svg class="animate-spin inline-block h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -78,16 +84,46 @@
             <div class="lg:col-span-2">
                 <!-- Welcome Message -->
                 <div id="welcomeMessage" class="bg-gray-800 shadow-sm rounded-lg p-8 mb-6 border border-gray-700 text-center">
-                    <h2 class="text-2xl font-semibold text-gray-100 mb-3">Welcome to the Pricing Equilibrium Calculator</h2>
-                    <p class="text-gray-400 mb-4">Select a pricing model to get started</p>
-                    <div class="text-left max-w-2xl mx-auto">
-                        <p class="text-sm text-gray-400 mb-3">This calculator helps you find the sweet spot between:</p>
-                        <ul class="list-disc list-inside text-sm text-gray-400 space-y-1 mb-4">
-                            <li><strong class="text-gray-300">Seller Floor:</strong> Minimum price to meet your margin goals</li>
-                            <li><strong class="text-gray-300">Buyer Ceiling:</strong> Maximum price buyers will accept based on value</li>
-                            <li><strong class="text-gray-300">Equilibrium Zone:</strong> The win-win pricing range</li>
-                        </ul>
-                        <p class="text-sm text-gray-400">Choose a pricing model from the left to begin your analysis.</p>
+                    <!-- Icon SVG -->
+                    <svg class="empty-state-icon w-24 h-24 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+
+                    <h2 class="text-3xl font-bold text-gray-100 mb-2 mt-4">Ready to Find Your Perfect Price?</h2>
+                    <p class="text-gray-400 mb-6 text-lg">Select a pricing model to discover your equilibrium zone</p>
+
+                    <div class="text-left max-w-2xl mx-auto bg-gray-750 rounded-lg p-6 border border-gray-600">
+                        <p class="text-sm text-gray-300 mb-4 font-semibold">This calculator helps you find the sweet spot between:</p>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <span class="text-blue-400 text-xl flex-shrink-0" aria-hidden="true">📊</span>
+                                <div>
+                                    <strong class="text-gray-200">Seller Floor:</strong>
+                                    <p class="text-sm text-gray-400">Minimum price to meet your margin goals</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="text-green-400 text-xl flex-shrink-0" aria-hidden="true">💰</span>
+                                <div>
+                                    <strong class="text-gray-200">Buyer Ceiling:</strong>
+                                    <p class="text-sm text-gray-400">Maximum price buyers will accept based on value</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="text-yellow-400 text-xl flex-shrink-0" aria-hidden="true">⚖️</span>
+                                <div>
+                                    <strong class="text-gray-200">Equilibrium Zone:</strong>
+                                    <p class="text-sm text-gray-400">The win-win pricing range where both parties benefit</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <p class="text-sm text-gray-500">
+                            <kbd class="px-2 py-1 bg-gray-700 rounded text-gray-300 text-xs">Tip:</kbd>
+                            Press <kbd class="px-2 py-1 bg-gray-700 rounded text-gray-300 text-xs">?</kbd> anytime for keyboard shortcuts
+                        </p>
                     </div>
                 </div>
 
@@ -112,16 +148,21 @@
     </div>
 
     <!-- Tooltip Modal -->
-    <div id="tooltipModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" onclick="closeTooltipModal(event)">
+    <div id="tooltipModal" role="dialog" aria-modal="true" aria-labelledby="tooltipTitle" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" onclick="closeTooltipModal(event)">
         <div class="bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 border border-gray-600 shadow-xl" onclick="event.stopPropagation()">
             <div class="flex justify-between items-start mb-4">
                 <h3 id="tooltipTitle" class="text-xl font-semibold text-gray-100"></h3>
-                <button onclick="closeTooltipModal()" class="text-gray-400 hover:text-gray-200 text-2xl leading-none">&times;</button>
+                <button onclick="closeTooltipModal()" aria-label="Close dialog" class="text-gray-400 hover:text-gray-200 text-2xl leading-none">&times;</button>
             </div>
             <div id="tooltipContent" class="text-gray-300 space-y-3">
                 <!-- Dynamic content will be populated here -->
             </div>
         </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" role="status" aria-live="polite" aria-atomic="true" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none">
+        <!-- Toast notifications will appear here -->
     </div>
 
     <!-- Custom JavaScript (ES6 Module) -->
