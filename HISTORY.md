@@ -9,6 +9,69 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Documentation: Streamlined Structure & Business Guide
+
+**Date**: January 6, 2026
+**Impact**: Simplified documentation structure with clear separation of concerns
+
+**Changes**:
+
+**Removed Outdated Documentation**:
+- ❌ `FRAMEWORK_ALIGNMENT_PLAN.md` - Described a different system than current implementation
+- ❌ `QUICK_START_ALIGNMENT.md` - Described planned features that were simplified
+- ❌ `IMPLEMENTATION_PROGRESS.md` - Outdated file references after modular refactoring
+- ❌ `SIMPLIFICATION_SUMMARY.md` - Historical context, no longer needed
+- ❌ `TODO_REMAINING_WORK.md` - Merged into HISTORY.md as ongoing changelog
+
+**Updated Core Documentation**:
+- ✅ **README.md** - Simplified to 106 lines (from 270), focused on quick overview
+- ✅ **claude.md** - Added documentation structure section, designated as primary technical reference
+- ✅ **HISTORY.md** - Designated as ongoing changelog for all bug fixes and improvements
+
+**New Documentation**:
+- ✅ **BUSINESS_GUIDE.md** - Comprehensive 800+ line user guide with:
+  - Detailed pricing model explanations
+  - Step-by-step usage tutorials
+  - Calculation mode walkthroughs
+  - Results interpretation guide
+  - Common scenarios and examples
+  - Best practices and troubleshooting
+  - FAQ section
+
+**New Documentation Structure**:
+```
+Documentation Hierarchy:
+├── README.md              # Quick overview (business users)
+├── BUSINESS_GUIDE.md      # Detailed user guide (business users)
+├── CALCULATIONS.md        # Formula explanations (technical users)
+├── claude.md              # Architecture & dev guide (developers/AI)
+└── HISTORY.md             # Ongoing changelog (developers)
+```
+
+**Benefits**:
+- Clear separation between business and technical documentation
+- Reduced redundancy and confusion from multiple overlapping docs
+- **claude.md** and **HISTORY.md** designated as primary living documents
+- Easier maintenance with fewer files to keep updated
+- Better onboarding for both business users and developers
+
+**Files Modified**:
+- `README.md` (simplified, 106 lines)
+- `claude.md` (added documentation structure section)
+- `HISTORY.md` (this entry)
+
+**Files Created**:
+- `BUSINESS_GUIDE.md` (comprehensive user guide, 800+ lines)
+
+**Files Removed**:
+- `FRAMEWORK_ALIGNMENT_PLAN.md`
+- `QUICK_START_ALIGNMENT.md`
+- `IMPLEMENTATION_PROGRESS.md`
+- `SIMPLIFICATION_SUMMARY.md`
+- `TODO_REMAINING_WORK.md`
+
+---
+
 ### Documentation: Comprehensive Calculations Guide
 
 **Date**: January 5, 2026
