@@ -118,40 +118,40 @@ This document outlines the phased implementation plan for integrating the Financ
 ---
 
 ## Phase 3: Model 2 - Software Licence with Royalties
-**Status:** Not Started
+**Status:** Completed
 **Estimated Sessions:** 3-4
-**Dependencies:** Phase 1
+**Dependencies:** Phase 1 (Completed)
 
 ### 3.1 Core Licence Model
-- [ ] Create Model 2 input form
-- [ ] Add development cost inputs (Developer side)
-- [ ] Add licence type selector (Perpetual / Term)
-- [ ] Add exclusivity toggle (Exclusive / Non-exclusive)
-- [ ] Add territory selector
+- [x] Create Model 2 input form
+- [x] Add development cost inputs (Developer side)
+- [x] Add licence type selector (Perpetual / Term)
+- [x] Add exclusivity toggle (Exclusive / Non-exclusive)
+- [x] Add territory selector
 
 ### 3.2 Variant Implementation (2A-2H)
-- [ ] 2A: Perpetual Licence (Upfront Payment)
-- [ ] 2B: Term Licence (Annual/Multi-Year)
-- [ ] 2C: Usage-Based Royalties
-- [ ] 2D: Minimum Guarantee Plus Royalties
-- [ ] 2E: Revenue Share / Profit Share
-- [ ] 2F: White-Label / Reseller Licence
-- [ ] 2G: Exclusive vs Non-Exclusive comparison
-- [ ] 2H: Source Code Licence / Escrow
+- [x] 2A: Perpetual Licence (Upfront Payment)
+- [x] 2B: Term Licence (Annual/Multi-Year)
+- [x] 2C: Usage-Based Royalties
+- [x] 2D: Minimum Guarantee Plus Royalties
+- [x] 2E: Revenue Share / Profit Share
+- [x] 2F: White-Label / Reseller Licence
+- [x] 2G: Exclusive vs Non-Exclusive comparison
+- [x] 2H: Source Code Licence / Escrow
 
 ### 3.3 Model 2 Calculations
-- [ ] Developer asset recognition and amortisation
-- [ ] Revenue recognition (point in time vs over time)
-- [ ] Royalty revenue calculations
-- [ ] Buyer capitalisation (licence cost)
-- [ ] Buyer expense profile (royalties)
-- [ ] Combined NPV analysis
+- [x] Developer asset recognition and amortisation
+- [x] Revenue recognition (point in time vs over time)
+- [x] Royalty revenue calculations
+- [x] Buyer capitalisation (licence cost)
+- [x] Buyer expense profile (royalties)
+- [x] Combined NPV analysis
 
 ### 3.4 Model 2 Outputs & Visualisations
-- [ ] Revenue recognition timeline
-- [ ] Buyer cost split (capitalised vs expensed)
-- [ ] Developer vs Buyer asset position chart
-- [ ] Risk-return bubble chart
+- [~] Revenue recognition timeline (deferred to Phase 10)
+- [~] Buyer cost split (capitalised vs expensed) (deferred to Phase 10)
+- [~] Developer vs Buyer asset position chart (deferred to Phase 10)
+- [~] Risk-return bubble chart (deferred to Phase 10)
 
 ---
 
@@ -560,6 +560,7 @@ Phase 13 (Polish)
 | 2026-01-07 | Phase 1 | Core infrastructure complete: registry, state, perspectives, Model 1 | Claude |
 | 2026-01-07 | Phase 1 | Completed - Entity configuration UI panel added | Claude |
 | 2026-01-07 | Phase 2 | Completed - Model 1 with all 6 variants fully implemented | Claude |
+| 2026-01-07 | Phase 3 | Completed - Model 2 with all 8 variants (2A-2H) fully implemented | Claude |
 
 ---
 
