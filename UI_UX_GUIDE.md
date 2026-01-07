@@ -207,7 +207,7 @@ Enhanced empty state with:
 
 #### Default State
 ```html
-<button class="bg-blue-600 hover:bg-blue-700">
+<button class="bg-gray-700 hover:bg-gray-600 shadow-lg border border-gray-600">
     Calculate Equilibrium
 </button>
 ```
@@ -281,7 +281,7 @@ Example:
 ### Color Palette
 
 #### Semantic Colors
-- **Blue** (#3B82F6): Primary actions, links
+- **Blue** (#3B82F6): Selected states, focus indicators, info badges
 - **Green** (#10B981): Success, positive metrics
 - **Yellow** (#F59E0B): Warnings, calculated fields
 - **Red** (#EF4444): Errors, negative metrics
@@ -370,16 +370,18 @@ Consistent spacing scale using Tailwind's spacing system:
 #### Buttons
 ```css
 .button-primary {
-    background: #3B82F6;
+    background: #374151;  /* gray-700 */
     color: white;
     padding: 0.75rem 1rem;
     border-radius: 0.375rem;
+    border: 1px solid #4B5563;  /* gray-600 */
     font-weight: 600;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
     transition: background-color 0.2s;
 }
 
 .button-primary:hover {
-    background: #2563EB;
+    background: #4B5563;  /* gray-600 */
 }
 ```
 
@@ -487,6 +489,13 @@ Each error message includes a 💡 suggestion for how to fix it
 
 ## Changelog
 
+### Version 2.1 (2025-01-07)
+
+#### Improved
+- **Calculate button styling**: Changed from bright blue (`bg-blue-600`) to muted gray (`bg-gray-700`) with subtle shadow and border for better visual consistency with the overall dark theme
+- The gray button seamlessly integrates with the sticky mobile gradient background
+- Blue is now reserved for selected states, focus indicators, and info badges
+
 ### Version 2.0 (2025-01-06)
 
 #### Added
@@ -517,4 +526,4 @@ Each error message includes a 💡 suggestion for how to fix it
 
 ---
 
-*Last updated: 2025-01-06*
+*Last updated: 2025-01-07*
