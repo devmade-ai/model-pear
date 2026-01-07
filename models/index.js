@@ -503,8 +503,10 @@ export const models = {
             const buyerFirstYearCost = inputs.licensePrice + (annualMaintenanceFee * (inputs.maintenanceAttach / 100));
             const buyerYear2PlusCost = annualMaintenanceFee * (inputs.maintenanceAttach / 100);
             const buyerROIFirstYear = buyerFirstYearCost > 0 ? inputs.buyerValuePerYear / buyerFirstYearCost : 0;
-            const buyerPaybackMonths = buyerFirstYearCost > 0 && inputs.buyerValuePerYear > buyerFirstYearCost ?
-                12 * (buyerFirstYearCost / (inputs.buyerValuePerYear - buyerFirstYearCost)) : Infinity;
+            // Payback = months until first year cost is recovered from monthly value
+            // Monthly value = annual value / 12, so payback = firstYearCost / (annualValue / 12)
+            const buyerPaybackMonths = buyerFirstYearCost > 0 && inputs.buyerValuePerYear > 0 ?
+                12 * (buyerFirstYearCost / inputs.buyerValuePerYear) : Infinity;
 
             // Equilibrium analysis
             const maximumPriceBuyerWillPay = inputs.buyerValuePerYear * 0.5; // 2x ROI in year 1

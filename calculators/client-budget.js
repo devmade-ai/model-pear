@@ -368,13 +368,12 @@ export function calculateMonthlyCost(modelKey, inputs) {
     const model = models[modelKey];
     if (!model) return 0;
 
-    // Run calculation for just first month
-    const results = model.calculate(inputs, 1);
-    if (!results || results.length === 0) return 0;
+    // Run calculation - returns a single results object (static unit economics)
+    const results = model.calculate(inputs);
+    if (!results) return 0;
 
-    // Extract monthly revenue/cost
-    const firstMonth = results[0];
-    return firstMonth.totalRevenue || firstMonth.revenue || firstMonth.mrr || 0;
+    // Extract monthly revenue from the results object
+    return results.monthlyRevenue || 0;
 }
 
 /**
