@@ -1,5 +1,5 @@
-// ========== SIMPLIFIED APPLICATION ORCHESTRATOR ==========
-// Pricing Equilibrium Calculator - Simplified version
+// ========== APPLICATION ORCHESTRATOR ==========
+// Software Transaction Tool - Pricing & Inter-Company Calculators
 
 // ===== MODELS =====
 import { models } from './models/index.js';
@@ -15,9 +15,14 @@ import * as forms from './ui/forms.js';
 import * as initialization from './ui/initialization.js';
 import * as resultsDisplay from './ui/results-display.js';
 
-// ===== CHARTS (simplified) =====
-// Charts will be minimal - just equilibrium visualization
+// ===== CHARTS =====
 import * as charts from './charts/index.js';
+
+// ===== STATE =====
+import { getState, setMode, subscribe } from './state/app-state.js';
+
+// ===== INTER-COMPANY =====
+import { initIntercompanyCalculator } from './ui/intercompany/calculator.js';
 
 // ========== EVENT HANDLERS ==========
 
@@ -156,6 +161,57 @@ function displayResults(modelKey, results) {
     }
 }
 
+// ========== MODE SWITCHING ==========
+
+/**
+ * Handle mode switch between pricing and intercompany
+ */
+function switchMode(mode) {
+    setMode(mode);
+
+    const pricingSection = document.getElementById('pricingCalculatorSection');
+    const intercompanySection = document.getElementById('intercompanyCalculatorSection');
+    const modePricingBtn = document.getElementById('mode-pricing');
+    const modeIntercompanyBtn = document.getElementById('mode-intercompany');
+
+    if (mode === 'pricing') {
+        pricingSection?.classList.remove('hidden');
+        intercompanySection?.classList.add('hidden');
+
+        modePricingBtn?.classList.add('bg-blue-600', 'text-white');
+        modePricingBtn?.classList.remove('text-gray-300', 'hover:bg-gray-600');
+
+        modeIntercompanyBtn?.classList.remove('bg-blue-600', 'text-white');
+        modeIntercompanyBtn?.classList.add('text-gray-300', 'hover:bg-gray-600');
+    } else {
+        pricingSection?.classList.add('hidden');
+        intercompanySection?.classList.remove('hidden');
+
+        modeIntercompanyBtn?.classList.add('bg-blue-600', 'text-white');
+        modeIntercompanyBtn?.classList.remove('text-gray-300', 'hover:bg-gray-600');
+
+        modePricingBtn?.classList.remove('bg-blue-600', 'text-white');
+        modePricingBtn?.classList.add('text-gray-300', 'hover:bg-gray-600');
+
+        // Initialize inter-company calculator if not already
+        initIntercompanyCalculator();
+    }
+}
+
+/**
+ * Set up mode switching buttons
+ */
+function setupModeSwitching() {
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mode = btn.dataset.mode;
+            if (mode) {
+                switchMode(mode);
+            }
+        });
+    });
+}
+
 // ========== DEPENDENCY INJECTION SETUP ==========
 
 // Set up handlers for UI components
@@ -232,11 +288,24 @@ document.addEventListener('keydown', handleKeyboardShortcuts);
 // ========== AUTO-INITIALIZE ==========
 
 // Initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialization.init);
-} else {
+function initApp() {
+    // Initialize pricing calculator
     initialization.init();
+
+    // Set up mode switching
+    setupModeSwitching();
+
+    // Check URL hash for initial mode
+    if (window.location.hash === '#intercompany') {
+        switchMode('intercompany');
+    }
 }
 
-console.log('🚀 Pricing Equilibrium Calculator loaded successfully!');
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
+
+console.log('🚀 Software Transaction Tool loaded successfully!');
 console.log('💡 Tip: Press Ctrl+Enter to calculate or ? for keyboard shortcuts');
