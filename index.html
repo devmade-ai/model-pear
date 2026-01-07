@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Find the sweet spot between seller costs and buyer value with equilibrium pricing analysis">
-    <title>Pricing Equilibrium Calculator</title>
+    <meta name="description" content="Software pricing and inter-company transaction analysis tool for South African businesses">
+    <title>Software Transaction Tool</title>
 
     <!-- Tailwind CSS via Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,12 +20,26 @@
     <div class="container-custom">
         <!-- Header -->
         <header class="bg-gray-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-700">
-            <h1 class="text-3xl font-bold text-gray-100">Pricing Equilibrium Calculator</h1>
-            <p class="text-gray-400 mt-2">Find the sweet spot between seller costs and buyer value</p>
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-100">Software Transaction Tool</h1>
+                    <p class="text-gray-400 mt-2">Pricing analysis and inter-company transaction structuring</p>
+                </div>
+
+                <!-- Mode Switcher -->
+                <div class="flex gap-2 bg-gray-700 p-1 rounded-lg">
+                    <button id="mode-pricing" class="mode-btn px-4 py-2 rounded-md font-medium transition-all duration-200 bg-blue-600 text-white" data-mode="pricing">
+                        <span class="hidden sm:inline">Pricing</span> Calculator
+                    </button>
+                    <button id="mode-intercompany" class="mode-btn px-4 py-2 rounded-md font-medium transition-all duration-200 text-gray-300 hover:bg-gray-600" data-mode="intercompany">
+                        Inter-Company <span class="hidden sm:inline">Tool</span>
+                    </button>
+                </div>
+            </div>
         </header>
 
-        <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Pricing Calculator (Default Mode) -->
+        <div id="pricingCalculatorSection" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Left Sidebar: Model Selection & Input Form -->
             <div class="lg:col-span-1">
                 <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
@@ -141,9 +155,16 @@
             </div>
         </div>
 
+        <!-- Inter-Company Calculator (Hidden by Default) -->
+        <div id="intercompanyCalculatorSection" class="hidden">
+            <div id="intercompanyCalculator">
+                <!-- Inter-company calculator will be dynamically populated here -->
+            </div>
+        </div>
+
         <!-- Footer -->
         <footer class="mt-8 text-center text-gray-400 text-sm">
-            <p>Pricing Equilibrium Calculator | Open Source | Built with ApexCharts & Tailwind CSS</p>
+            <p>Software Transaction Tool | South African B2B Software | Built with ApexCharts & Tailwind CSS</p>
         </footer>
     </div>
 
