@@ -149,7 +149,7 @@ select {
     #calculateBtnContainer {
         position: sticky;
         bottom: 0;
-        background: linear-gradient(to top, #111827 80%, transparent);
+        background: linear-gradient(to top, #1F2937 80%, transparent);
         padding: 1.5rem 0 1rem 0;
         margin-top: 1rem;
         z-index: 10;

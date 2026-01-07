@@ -115,7 +115,7 @@ On mobile devices, the calculate button stays visible at the bottom of the scree
 #calculateBtnContainer {
     position: sticky;
     bottom: 0;
-    background: linear-gradient(to top, #111827 80%, transparent);
+    background: linear-gradient(to top, #1F2937 80%, transparent);
     z-index: 10;
 }
 ```
@@ -207,7 +207,7 @@ Enhanced empty state with:
 
 #### Default State
 ```html
-<button class="bg-gray-700 hover:bg-gray-600 shadow-lg border border-gray-600">
+<button class="bg-blue-600 hover:bg-blue-700">
     Calculate Equilibrium
 </button>
 ```
@@ -281,7 +281,7 @@ Example:
 ### Color Palette
 
 #### Semantic Colors
-- **Blue** (#3B82F6): Selected states, focus indicators, info badges
+- **Blue** (#3B82F6): Primary actions, selected states, focus indicators
 - **Green** (#10B981): Success, positive metrics
 - **Yellow** (#F59E0B): Warnings, calculated fields
 - **Red** (#EF4444): Errors, negative metrics
@@ -370,18 +370,16 @@ Consistent spacing scale using Tailwind's spacing system:
 #### Buttons
 ```css
 .button-primary {
-    background: #374151;  /* gray-700 */
+    background: #3B82F6;  /* blue-600 */
     color: white;
     padding: 0.75rem 1rem;
     border-radius: 0.375rem;
-    border: 1px solid #4B5563;  /* gray-600 */
     font-weight: 600;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
     transition: background-color 0.2s;
 }
 
 .button-primary:hover {
-    background: #4B5563;  /* gray-600 */
+    background: #2563EB;  /* blue-700 */
 }
 ```
 
@@ -492,9 +490,9 @@ Each error message includes a 💡 suggestion for how to fix it
 ### Version 2.1 (2025-01-07)
 
 #### Improved
-- **Calculate button styling**: Changed from bright blue (`bg-blue-600`) to muted gray (`bg-gray-700`) with subtle shadow and border for better visual consistency with the overall dark theme
-- The gray button seamlessly integrates with the sticky mobile gradient background
-- Blue is now reserved for selected states, focus indicators, and info badges
+- **Calculate button styling**: Reverted to blue (`bg-blue-600`) for better visual prominence as the primary action
+- **Mobile sticky gradient**: Fixed gradient background to use `gray-800` (#1F2937) instead of `gray-900` (#111827) to match card backgrounds and eliminate visual discontinuity
+- The sticky container now seamlessly blends with the card color scheme while the blue button remains prominent
 
 ### Version 2.0 (2025-01-06)
 
