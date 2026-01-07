@@ -6,6 +6,7 @@ import { getState, subscribe, selectIntercompanyModel, selectVariant, setInterco
 import { getModelMetadata, getModelVariants, getVariantInputs, calculateIntercompany, DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from '../../models/intercompany/registry.js';
 import { initPerspectiveToggle } from './perspective-toggle.js';
 import { renderIntercompanyResults } from './results-display.js';
+import { initEntityConfig } from './entity-config.js';
 import { formatCurrency, formatPercentage, showToast } from '../../utils/index.js';
 
 // ========== STATE ==========
@@ -53,6 +54,11 @@ function renderCalculatorUI(container) {
 
     container.innerHTML = `
         <div class="intercompany-calculator">
+            <!-- Entity Configuration (Collapsible) -->
+            <div id="entityConfigSection" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
+                <!-- Entity config will be populated here -->
+            </div>
+
             <!-- Model Selection -->
             <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
                 <h2 class="text-xl font-semibold text-gray-100 mb-3">Select Transaction Model</h2>
@@ -109,6 +115,12 @@ function renderCalculatorUI(container) {
 
     // Add event listeners
     setupEventListeners(container);
+
+    // Initialize entity configuration panel
+    const entityConfigSection = container.querySelector('#entityConfigSection');
+    if (entityConfigSection) {
+        initEntityConfig(entityConfigSection);
+    }
 }
 
 /**
