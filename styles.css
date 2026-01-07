@@ -150,8 +150,10 @@ select {
         position: sticky;
         bottom: 0;
         background: linear-gradient(to top, #1F2937 80%, transparent);
-        padding: 1.5rem 0 1rem 0;
+        padding: 1.5rem 1rem 1rem 1rem;
         margin-top: 1rem;
+        margin-left: -1rem;
+        margin-right: -1rem;
         z-index: 10;
     }
 
