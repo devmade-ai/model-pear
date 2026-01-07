@@ -1,15 +1,24 @@
-# Pricing Equilibrium Calculator
+# Software Transaction Tool
 
-A focused pricing tool for South African B2B software businesses to find equilibrium between seller costs and buyer value.
+A dual-mode tool for South African B2B software businesses:
+1. **Pricing Calculator**: Find equilibrium between seller costs and buyer value
+2. **Inter-Company Tool**: Structure and analyse inter-company software transactions
 
 ## What It Does
 
-This tool helps you find the **sweet spot** in pricing by showing you:
+### Pricing Calculator Mode
+Find the **sweet spot** in pricing by showing you:
 - **Seller Perspective**: Minimum price needed to meet your margin goals
 - **Buyer Perspective**: Maximum price buyers will pay based on value received
 - **Equilibrium Zone**: The range where both seller and buyer win
 
-No growth projections, no complicated forecasting - just clear unit economics to help you price realistically.
+### Inter-Company Tool Mode (NEW)
+Analyse inter-company software transactions from **three perspectives**:
+- **Developer Perspective**: Revenue recognition, costs, profit, tax position
+- **Buyer Perspective**: Asset capitalisation, amortisation, Section 11(e) tax benefits
+- **Combined Perspective**: Group consolidation, profit elimination, efficiency analysis
+
+No growth projections, no complicated forecasting - just clear unit economics and transaction structuring.
 
 ## The 5 Pricing Models
 
@@ -19,11 +28,37 @@ No growth projections, no complicated forecasting - just clear unit economics to
 4. **One-Time Purchase** - Upfront license fee + optional annual maintenance
 5. **Marketplace (Two-Sided)** - Commission-based marketplace
 
+## The 6 Inter-Company Models
+
+| Model | Name | Description | Status |
+|-------|------|-------------|--------|
+| 1 | Development Services | Cost-plus software development | ✅ Implemented |
+| 2 | Software Licence | Perpetual/term licences with royalties | Planned |
+| 3 | Joint Development | Cost-sharing arrangements | Planned |
+| 4 | Build-Operate-Transfer | BOT/BTO/BOO structures | Planned |
+| 5 | Software Sale | Asset sale with ongoing support | Planned |
+| 6 | SaaS/Subscription | Enhanced subscription model | Planned |
+
+Each inter-company model includes:
+- Multiple variants (e.g., Model 1 has 6 variants: 1A-1F)
+- Three-perspective calculations (Developer, Buyer, Combined)
+- South African tax treatment (Section 11(e), CGT, deferred tax)
+- Transfer pricing risk assessment
+
 ## Key Features
 
+### Pricing Calculator
 - **Reverse Calculations**: Auto-calculate missing inputs (price, costs, margin, buyer value)
-- **Three-Perspective View**: Revenue & Profit, Seller Economics, Buyer Economics, Equilibrium Analysis
-- **South African Defaults**: Realistic ZAR pricing across all models
+- **Equilibrium Analysis**: Find win-win pricing zones
+
+### Inter-Company Tool
+- **Three-Perspective View**: Developer, Buyer, Combined (consolidation)
+- **Entity Configuration**: Customise developer/buyer settings
+- **Transfer Pricing**: Risk assessment with arm's length benchmarks
+- **Tax Calculations**: Section 11(e), deferred tax, CGT
+
+### Both Modes
+- **South African Defaults**: Realistic ZAR pricing and 27% corporate tax
 - **Static Unit Economics**: No month-by-month projections - just simple math
 - **No Installation**: Runs entirely in the browser
 - **Accessibility First**: Full keyboard navigation, ARIA support, screen reader friendly
@@ -74,8 +109,13 @@ No build process needed - it's pure HTML/CSS/JS.
 **For Understanding the Math:**
 - **[CALCULATIONS.md](CALCULATIONS.md)** - All formulas, rationale, and economic theory explained
 
+**For Inter-Company Transactions:**
+- **[financial_models_intercompany_software.md](financial_models_intercompany_software.md)** - Framework overview
+- **[model_1_cost_plus_concept.md](model_1_cost_plus_concept.md)** - Model 1 specifications
+- **[IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md)** - 13-phase implementation plan
+
 **For Developers:**
-- **[CLAUDE.md](../CLAUDE.md)** - Technical architecture and development guide (AI assistant context)
+- **[claude.md](../claude.md)** - Technical architecture and development guide (AI assistant context)
 - **[HISTORY.md](HISTORY.md)** - Changelog and bug fixes
 
 ## Technology Stack

@@ -46,7 +46,7 @@ This document outlines the phased implementation plan for integrating the Financ
 ---
 
 ## Phase 1: Foundation Infrastructure
-**Status:** In Progress
+**Status:** Completed
 **Estimated Sessions:** 3-4
 **Dependencies:** Phase 0 (Completed)
 
@@ -54,8 +54,8 @@ This document outlines the phased implementation plan for integrating the Financ
 - [x] Create model definitions data structure
 - [x] Define Model 1 (Cost-Plus) with metadata
 - [x] Define 6 variants for Model 1 (1A-1F) with metadata
-- [ ] Define remaining models (2-6) with metadata
-- [ ] Create model-to-current-calculator mapping
+- [~] Define remaining models (2-6) with metadata (deferred to Phases 3-7)
+- [~] Create model-to-current-calculator mapping (deferred)
 
 ### 1.2 Three-Perspective Framework
 - [x] Create perspective toggle UI component
@@ -68,52 +68,52 @@ This document outlines the phased implementation plan for integrating the Financ
 - [x] Add corporate tax rate input (default 27%)
 - [x] Add Section 11(e) software type selector (Mainframe 5yr / PC 2yr)
 - [x] Add useful life input for amortisation
-- [ ] Add accounting framework selector (IFRS / GRAP)
+- [x] Add accounting framework selector (IFRS / GRAP / IFRS-SME)
 - [x] Calculate deferred tax positions
 
 ### 1.4 Entity Configuration
 - [x] Add Developer entity configuration schema
 - [x] Add Buyer entity configuration schema
-- [ ] Add entity configuration UI panel
-- [ ] Add related party status toggle
-- [ ] Add consolidation status toggle
+- [x] Add entity configuration UI panel (collapsible)
+- [x] Add related party status toggle
+- [x] Add consolidation status toggle
 
 ---
 
 ## Phase 2: Model 1 - Development Services (Cost-Plus)
-**Status:** Not Started
+**Status:** Completed
 **Estimated Sessions:** 3-4
-**Dependencies:** Phase 1
+**Dependencies:** Phase 1 (Completed)
 
 ### 2.1 Core Cost-Plus Model
-- [ ] Create Model 1 input form
-- [ ] Add base development cost input
-- [ ] Add margin percentage input (5-15% range guidance)
-- [ ] Add research vs development phase split
-- [ ] Add IAS 38 criteria date input
+- [x] Create Model 1 input form (dynamic generation from model definition)
+- [x] Add base development cost input
+- [x] Add margin percentage input (5-15% range guidance)
+- [x] Add research vs development phase split
+- [~] Add IAS 38 criteria date input (deferred - using cost allocation instead)
 
 ### 2.2 Variant Implementation (1A-1F)
-- [ ] 1A: Pure Cost Reimbursement (no margin)
-- [ ] 1B: Cost-Plus Fixed Margin (standard)
-- [ ] 1C: Cost-Plus with Performance Bonus (milestones)
-- [ ] 1D: Fixed Price Development Contract
-- [ ] 1E: Time and Materials
-- [ ] 1F: Dedicated Development Team
+- [x] 1A: Pure Cost Reimbursement (no margin)
+- [x] 1B: Cost-Plus Fixed Margin (standard)
+- [x] 1C: Cost-Plus with Performance Bonus (milestones)
+- [x] 1D: Fixed Price Development Contract
+- [x] 1E: Time and Materials
+- [x] 1F: Dedicated Development Team
 
 ### 2.3 Model 1 Calculations
-- [ ] Developer revenue by variant
-- [ ] Developer profit and tax calculations
-- [ ] Buyer capitalisation calculations
-- [ ] Buyer amortisation schedule
-- [ ] Combined asset efficiency ratio
-- [ ] Intercompany profit elimination amount
+- [x] Developer revenue by variant
+- [x] Developer profit and tax calculations
+- [x] Buyer capitalisation calculations
+- [x] Buyer amortisation schedule
+- [x] Combined asset efficiency ratio
+- [x] Intercompany profit elimination amount
 
 ### 2.4 Model 1 Outputs & Visualisations
-- [ ] Variant comparison bar chart
-- [ ] Cash flow timeline chart
-- [ ] Asset carrying value over time chart
-- [ ] Risk vs return scatter plot
-- [ ] Decision support recommendation matrix
+- [~] Variant comparison bar chart (deferred to Phase 10)
+- [~] Cash flow timeline chart (deferred to Phase 10)
+- [x] Asset carrying value over time chart (mini bar chart in results)
+- [~] Risk vs return scatter plot (deferred to Phase 10)
+- [~] Decision support recommendation matrix (deferred to Phase 8)
 
 ---
 
@@ -558,6 +558,8 @@ Phase 13 (Polish)
 | 2026-01-07 | Phase 0 | Completed - See PHASE_0_PREPARATION.md | Claude |
 | 2026-01-07 | Phase 1 | Started implementation | Claude |
 | 2026-01-07 | Phase 1 | Core infrastructure complete: registry, state, perspectives, Model 1 | Claude |
+| 2026-01-07 | Phase 1 | Completed - Entity configuration UI panel added | Claude |
+| 2026-01-07 | Phase 2 | Completed - Model 1 with all 6 variants fully implemented | Claude |
 
 ---
 
