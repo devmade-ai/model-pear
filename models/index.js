@@ -431,16 +431,6 @@ export const models = {
                 hint: 'Percentage of customers buying maintenance'
             },
             {
-                name: 'unitsSoldPerMonth',
-                label: 'Licenses Sold per Month',
-                type: 'number',
-                default: 5,
-                min: 0,
-                step: 1,
-                category: 'pricing',
-                hint: 'Average number of new licenses sold monthly'
-            },
-            {
                 name: 'existingCustomers',
                 label: 'Existing Customers on Maintenance',
                 type: 'number',
@@ -498,15 +488,13 @@ export const models = {
         ],
 
         calculate: function(inputs) {
-            // Monthly calculations
-            const monthlyLicenseRevenue = inputs.licensePrice * inputs.unitsSoldPerMonth;
+            // Monthly calculations - maintenance revenue only (static snapshot)
             const annualMaintenanceFee = inputs.licensePrice * (inputs.maintenanceFee / 100);
             const monthlyMaintenanceRevenue = (inputs.existingCustomers * annualMaintenanceFee) / 12;
-            const monthlyRevenue = monthlyLicenseRevenue + monthlyMaintenanceRevenue;
+            const monthlyRevenue = monthlyMaintenanceRevenue;
 
-            const monthlyLicenseCost = inputs.costToDeliver * inputs.unitsSoldPerMonth;
             const monthlySupportCost = inputs.existingCustomers * inputs.monthlySupportCost;
-            const monthlyCost = monthlyLicenseCost + monthlySupportCost;
+            const monthlyCost = monthlySupportCost;
 
             const monthlyProfit = monthlyRevenue - monthlyCost;
             const actualMargin = monthlyRevenue > 0 ? (monthlyProfit / monthlyRevenue) * 100 : 0;
@@ -540,7 +528,6 @@ export const models = {
                 // Revenue & Profit
                 monthlyRevenue,
                 annualRevenue,
-                monthlyLicenseRevenue,
                 monthlyMaintenanceRevenue,
                 monthlyCost,
                 monthlyProfit,
@@ -566,7 +553,6 @@ export const models = {
 
                 // Display metrics
                 licensePrice: inputs.licensePrice,
-                unitsSoldPerMonth: inputs.unitsSoldPerMonth,
                 existingCustomers: inputs.existingCustomers
             };
         },
