@@ -1,16 +1,21 @@
-# Pricing Equilibrium Calculator
+# Software Transaction Tool
 
-> **Purpose**: AI assistant context file for the Pricing Equilibrium Calculator
+> **Purpose**: AI assistant context file for the Software Transaction Tool
 > **Last Updated**: January 2026
-> **Status**: Active - 5 pricing models with seller/buyer equilibrium analysis
+> **Status**: Active - Dual-mode tool with Pricing Calculator (5 models) and Inter-Company Transaction Tool (6 models)
 
 ## System Purpose
 
-This tool exists to help **an owner of two companies** (a seller company and a buyer company) find pricing that works for both sides.
+This tool exists to help **an owner of two companies** (a seller company and a buyer company) with:
 
-**The core question**: What price lets the seller make their target margin while giving the buyer compelling ROI?
+1. **Pricing Calculator**: Find pricing that works for both sides (equilibrium pricing)
+2. **Inter-Company Tool**: Structure and analyse inter-company software transactions with proper accounting, tax, and transfer pricing treatment
 
-**Why this matters**: Most pricing tools focus only on the seller's perspective. This calculator shows both sides simultaneously, revealing whether a sustainable business relationship is possible.
+**The core questions**:
+- Pricing: What price lets the seller make their target margin while giving the buyer compelling ROI?
+- Inter-Company: How should we structure this transaction for optimal accounting treatment, tax efficiency, and transfer pricing compliance?
+
+**Why this matters**: Most pricing tools focus only on the seller's perspective. This tool shows both sides simultaneously, revealing whether a sustainable business relationship is possible AND how to properly account for it.
 
 ## Architecture
 
@@ -28,26 +33,37 @@ This tool exists to help **an owner of two companies** (a seller company and a b
 
 ```
 model-pear/
-├── index.html              # Entry point
+├── index.html              # Entry point (dual-mode: pricing + intercompany)
 ├── styles.css              # Custom styles
-├── app.js                  # Orchestrator (sets up dependencies, exports to window)
+├── app.js                  # Orchestrator (sets up dependencies, mode switching)
 │
 ├── config/
 │   ├── constants.js        # Chart colors, global config
 │   └── sa-pricing-defaults.js  # South African market defaults (ZAR)
 │
+├── state/
+│   └── app-state.js        # Pub/sub state management for both modes
+│
 ├── models/
-│   └── index.js            # 5 pricing models with calculation logic
+│   ├── index.js            # 5 pricing models with calculation logic
+│   └── intercompany/       # NEW: Inter-company transaction models
+│       ├── registry.js     # Model registry with helper functions
+│       └── model-1-cost-plus.js  # Model 1: Development Services (6 variants)
 │
 ├── calculators/
-│   ├── engine.js           # Main calculation engine
+│   ├── engine.js           # Main calculation engine (pricing)
 │   └── reverse-calculations.js  # Auto-calculate missing inputs
 │
 ├── ui/
 │   ├── initialization.js   # App startup
 │   ├── forms.js            # Dynamic form generation
-│   ├── results-display.js  # Render result panels
-│   └── modals.js           # Tooltips and modals
+│   ├── results-display.js  # Render result panels (pricing)
+│   ├── modals.js           # Tooltips and modals
+│   └── intercompany/       # NEW: Inter-company UI components
+│       ├── calculator.js       # Main inter-company calculator
+│       ├── entity-config.js    # Developer/Buyer entity configuration
+│       ├── perspective-toggle.js  # Three-perspective switcher
+│       └── results-display.js  # Three-perspective results rendering
 │
 ├── charts/
 │   └── index.js            # Equilibrium chart rendering
@@ -55,14 +71,18 @@ model-pear/
 ├── utils/
 │   └── index.js            # Formatting, validation, helpers
 │
-├── CLAUDE.md               # This file (AI assistant context, must be in root)
+├── claude.md               # This file (AI assistant context, must be in root)
 │
 └── docs/
     ├── README.md           # Quick start
     ├── BUSINESS_GUIDE.md   # User guide with tutorials
     ├── CALCULATIONS.md     # Formula explanations
     ├── UI_UX_GUIDE.md      # Accessibility features
-    └── HISTORY.md          # Changelog
+    ├── HISTORY.md          # Changelog
+    ├── IMPLEMENTATION_ROADMAP.md  # NEW: 13-phase implementation plan
+    ├── PHASE_0_PREPARATION.md     # NEW: Phase 0 audit findings
+    ├── financial_models_intercompany_software.md  # Framework overview
+    └── model_*_concept.md  # Concept docs for Models 1-6
 ```
 
 ## The 5 Pricing Models
@@ -108,6 +128,59 @@ Each model answers the same core question from two perspectives:
 |-------------|--------------|
 | Platform | "What commission rate covers R15/transaction cost and hits 70% margin?" |
 | Merchants | "Is 10% commission worth it if I profit R150 per transaction?" |
+
+## The Inter-Company Transaction Tool (NEW)
+
+A separate mode for analysing inter-company software transactions. Accessed via the mode switcher in the header.
+
+### Three-Perspective Framework
+
+Every transaction is analysed from three perspectives:
+
+| Perspective | Shows |
+|-------------|-------|
+| **Developer** | Revenue recognition, costs, profit, tax position |
+| **Buyer** | Asset capitalisation, amortisation, tax deductions |
+| **Combined** | Group consolidation, profit elimination, efficiency |
+
+### Model 1: Development Services (Cost-Plus) ✅ IMPLEMENTED
+
+Developer creates software for Buyer as a service. IP ownership goes to Buyer.
+
+**6 Variants:**
+| Variant | Description | Use Case |
+|---------|-------------|----------|
+| 1A | Pure Cost Reimbursement | Zero margin, cost validation |
+| 1B | Cost-Plus Fixed Margin | Standard arrangement (5-15%) |
+| 1C | Cost-Plus with Bonus | Milestone incentives |
+| 1D | Fixed Price Development | Well-defined scope |
+| 1E | Time and Materials | Uncertain scope |
+| 1F | Dedicated Team | Monthly retainer |
+
+### Models 2-6 (Planned)
+
+| Model | Description | Status |
+|-------|-------------|--------|
+| Model 2 | Software Licence with Royalties | Not Started |
+| Model 3 | Joint Development / Cost-Sharing | Not Started |
+| Model 4 | Build-Operate-Transfer (BOT) | Not Started |
+| Model 5 | Software Sale with Ongoing Support | Not Started |
+| Model 6 | Subscription/SaaS Enhancement | Not Started |
+
+### South African Tax Features
+
+- Corporate tax rate (default 27%)
+- Section 11(e) accelerated depreciation (PC: 2yr, Mainframe: 5yr)
+- Capital Gains Tax inclusion rate
+- Deferred tax calculations (timing differences)
+- Transfer pricing risk assessment
+
+### Entity Configuration
+
+Configurable settings for:
+- Developer entity (name, jurisdiction, accounting framework)
+- Buyer entity (name, jurisdiction, accounting framework)
+- Relationship settings (related parties, consolidation required)
 
 ## Core Concept: Equilibrium Pricing
 
@@ -247,4 +320,8 @@ const minimumPrice = cost / (1 - margin / 100);
 
 ---
 
-**For AI Assistants**: This file is your source of truth. The system has exactly 5 models focused on equilibrium pricing. No growth projections, no admin panels, no multi-model comparison modes. Keep it simple.
+**For AI Assistants**: This file is your source of truth. The system has two modes:
+1. **Pricing Calculator**: 5 models focused on equilibrium pricing - keep it simple
+2. **Inter-Company Tool**: 6 models (1 implemented, 5 planned) for transaction structuring with three-perspective analysis
+
+See `docs/IMPLEMENTATION_ROADMAP.md` for the detailed implementation plan. Focus on Phase 3-7 (Models 2-6) as next steps.
