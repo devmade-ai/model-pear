@@ -1,14 +1,22 @@
 import { SA_PRICING_DEFAULTS, getDefaults } from '../config/sa-pricing-defaults.js';
 
-// ========== SIMPLIFIED MODEL DEFINITIONS ==========
-// Static unit economics focused on seller cost vs buyer value equilibrium
+// ========== MODEL DEFINITIONS ==========
+// Each model answers: "What price lets the seller hit their margin while giving
+// the buyer compelling ROI?"
+//
+// Why only 5 models?
+// - These cover 90%+ of B2B software pricing patterns
+// - More models can be added later, but complexity should grow with user needs
+// - Each model uses the same equilibrium framework, just with different inputs
 
 export const models = {
     'subscription': {
         name: 'Subscription (SaaS)',
         description: 'Recurring monthly revenue per customer',
+        // Inputs are grouped by perspective: pricing, seller costs, buyer value
+        // This grouping helps users understand which side of the equation they're filling in
         inputs: [
-            // PRICING
+            // PRICING - the variables that determine revenue
             {
                 name: 'monthlyPrice',
                 label: 'Monthly Price per Customer (R)',
@@ -30,7 +38,7 @@ export const models = {
                 hint: 'Total active customers'
             },
 
-            // SELLER COSTS
+            // SELLER COSTS - what the seller needs to cover to be profitable
             {
                 name: 'costToServe',
                 label: 'Cost to Serve per Customer (R/month)',
@@ -53,7 +61,9 @@ export const models = {
                 hint: 'Target profit margin (typical SaaS: 70-85%)'
             },
 
-            // BUYER VALUE
+            // BUYER VALUE - what the buyer gets out of using the product
+            // This is the key to equilibrium: if buyer value is too low relative to price,
+            // no sustainable pricing exists
             {
                 name: 'buyerValue',
                 label: 'Monthly Value to Buyer (R)',
@@ -66,29 +76,32 @@ export const models = {
             }
         ],
 
+        // Calculate equilibrium between seller needs and buyer value
         calculate: function(inputs) {
+            // Basic unit economics
             const monthlyRevenue = inputs.monthlyPrice * inputs.customers;
             const monthlyCost = inputs.costToServe * inputs.customers;
             const monthlyProfit = monthlyRevenue - monthlyCost;
             const actualMargin = monthlyRevenue > 0 ? (monthlyProfit / monthlyRevenue) * 100 : 0;
-
-            // Calculate annual values
             const annualRevenue = monthlyRevenue * 12;
             const annualProfit = monthlyProfit * 12;
 
-            // Seller perspective
+            // SELLER PERSPECTIVE: What's the minimum price to hit target margin?
+            // Formula: cost / (1 - margin) because margin = (price - cost) / price
             const minimumPrice = inputs.desiredMargin >= 100 ? Infinity :
                 inputs.costToServe / (1 - inputs.desiredMargin / 100);
             const priceVsMinimum = inputs.monthlyPrice >= minimumPrice;
 
-            // Buyer perspective
+            // BUYER PERSPECTIVE: Is the price worth it for the value received?
             const buyerROI = inputs.monthlyPrice > 0 ? inputs.buyerValue / inputs.monthlyPrice : 0;
             const buyerAnnualSavings = (inputs.buyerValue - inputs.monthlyPrice) * 12;
+            // Payback: how many months of net benefit to recover the cost?
             const buyerPaybackMonths = inputs.buyerValue > inputs.monthlyPrice ?
                 inputs.monthlyPrice / (inputs.buyerValue - inputs.monthlyPrice) : Infinity;
 
-            // Equilibrium analysis
-            const maximumPriceBuyerWillPay = inputs.buyerValue * 0.4; // 2.5x ROI threshold
+            // EQUILIBRIUM: Where do seller needs and buyer limits overlap?
+            // Buyer ceiling at 40% of value = 2.5x ROI minimum threshold
+            const maximumPriceBuyerWillPay = inputs.buyerValue * 0.4;
             const equilibriumExists = minimumPrice <= maximumPriceBuyerWillPay;
             const equilibriumRange = equilibriumExists ? {
                 floor: minimumPrice,
@@ -126,6 +139,7 @@ export const models = {
             };
         },
 
+        // Tiers allow loading different default values for different market segments
         defaultTier: 'standard',
         tiers: ['basic', 'standard', 'enterprise']
     },
@@ -133,6 +147,7 @@ export const models = {
     'usage-based': {
         name: 'Usage-Based',
         description: 'Pay per API call, transaction, build minute, etc.',
+        // Usage-based applies the same equilibrium logic per-unit instead of per-customer
         inputs: [
             // PRICING
             {
@@ -387,6 +402,8 @@ export const models = {
     'one-time': {
         name: 'One-Time Purchase (Perpetual License)',
         description: 'Upfront license fee + optional annual maintenance',
+        // One-time has unique inputs: maintenance fees create recurring revenue from existing customers
+        // This is how perpetual license businesses build sustainable revenue
         inputs: [
             // PRICING
             {
@@ -479,7 +496,8 @@ export const models = {
         ],
 
         calculate: function(inputs) {
-            // Monthly calculations - maintenance revenue only (static snapshot)
+            // For one-time purchases, monthly revenue comes from maintenance contracts
+            // This represents the steady-state recurring revenue, not the one-time license sales
             const annualMaintenanceFee = inputs.licensePrice * (inputs.maintenanceFee / 100);
             const monthlyMaintenanceRevenue = (inputs.existingCustomers * annualMaintenanceFee) / 12;
             const monthlyRevenue = monthlyMaintenanceRevenue;
@@ -494,22 +512,22 @@ export const models = {
             const annualRevenue = monthlyRevenue * 12;
             const annualProfit = monthlyProfit * 12;
 
-            // Seller perspective - license only
+            // SELLER: minimum license price to cover delivery cost and hit margin
             const minimumLicensePrice = inputs.desiredMargin >= 100 ? Infinity :
                 inputs.costToDeliver / (1 - inputs.desiredMargin / 100);
             const priceVsMinimum = inputs.licensePrice >= minimumLicensePrice;
 
-            // Buyer perspective - total cost of ownership
+            // BUYER: total cost of ownership includes license + maintenance
             const buyerFirstYearCost = inputs.licensePrice + (annualMaintenanceFee * (inputs.maintenanceAttach / 100));
             const buyerYear2PlusCost = annualMaintenanceFee * (inputs.maintenanceAttach / 100);
             const buyerROIFirstYear = buyerFirstYearCost > 0 ? inputs.buyerValuePerYear / buyerFirstYearCost : 0;
-            // Payback = months until first year cost is recovered from monthly value
-            // Monthly value = annual value / 12, so payback = firstYearCost / (annualValue / 12)
+            // Payback in months = (total first year cost) / (monthly value)
             const buyerPaybackMonths = buyerFirstYearCost > 0 && inputs.buyerValuePerYear > 0 ?
                 12 * (buyerFirstYearCost / inputs.buyerValuePerYear) : Infinity;
 
-            // Equilibrium analysis
-            const maximumPriceBuyerWillPay = inputs.buyerValuePerYear * 0.5; // 2x ROI in year 1
+            // EQUILIBRIUM: buyers accept 2x ROI (not 2.5x) for one-time purchases
+            // because upfront payment is less risky than ongoing commitment
+            const maximumPriceBuyerWillPay = inputs.buyerValuePerYear * 0.5;
             const equilibriumExists = minimumLicensePrice <= maximumPriceBuyerWillPay;
             const equilibriumRange = equilibriumExists ? {
                 floor: minimumLicensePrice,
@@ -557,6 +575,8 @@ export const models = {
     'marketplace': {
         name: 'Marketplace (Two-Sided)',
         description: 'Commission-based marketplace connecting buyers and sellers',
+        // Unique model: the "buyer" in equilibrium terms is the merchant on the platform
+        // Platform needs to balance its margin against keeping merchants profitable
         inputs: [
             // PRICING
             {
@@ -624,7 +644,8 @@ export const models = {
                 hint: 'Target profit margin on commissions (typical: 60-75%)'
             },
 
-            // BUYER VALUE (for sellers using the platform)
+            // "BUYER" VALUE - actually the merchant's profit per transaction
+            // In marketplace equilibrium, merchants are the "buyers" of platform services
             {
                 name: 'sellerValuePerTransaction',
                 label: 'Value per Transaction to Seller (R)',
@@ -638,27 +659,24 @@ export const models = {
         ],
 
         calculate: function(inputs) {
-            // Revenue calculations
+            // GMV (Gross Merchandise Value) = total transaction volume through platform
             const monthlyGMV = inputs.avgTransactionValue * inputs.monthlyTransactions;
             const commissionPerTransaction = inputs.avgTransactionValue * (inputs.commissionRate / 100);
             const monthlyRevenue = commissionPerTransaction * inputs.monthlyTransactions;
 
-            // Cost calculations
             const monthlyCost = inputs.costPerTransaction * inputs.monthlyTransactions;
             const monthlyProfit = monthlyRevenue - monthlyCost;
             const actualMargin = monthlyRevenue > 0 ? (monthlyProfit / monthlyRevenue) * 100 : 0;
-
-            // Annual calculations
             const annualRevenue = monthlyRevenue * 12;
             const annualProfit = monthlyProfit * 12;
             const annualGMV = monthlyGMV * 12;
 
-            // Seller perspective - minimum commission rate
+            // PLATFORM: minimum commission rate to cover costs and hit margin
             const minimumCommissionRate = inputs.desiredMargin >= 100 ? 100 :
                 (inputs.costPerTransaction / inputs.avgTransactionValue) / (1 - inputs.desiredMargin / 100) * 100;
             const rateVsMinimum = inputs.commissionRate >= minimumCommissionRate;
 
-            // Buyer perspective - sellers on the platform
+            // MERCHANTS: how much profit do they keep after commission?
             const sellerNetProfit = inputs.sellerValuePerTransaction - commissionPerTransaction;
             const sellerROI = inputs.sellerValuePerTransaction > 0 ?
                 sellerNetProfit / inputs.sellerValuePerTransaction : 0;
@@ -666,9 +684,10 @@ export const models = {
             const avgTransactionsPerSeller = inputs.activeSellers > 0 ?
                 inputs.monthlyTransactions / inputs.activeSellers : 0;
 
-            // Equilibrium analysis - maximum commission sellers will accept
+            // EQUILIBRIUM: merchants tolerate up to 30% of their profit as commission
+            // Beyond this, they leave the platform or demand better terms
             const maximumCommissionRate = inputs.avgTransactionValue > 0 ?
-                (inputs.sellerValuePerTransaction * 0.3) / inputs.avgTransactionValue * 100 : 0; // Max 30% of profit
+                (inputs.sellerValuePerTransaction * 0.3) / inputs.avgTransactionValue * 100 : 0;
             const equilibriumExists = minimumCommissionRate <= maximumCommissionRate;
             const equilibriumRange = equilibriumExists ? {
                 floor: minimumCommissionRate,
@@ -718,22 +737,21 @@ export const models = {
 
 // ========== HELPER FUNCTIONS ==========
 
-/**
- * Get a model by key
- */
 export function getModel(modelKey) {
     return models[modelKey];
 }
 
-/**
- * Get all model keys
- */
 export function getModelKeys() {
     return Object.keys(models);
 }
 
 /**
  * Load default inputs for a model from SA pricing defaults
+ *
+ * Why SA defaults?
+ * - Primary users are South African B2B software businesses
+ * - Using ZAR and local market benchmarks makes the tool immediately useful
+ * - Defaults can be changed per tier (basic/standard/enterprise)
  */
 export function loadModelDefaults(modelKey, tier = null) {
     const model = models[modelKey];
