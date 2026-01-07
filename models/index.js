@@ -155,14 +155,6 @@ export const models = {
                 category: 'pricing',
                 hint: 'Total units consumed per month'
             },
-            {
-                name: 'unitLabel',
-                label: 'Unit Description',
-                type: 'text',
-                default: '1,000 API calls',
-                category: 'pricing',
-                hint: 'What is the unit? (e.g., "1,000 API calls", "build minute")'
-            },
 
             // SELLER COSTS
             {
@@ -257,8 +249,7 @@ export const models = {
 
                 // Display metrics
                 pricePerUnit: inputs.pricePerUnit,
-                monthlyUnits: inputs.monthlyUnits,
-                unitLabel: inputs.unitLabel
+                monthlyUnits: inputs.monthlyUnits
             };
         },
 
@@ -598,16 +589,6 @@ export const models = {
                 hint: 'Total successful transactions per month'
             },
             {
-                name: 'activeBuyers',
-                label: 'Active Buyers',
-                type: 'number',
-                default: 100,
-                min: 0,
-                step: 5,
-                category: 'pricing',
-                hint: 'Number of active buyers on platform'
-            },
-            {
                 name: 'activeSellers',
                 label: 'Active Sellers',
                 type: 'number',
@@ -724,7 +705,6 @@ export const models = {
                 commissionRate: inputs.commissionRate,
                 avgTransactionValue: inputs.avgTransactionValue,
                 monthlyTransactions: inputs.monthlyTransactions,
-                activeBuyers: inputs.activeBuyers,
                 activeSellers: inputs.activeSellers
             };
         },
