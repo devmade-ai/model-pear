@@ -37,7 +37,7 @@ No growth projections, no complicated forecasting - just clear unit economics an
 | 3 | Joint Development | Cost-sharing arrangements | Planned |
 | 4 | Build-Operate-Transfer | BOT/BTO/BOO structures | Planned |
 | 5 | Software Sale | Asset sale with ongoing support | Planned |
-| 6 | SaaS/Subscription | Enhanced subscription model | Planned |
+| 6 | SaaS/Subscription | Enhanced subscription model | ✅ Implemented |
 
 Each inter-company model includes:
 - Multiple variants (e.g., Model 1 has 6 variants: 1A-1F)
@@ -113,6 +113,7 @@ No build process needed - it's pure HTML/CSS/JS.
 - **[financial_models_intercompany_software.md](financial_models_intercompany_software.md)** - Framework overview
 - **[model_1_cost_plus_concept.md](model_1_cost_plus_concept.md)** - Model 1 specifications
 - **[model_2_licence_royalties_concept.md](model_2_licence_royalties_concept.md)** - Model 2 specifications
+- **[model_6_saas_subscription_concept.md](model_6_saas_subscription_concept.md)** - Model 6 specifications
 - **[IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md)** - 13-phase implementation plan
 
 **For Developers:**
