@@ -1,73 +1,83 @@
 // ========== REVERSE CALCULATIONS ==========
-// Calculate missing inputs based on other known inputs
+// These functions let users work backwards from what they know.
+//
+// Why "reverse" calculations?
+// - Users often know their costs and buyer value, but not the optimal price
+// - Or they have a price in mind and want to know what margin they'll achieve
+// - This inverts the normal "input everything, see results" flow
 
 /**
  * Calculate optimal price for subscription model
- * @param {Object} inputs - Known inputs
- * @param {string} strategy - 'minimum' | 'balanced' | 'maximum'
- * @returns {number} Calculated price
+ *
+ * Three pricing strategies serve different business goals:
+ * - minimum: Win on price (seller floor) - use when competing on cost
+ * - balanced: Fair to both sides (midpoint) - default, sustainable long-term
+ * - maximum: Capture full value (buyer ceiling) - use when you have pricing power
  */
 export function calculateSubscriptionPrice(inputs, strategy = 'balanced') {
     const { costToServe, desiredMargin, buyerValue } = inputs;
 
-    // Calculate seller floor (minimum viable price)
+    // Seller floor: the minimum price to cover costs AND hit target margin
+    // Formula: cost / (1 - margin) because margin = (price - cost) / price
     const sellerFloor = desiredMargin >= 100 ? Infinity :
         costToServe / (1 - desiredMargin / 100);
 
-    // Calculate buyer ceiling (maximum price for 2.5x ROI)
+    // Buyer ceiling: maximum price that still gives buyer 2.5x ROI
+    // At 40% of value, buyer gets R2.50 back for every R1 spent
     const buyerCeiling = buyerValue * 0.4;
 
-    // Return based on strategy
     if (strategy === 'minimum') {
         return sellerFloor;
     } else if (strategy === 'maximum') {
         return buyerCeiling;
     } else {
-        // Balanced - midpoint
+        // Balanced: split the difference - both parties "win" equally
         return (sellerFloor + buyerCeiling) / 2;
     }
 }
 
 /**
  * Calculate required buyer value for subscription model
- * @param {Object} inputs - Known inputs
- * @returns {number} Minimum buyer value needed
+ *
+ * Why divide by 0.4?
+ * - We assume buyers need at least 2.5x ROI to justify the purchase
+ * - If price = value × 0.4, then value = price / 0.4
+ * - Example: R500 price requires R1,250 monthly value to hit 2.5x ROI
  */
 export function calculateSubscriptionBuyerValue(inputs) {
     const { monthlyPrice } = inputs;
-
-    // For 2.5x ROI threshold: price = value × 0.4
-    // Therefore: value = price / 0.4
     return monthlyPrice / 0.4;
 }
 
 /**
  * Calculate achievable margin for subscription model
- * @param {Object} inputs - Known inputs
- * @returns {number} Margin percentage
+ *
+ * Why this formula?
+ * - Margin = (revenue - cost) / revenue = 1 - (cost/revenue)
+ * - User asks: "If I charge R500 and it costs R150, what's my margin?"
+ * - Answer: 1 - (150/500) = 0.70 = 70%
  */
 export function calculateSubscriptionMargin(inputs) {
     const { monthlyPrice, costToServe } = inputs;
-
     if (monthlyPrice === 0) return 0;
-
-    // Margin = (1 - cost/price) × 100
     return (1 - costToServe / monthlyPrice) * 100;
 }
 
 /**
  * Calculate maximum cost to serve for subscription model
- * @param {Object} inputs - Known inputs
- * @returns {number} Maximum cost
+ *
+ * Why this matters?
+ * - User asks: "I charge R500 and want 70% margin. What's my cost ceiling?"
+ * - This tells them the maximum they can spend per customer and still hit margin
+ * - Answer: R500 × (1 - 0.70) = R150 max cost
  */
 export function calculateSubscriptionCost(inputs) {
     const { monthlyPrice, desiredMargin } = inputs;
-
-    // Cost = price × (1 - margin/100)
     return monthlyPrice * (1 - desiredMargin / 100);
 }
 
 // ========== USAGE-BASED MODEL ==========
+// Same equilibrium logic as subscription, but applied per-unit instead of per-customer
 
 export function calculateUsageBasedPrice(inputs, strategy = 'balanced') {
     const { costPerUnit, desiredMargin, buyerValuePerUnit } = inputs;
@@ -102,6 +112,7 @@ export function calculateUsageBasedCost(inputs) {
 }
 
 // ========== PER-SEAT MODEL ==========
+// Same equilibrium logic, applied per-seat/per-user
 
 export function calculatePerSeatPrice(inputs, strategy = 'balanced') {
     const { costPerSeat, desiredMargin, valuePerSeat } = inputs;
@@ -136,13 +147,17 @@ export function calculatePerSeatCost(inputs) {
 }
 
 // ========== ONE-TIME PURCHASE MODEL ==========
+// Different ROI threshold: buyers expect 2x (not 2.5x) for upfront purchases
+// because they're buying once, not committing to recurring payments
 
 export function calculateOneTimePrice(inputs, strategy = 'balanced') {
     const { costToDeliver, desiredMargin, buyerValuePerYear } = inputs;
 
     const sellerFloor = desiredMargin >= 100 ? Infinity :
         costToDeliver / (1 - desiredMargin / 100);
-    const buyerCeiling = buyerValuePerYear * 0.5; // 2x ROI in year 1
+    // 0.5 = 50% of annual value = 2x ROI in first year
+    // Lower threshold than subscription because it's a one-time commitment
+    const buyerCeiling = buyerValuePerYear * 0.5;
 
     if (strategy === 'minimum') {
         return sellerFloor;
@@ -155,8 +170,7 @@ export function calculateOneTimePrice(inputs, strategy = 'balanced') {
 
 export function calculateOneTimeBuyerValue(inputs) {
     const { licensePrice } = inputs;
-    // For 2x ROI in year 1: price = value × 0.5
-    // Therefore: value = price / 0.5
+    // For 2x ROI in year 1, annual value must be 2x the license price
     return licensePrice / 0.5;
 }
 
@@ -172,15 +186,18 @@ export function calculateOneTimeCost(inputs) {
 }
 
 // ========== MARKETPLACE MODEL ==========
+// Unique: the "buyer" is actually the merchant selling on your platform
+// They'll accept commission that leaves them profitable, but not too greedy
 
 export function calculateMarketplaceCommission(inputs, strategy = 'balanced') {
     const { costPerTransaction, desiredMargin, sellerValuePerTransaction, avgTransactionValue } = inputs;
 
-    // Minimum commission rate
+    // Platform's minimum commission rate to cover costs and hit margin
     const sellerFloor = desiredMargin >= 100 ? 100 :
         (costPerTransaction / avgTransactionValue) / (1 - desiredMargin / 100) * 100;
 
-    // Maximum commission rate (30% of seller's profit)
+    // Maximum commission merchants will tolerate: 30% of their profit
+    // Beyond this, merchants won't see the platform as worth it
     const buyerCeiling = avgTransactionValue > 0 ?
         (sellerValuePerTransaction * 0.3) / avgTransactionValue * 100 : 0;
 
@@ -195,9 +212,8 @@ export function calculateMarketplaceCommission(inputs, strategy = 'balanced') {
 
 export function calculateMarketplaceBuyerValue(inputs) {
     const { commissionRate, avgTransactionValue } = inputs;
-    // Maximum commission takes 30% of seller profit
-    // commission = (sellerValue × 0.3) / avgTxValue × 100
-    // Therefore: sellerValue = (commission × avgTxValue) / 30
+    // Invert the 30% rule: if commission is X%, what profit must merchants make
+    // for that to be only 30% of their margin?
     return (commissionRate * avgTransactionValue) / 30;
 }
 
@@ -215,14 +231,16 @@ export function calculateMarketplaceCost(inputs) {
 }
 
 // ========== GENERIC CALCULATION ROUTER ==========
+// Maps model + field combinations to the right calculator function
+// This keeps the engine.js simple - it just calls calculateMissingInput()
 
 /**
- * Calculate missing input based on model and calculation mode
- * @param {string} modelKey - Model identifier
- * @param {string} calculateField - Field to calculate
- * @param {Object} inputs - Known inputs
- * @param {string} strategy - Pricing strategy (for price calculations)
- * @returns {number} Calculated value
+ * Route to the correct calculator based on model and field
+ *
+ * Why a router pattern?
+ * - Each model has 4 possible calculations (price, value, margin, cost)
+ * - 5 models × 4 calculations = 20 combinations
+ * - Router keeps the calling code clean: one function, any combination
  */
 export function calculateMissingInput(modelKey, calculateField, inputs, strategy = 'balanced') {
     const calculators = {
@@ -273,8 +291,11 @@ export function calculateMissingInput(modelKey, calculateField, inputs, strategy
 
 /**
  * Get available calculation options for a model
- * @param {string} modelKey - Model identifier
- * @returns {Array} Array of {value, label, description} objects
+ *
+ * Why per-model options?
+ * - Each model has different field names (monthlyPrice vs pricePerUnit vs licensePrice)
+ * - Descriptions need to be contextual ("Calculate Optimal Price per Seat" not just "Calculate Price")
+ * - Some options require pricing strategy selection (price calculations), others don't
  */
 export function getCalculationOptions(modelKey) {
     const options = {

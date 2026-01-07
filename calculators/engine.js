@@ -3,20 +3,28 @@ import { CONFIG } from '../config/constants.js';
 import { calculateMissingInput } from './reverse-calculations.js';
 
 // ========== CALCULATION ENGINE ==========
+// This engine bridges user inputs with model calculations, handling both
+// manual entry and auto-calculation modes.
 
-// Track previous calculation mode per model to properly unlock fields
+// Track previous calculation mode per model so we can unlock the old field
+// when the user switches to calculating a different field
 const previousCalculationModes = {};
 
 /**
  * Calculate results for the selected model
- * Simplified for static unit economics (no month-by-month projections)
- * Now supports auto-calculating missing inputs
+ *
+ * Why static unit economics (no projections)?
+ * - If pricing doesn't work at the unit level, growth projections are meaningless
+ * - Simpler UI keeps focus on the equilibrium question
+ * - Users can always add complexity later
  */
 export function calculateModel(modelKey, calculationMode = 'none', pricingStrategy = 'balanced') {
     const model = models[modelKey];
     const inputs = {};
 
-    // Gather input values
+    // Gather input values from the form
+    // We need to handle text vs numeric inputs differently because parseFloat
+    // on text returns NaN, which breaks calculations
     model.inputs.forEach(input => {
         const inputId = `${modelKey}-${input.name}`;
         const element = document.getElementById(inputId);
@@ -32,10 +40,12 @@ export function calculateModel(modelKey, calculationMode = 'none', pricingStrate
         }
     });
 
-    // Calculate missing input if calculation mode is active
+    // Auto-calculate a missing input if the user selected a calculation mode
+    // This lets users say "I know my costs and buyer value, calculate my price"
     if (calculationMode && calculationMode !== 'none') {
         try {
-            // Unlock the PREVIOUS calculated field when switching modes
+            // When switching from calculating price to calculating margin,
+            // we need to unlock the price field so it becomes editable again
             const previousMode = previousCalculationModes[modelKey];
             if (previousMode && previousMode !== 'none' && previousMode !== calculationMode) {
                 updateCalculatedFieldStyling(modelKey, previousMode, false);
@@ -44,37 +54,43 @@ export function calculateModel(modelKey, calculationMode = 'none', pricingStrate
             const calculatedValue = calculateMissingInput(modelKey, calculationMode, inputs, pricingStrategy);
             inputs[calculationMode] = calculatedValue;
 
-            // Update the UI input field with calculated value
+            // Show the calculated value in the form field so user sees the result
             const calculatedInputId = `${modelKey}-${calculationMode}`;
             const calculatedElement = document.getElementById(calculatedInputId);
             if (calculatedElement) {
                 calculatedElement.value = calculatedValue.toFixed(2);
             }
 
-            // Lock and style the NEW calculated field
+            // Lock the field visually - users shouldn't edit a calculated value
+            // (changing it would make the calculation inconsistent)
             updateCalculatedFieldStyling(modelKey, calculationMode, true);
 
-            // Remember this mode for next time
+            // Remember this mode so we can unlock the field if user switches modes
             previousCalculationModes[modelKey] = calculationMode;
         } catch (error) {
             console.error('Error calculating missing input:', error);
         }
     } else {
-        // Reset all field styling when switching to manual mode
+        // User switched to "Enter All Inputs Manually" - unlock all fields
+        // so they can edit everything freely
         model.inputs.forEach(input => {
             updateCalculatedFieldStyling(modelKey, input.name, false);
         });
         previousCalculationModes[modelKey] = 'none';
     }
 
-    // Run calculation (no longer needs months parameter - static calculation)
+    // Run the model's calculation function to get equilibrium analysis
     const results = model.calculate(inputs);
 
     return results;
 }
 
 /**
- * Update field styling to show calculated vs manual
+ * Visually distinguish auto-calculated fields from user-editable ones
+ *
+ * Why lock calculated fields?
+ * - Prevents confusion: editing a calculated value breaks the math
+ * - Clear visual feedback: yellow background = "this was computed for you"
  */
 function updateCalculatedFieldStyling(modelKey, fieldName, isCalculated) {
     const inputId = `${modelKey}-${fieldName}`;

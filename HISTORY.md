@@ -9,6 +9,38 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Codebase Cleanup: Remove Unused Framework & Improve Comments
+
+**Date**: January 7, 2026
+**Impact**: Simplified codebase, improved code documentation
+
+**Changes**:
+
+**Removed Unused Code**:
+- ❌ `framework/categories.js` - Defined pricing contexts but never imported anywhere
+- ❌ `framework/delivery.js` - Defined delivery mechanisms but never used
+- ❌ `framework/model-families.js` - Defined model groupings but never used
+- ❌ `framework/services.js` - Defined service models but never used
+- ❌ `framework/` folder - Removed entirely (4 files, ~1,000 lines of dead code)
+
+**Rewrote claude.md**:
+- Previous version described 20 models, 4 calculator modes, admin panels - none of which exist
+- New version accurately describes the 5-model equilibrium pricing system
+- Added "System Purpose" section explaining the dual-company owner use case
+- Added "Comment Philosophy" section explaining why > what principle
+
+**Updated Code Comments (why > what)**:
+- `calculators/engine.js` - Explains why static unit economics, why fields get locked
+- `calculators/reverse-calculations.js` - Explains why 0.4 threshold, why 3 strategies
+- `models/index.js` - Explains why 5 models, why input groupings, why equilibrium math
+
+**Why this matters**:
+- Reduced confusion: code now matches documentation
+- Easier onboarding: comments explain reasoning, not just mechanics
+- Simpler codebase: removed ~1,000 lines of unused code
+
+---
+
 ### Documentation: Streamlined Structure & Business Guide
 
 **Date**: January 6, 2026
