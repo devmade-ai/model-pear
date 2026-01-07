@@ -33,7 +33,7 @@ No growth projections, no complicated forecasting - just clear unit economics an
 | Model | Name | Description | Status |
 |-------|------|-------------|--------|
 | 1 | Development Services | Cost-plus software development | ✅ Implemented |
-| 2 | Software Licence | Perpetual/term licences with royalties | Planned |
+| 2 | Software Licence | Perpetual/term licences with royalties | ✅ Implemented |
 | 3 | Joint Development | Cost-sharing arrangements | Planned |
 | 4 | Build-Operate-Transfer | BOT/BTO/BOO structures | Planned |
 | 5 | Software Sale | Asset sale with ongoing support | Planned |
@@ -112,6 +112,7 @@ No build process needed - it's pure HTML/CSS/JS.
 **For Inter-Company Transactions:**
 - **[financial_models_intercompany_software.md](financial_models_intercompany_software.md)** - Framework overview
 - **[model_1_cost_plus_concept.md](model_1_cost_plus_concept.md)** - Model 1 specifications
+- **[model_2_licence_royalties_concept.md](model_2_licence_royalties_concept.md)** - Model 2 specifications
 - **[IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md)** - 13-phase implementation plan
 
 **For Developers:**
