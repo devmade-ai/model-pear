@@ -155,14 +155,6 @@ export const models = {
                 category: 'pricing',
                 hint: 'Total units consumed per month'
             },
-            {
-                name: 'unitLabel',
-                label: 'Unit Description',
-                type: 'text',
-                default: '1,000 API calls',
-                category: 'pricing',
-                hint: 'What is the unit? (e.g., "1,000 API calls", "build minute")'
-            },
 
             // SELLER COSTS
             {
@@ -257,8 +249,7 @@ export const models = {
 
                 // Display metrics
                 pricePerUnit: inputs.pricePerUnit,
-                monthlyUnits: inputs.monthlyUnits,
-                unitLabel: inputs.unitLabel
+                monthlyUnits: inputs.monthlyUnits
             };
         },
 
@@ -431,16 +422,6 @@ export const models = {
                 hint: 'Percentage of customers buying maintenance'
             },
             {
-                name: 'unitsSoldPerMonth',
-                label: 'Licenses Sold per Month',
-                type: 'number',
-                default: 5,
-                min: 0,
-                step: 1,
-                category: 'pricing',
-                hint: 'Average number of new licenses sold monthly'
-            },
-            {
                 name: 'existingCustomers',
                 label: 'Existing Customers on Maintenance',
                 type: 'number',
@@ -498,15 +479,13 @@ export const models = {
         ],
 
         calculate: function(inputs) {
-            // Monthly calculations
-            const monthlyLicenseRevenue = inputs.licensePrice * inputs.unitsSoldPerMonth;
+            // Monthly calculations - maintenance revenue only (static snapshot)
             const annualMaintenanceFee = inputs.licensePrice * (inputs.maintenanceFee / 100);
             const monthlyMaintenanceRevenue = (inputs.existingCustomers * annualMaintenanceFee) / 12;
-            const monthlyRevenue = monthlyLicenseRevenue + monthlyMaintenanceRevenue;
+            const monthlyRevenue = monthlyMaintenanceRevenue;
 
-            const monthlyLicenseCost = inputs.costToDeliver * inputs.unitsSoldPerMonth;
             const monthlySupportCost = inputs.existingCustomers * inputs.monthlySupportCost;
-            const monthlyCost = monthlyLicenseCost + monthlySupportCost;
+            const monthlyCost = monthlySupportCost;
 
             const monthlyProfit = monthlyRevenue - monthlyCost;
             const actualMargin = monthlyRevenue > 0 ? (monthlyProfit / monthlyRevenue) * 100 : 0;
@@ -540,7 +519,6 @@ export const models = {
                 // Revenue & Profit
                 monthlyRevenue,
                 annualRevenue,
-                monthlyLicenseRevenue,
                 monthlyMaintenanceRevenue,
                 monthlyCost,
                 monthlyProfit,
@@ -566,7 +544,6 @@ export const models = {
 
                 // Display metrics
                 licensePrice: inputs.licensePrice,
-                unitsSoldPerMonth: inputs.unitsSoldPerMonth,
                 existingCustomers: inputs.existingCustomers
             };
         },
@@ -610,16 +587,6 @@ export const models = {
                 step: 10,
                 category: 'pricing',
                 hint: 'Total successful transactions per month'
-            },
-            {
-                name: 'activeBuyers',
-                label: 'Active Buyers',
-                type: 'number',
-                default: 100,
-                min: 0,
-                step: 5,
-                category: 'pricing',
-                hint: 'Number of active buyers on platform'
             },
             {
                 name: 'activeSellers',
@@ -738,7 +705,6 @@ export const models = {
                 commissionRate: inputs.commissionRate,
                 avgTransactionValue: inputs.avgTransactionValue,
                 monthlyTransactions: inputs.monthlyTransactions,
-                activeBuyers: inputs.activeBuyers,
                 activeSellers: inputs.activeSellers
             };
         },
