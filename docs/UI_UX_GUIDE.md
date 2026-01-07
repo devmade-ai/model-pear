@@ -480,7 +480,7 @@ Each error message includes a 💡 suggestion for how to fix it
 
 ### Documentation
 - **Business Guide**: [BUSINESS_GUIDE.md](BUSINESS_GUIDE.md)
-- **Technical Docs**: [claude.md](claude.md)
+- **Technical Docs**: [CLAUDE.md](../CLAUDE.md)
 - **Calculations**: [CALCULATIONS.md](CALCULATIONS.md)
 
 ---

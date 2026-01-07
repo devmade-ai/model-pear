@@ -1059,7 +1059,7 @@ Run calculator separately for each segment.
 
 ### For Technical Questions
 - See **[CALCULATIONS.md](CALCULATIONS.md)** for detailed formula explanations
-- See **[claude.md](claude.md)** for developer documentation
+- See **[CLAUDE.md](../CLAUDE.md)** for developer documentation
 
 ### For Pricing Strategy
 - Consult pricing experts or fractional CFOs

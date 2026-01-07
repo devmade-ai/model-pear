@@ -55,8 +55,9 @@ model-pear/
 ├── utils/
 │   └── index.js            # Formatting, validation, helpers
 │
-└── Documentation:
-    ├── claude.md           # This file (technical reference)
+├── CLAUDE.md               # This file (AI assistant context, must be in root)
+│
+└── docs/
     ├── README.md           # Quick start
     ├── BUSINESS_GUIDE.md   # User guide with tutorials
     ├── CALCULATIONS.md     # Formula explanations
@@ -224,11 +225,11 @@ const minimumPrice = cost / (1 - margin / 100);
 
 | File | Update When |
 |------|-------------|
-| **claude.md** | Architecture or models change |
-| **CALCULATIONS.md** | Formulas change |
-| **BUSINESS_GUIDE.md** | User workflows change |
-| **HISTORY.md** | Any bug fix or improvement |
-| **README.md** | Only for major changes |
+| **CLAUDE.md** (root) | Architecture or models change |
+| **docs/CALCULATIONS.md** | Formulas change |
+| **docs/BUSINESS_GUIDE.md** | User workflows change |
+| **docs/HISTORY.md** | Any bug fix or improvement |
+| **docs/README.md** | Only for major changes |
 
 ## Troubleshooting
 

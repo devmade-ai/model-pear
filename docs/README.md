@@ -75,7 +75,7 @@ No build process needed - it's pure HTML/CSS/JS.
 - **[CALCULATIONS.md](CALCULATIONS.md)** - All formulas, rationale, and economic theory explained
 
 **For Developers:**
-- **[claude.md](claude.md)** - Technical architecture and development guide
+- **[CLAUDE.md](../CLAUDE.md)** - Technical architecture and development guide (AI assistant context)
 - **[HISTORY.md](HISTORY.md)** - Changelog and bug fixes
 
 ## Technology Stack

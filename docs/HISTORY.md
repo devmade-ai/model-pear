@@ -3,11 +3,42 @@
 > **Last Updated**: January 2026
 > **Purpose**: Historical record of bug fixes, improvements, and major refactoring work
 
-This file tracks all significant bug fixes, improvements, and architectural changes made to the Revenue Model Calculator project. For current project status and architecture, see [claude.md](./claude.md).
+This file tracks all significant bug fixes, improvements, and architectural changes made to the Revenue Model Calculator project. For current project status and architecture, see [CLAUDE.md](../CLAUDE.md).
 
 ---
 
 ## Recent Bug Fixes & Improvements (January 2026)
+
+### Documentation Reorganization: docs/ Folder
+
+**Date**: January 7, 2026
+**Impact**: Cleaner root directory, better organization
+
+**Changes**:
+
+- Created `docs/` folder to house all documentation
+- Moved all `.md` files into `docs/`:
+  - `README.md` → `docs/README.md`
+  - `BUSINESS_GUIDE.md` → `docs/BUSINESS_GUIDE.md`
+  - `CALCULATIONS.md` → `docs/CALCULATIONS.md`
+  - `UI_UX_GUIDE.md` → `docs/UI_UX_GUIDE.md`
+  - `HISTORY.md` → `docs/HISTORY.md`
+- Created `CLAUDE.md` (uppercase) in root directory
+  - Claude Code looks for `CLAUDE.md` in the root for AI assistant context
+  - This is the single source for technical/development documentation
+- Updated file structure documentation in `CLAUDE.md`
+- Updated all cross-references in docs to point to `../CLAUDE.md`
+
+**Benefits**:
+
+- Cleaner root directory with only code, config, and LICENSE
+- All user-facing documentation consolidated in `docs/` folder
+- `CLAUDE.md` in root where Claude Code expects it (single source)
+- No duplicate documentation files to maintain
+- Easier to navigate for both developers and users
+- Follows common open-source project conventions
+
+---
 
 ### Codebase Cleanup: Remove Unused Framework & Improve Comments
 
