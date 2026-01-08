@@ -500,14 +500,14 @@ Press `?` anywhere to view all keyboard shortcuts
 
 ### Tooltips & Help Icons
 
-The application features a comprehensive tooltip system with `?` help icons throughout:
+The application features a comprehensive tooltip system with info icons (`ⓘ`) throughout:
 
 **Where to Find Help Icons**:
-- **Mode Switcher**: Click `?` next to "Inter-Company Tool" or "Pricing Calculator" buttons
-- **Pricing Models**: Each model button (Subscription, Usage-Based, etc.) has a `?` icon
+- **Mode Switcher**: Click the `ⓘ` icon next to "Inter-Company Tool" or "Pricing Calculator" buttons
+- **Pricing Models**: Each model button (Subscription, Usage-Based, etc.) has an info icon
 - **Calculator Tabs**: All 5 tabs (Calculator, Compliance, Visualizations, Sensitivity, Projections) have help icons
 - **Selection Mode**: Wizard and Direct mode buttons include tooltips
-- **Input Fields**: Every form input has a `?` button for detailed field explanations
+- **Input Fields**: Every form input has an info button for detailed field explanations
 
 **Tooltip Content Includes**:
 - Detailed explanation of the feature/field
@@ -517,7 +517,7 @@ The application features a comprehensive tooltip system with `?` help icons thro
 - Best practices
 
 **How to Use**:
-1. Click any `?` icon to open a modal with detailed information
+1. Click any info icon (`ⓘ`) to open a modal with detailed information
 2. Press `Esc` or click outside the modal to close
 3. Inline hints (with 💡) below inputs provide quick reference
 
@@ -540,13 +540,13 @@ Each error message includes a 💡 suggestion for how to fix it
 - **Tab Order**: Mode switcher tabs reordered with Inter-Company first
 
 #### Added
-- **Comprehensive Tooltip System**: Added help icons (`?`) with detailed modal explanations:
+- **Comprehensive Tooltip System**: Added info icons (`ⓘ`) with detailed modal explanations:
   - Mode switcher buttons explain each tool's purpose
   - All 5 pricing models have tooltips with formulas, key metrics, and use cases
   - All 5 intercompany calculator tabs have tooltips explaining their function
   - Wizard/Direct mode toggle buttons have help explanations
-  - All form input fields have clickable help icons opening detailed modals
-- **Help Icon Styling**: New CSS styles for help icons with hover effects and accessibility
+  - All form input fields have clickable info icons opening detailed modals
+- **Help Icon Styling**: New CSS styles for info icons with hover effects, borders, and shadows for visual distinction
 
 ### Version 2.2 (2026-01-08)
 

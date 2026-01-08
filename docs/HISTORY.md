@@ -79,14 +79,14 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 - URL hash `#intercompany` is no longer needed (it's now default)
 
 **Comprehensive Tooltip System**:
-Added help icons (`?`) with detailed modal explanations throughout the application:
+Added info icons (`ⓘ`) with detailed modal explanations throughout the application:
 
-- **Mode Switcher Buttons**: Each mode button now has a help icon explaining the tool's purpose
-- **Pricing Model Selection**: All 5 pricing models (Subscription, Usage-Based, Per-Seat, One-Time, Marketplace) have help icons with formulas, key metrics, and use cases
+- **Mode Switcher Buttons**: Each mode button now has an info icon explaining the tool's purpose
+- **Pricing Model Selection**: All 5 pricing models (Subscription, Usage-Based, Per-Seat, One-Time, Marketplace) have info icons with formulas, key metrics, and use cases
 - **Intercompany Calculator Tabs**: All 5 tabs (Calculator, Compliance, Visualizations, Sensitivity, Projections) have tooltips explaining their purpose
-- **Selection Mode Toggle**: Wizard and Direct mode buttons have help icons explaining each approach
-- **Form Inputs (Pricing)**: All input fields now have help icon buttons that open detailed modal explanations
-- **Form Inputs (Intercompany)**: All input fields with hints now have clickable help icons
+- **Selection Mode Toggle**: Wizard and Direct mode buttons have info icons explaining each approach
+- **Form Inputs (Pricing)**: All input fields now have info icon buttons that open detailed modal explanations
+- **Form Inputs (Intercompany)**: All input fields with hints now have clickable info icons
 
 **Tooltip Content**:
 - Each tooltip includes: explanation, key metrics/features, and common use cases
@@ -95,8 +95,9 @@ Added help icons (`?`) with detailed modal explanations throughout the applicati
 - Event delegation pattern for efficient handling
 
 **Styling**:
-- Added CSS styles for help icons with hover effects
-- Help icons scale on hover for visual feedback
+- Added CSS styles for info icons with borders, shadows, and hover effects
+- Info icons have italic "i" styling to appear as deliberate help badges
+- Icons scale on hover with enhanced glow for visual feedback
 - Proper focus states for accessibility
 
 **Files Modified**:
@@ -112,7 +113,7 @@ Added help icons (`?`) with detailed modal explanations throughout the applicati
 - New users can immediately understand each feature without guessing
 - Reduced learning curve for both pricing and inter-company tools
 - Consistent help pattern across the entire application
-- Maintains clean UI with non-intrusive `?` icons
+- Info icons (`ⓘ`) look like deliberate help badges, not confused question marks
 - Inter-company tool highlighted as the primary feature
 
 ---

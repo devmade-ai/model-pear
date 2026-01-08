@@ -61,7 +61,7 @@ Each inter-company model includes:
 - **South African Defaults**: Realistic ZAR pricing and 27% corporate tax
 - **Static Unit Economics**: No month-by-month projections - just simple math
 - **No Installation**: Runs entirely in the browser
-- **Comprehensive Help System**: Click `?` icons throughout for detailed explanations, formulas, and use cases
+- **Comprehensive Help System**: Click info icons (`ⓘ`) throughout for detailed explanations, formulas, and use cases
 - **Accessibility First**: Full keyboard navigation, ARIA support, screen reader friendly
 - **Mobile Optimized**: Responsive design with touch-friendly controls
 - **Real-time Validation**: Inline feedback as you type with helpful suggestions
