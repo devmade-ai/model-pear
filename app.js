@@ -1,6 +1,24 @@
 // ========== APPLICATION ORCHESTRATOR ==========
 // Software Transaction Tool - Pricing & Inter-Company Calculators
 
+// ===== GLOBAL ERROR HANDLING =====
+
+/**
+ * Global error handler for uncaught errors
+ */
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error('Global error caught:', { message, source, lineno, colno, error });
+    // Don't show toast for every error to avoid spam, but log them
+    return false; // Let the error propagate for debugging
+};
+
+/**
+ * Global handler for unhandled promise rejections
+ */
+window.onunhandledrejection = function(event) {
+    console.error('Unhandled promise rejection:', event.reason);
+};
+
 // ===== MODELS =====
 import { models } from './models/index.js';
 
@@ -289,15 +307,27 @@ document.addEventListener('keydown', handleKeyboardShortcuts);
 
 // Initialize when DOM is ready
 function initApp() {
-    // Initialize pricing calculator
-    initialization.init();
+    try {
+        // Initialize pricing calculator
+        initialization.init();
 
-    // Set up mode switching
-    setupModeSwitching();
+        // Set up mode switching
+        setupModeSwitching();
 
-    // Check URL hash for initial mode
-    if (window.location.hash === '#intercompany') {
-        switchMode('intercompany');
+        // Check URL hash for initial mode
+        if (window.location.hash === '#intercompany') {
+            switchMode('intercompany');
+        }
+
+        console.log('🚀 Software Transaction Tool loaded successfully!');
+        console.log('💡 Tip: Press Ctrl+Enter to calculate or ? for keyboard shortcuts');
+    } catch (error) {
+        console.error('Failed to initialize application:', error);
+        // Show a user-friendly error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        errorDiv.textContent = 'Failed to load application. Please refresh the page.';
+        document.body.appendChild(errorDiv);
     }
 }
 
@@ -306,6 +336,3 @@ if (document.readyState === 'loading') {
 } else {
     initApp();
 }
-
-console.log('🚀 Software Transaction Tool loaded successfully!');
-console.log('💡 Tip: Press Ctrl+Enter to calculate or ? for keyboard shortcuts');
