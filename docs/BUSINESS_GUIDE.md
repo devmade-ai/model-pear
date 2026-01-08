@@ -303,7 +303,16 @@ The tool operates in two distinct modes:
 - How should risk be allocated?
 - What asset recognition is needed?
 - Are the entities consolidated?
-- What is the transaction timeframe?
+- What is the software development stage?
+
+**Asset Recognition Options** (Q6):
+| Option | Description | Best Models |
+|--------|-------------|-------------|
+| **Buyer balance sheet** | Buyer wants to capitalise and show the asset | Model 1, Model 5 |
+| **Developer balance sheet** | Developer wants to retain and show the asset | Model 2, Model 6 |
+| **Both balance sheets** | Both parties want to capitalise and show an asset | Model 3 (Joint Development), Model 4 (BOT) |
+| **Minimise assets** | Prefer operational expense treatment over capitalisation | Model 6 (SaaS) |
+| **Tax efficient** | Prioritise accelerated tax deductions (Section 11(e)) | Model 1, Model 5 |
 
 ---
 

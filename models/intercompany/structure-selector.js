@@ -130,6 +130,12 @@ export const DECISION_FACTORS = {
                 modelScores: { 'model-2': 10, 'model-6': 10, 'model-4': 7, 'model-3': 5, 'model-1': 0, 'model-5': 0 }
             },
             {
+                value: 'both-balance-sheets',
+                label: 'Asset on both balance sheets',
+                description: 'Both parties want to capitalise and show an asset',
+                modelScores: { 'model-3': 10, 'model-4': 8, 'model-2': 5, 'model-1': 3, 'model-5': 2, 'model-6': 0 }
+            },
+            {
                 value: 'minimize-assets',
                 label: 'Minimise balance sheet assets',
                 description: 'Prefer operational expense treatment over capitalisation',
