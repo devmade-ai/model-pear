@@ -235,41 +235,41 @@ This document outlines the phased implementation plan for integrating the Financ
 ---
 
 ## Phase 6: Model 5 - Software Sale with Ongoing Support
-**Status:** Not Started
+**Status:** Completed
 **Estimated Sessions:** 3-4
-**Dependencies:** Phase 1
+**Dependencies:** Phase 1 (Completed)
 
 ### 6.1 Core Sale Model
-- [ ] Create Model 5 input form
-- [ ] Add sale price input
-- [ ] Add payment structure selector (lump sum / instalments)
-- [ ] Add support fee inputs
-- [ ] Add support term inputs
+- [x] Create Model 5 input form
+- [x] Add sale price input
+- [x] Add payment structure selector (lump sum / instalments / deferred)
+- [x] Add support fee inputs
+- [x] Add support term inputs
 
 ### 6.2 Variant Implementation (5A-5H)
-- [ ] 5A: Clean Sale (no post-sale obligations)
-- [ ] 5B: Sale Plus Maintenance Agreement
-- [ ] 5C: Sale Plus Support and Updates
-- [ ] 5D: Sale with Warranty
-- [ ] 5E: Sale with Buyback Commitment
-- [ ] 5F: Sale with Retained Improvements
-- [ ] 5G: Asset Sale vs Share Sale comparison
-- [ ] 5H: Sale with Licence-Back
+- [x] 5A: Clean Sale (no post-sale obligations)
+- [x] 5B: Sale Plus Maintenance Agreement
+- [x] 5C: Sale Plus Support and Updates
+- [x] 5D: Sale with Warranty
+- [x] 5E: Sale with Buyback Commitment
+- [x] 5F: Sale with Retained Improvements
+- [x] 5G: Asset Sale vs Share Sale comparison
+- [x] 5H: Sale with Licence-Back
 
 ### 6.3 Model 5 Calculations
-- [ ] Developer gain/loss on sale
-- [ ] Developer CGT vs revenue treatment
-- [ ] Developer support margin
-- [ ] Buyer asset allocation (IFRS 15 bundling)
-- [ ] Buyer amortisation schedule
-- [ ] Warranty provision (5D)
-- [ ] Securities transfer tax (5G share sale)
+- [x] Developer gain/loss on sale
+- [x] Developer CGT vs revenue treatment
+- [x] Developer support margin
+- [x] Buyer asset allocation (IFRS 15 bundling)
+- [x] Buyer amortisation schedule
+- [x] Warranty provision (5D)
+- [x] Securities transfer tax (5G share sale)
 
 ### 6.4 Model 5 Outputs & Visualisations
-- [ ] Revenue split bar (sale vs support)
-- [ ] Transaction price allocation pie chart
-- [ ] Buyer asset carrying value timeline
-- [ ] Cash flow waterfall
+- [~] Revenue split bar (sale vs support) (deferred to Phase 10)
+- [~] Transaction price allocation pie chart (deferred to Phase 10)
+- [~] Buyer asset carrying value timeline (deferred to Phase 10)
+- [~] Cash flow waterfall (deferred to Phase 10)
 
 ---
 
@@ -564,6 +564,7 @@ Phase 13 (Polish)
 | 2026-01-07 | Phase 7 | Completed - Model 6 with all 9 variants (6A-6I) fully implemented | Claude |
 | 2026-01-07 | Phase 4 | Completed - Model 3 with all 8 variants (3A-3H) fully implemented | Claude |
 | 2026-01-08 | Phase 5 | Completed - Model 4 (BOT) with all 8 variants (4A-4H) fully implemented | Claude |
+| 2026-01-08 | Phase 6 | Completed - Model 5 (Software Sale) with all 8 variants (5A-5H) fully implemented | Claude |
 
 ---
 
