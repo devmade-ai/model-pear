@@ -1335,6 +1335,12 @@ Score 50-79: Medium Risk (Amber)
 Score < 50: High Risk (Red)
 ```
 
+**Model-Specific Considerations**
+
+- **Model 4 (BOT) - Variant 4E (Build-Operate-Own)**: Full transfer pricing assessment is not applicable since there is no ownership transfer. Only service fee arm's length analysis is performed.
+- **Model 4 (BOT) - Variant 4F (Build-Transfer-Operate)**: Transfer pricing assessment focuses on the immediate transfer price as there is no operation period before transfer.
+- **All models with service fees**: Service fee margin is assessed against the 5-15% arm's length benchmark range.
+
 ---
 
 ### Sensitivity Analysis Calculations

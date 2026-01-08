@@ -450,6 +450,51 @@ function renderRevenueBreakdown(breakdown) {
 }
 
 function renderTransferPricingRisk(tp) {
+    // Handle not applicable case (e.g., BOO variant with no transfer)
+    if (!tp || tp.notApplicable) {
+        if (tp && tp.serviceFeeAnalysis) {
+            // Show service fee analysis only for BOO
+            const withinRange = tp.serviceFeeAnalysis.withinRange;
+            const colors = withinRange ?
+                { bg: 'bg-gray-800/50', border: 'border-gray-600', text: 'text-gray-400', icon: 'i' } :
+                { bg: 'bg-yellow-900/20', border: 'border-yellow-700', text: 'text-yellow-400', icon: 'i' };
+
+            return `
+                <div class="${colors.bg} border ${colors.border} rounded-lg p-6">
+                    <h4 class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">${colors.icon}</span>
+                        Transfer Pricing Assessment
+                    </h4>
+                    <div class="p-4 bg-gray-700/30 rounded-lg mb-4">
+                        <p class="text-gray-300">${tp.reason}</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-400 mb-2">Service Fee Analysis</p>
+                            <table class="w-full text-sm">
+                                <tbody>
+                                    <tr class="border-b border-gray-700/50">
+                                        <td class="py-2 text-gray-400">Operating Margin</td>
+                                        <td class="py-2 text-right ${withinRange ? 'text-green-400' : 'text-yellow-400'}">${formatPercentage(tp.serviceFeeAnalysis.margin)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 text-gray-400">Benchmark Range</td>
+                                        <td class="py-2 text-right text-gray-200">${tp.serviceFeeAnalysis.benchmarkRange}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="flex items-center">
+                            <p class="text-sm text-gray-400 italic">${tp.serviceFeeAnalysis.note}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        // No transfer pricing analysis to show
+        return '';
+    }
+
     const riskColors = {
         low: { bg: 'bg-green-900/20', border: 'border-green-700', text: 'text-green-400', icon: '✅' },
         medium: { bg: 'bg-yellow-900/20', border: 'border-yellow-700', text: 'text-yellow-400', icon: '⚠️' },

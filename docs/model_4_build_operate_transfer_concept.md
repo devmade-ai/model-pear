@@ -411,6 +411,7 @@ Option Value = Calculated using Black-Scholes or similar (if premium valued)
 **4E Build-Operate-Own**
 Transfer Price = N/A (no transfer)
 Total Buyer Cost = Sum of Service Fees over contract term
+Transfer Pricing Assessment = Not applicable (no ownership transfer occurs; service fee arm's length analysis only)
 
 **4F Build-Transfer-Operate**
 Developer Revenue = Immediate Transfer Price + Sum of Service Fees (post-transfer)
@@ -472,6 +473,8 @@ Risk factors assessed:
 4. Business rationale: Clear (reduces risk), Unclear (increases risk)
 
 Score = Weighted combination producing Low / Medium / High rating
+
+**Note on BOO (4E):** Since Build-Operate-Own has no ownership transfer, the full transfer pricing assessment is not applicable. Only the service fee arm's length analysis is relevant for this variant. The tool will display a simplified assessment showing that no transfer pricing review is required, while still noting the importance of arm's length service fee pricing.
 
 ---
 

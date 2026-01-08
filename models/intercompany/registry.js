@@ -97,7 +97,25 @@ export function getVariantInputs(modelId, variantId) {
 }
 
 /**
+ * Get default values for a model variant's inputs
+ * Returns an object with input names as keys and default values
+ */
+export function getVariantDefaults(modelId, variantId) {
+    const inputDefs = getVariantInputs(modelId, variantId);
+    const defaults = {};
+
+    for (const input of inputDefs) {
+        if (input.default !== undefined) {
+            defaults[input.name] = input.default;
+        }
+    }
+
+    return defaults;
+}
+
+/**
  * Calculate results for a model variant
+ * Merges provided inputs with defaults to ensure sensible values
  */
 export function calculateIntercompany(modelId, variantId, inputs, entityConfig, taxParams) {
     const model = INTERCOMPANY_MODELS[modelId];
@@ -110,8 +128,13 @@ export function calculateIntercompany(modelId, variantId, inputs, entityConfig, 
         throw new Error(`Unknown variant: ${variantId} for model ${modelId}`);
     }
 
-    // Call the model's calculate function with all context
-    return model.calculate(inputs, variantId, entityConfig, taxParams);
+    // Merge defaults with provided inputs (provided inputs take precedence)
+    // This ensures calculations have sensible values even if inputs are missing
+    const defaults = getVariantDefaults(modelId, variantId);
+    const mergedInputs = { ...defaults, ...inputs };
+
+    // Call the model's calculate function with merged inputs
+    return model.calculate(mergedInputs, variantId, entityConfig, taxParams);
 }
 
 // ========== DEFAULT CONFIGURATIONS ==========
