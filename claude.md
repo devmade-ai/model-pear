@@ -1,21 +1,27 @@
-# Inter-Company Software Transaction Tool
+# Software Transaction Structuring Tool
 
-> **Purpose**: AI assistant context file for the Inter-Company Software Transaction Tool
+> **Purpose**: AI assistant context file for the Software Transaction Structuring Tool
 > **Last Updated**: January 2026
-> **Status**: Active - Comprehensive tool with 6 inter-company models, 3 modules, sensitivity analysis, and growth projections
+> **Status**: Active - Comprehensive tool with 6 transaction models, 3 modules, sensitivity analysis, and growth projections
 
 ## System Purpose
 
-This tool helps **an owner of related companies** (typically a group with multiple subsidiaries) with:
+This tool helps **software companies** analyse and compare different transaction models to maximize value for both parties (your company and your client) when starting new projects or products.
 
 1. **Pricing Calculator (Mode 1)**: Find equilibrium pricing for B2B software products
-2. **Inter-Company Tool (Mode 2)**: Structure and analyse inter-company software transactions with proper accounting, tax, and transfer pricing treatment
+2. **Transaction Structuring Tool (Mode 2)**: Compare transaction models to optimize expenses, capitalization, and tax outcomes for both parties
 
 **The core questions**:
 - Pricing Mode: What price lets the seller make their target margin while giving the buyer compelling ROI?
-- Inter-Company Mode: How should we structure this transaction for optimal accounting treatment, tax efficiency, and transfer pricing compliance?
+- Transaction Mode: Which model maximizes value for both your company and the client? How do expenses, capitalization, and tax effects compare across different structures?
 
-**Why this matters**: Inter-company software transactions are complex. They involve IP ownership, transfer pricing rules, different accounting treatments per party, and tax implications. This tool analyses all dimensions simultaneously.
+**Why this matters**: Software transactions involve IP ownership, different accounting treatments per party, and tax implications. This tool analyses all dimensions simultaneously to inform your structuring decision.
+
+**Important scope clarification**:
+- This is NOT specifically for inter-company/related party transactions
+- It works for ANY client (related or unrelated)
+- Consolidated accounting is NOT in scope
+- "Mutual ownership" (related parties) is just one optional configuration
 
 ## Architecture
 
@@ -115,9 +121,9 @@ For B2B software product pricing decisions.
 | One-Time Purchase | Upfront license + optional maintenance |
 | Marketplace | Commission on transactions |
 
-### Mode 2: Inter-Company Transaction Tool (6 Models, 47 Variants)
+### Mode 2: Transaction Structuring Tool (6 Models, 47 Variants)
 
-For inter-company software transactions between related entities.
+For comparing software transaction structures to optimize outcomes for both parties.
 
 | Model | Description | Variants |
 |-------|-------------|----------|
@@ -198,28 +204,28 @@ Transfer pricing compliance analysis:
 
 ## Three-Perspective Framework
 
-Every inter-company transaction is analysed from three perspectives:
+Every transaction is analysed from three perspectives:
 
-### Developer Perspective
+### Your Company (Developer)
 - Revenue recognition (service revenue, licence revenue, sale proceeds)
 - Development costs (capitalised vs expensed)
 - Profit margin analysis
 - Income tax liability
 - Asset position (if IP retained)
 
-### Buyer Perspective
+### Client (Buyer)
 - Asset capitalisation
 - Amortisation schedule (accounting vs tax)
 - Section 11(e) accelerated depreciation
 - Deferred tax position
 - Total cost of ownership
 
-### Combined Perspective
-- Group profit (with eliminations)
-- Asset efficiency ratio
-- Consolidation adjustments
-- Transfer pricing reasonableness
-- Overall tax efficiency
+### Net Effect (Both Parties)
+- Combined profit analysis
+- Asset distribution (who holds what)
+- Total tax impact
+- Key insights for decision-making
+- Transfer pricing considerations (if related parties)
 
 ## South African Tax Features
 
@@ -282,24 +288,24 @@ riskScore =
 
 ## Entity Configuration
 
-The tool is pre-configured for **South African companies** doing inter-company transactions. These defaults:
+The tool is pre-configured for **South African companies** doing software transactions. These defaults:
 - Reduce setup time for typical users
-- Ensure transfer pricing rules apply automatically (related parties = true)
-- Activate compliance scoring and documentation checklists
+- Assume independent parties by default (NOT related)
+- Focus on comparing net effects rather than consolidation
 
-**Note**: Consolidation is NOT assumed by default. Users must explicitly enable `sameGroup` and `consolidationRequired` if applicable.
+**Note**: Consolidated accounting is NOT in scope. The "Mutual Ownership" checkbox is available for cases where transfer pricing compliance is relevant.
 
 ```javascript
 DEFAULT_ENTITY_CONFIG = {
   developer: {
-    name: 'Developer Entity',
+    name: 'Your Company',
     jurisdiction: 'South Africa',       // Default market for the tool
     taxResident: true,                   // Subject to SARS rules
     corporateTaxRate: 0.27,              // SA CIT rate (since 2023)
     accountingFramework: 'IFRS'          // Mandatory for SA listed companies
   },
   buyer: {
-    name: 'Buyer Entity',
+    name: 'Client',
     jurisdiction: 'South Africa',
     taxResident: true,
     corporateTaxRate: 0.27,
@@ -307,14 +313,14 @@ DEFAULT_ENTITY_CONFIG = {
     section11eType: 'pc-2yr'             // Accelerated depreciation (2yr for PC software)
   },
   relationship: {
-    relatedParties: true,                // Inter-company = related parties by definition
-    sameGroup: false,                    // User must specify if same group
-    consolidationRequired: false         // User must specify if consolidation applies
+    relatedParties: false,               // Default: independent parties
+    sameGroup: false,                    // Consolidation not in scope
+    consolidationRequired: false         // Consolidation not in scope
   }
 }
 ```
 
-**When to enable consolidation**: Check `sameGroup` and `consolidationRequired` if both entities are in a consolidated group. This triggers intercompany profit elimination in the Combined perspective.
+**When to enable "Mutual Ownership"**: Check this only if the client shares common ownership with your company. This activates transfer pricing compliance considerations and related party disclosure requirements.
 
 See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#default-entity-configuration)** for detailed explanations of each setting.
 
@@ -409,16 +415,23 @@ const profit = revenue - cost;
 
 ---
 
-**For AI Assistants**: This file is your source of truth. The system has evolved into a comprehensive Inter-Company Software Transaction Tool:
+**For AI Assistants**: This file is your source of truth. The system is a Software Transaction Structuring Tool:
 
 - **Mode 1**: 5 pricing models for equilibrium pricing (original functionality)
-- **Mode 2**: 6 inter-company models (47 variants total) with three-perspective analysis
+- **Mode 2**: 6 transaction models (47 variants total) for comparing structures
 
-The tool now includes:
+**Key scope clarification**:
+- This tool is for a **software company** (the developer) working with **any client**
+- The goal is to compare models to maximize value for both parties
+- "Mutual ownership" (related parties) is just one scenario, NOT the default
+- Consolidated accounting is NOT in scope
+- Focus is on: expenses, capitalization, and tax effects
+
+The tool includes:
 - Structure Selector (decision tree wizard)
-- Compliance Analyzer (TP risk scoring, checklists)
+- Three-perspective analysis (Your Company, Client, Net Effect)
 - Sensitivity Analysis (ranges, scenarios, Monte Carlo)
 - Growth Projections (NPV, IRR, payback)
-- Advanced Visualisations (comparisons, timelines, risk charts)
+- Advanced Visualisations (comparisons, timelines, charts)
 
-All 13 phases of the roadmap have been completed. The documentation (BUSINESS_GUIDE.md, CLAUDE.md) has been updated to reflect the current state.
+All 13 phases of the roadmap have been completed.

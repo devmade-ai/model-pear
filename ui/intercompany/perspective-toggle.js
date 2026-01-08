@@ -1,6 +1,6 @@
 // ========== THREE-PERSPECTIVE TOGGLE COMPONENT ==========
-// UI component for switching between Developer, Buyer, and Combined perspectives.
-// Each perspective shows different aspects of the inter-company transaction.
+// UI component for switching between Your Company, Client, and Net Effect perspectives.
+// Each perspective shows different aspects of the software transaction.
 
 import { getState, setPerspective, subscribe } from '../../state/app-state.js';
 
@@ -9,23 +9,23 @@ import { getState, setPerspective, subscribe } from '../../state/app-state.js';
 export const PERSPECTIVES = {
     developer: {
         id: 'developer',
-        name: 'Developer',
+        name: 'Your Company',
         icon: '💻',
-        description: 'Revenue, costs, and tax position for the software developer',
+        description: 'Revenue, costs, profit, and tax position for your software company',
         color: 'blue'
     },
     buyer: {
         id: 'buyer',
-        name: 'Buyer',
+        name: 'Client',
         icon: '🏢',
-        description: 'Asset capitalisation, amortisation, and tax benefits',
+        description: 'Asset capitalisation, amortisation, and tax benefits for the client',
         color: 'green'
     },
     combined: {
         id: 'combined',
-        name: 'Combined',
-        icon: '🔗',
-        description: 'Group consolidation view with intercompany eliminations',
+        name: 'Net Effect',
+        icon: '⚖️',
+        description: 'Combined financial impact for both parties to inform your decision',
         color: 'purple'
     }
 };
