@@ -1,11 +1,11 @@
 // ========== STRUCTURE SELECTOR UI ==========
-// Step-by-step wizard interface for selecting the optimal
+// Progressive disclosure wizard interface for selecting the optimal
 // inter-company software transaction structure.
 //
 // Features:
-// - Progress indicator for wizard steps
-// - Question cards with radio button options
-// - Real-time recommendation preview
+// - Auto-advancing questions (no Next button needed)
+// - All answered questions visible for easy review/editing
+// - Real-time recommendation preview that updates as you answer
 // - Final recommendation with detailed rationale
 // - Variant recommendation within selected model
 
@@ -23,7 +23,6 @@ import { showToast } from '../../utils/index.js';
 // ========== STATE ==========
 
 let wizardState = {
-    currentStep: 0,
     answers: {},
     recommendations: null,
     selectedModel: null,
@@ -47,7 +46,6 @@ export function initStructureSelector(container, onModelSelected) {
 
     // Reset wizard state
     wizardState = {
-        currentStep: 0,
         answers: {},
         recommendations: null,
         selectedModel: null,
@@ -75,32 +73,34 @@ function renderWizard() {
     if (!containerRef) return;
 
     const totalSteps = QUESTION_ORDER.length;
-    const currentQuestion = DECISION_FACTORS[QUESTION_ORDER[wizardState.currentStep]];
-    const isLastQuestion = wizardState.currentStep === totalSteps - 1;
+    const answeredCount = Object.keys(wizardState.answers).length;
     const showResults = wizardState.isComplete;
 
     containerRef.innerHTML = `
         <div class="structure-selector">
             <!-- Header -->
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <div>
                     <h2 class="text-xl font-semibold text-gray-100">Structure Selection Wizard</h2>
                     <p class="text-sm text-gray-400 mt-1">
                         ${showResults ? 'Review your recommended transaction structures' : 'Answer questions to find the optimal transaction model'}
                     </p>
                 </div>
-                ${!showResults ? `
-                    <button id="skipWizardBtn" class="text-sm text-gray-400 hover:text-gray-300 underline">
-                        Skip wizard
-                    </button>
-                ` : `
-                    <button id="restartWizardBtn" class="text-sm text-blue-400 hover:text-blue-300 underline">
-                        Start over
-                    </button>
-                `}
+                <div class="flex gap-3">
+                    ${!showResults ? `
+                        <button id="skipWizardBtn" class="text-sm text-gray-400 hover:text-gray-300 underline">
+                            Skip wizard
+                        </button>
+                    ` : ''}
+                    ${answeredCount > 0 ? `
+                        <button id="restartWizardBtn" class="text-sm text-blue-400 hover:text-blue-300 underline">
+                            Start over
+                        </button>
+                    ` : ''}
+                </div>
             </div>
 
-            ${showResults ? renderResults() : renderQuestionStep(currentQuestion, isLastQuestion, totalSteps)}
+            ${showResults ? renderResults() : renderAllQuestions(totalSteps, answeredCount)}
         </div>
     `;
 
@@ -110,13 +110,13 @@ function renderWizard() {
 /**
  * Render progress bar
  */
-function renderProgressBar(current, total) {
-    const progress = Math.round(((current + 1) / total) * 100);
+function renderProgressBar(answeredCount, total) {
+    const progress = Math.round((answeredCount / total) * 100);
 
     return `
         <div class="mb-6">
             <div class="flex justify-between text-xs text-gray-400 mb-2">
-                <span>Question ${current + 1} of ${total}</span>
+                <span>${answeredCount} of ${total} questions answered</span>
                 <span>${progress}% complete</span>
             </div>
             <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -127,16 +127,84 @@ function renderProgressBar(current, total) {
 }
 
 /**
- * Render a question step
+ * Render all questions with progressive disclosure
+ * Shows answered questions and the next unanswered question
  */
-function renderQuestionStep(question, isLastQuestion, totalSteps) {
-    const selectedValue = wizardState.answers[question.id];
+function renderAllQuestions(totalSteps, answeredCount) {
+    // Find which questions to show: all answered + next unanswered
+    const questionsToShow = [];
+    let foundUnanswered = false;
+
+    for (const factorId of QUESTION_ORDER) {
+        const isAnswered = wizardState.answers[factorId] !== undefined;
+        if (isAnswered || !foundUnanswered) {
+            questionsToShow.push({ id: factorId, isAnswered });
+            if (!isAnswered) foundUnanswered = true;
+        }
+    }
+
+    const allAnswered = answeredCount === totalSteps;
 
     return `
-        ${renderProgressBar(wizardState.currentStep, totalSteps)}
+        ${renderProgressBar(answeredCount, totalSteps)}
 
-        <!-- Question Card -->
-        <div class="bg-gray-700/50 rounded-lg p-6 mb-6">
+        <!-- Questions -->
+        <div class="space-y-4">
+            ${questionsToShow.map((q, idx) => renderQuestionCard(q.id, idx, q.isAnswered)).join('')}
+        </div>
+
+        <!-- See Results Button (when all answered) -->
+        ${allAnswered ? `
+            <div class="mt-6 pt-6 border-t border-gray-700">
+                <button
+                    id="seeResultsBtn"
+                    class="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                >
+                    See Recommendations →
+                </button>
+            </div>
+        ` : ''}
+
+        <!-- Live Preview -->
+        ${answeredCount > 0 ? renderLivePreview() : ''}
+    `;
+}
+
+/**
+ * Render a single question card (collapsible for answered questions)
+ */
+function renderQuestionCard(factorId, index, isAnswered) {
+    const question = DECISION_FACTORS[factorId];
+    const selectedValue = wizardState.answers[factorId];
+    const selectedOption = selectedValue ? question.options.find(o => o.value === selectedValue) : null;
+
+    if (isAnswered) {
+        // Compact answered question with ability to change
+        return `
+            <div class="question-card bg-gray-700/30 rounded-lg p-4 border border-gray-600" data-factor-id="${factorId}">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-green-400">✓</span>
+                        <span class="text-sm text-gray-400">Q${index + 1}:</span>
+                        <span class="text-sm font-medium text-gray-200">${question.question}</span>
+                    </div>
+                    <button class="change-answer-btn text-xs text-blue-400 hover:text-blue-300" data-factor-id="${factorId}">
+                        Change
+                    </button>
+                </div>
+                <div class="ml-6 text-sm text-gray-300 bg-gray-800/50 rounded px-3 py-2">
+                    ${selectedOption?.label || 'Selected'}
+                </div>
+            </div>
+        `;
+    }
+
+    // Active question (not yet answered)
+    return `
+        <div class="question-card bg-gray-700/50 rounded-lg p-6 border-2 border-blue-500/50" data-factor-id="${factorId}" id="question-${factorId}">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs text-blue-400 font-medium">Q${index + 1}</span>
+            </div>
             <h3 class="text-lg font-medium text-gray-100 mb-2">${question.question}</h3>
             <p class="text-sm text-gray-400 mb-4">${question.description}</p>
 
@@ -149,7 +217,7 @@ function renderQuestionStep(question, isLastQuestion, totalSteps) {
                                   }">
                         <input
                             type="radio"
-                            name="question-${question.id}"
+                            name="question-${factorId}"
                             value="${option.value}"
                             ${selectedValue === option.value ? 'checked' : ''}
                             class="mt-1 w-4 h-4 text-blue-500 bg-gray-700 border-gray-500 focus:ring-blue-500"
@@ -162,28 +230,6 @@ function renderQuestionStep(question, isLastQuestion, totalSteps) {
                 `).join('')}
             </div>
         </div>
-
-        <!-- Navigation -->
-        <div class="flex justify-between">
-            <button
-                id="prevStepBtn"
-                class="px-4 py-2 text-gray-400 hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                ${wizardState.currentStep === 0 ? 'disabled' : ''}
-            >
-                ← Previous
-            </button>
-
-            <button
-                id="nextStepBtn"
-                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                ${!selectedValue ? 'disabled' : ''}
-            >
-                ${isLastQuestion ? 'See Recommendations' : 'Next →'}
-            </button>
-        </div>
-
-        <!-- Live Preview (small) -->
-        ${Object.keys(wizardState.answers).length > 0 ? renderLivePreview() : ''}
     `;
 }
 
@@ -345,12 +391,21 @@ function renderAlternativeCard(rec) {
 function setupEventListeners() {
     if (!containerRef) return;
 
-    // Radio button changes
+    // Radio button changes - auto advance on selection
     containerRef.addEventListener('change', (e) => {
         if (e.target.type === 'radio') {
-            const factorId = QUESTION_ORDER[wizardState.currentStep];
+            // Get the factor ID from the input name (format: "question-{factorId}")
+            const inputName = e.target.name;
+            const factorId = inputName.replace('question-', '');
             wizardState.answers[factorId] = e.target.value;
+
+            // Re-render to show next question
             renderWizard();
+
+            // Scroll to next unanswered question after render
+            setTimeout(() => {
+                scrollToNextQuestion();
+            }, 100);
         }
 
         // Variant preference selector
@@ -363,12 +418,8 @@ function setupEventListeners() {
     containerRef.addEventListener('click', (e) => {
         const target = e.target;
 
-        if (target.id === 'nextStepBtn') {
-            handleNextStep();
-        }
-
-        if (target.id === 'prevStepBtn') {
-            handlePrevStep();
+        if (target.id === 'seeResultsBtn') {
+            handleSeeResults();
         }
 
         if (target.id === 'skipWizardBtn') {
@@ -379,31 +430,69 @@ function setupEventListeners() {
             handleRestartWizard();
         }
 
+        if (target.classList.contains('change-answer-btn')) {
+            handleChangeAnswer(target.dataset.factorId);
+        }
+
         if (target.id === 'useRecommendedBtn' || target.classList.contains('use-model-btn')) {
             handleUseModel(target.dataset.modelId);
         }
     });
 }
 
-function handleNextStep() {
-    const isLastQuestion = wizardState.currentStep === QUESTION_ORDER.length - 1;
+/**
+ * Scroll to the next unanswered question
+ */
+function scrollToNextQuestion() {
+    if (!containerRef) return;
 
-    if (isLastQuestion) {
-        // Show results
-        wizardState.isComplete = true;
-        wizardState.recommendations = getModelRecommendations(wizardState.answers);
-    } else {
-        wizardState.currentStep++;
+    // Find the first unanswered question
+    for (const factorId of QUESTION_ORDER) {
+        if (wizardState.answers[factorId] === undefined) {
+            const questionEl = containerRef.querySelector(`#question-${factorId}`);
+            if (questionEl) {
+                questionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
+        }
     }
 
+    // If all answered, scroll to the See Results button
+    const resultsBtn = containerRef.querySelector('#seeResultsBtn');
+    if (resultsBtn) {
+        resultsBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function handleSeeResults() {
+    wizardState.isComplete = true;
+    wizardState.recommendations = getModelRecommendations(wizardState.answers);
     renderWizard();
 }
 
-function handlePrevStep() {
-    if (wizardState.currentStep > 0) {
-        wizardState.currentStep--;
-        renderWizard();
+function handleChangeAnswer(factorId) {
+    // Remove this answer and all subsequent answers to allow re-answering
+    const factorIndex = QUESTION_ORDER.indexOf(factorId);
+    if (factorIndex === -1) return;
+
+    // Clear this answer and subsequent ones
+    for (let i = factorIndex; i < QUESTION_ORDER.length; i++) {
+        delete wizardState.answers[QUESTION_ORDER[i]];
     }
+
+    // Also clear completion state
+    wizardState.isComplete = false;
+    wizardState.recommendations = null;
+
+    renderWizard();
+
+    // Scroll to the question being changed
+    setTimeout(() => {
+        const questionEl = containerRef?.querySelector(`#question-${factorId}`);
+        if (questionEl) {
+            questionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, 100);
 }
 
 function handleSkipWizard() {
@@ -414,7 +503,6 @@ function handleSkipWizard() {
 
 function handleRestartWizard() {
     wizardState = {
-        currentStep: 0,
         answers: {},
         recommendations: null,
         selectedModel: null,

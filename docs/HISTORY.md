@@ -9,6 +9,45 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### UI/UX Improvements: Layout Wrapping and Wizard Auto-Advance
+
+**Date**: January 8, 2026
+**Impact**: Improved mobile usability and simplified wizard navigation
+
+**Changes**:
+
+**Main Tab Navigation** (`ui/intercompany/calculator.js`):
+- Added `flex-wrap` to tab button container to allow wrapping on narrow screens
+- Added `min-w-[120px]` to each tab button for consistent sizing when wrapped
+- Reduced icon margin from `mr-2` to `mr-1` for better space utilization
+
+**Structure Selection Wizard** (`ui/intercompany/structure-selector.js`):
+- Removed confusing Previous/Next navigation buttons
+- Converted from step-by-step wizard to progressive disclosure pattern
+- Questions now auto-advance when an option is selected
+- All answered questions remain visible in compact format with "Change" button
+- Smooth scroll animation to next question after each selection
+- "See Recommendations" button appears only after all questions are answered
+- Removed unused `currentStep` from wizard state
+
+**Documentation** (`docs/UI_UX_GUIDE.md`):
+- Added new "Structure Selection Wizard" section documenting the auto-advancing flow
+- Updated changelog with version 2.2 entry
+
+**Benefits**:
+- Mobile users can now see all tabs without horizontal scrolling
+- Wizard is more intuitive - no need to click "Next" to proceed
+- Users can easily review and change previous answers
+- Live preview of recommendations guides decision-making
+- Smoother, more natural interaction flow
+
+**Files Modified**:
+- `ui/intercompany/calculator.js` (tab navigation flex-wrap)
+- `ui/intercompany/structure-selector.js` (complete wizard refactor)
+- `docs/UI_UX_GUIDE.md` (documentation updates)
+
+---
+
 ### Fix: Reserved Keyword in Destructuring
 
 **Date**: January 8, 2026
