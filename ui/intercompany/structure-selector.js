@@ -33,6 +33,10 @@ let wizardState = {
 let containerRef = null;
 let onModelSelectedCallback = null;
 
+// Store bound event handlers for cleanup
+let boundChangeHandler = null;
+let boundClickHandler = null;
+
 // ========== INITIALIZATION ==========
 
 /**
@@ -60,8 +64,26 @@ export function initStructureSelector(container, onModelSelected) {
  * Destroy the structure selector
  */
 export function destroyStructureSelector() {
+    // Remove event listeners before destroying
+    removeEventListeners();
     containerRef = null;
     onModelSelectedCallback = null;
+}
+
+/**
+ * Remove event listeners from container
+ */
+function removeEventListeners() {
+    if (!containerRef) return;
+
+    if (boundChangeHandler) {
+        containerRef.removeEventListener('change', boundChangeHandler);
+        boundChangeHandler = null;
+    }
+    if (boundClickHandler) {
+        containerRef.removeEventListener('click', boundClickHandler);
+        boundClickHandler = null;
+    }
 }
 
 // ========== RENDER FUNCTIONS ==========
@@ -391,8 +413,11 @@ function renderAlternativeCard(rec) {
 function setupEventListeners() {
     if (!containerRef) return;
 
-    // Radio button changes - auto advance on selection
-    containerRef.addEventListener('change', (e) => {
+    // Remove any existing listeners first to prevent accumulation
+    removeEventListeners();
+
+    // Create bound handler for change events
+    boundChangeHandler = (e) => {
         if (e.target.type === 'radio') {
             // Get the factor ID from the input name (format: "question-{factorId}")
             const inputName = e.target.name;
@@ -412,10 +437,10 @@ function setupEventListeners() {
         if (e.target.id === 'variantPreference') {
             handleVariantPreferenceChange(e.target);
         }
-    });
+    };
 
-    // Button clicks
-    containerRef.addEventListener('click', (e) => {
+    // Create bound handler for click events
+    boundClickHandler = (e) => {
         const target = e.target;
 
         if (target.id === 'seeResultsBtn') {
@@ -437,7 +462,11 @@ function setupEventListeners() {
         if (target.id === 'useRecommendedBtn' || target.classList.contains('use-model-btn')) {
             handleUseModel(target.dataset.modelId);
         }
-    });
+    };
+
+    // Add the listeners
+    containerRef.addEventListener('change', boundChangeHandler);
+    containerRef.addEventListener('click', boundClickHandler);
 }
 
 /**
