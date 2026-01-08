@@ -9,12 +9,15 @@ import { initPerspectiveToggle } from './perspective-toggle.js';
 import { renderIntercompanyResults } from './results-display.js';
 import { initEntityConfig } from './entity-config.js';
 import { initStructureSelector } from './structure-selector.js';
+import { initComplianceAnalyzer, destroyComplianceAnalyzer } from './compliance-analyzer.js';
+import { initAdvancedVisualizations, destroyAdvancedVisualizations } from './advanced-visualizations.js';
 import { formatCurrency, formatPercentage, showToast } from '../../utils/index.js';
 
 // ========== STATE ==========
 
 let unsubscribers = [];
 let selectionMode = 'wizard';  // 'wizard' | 'direct' - start with wizard by default
+let activeMainTab = 'calculator';  // 'calculator' | 'compliance' | 'visualizations'
 
 // ========== INITIALIZATION ==========
 
@@ -39,11 +42,15 @@ export function initIntercompanyCalculator() {
 }
 
 /**
- * Cleanup subscriptions
+ * Cleanup subscriptions and modules
  */
 export function destroyIntercompanyCalculator() {
     unsubscribers.forEach(fn => fn());
     unsubscribers = [];
+
+    // Cleanup compliance and visualizations modules
+    destroyComplianceAnalyzer();
+    destroyAdvancedVisualizations();
 }
 
 // ========== RENDER FUNCTIONS ==========
@@ -57,12 +64,41 @@ function renderCalculatorUI(container) {
 
     container.innerHTML = `
         <div class="intercompany-calculator">
-            <!-- Entity Configuration (Collapsible) -->
-            <div id="entityConfigSection" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
-                <!-- Entity config will be populated here -->
+            <!-- Main Tab Navigation -->
+            <div class="bg-gray-800 shadow-sm rounded-lg p-2 border border-gray-700 mb-6">
+                <div class="flex gap-2">
+                    <button
+                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               ${activeMainTab === 'calculator' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
+                        data-main-tab="calculator"
+                    >
+                        <span class="mr-2">🧮</span> Calculator
+                    </button>
+                    <button
+                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               ${activeMainTab === 'compliance' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
+                        data-main-tab="compliance"
+                    >
+                        <span class="mr-2">✓</span> Compliance
+                    </button>
+                    <button
+                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               ${activeMainTab === 'visualizations' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
+                        data-main-tab="visualizations"
+                    >
+                        <span class="mr-2">📊</span> Visualizations
+                    </button>
+                </div>
             </div>
 
-            <!-- Selection Mode Toggle -->
+            <!-- Calculator Tab Content -->
+            <div id="calculatorTabContent" class="${activeMainTab === 'calculator' ? '' : 'hidden'}">
+                <!-- Entity Configuration (Collapsible) -->
+                <div id="entityConfigSection" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
+                    <!-- Entity config will be populated here -->
+                </div>
+
+                <!-- Selection Mode Toggle -->
             <div class="bg-gray-800 shadow-sm rounded-lg p-4 border border-gray-700 mb-6">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -147,6 +183,21 @@ function renderCalculatorUI(container) {
                     <!-- Results will be rendered here -->
                 </div>
             </div>
+            </div><!-- End Calculator Tab Content -->
+
+            <!-- Compliance Tab Content -->
+            <div id="complianceTabContent" class="${activeMainTab === 'compliance' ? '' : 'hidden'}">
+                <div id="complianceSection">
+                    <!-- Compliance analyzer will be populated here -->
+                </div>
+            </div>
+
+            <!-- Visualizations Tab Content -->
+            <div id="visualizationsTabContent" class="${activeMainTab === 'visualizations' ? '' : 'hidden'}">
+                <div id="visualizationsSection">
+                    <!-- Advanced visualizations will be populated here -->
+                </div>
+            </div>
         </div>
     `;
 
@@ -164,6 +215,26 @@ function renderCalculatorUI(container) {
         const wizardSection = container.querySelector('#structureSelectorSection');
         if (wizardSection) {
             initStructureSelector(wizardSection, handleWizardModelSelected);
+        }
+    }
+
+    // Initialize compliance analyzer if on that tab
+    if (activeMainTab === 'compliance') {
+        const complianceSection = container.querySelector('#complianceSection');
+        if (complianceSection) {
+            initComplianceAnalyzer(complianceSection, {
+                calculationResults: state.intercompany?.results
+            });
+        }
+    }
+
+    // Initialize advanced visualizations if on that tab
+    if (activeMainTab === 'visualizations') {
+        const vizSection = container.querySelector('#visualizationsSection');
+        if (vizSection) {
+            initAdvancedVisualizations(vizSection, {
+                calculationResults: state.intercompany?.results
+            });
         }
     }
 }
@@ -397,8 +468,26 @@ function renderInputField(input, modelId) {
 // ========== EVENT HANDLERS ==========
 
 function setupEventListeners(container) {
-    // Selection mode toggle
+    // Main tab navigation
     container.addEventListener('click', (e) => {
+        const mainTabBtn = e.target.closest('.main-tab-btn');
+        if (mainTabBtn) {
+            const newTab = mainTabBtn.dataset.mainTab;
+            if (newTab !== activeMainTab) {
+                // Cleanup previous tab
+                if (activeMainTab === 'compliance') {
+                    destroyComplianceAnalyzer();
+                } else if (activeMainTab === 'visualizations') {
+                    destroyAdvancedVisualizations();
+                }
+
+                activeMainTab = newTab;
+                renderCalculatorUI(container);
+            }
+            return;
+        }
+
+        // Selection mode toggle
         const modeBtn = e.target.closest('.selection-mode-btn');
         if (modeBtn) {
             const newMode = modeBtn.dataset.mode;
