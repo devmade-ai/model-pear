@@ -310,7 +310,7 @@ The tool operates in two distinct modes:
 |--------|-------------|-------------|
 | **Buyer balance sheet** | Buyer wants to capitalise and show the asset | Model 1, Model 5 |
 | **Developer balance sheet** | Developer wants to retain and show the asset | Model 2, Model 6 |
-| **Both balance sheets** | Both parties want to capitalise and show an asset | Model 3 (Joint Development), Model 4 (BOT) |
+| **Both balance sheets** | Both parties want to capitalise and show an asset (including licence arrangements) | Model 2 (Licence), Model 3 (Joint Development), Model 4 (BOT) |
 | **Minimise assets** | Prefer operational expense treatment over capitalisation | Model 6 (SaaS) |
 | **Tax efficient** | Prioritise accelerated tax deductions (Section 11(e)) | Model 1, Model 5 |
 
