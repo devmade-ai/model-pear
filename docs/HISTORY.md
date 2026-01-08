@@ -9,6 +9,49 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Quality & Error Handling Improvements
+
+**Date**: January 8, 2026
+**Impact**: Improved application stability and error resilience
+
+**Changes**:
+
+**Global Error Handling** (`app.js`):
+- Added `window.onerror` handler to catch and log uncaught JavaScript errors
+- Added `window.onunhandledrejection` handler for unhandled promise rejections
+- Wrapped application initialization in try-catch with user-friendly error display
+- Moved console.log messages inside initialization to ensure they only appear on success
+
+**Chart Rendering Safety** (`charts/index.js`):
+- Created `safeGetElement()` helper function with null checks and console warnings
+- Created `safeRenderChart()` helper for safe chart instantiation
+- Refactored all 18 chart rendering calls to use safe helpers
+- Prevents runtime errors when chart containers are not present in DOM
+- Added null checks for `updateMetrics()` and `renderEquilibriumChart()` functions
+
+**Utility Function Robustness** (`utils/index.js`):
+- Added null/undefined/NaN checks to `formatCurrency()` - returns 'R 0.00' for invalid values
+- Added null/undefined/NaN checks to `formatPercentage()` - returns '0.0%' for invalid values
+- Added null/undefined/NaN checks to `formatNumber()` - returns '0' for invalid values
+- Prevents "NaN" or "undefined" appearing in UI for edge cases
+
+**Cleanup**:
+- Removed accidentally created `package.json` (project is pure browser-based, no npm needed)
+
+**Benefits**:
+- More resilient application that gracefully handles unexpected errors
+- Clear error logging in console for debugging
+- User-friendly error messages instead of blank/broken screens
+- No more potential "Cannot read property of null" errors from chart rendering
+- Consistent formatting output even with invalid data inputs
+
+**Files Modified**:
+- `app.js` (added global error handlers and try-catch around init)
+- `charts/index.js` (added safe helper functions, refactored all chart rendering)
+- `utils/index.js` (added defensive checks to formatting functions)
+
+---
+
 ### Documentation Reorganization: docs/ Folder
 
 **Date**: January 7, 2026

@@ -4,8 +4,14 @@ import { models } from '../models/index.js';
 
 /**
  * Format currency value with proper decimals
+ * @param {number} value - The value to format
+ * @returns {string} Formatted currency string
  */
 export function formatCurrency(value) {
+    // Handle invalid values gracefully
+    if (value === null || value === undefined || isNaN(value)) {
+        return 'R 0.00';
+    }
     return new Intl.NumberFormat('en-ZA', {
         style: 'currency',
         currency: 'ZAR',
@@ -16,15 +22,27 @@ export function formatCurrency(value) {
 
 /**
  * Format percentage value
+ * @param {number} value - The value to format
+ * @returns {string} Formatted percentage string
  */
 export function formatPercentage(value) {
+    // Handle invalid values gracefully
+    if (value === null || value === undefined || isNaN(value)) {
+        return '0.0%';
+    }
     return `${value.toFixed(1)}%`;
 }
 
 /**
  * Format large numbers with thousand separators
+ * @param {number} value - The value to format
+ * @returns {string} Formatted number string
  */
 export function formatNumber(value) {
+    // Handle invalid values gracefully
+    if (value === null || value === undefined || isNaN(value)) {
+        return '0';
+    }
     return new Intl.NumberFormat('en-US').format(Math.round(value));
 }
 

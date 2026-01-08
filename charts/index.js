@@ -1,6 +1,45 @@
 import { chartInstances, setChartInstance, CONFIG } from '../config/constants.js';
 import { formatCurrency, formatNumber, formatPercentage } from '../utils/index.js';
 
+// ========== HELPER FUNCTIONS ==========
+
+/**
+ * Safely get a DOM element by ID with console warning if not found
+ * @param {string} id - Element ID
+ * @returns {HTMLElement|null}
+ */
+function safeGetElement(id) {
+    const element = document.getElementById(id);
+    if (!element) {
+        console.warn(`Chart element not found: ${id}`);
+    }
+    return element;
+}
+
+/**
+ * Safely render a chart with null checks
+ * @param {string} containerId - Container element ID
+ * @param {string} chartId - Chart element ID
+ * @param {object} options - ApexCharts options
+ * @param {string} chartKey - Key for chartInstances storage
+ * @param {boolean} showContainer - Whether to show the container
+ */
+function safeRenderChart(containerId, chartId, options, chartKey, showContainer = true) {
+    const container = containerId ? safeGetElement(containerId) : null;
+    const chartElement = safeGetElement(chartId);
+
+    if (!chartElement) return null;
+
+    if (container && showContainer) {
+        container.classList.remove('hidden');
+    }
+
+    const chart = new ApexCharts(chartElement, options);
+    chart.render();
+    chartInstances[chartKey] = chart;
+    return chart;
+}
+
 // ========== CHART RENDERING ==========
 
 /**
@@ -100,9 +139,7 @@ export function renderOneTimePurchaseCharts(data) {
         }
     };
 
-    document.getElementById('primaryChartContainer').classList.remove('hidden');
-    chartInstances.primary = new ApexCharts(document.getElementById('primaryChart'), primaryOptions);
-    chartInstances.primary.render();
+    safeRenderChart('primaryChartContainer', 'primaryChart', primaryOptions, 'primary');
 
     // Secondary Chart 1: Total Revenue Line
     const secondary1Options = {
@@ -127,9 +164,7 @@ export function renderOneTimePurchaseCharts(data) {
         subtitle: { text: 'Combined license and maintenance revenue over time', align: 'center', style: { fontSize: '11px', color: '#9CA3AF' } }
     };
 
-    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
-    chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
-    chartInstances.secondary1.render();
+    safeRenderChart('secondaryChartsGrid', 'secondaryChart1', secondary1Options, 'secondary1');
 
     // Secondary Chart 2: Customer Growth
     const secondary2Options = {
@@ -155,8 +190,7 @@ export function renderOneTimePurchaseCharts(data) {
         tooltip: { theme: 'dark', y: { formatter: val => formatNumber(val) } },
         title: { text: 'Customer Base Growth', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
-    chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
-    chartInstances.secondary2.render();
+    safeRenderChart(null, 'secondaryChart2', secondary2Options, 'secondary2', false);
 }
 
 export function renderSubscriptionCharts(data) {
@@ -190,9 +224,7 @@ export function renderSubscriptionCharts(data) {
         subtitle: { text: 'Monthly and annual recurring revenue trends', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
-    document.getElementById('primaryChartContainer').classList.remove('hidden');
-    chartInstances.primary = new ApexCharts(document.getElementById('primaryChart'), primaryOptions);
-    chartInstances.primary.render();
+    safeRenderChart('primaryChartContainer', 'primaryChart', primaryOptions, 'primary');
 
     // Secondary Chart 1: Customer Count
     const secondary1Options = {
@@ -217,9 +249,7 @@ export function renderSubscriptionCharts(data) {
         title: { text: 'Customer Count', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
-    chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
-    chartInstances.secondary1.render();
+    safeRenderChart('secondaryChartsGrid', 'secondaryChart1', secondary1Options, 'secondary1');
 
     // Secondary Chart 2: MRR Components
     const secondary2Options = {
@@ -254,8 +284,7 @@ export function renderSubscriptionCharts(data) {
         title: { text: 'MRR Components', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
-    chartInstances.secondary2.render();
+    safeRenderChart(null, 'secondaryChart2', secondary2Options, 'secondary2', false);
 }
 
 export function renderFreemiumCharts(data) {
@@ -290,9 +319,7 @@ export function renderFreemiumCharts(data) {
         subtitle: { text: 'User base growth and conversion funnel visualization', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
-    document.getElementById('primaryChartContainer').classList.remove('hidden');
-    chartInstances.primary = new ApexCharts(document.getElementById('primaryChart'), primaryOptions);
-    chartInstances.primary.render();
+    safeRenderChart('primaryChartContainer', 'primaryChart', primaryOptions, 'primary');
 
     // Secondary Chart 1: Revenue from Paid Users
     const secondary1Options = {
@@ -316,9 +343,7 @@ export function renderFreemiumCharts(data) {
         title: { text: 'Revenue from Paid Users', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
-    chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
-    chartInstances.secondary1.render();
+    safeRenderChart('secondaryChartsGrid', 'secondaryChart1', secondary1Options, 'secondary1');
 
     // Secondary Chart 2: Conversion Rate
     const secondary2Options = {
@@ -342,8 +367,7 @@ export function renderFreemiumCharts(data) {
         title: { text: 'Free-to-Paid Conversion Rate', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
-    chartInstances.secondary2.render();
+    safeRenderChart(null, 'secondaryChart2', secondary2Options, 'secondary2', false);
 }
 
 export function renderUsageBasedCharts(data) {
@@ -381,9 +405,7 @@ export function renderUsageBasedCharts(data) {
         subtitle: { text: 'Revenue fluctuations based on customer usage patterns', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
-    document.getElementById('primaryChartContainer').classList.remove('hidden');
-    chartInstances.primary = new ApexCharts(document.getElementById('primaryChart'), primaryOptions);
-    chartInstances.primary.render();
+    safeRenderChart('primaryChartContainer', 'primaryChart', primaryOptions, 'primary');
 
     // Secondary Chart 1: Average Usage per Customer
     const secondary1Options = {
@@ -408,9 +430,7 @@ export function renderUsageBasedCharts(data) {
         title: { text: 'Avg Usage per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
-    chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
-    chartInstances.secondary1.render();
+    safeRenderChart('secondaryChartsGrid', 'secondaryChart1', secondary1Options, 'secondary1');
 
     // Secondary Chart 2: Revenue per Customer
     const secondary2Options = {
@@ -434,8 +454,7 @@ export function renderUsageBasedCharts(data) {
         title: { text: 'Revenue per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
-    chartInstances.secondary2.render();
+    safeRenderChart(null, 'secondaryChart2', secondary2Options, 'secondary2', false);
 }
 
 export function renderTieredCharts(data) {
@@ -474,9 +493,7 @@ export function renderTieredCharts(data) {
         subtitle: { text: 'Revenue contribution from each pricing tier', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
-    document.getElementById('primaryChartContainer').classList.remove('hidden');
-    chartInstances.primary = new ApexCharts(document.getElementById('primaryChart'), primaryOptions);
-    chartInstances.primary.render();
+    safeRenderChart('primaryChartContainer', 'primaryChart', primaryOptions, 'primary');
 
     // Secondary Chart 1: Customer Distribution by Tier
     const secondary1Options = {
@@ -511,9 +528,7 @@ export function renderTieredCharts(data) {
         title: { text: 'Customer Distribution by Tier', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
-    chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
-    chartInstances.secondary1.render();
+    safeRenderChart('secondaryChartsGrid', 'secondaryChart1', secondary1Options, 'secondary1');
 
     // Secondary Chart 2: Total Revenue
     const secondary2Options = {
@@ -537,8 +552,7 @@ export function renderTieredCharts(data) {
         title: { text: 'Total Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
-    chartInstances.secondary2.render();
+    safeRenderChart(null, 'secondaryChart2', secondary2Options, 'secondary2', false);
 }
 
 export function renderPerSeatCharts(data) {
@@ -566,9 +580,7 @@ export function renderPerSeatCharts(data) {
         subtitle: { text: 'Growth in total seats across all customers', align: 'center', style: { fontSize: '12px', color: '#9CA3AF' } }
     };
 
-    document.getElementById('primaryChartContainer').classList.remove('hidden');
-    chartInstances.primary = new ApexCharts(document.getElementById('primaryChart'), primaryOptions);
-    chartInstances.primary.render();
+    safeRenderChart('primaryChartContainer', 'primaryChart', primaryOptions, 'primary');
 
     // Secondary Chart 1: Average Seats per Customer
     const secondary1Options = {
@@ -592,9 +604,7 @@ export function renderPerSeatCharts(data) {
         title: { text: 'Avg Seats per Customer', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    document.getElementById('secondaryChartsGrid').classList.remove('hidden');
-    chartInstances.secondary1 = new ApexCharts(document.getElementById('secondaryChart1'), secondary1Options);
-    chartInstances.secondary1.render();
+    safeRenderChart('secondaryChartsGrid', 'secondaryChart1', secondary1Options, 'secondary1');
 
     // Secondary Chart 2: Revenue
     const secondary2Options = {
@@ -618,16 +628,17 @@ export function renderPerSeatCharts(data) {
         title: { text: 'Monthly Revenue', align: 'center', style: { fontSize: '14px', fontWeight: 600, color: '#F3F4F6' } }
     };
 
-    chartInstances.secondary2 = new ApexCharts(document.getElementById('secondaryChart2'), secondary2Options);
-    chartInstances.secondary2.render();
+    safeRenderChart(null, 'secondaryChart2', secondary2Options, 'secondary2', false);
 }
 
 /**
  * Update metrics panel with calculated values
  */
 export function updateMetrics(modelKey, data) {
-    const metricsPanel = document.getElementById('metricsPanel');
-    const metricsContent = document.getElementById('metricsContent');
+    const metricsPanel = safeGetElement('metricsPanel');
+    const metricsContent = safeGetElement('metricsContent');
+
+    if (!metricsPanel || !metricsContent) return;
 
     const lastMonth = data[data.length - 1];
     const firstMonth = data[0];
@@ -734,7 +745,7 @@ export function updateMetrics(modelKey, data) {
  * Render equilibrium chart - shows seller floor, suggested price, and buyer ceiling
  */
 export function renderEquilibriumChart(results) {
-    const chartContainer = document.getElementById('equilibriumChart');
+    const chartContainer = safeGetElement('equilibriumChart');
     if (!chartContainer) return;
 
     // Destroy existing chart
