@@ -58,7 +58,7 @@ Each inter-company model includes:
 - **Tax Calculations**: Section 11(e), deferred tax, CGT
 
 ### Both Modes
-- **South African Defaults**: Realistic ZAR pricing and 27% corporate tax
+- **South African Defaults**: Pre-configured for SA group companies (IFRS, 27% tax, consolidation enabled). See [Default Entity Configuration](BUSINESS_GUIDE.md#default-entity-configuration) for full explanation of why each setting is selected.
 - **Static Unit Economics**: No month-by-month projections - just simple math
 - **No Installation**: Runs entirely in the browser
 - **Comprehensive Help System**: Click info icons (`ⓘ`) throughout for detailed explanations, formulas, and use cases

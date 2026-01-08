@@ -282,14 +282,20 @@ riskScore =
 
 ## Entity Configuration
 
+The tool is pre-configured for **South African group companies**. These defaults represent the most common scenario and are selected to:
+- Reduce setup time for typical users
+- Ensure transfer pricing rules apply automatically
+- Enable proper consolidation accounting treatment
+- Activate compliance scoring and documentation checklists
+
 ```javascript
 DEFAULT_ENTITY_CONFIG = {
   developer: {
     name: 'Developer Entity',
-    jurisdiction: 'South Africa',
-    taxResident: true,
-    corporateTaxRate: 0.27,
-    accountingFramework: 'IFRS'
+    jurisdiction: 'South Africa',       // Default market for the tool
+    taxResident: true,                   // Subject to SARS rules
+    corporateTaxRate: 0.27,              // SA CIT rate (since 2023)
+    accountingFramework: 'IFRS'          // Mandatory for SA listed companies
   },
   buyer: {
     name: 'Buyer Entity',
@@ -297,15 +303,19 @@ DEFAULT_ENTITY_CONFIG = {
     taxResident: true,
     corporateTaxRate: 0.27,
     accountingFramework: 'IFRS',
-    section11eType: 'pc-2yr'  // or 'mainframe-5yr'
+    section11eType: 'pc-2yr'             // Accelerated depreciation (2yr for PC software)
   },
   relationship: {
-    relatedParties: true,
-    sameGroup: true,
-    consolidationRequired: true
+    relatedParties: true,                // Inter-company = related parties by definition
+    sameGroup: true,                     // Common ownership/control assumed
+    consolidationRequired: true          // Triggers intercompany profit elimination
   }
 }
 ```
+
+**Why consolidation matters**: When `consolidationRequired: true`, the developer's profit margin is eliminated from the group's capitalised asset. This reflects the true cost to the group rather than an inflated intercompany value.
+
+See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#default-entity-configuration)** for detailed explanations of each setting.
 
 ## Transfer Pricing Benchmarks
 
