@@ -13,6 +13,7 @@ import { initComplianceAnalyzer, destroyComplianceAnalyzer } from './compliance-
 import { initAdvancedVisualizations, destroyAdvancedVisualizations } from './advanced-visualizations.js';
 import { initRangeInputControls, renderRangeInputField, setupRangeSliders, gatherRangeValues, isRangeModeActive, getRangeInputState, getRangeInputStyles } from './range-input.js';
 import { initSensitivityVisualizations, updateSensitivityData, destroySensitivityVisualizations } from './sensitivity-visualizations.js';
+import { initProjectionVisualizations, updateProjectionData, destroyProjectionVisualizations } from './projection-visualizations.js';
 import { createInputRanges, calculateScenarios, calculateInputSensitivity, calculateBreakEven } from '../../models/intercompany/sensitivity-analysis.js';
 import { formatCurrency, formatPercentage, showToast } from '../../utils/index.js';
 
@@ -20,9 +21,10 @@ import { formatCurrency, formatPercentage, showToast } from '../../utils/index.j
 
 let unsubscribers = [];
 let selectionMode = 'wizard';  // 'wizard' | 'direct' - start with wizard by default
-let activeMainTab = 'calculator';  // 'calculator' | 'compliance' | 'visualizations' | 'sensitivity'
+let activeMainTab = 'calculator';  // 'calculator' | 'compliance' | 'visualizations' | 'sensitivity' | 'projections'
 let sensitivityData = null;  // Cached sensitivity analysis results
 let lastInputRanges = null;  // Cached input ranges for sensitivity analysis
+let projectionData = null;   // Cached projection data
 
 // ========== INITIALIZATION ==========
 
@@ -53,14 +55,16 @@ export function destroyIntercompanyCalculator() {
     unsubscribers.forEach(fn => fn());
     unsubscribers = [];
 
-    // Cleanup compliance, visualizations, and sensitivity modules
+    // Cleanup compliance, visualizations, sensitivity, and projections modules
     destroyComplianceAnalyzer();
     destroyAdvancedVisualizations();
     destroySensitivityVisualizations();
+    destroyProjectionVisualizations();
 
     // Reset local state
     sensitivityData = null;
     lastInputRanges = null;
+    projectionData = null;
 }
 
 // ========== RENDER FUNCTIONS ==========
@@ -104,6 +108,13 @@ function renderCalculatorUI(container) {
                         data-main-tab="sensitivity"
                     >
                         <span class="mr-2">📈</span> Sensitivity
+                    </button>
+                    <button
+                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               ${activeMainTab === 'projections' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
+                        data-main-tab="projections"
+                    >
+                        <span class="mr-2">🚀</span> Projections
                     </button>
                 </div>
             </div>
@@ -231,6 +242,13 @@ function renderCalculatorUI(container) {
                     <!-- Sensitivity visualizations will be populated here -->
                 </div>
             </div>
+
+            <!-- Projections Tab Content -->
+            <div id="projectionsTabContent" class="${activeMainTab === 'projections' ? '' : 'hidden'}">
+                <div id="projectionsSection">
+                    <!-- Projection visualizations will be populated here -->
+                </div>
+            </div>
         </div>
 
         <!-- Range Input Styles -->
@@ -285,6 +303,17 @@ function renderCalculatorUI(container) {
                 ranges: lastInputRanges,
                 entityConfig: state.entities,
                 taxParams: state.taxParams
+            });
+        }
+    }
+
+    // Initialize projection visualizations if on that tab
+    if (activeMainTab === 'projections') {
+        const projectionsSection = container.querySelector('#projectionsSection');
+        if (projectionsSection) {
+            initProjectionVisualizations(projectionsSection, {
+                calculationResults: state.intercompany?.results,
+                projectionParams: projectionData?.params
             });
         }
     }
@@ -532,6 +561,8 @@ function setupEventListeners(container) {
                     destroyAdvancedVisualizations();
                 } else if (activeMainTab === 'sensitivity') {
                     destroySensitivityVisualizations();
+                } else if (activeMainTab === 'projections') {
+                    destroyProjectionVisualizations();
                 }
 
                 activeMainTab = newTab;
@@ -653,10 +684,11 @@ function handleVariantSelect(variantId, container) {
         setupRangeSliders(inputForm);
     }
 
-    // Hide results section and reset sensitivity data
+    // Hide results section and reset analysis data
     container.querySelector('#resultsSection')?.classList.add('hidden');
     sensitivityData = null;
     lastInputRanges = null;
+    projectionData = null;
 
     // Update variant button styles
     container.querySelectorAll('.variant-select-btn').forEach(btn => {
