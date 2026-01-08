@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This tool enables comparison of eight sub-variants within the Software Sale with Ongoing Support model to determine optimal fit for a software transaction between related entities. The tool evaluates financial, accounting, tax, and risk outcomes from three perspectives: Developer, Buyer, and Combined.
+This tool enables comparison of eight sub-variants within the Software Sale with Ongoing Support model to determine optimal fit for a software transaction. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer. When mutual ownership applies (you own both entities), a Shareholder Perspective shows your overall position.
 
 ---
 
@@ -227,24 +227,27 @@ Developer creates software, sells it outright to Buyer, and provides ongoing mai
 - Intangible asset carrying value over time
 - Prepaid expense (if support prepaid)
 
-### Combined Perspective
+### Shareholder Perspective (When Mutual Ownership)
 
-**Aggregate Asset Position**
+Only relevant when the same person/entity owns both Developer and Buyer. This is NOT about group accounting consolidation.
+
+**Your Asset Position**
 - Before sale: Developer holds asset
 - After sale: Buyer holds asset
-- No duplication — clean transfer
+- No duplication — clean transfer between your entities
 
-**Net Cash Position**
-- Intercompany cash flows net to zero
-- External cash impact only
+**Cash Flow to You**
+- Cash moves between your entities (internal)
+- Your net cash position unchanged
+- External cash impact only relevant if third parties involved
 
-**Intercompany Profit**
-- Developer gain on sale (eliminated on consolidation)
-- Developer support margin (eliminated on consolidation)
-- Total elimination amount
+**Where Does Profit Sit?**
+- Developer gain on sale
+- Developer support margin
+- Which entity should hold the profit for tax efficiency?
 
-**Transfer Pricing Risk Score**
-- Sale price vs fair value
+**Transfer Pricing Risk**
+- Sale price vs fair value (in case SARS queries)
 - Support fees vs market rates
 - Documentation completeness
 

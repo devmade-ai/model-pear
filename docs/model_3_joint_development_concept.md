@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This tool enables comparison of eight sub-variants within the Joint Development model to determine optimal fit for a collaborative software development arrangement between related entities. The tool evaluates financial, accounting, tax, and risk outcomes from three perspectives: Developer, Buyer, and Combined.
+This tool enables comparison of eight sub-variants within the Joint Development model to determine optimal fit for a collaborative software development arrangement. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer. When mutual ownership applies (you own both entities), a Shareholder Perspective shows your overall position.
 
 ---
 
@@ -193,30 +193,32 @@ Both companies contribute resources (cash, personnel, facilities) to jointly dev
 - Section 11(e) deduction (if IP owner)
 - Tax impact of contribution structure
 
-### Combined Perspective
+### Shareholder Perspective (When Mutual Ownership)
 
-**Aggregate Asset Position**
+Only relevant when the same person/entity owns both Developer and Buyer. This is NOT about group accounting consolidation.
+
+**Your Total Asset Position**
 - Developer intangible asset
 - Buyer intangible asset
 - Combined total = Total capitalisable costs (no intercompany profit)
 
 **Cost Efficiency**
-- Total project cost
+- Total project cost across both your entities
 - Total assets recognised
 - Asset/Cost ratio (should be high — close to 100% for development phase costs)
 
-**No Intercompany Profit**
-- Key benefit of joint development: no margin to eliminate
+**Benefit of Joint Development**
+- Key benefit: no margin between your entities
 - Both parties at cost basis
-- Clean consolidation
+- Straightforward for transfer pricing purposes
 
 **Balance of Ownership**
 - Developer ownership percentage
 - Buyer ownership percentage
-- Assessment of fairness vs contribution
+- Does the split reflect your strategic intent?
 
 **Transfer Pricing Risk**
-- Contribution valuation defensibility
+- Contribution valuation defensibility (in case SARS queries)
 - Benefit allocation methodology
 - Documentation completeness
 

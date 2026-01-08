@@ -11,7 +11,7 @@
 3. [The Two Modes](#the-two-modes)
 4. [The 6 Transaction Models](#the-6-transaction-models)
 5. [The 3 Core Modules](#the-3-core-modules)
-6. [Three-Perspective Analysis](#three-perspective-analysis)
+6. [Perspective Analysis](#perspective-analysis)
 7. [Advanced Features](#advanced-features)
 8. [Common Scenarios & Examples](#common-scenarios--examples)
 9. [South African Tax Considerations](#south-african-tax-considerations)
@@ -30,7 +30,7 @@ The Software Transaction Structuring Tool is a web-based application that helps 
 
 **What This Tool DOES**:
 - ✅ Compare 6 different transaction structures
-- ✅ Analyse from three perspectives (Your Company, Client, Net Effect)
+- ✅ Analyse from both perspectives (Your Company and Client) with shareholder view when applicable
 - ✅ Calculate accounting treatment under IFRS
 - ✅ Assess South African tax implications (Section 11(e), CGT)
 - ✅ Show transfer pricing considerations (when mutual ownership applies)
@@ -57,7 +57,7 @@ The Software Transaction Structuring Tool is a web-based application that helps 
 
 **Value:**
 - Compare 6 transaction structures side-by-side
-- See net effect on both parties
+- See what each party gets (and your overall position if you own both)
 - Make informed decisions for each project/product
 
 ### For CFOs & Finance Directors
@@ -103,7 +103,7 @@ The tool operates in two distinct modes:
 
 **Features**:
 - 6 comprehensive transaction models with 47 variants
-- Three-perspective analysis (Your Company, Client, Net Effect)
+- Two-perspective analysis (Your Company, Client) plus shareholder view when applicable
 - Sensitivity analysis and growth projections
 - Advanced visualisations
 
@@ -311,7 +311,7 @@ The tool operates in two distinct modes:
 
 **Features**:
 - Dynamic input forms per model/variant
-- Three-perspective results (Developer, Buyer, Combined)
+- Results for each party (Developer, Buyer) plus shareholder view when related
 - Accounting treatment summaries
 - Tax calculations (income tax, CGT, deferred tax)
 - Visualisations (charts, timelines, comparisons)
@@ -340,11 +340,15 @@ The tool operates in two distinct modes:
 
 ---
 
-## Three-Perspective Analysis
+## Perspective Analysis
 
-Every transaction is analysed from three perspectives simultaneously:
+The tool analyses every transaction from two core perspectives, with a third perspective available when you have ownership in both parties.
 
-### Developer Perspective
+### When Independent Parties (2 Perspectives)
+
+When the developer and buyer are unrelated parties, each party only cares about their own position:
+
+#### Developer Perspective
 **Focus**: Revenue recognition, costs, profitability, tax position
 
 **Key Outputs**:
@@ -354,7 +358,7 @@ Every transaction is analysed from three perspectives simultaneously:
 - Income tax liability
 - Asset position (if IP retained)
 
-### Buyer Perspective
+#### Buyer Perspective
 **Focus**: Asset recognition, amortisation, deductibility, cash flow
 
 **Key Outputs**:
@@ -364,15 +368,27 @@ Every transaction is analysed from three perspectives simultaneously:
 - Deferred tax position
 - Total cost of ownership
 
-### Combined Perspective
-**Focus**: Group consolidation, elimination entries, overall efficiency
+### When Related Parties / Mutual Ownership (3 Perspectives)
+
+When you are a shareholder in BOTH the developer and buyer companies, a third perspective becomes relevant:
+
+#### Shareholder Perspective (Your Overall Position)
+**Focus**: What's best for YOU as the person who owns both entities
+
+**Key Questions**:
+- "Should I price high (profit sits in developer) or low (profit sits in buyer)?"
+- "Which side has better tax treatment for me?"
+- "Where do I WANT the profit to land?"
+- "What's my total outcome across both entities?"
 
 **Key Outputs**:
-- Group profit (with eliminations)
-- Asset efficiency ratio
-- Consolidation adjustments
-- Transfer pricing reasonableness
-- Overall tax efficiency
+- Total profit across both entities
+- Combined tax position
+- Overall cash flow to you
+- Transfer pricing risk assessment
+- Which structure benefits you most
+
+**Important**: This is NOT about group accounting consolidation or IFRS elimination entries. It's about your personal financial outcome as a shareholder in both companies.
 
 ---
 
@@ -646,37 +662,33 @@ The tool is designed for **South African companies** structuring inter-company s
 
 **When to change**: Generally should remain checked. If entities are truly unrelated, this tool may not be appropriate—standard commercial pricing applies.
 
-#### Same Group: Unchecked
+#### Mutual Ownership (Related Parties): Unchecked
 
 | Setting | Default | Why |
 |---------|---------|-----|
-| **Same Group** | ☐ Unchecked | Not all related party transactions are within a consolidated group |
+| **Mutual Ownership** | ☐ Unchecked | Only check if you have ownership in both entities |
 
 **What it affects**:
-- When checked: Indicates entities are under common ownership/control
-- Enables consolidation accounting treatment options
-- Affects combined perspective calculations
+- When checked: Enables the Shareholder Perspective (your overall position)
+- Shows what's best for YOU across both entities
+- Activates transfer pricing compliance requirements
+- Enables arm's length benchmark validation
 
-**When to check**: Enable if both entities are part of the same corporate group (e.g., parent-subsidiary, common parent).
+**When to check**: Enable if you are a shareholder in BOTH the developer and buyer companies.
 
-#### Consolidation Required: Unchecked
+**What the Shareholder Perspective shows** (when enabled):
+- Total profit across both your entities
+- Where profit should sit for optimal tax treatment
+- Your overall cash flow from both companies
+- Transfer pricing risk if SARS queries the arrangement
 
-| Setting | Default | Why |
-|---------|---------|-----|
-| **Consolidation Required** | ☐ Unchecked | Not all inter-company transactions require consolidated accounts |
+**Example** (Model 1 at 10% margin):
+- Developer charges R880,000 (R800,000 cost + R80,000 profit)
+- Developer profit: R80,000, tax: R21,600
+- Buyer capitalises R880,000, gets Section 11(e) deduction
+- **Shareholder view**: "My total profit is R80,000 minus R21,600 tax = R58,400. Is this the best structure for me?"
 
-**What it affects when checked**:
-- **Intercompany profit elimination**: Developer's profit margin is eliminated from the group's capitalised asset value
-- **Combined perspective journal entries**: Shows elimination entries for consolidation
-- **Group asset efficiency**: Asset values reflect true cost to the group, not inflated by internal markups
-
-**Example impact** (Model 1 at 10% margin):
-- Developer charges R880,000 (R800,000 cost + R80,000 markup)
-- Buyer capitalises R880,000
-- **With consolidation**: Group asset = R800,000 (R80,000 profit eliminated)
-- **Without consolidation**: Group asset = R880,000 (no elimination)
-
-**When to check**: Enable if your group prepares consolidated financial statements that include both entities.
+**Important**: This is about YOUR personal financial outcome as shareholder, not group accounting consolidation.
 
 ### Summary: Default Settings at a Glance
 
@@ -687,9 +699,7 @@ The tool is designed for **South African companies** structuring inter-company s
 | **Corporate Tax Rate** | 27% | Current SA CIT rate |
 | **SA Tax Resident** | ✓ Both entities | Subject to SARS rules |
 | **Section 11(e) Type** | PC (2-year) | Accelerated depreciation for PC software |
-| **Related Parties** | ✓ Checked | Inter-company by definition |
-| **Same Group** | ☐ Unchecked | User must specify if consolidated group |
-| **Consolidation Required** | ☐ Unchecked | User must specify if consolidation applies |
+| **Mutual Ownership** | ☐ Unchecked | User must specify if they own both entities |
 
 ### Changing Defaults
 
@@ -820,7 +830,7 @@ The tool generates checklists for:
 - Cash flow preferences
 - Risk allocation
 - Asset recognition needs
-- Consolidation status
+- Whether you own both entities (mutual ownership)
 
 The tool will recommend the best-fit model based on your answers.
 
