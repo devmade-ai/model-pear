@@ -134,8 +134,8 @@ export const DEFAULT_ENTITY_CONFIG = {
     },
     relationship: {
         relatedParties: true,
-        sameGroup: true,
-        consolidationRequired: true
+        sameGroup: false,
+        consolidationRequired: false
     }
 };
 

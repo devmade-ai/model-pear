@@ -282,14 +282,21 @@ riskScore =
 
 ## Entity Configuration
 
+The tool is pre-configured for **South African companies** doing inter-company transactions. These defaults:
+- Reduce setup time for typical users
+- Ensure transfer pricing rules apply automatically (related parties = true)
+- Activate compliance scoring and documentation checklists
+
+**Note**: Consolidation is NOT assumed by default. Users must explicitly enable `sameGroup` and `consolidationRequired` if applicable.
+
 ```javascript
 DEFAULT_ENTITY_CONFIG = {
   developer: {
     name: 'Developer Entity',
-    jurisdiction: 'South Africa',
-    taxResident: true,
-    corporateTaxRate: 0.27,
-    accountingFramework: 'IFRS'
+    jurisdiction: 'South Africa',       // Default market for the tool
+    taxResident: true,                   // Subject to SARS rules
+    corporateTaxRate: 0.27,              // SA CIT rate (since 2023)
+    accountingFramework: 'IFRS'          // Mandatory for SA listed companies
   },
   buyer: {
     name: 'Buyer Entity',
@@ -297,15 +304,19 @@ DEFAULT_ENTITY_CONFIG = {
     taxResident: true,
     corporateTaxRate: 0.27,
     accountingFramework: 'IFRS',
-    section11eType: 'pc-2yr'  // or 'mainframe-5yr'
+    section11eType: 'pc-2yr'             // Accelerated depreciation (2yr for PC software)
   },
   relationship: {
-    relatedParties: true,
-    sameGroup: true,
-    consolidationRequired: true
+    relatedParties: true,                // Inter-company = related parties by definition
+    sameGroup: false,                    // User must specify if same group
+    consolidationRequired: false         // User must specify if consolidation applies
   }
 }
 ```
+
+**When to enable consolidation**: Check `sameGroup` and `consolidationRequired` if both entities are in a consolidated group. This triggers intercompany profit elimination in the Combined perspective.
+
+See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#default-entity-configuration)** for detailed explanations of each setting.
 
 ## Transfer Pricing Benchmarks
 

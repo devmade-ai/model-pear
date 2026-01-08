@@ -15,9 +15,10 @@
 7. [Advanced Features](#advanced-features)
 8. [Common Scenarios & Examples](#common-scenarios--examples)
 9. [South African Tax Considerations](#south-african-tax-considerations)
-10. [Transfer Pricing Compliance](#transfer-pricing-compliance)
-11. [Glossary of Terms](#glossary-of-terms)
-12. [FAQ](#faq)
+10. [Default Entity Configuration](#default-entity-configuration)
+11. [Transfer Pricing Compliance](#transfer-pricing-compliance)
+12. [Glossary of Terms](#glossary-of-terms)
+13. [FAQ](#faq)
 
 ---
 
@@ -581,6 +582,135 @@ When software is sold (Model 5):
 - Capital gain: R1,000,000
 - Taxable gain: R800,000 (80% inclusion)
 - CGT payable: R216,000
+
+---
+
+## Default Entity Configuration
+
+When you first load the Inter-Company Tool, several settings are pre-selected. This section explains **what** these defaults are, **why** they're selected, and **when** you might want to change them.
+
+### Why Defaults Are Pre-Selected
+
+The tool is designed for **South African companies** structuring inter-company software transactions. The defaults are configured to:
+- Reduce setup time for typical users
+- Ensure transfer pricing rules are automatically applied (since inter-company = related parties)
+- Activate compliance scoring and documentation checklists
+
+**Note**: Consolidation settings (`Same Group`, `Consolidation Required`) are **not** pre-selected. Users must explicitly enable these if their entities prepare consolidated financial statements together.
+
+### Entity Settings
+
+#### Accounting Framework: IFRS
+
+| Setting | Default | Why |
+|---------|---------|-----|
+| **IFRS** | Selected | IFRS is mandatory for SA listed companies and widely adopted by large private groups |
+
+**What it affects**:
+- Revenue recognition follows IFRS 15 (Developer side)
+- Asset capitalisation follows IAS 38 (Buyer side)
+- Accounting treatment summaries reference IFRS standards
+- Journal entry templates use IFRS terminology
+
+**When to change**: Only if your entities use a different framework (e.g., SA GAAP for smaller entities).
+
+#### SA Tax Resident: Checked
+
+| Setting | Default | Why |
+|---------|---------|-----|
+| **SA Tax Resident** | ✓ Checked (both entities) | Assumes both entities are subject to South African tax law |
+
+**What it affects**:
+- Applies 27% corporate tax rate
+- Enables Section 11(e) accelerated depreciation calculations
+- Triggers SARS transfer pricing documentation requirements
+- Calculates deferred tax on timing differences
+
+**When to change**: If one entity is in a different jurisdiction (e.g., offshore holding company), uncheck this for that entity. Note: Cross-border transactions may involve withholding tax not currently calculated by this tool.
+
+#### Corporate Tax Rate: 27%
+
+| Setting | Default | Why |
+|---------|---------|-----|
+| **27%** | Pre-filled | South Africa's corporate income tax rate (unchanged since 2023) |
+
+**What it affects**:
+- Developer's income tax liability
+- Buyer's deferred tax calculations
+- Combined group tax efficiency analysis
+- CGT effective rate (27% × 80% = 21.6%)
+
+**When to change**: Only if tax legislation changes or your entity has a different effective rate (e.g., small business corporation relief).
+
+### Relationship Settings
+
+#### Related Parties: Checked
+
+| Setting | Default | Why |
+|---------|---------|-----|
+| **Related Parties** | ✓ Checked | The tool is designed for inter-company transactions (by definition, between related parties) |
+
+**What it affects**:
+- Activates transfer pricing compliance requirements
+- Enables arm's length benchmark validation
+- Triggers TP documentation checklists
+- Affects compliance risk scoring
+
+**When to change**: Generally should remain checked. If entities are truly unrelated, this tool may not be appropriate—standard commercial pricing applies.
+
+#### Same Group: Unchecked
+
+| Setting | Default | Why |
+|---------|---------|-----|
+| **Same Group** | ☐ Unchecked | Not all related party transactions are within a consolidated group |
+
+**What it affects**:
+- When checked: Indicates entities are under common ownership/control
+- Enables consolidation accounting treatment options
+- Affects combined perspective calculations
+
+**When to check**: Enable if both entities are part of the same corporate group (e.g., parent-subsidiary, common parent).
+
+#### Consolidation Required: Unchecked
+
+| Setting | Default | Why |
+|---------|---------|-----|
+| **Consolidation Required** | ☐ Unchecked | Not all inter-company transactions require consolidated accounts |
+
+**What it affects when checked**:
+- **Intercompany profit elimination**: Developer's profit margin is eliminated from the group's capitalised asset value
+- **Combined perspective journal entries**: Shows elimination entries for consolidation
+- **Group asset efficiency**: Asset values reflect true cost to the group, not inflated by internal markups
+
+**Example impact** (Model 1 at 10% margin):
+- Developer charges R880,000 (R800,000 cost + R80,000 markup)
+- Buyer capitalises R880,000
+- **With consolidation**: Group asset = R800,000 (R80,000 profit eliminated)
+- **Without consolidation**: Group asset = R880,000 (no elimination)
+
+**When to check**: Enable if your group prepares consolidated financial statements that include both entities.
+
+### Summary: Default Settings at a Glance
+
+| Setting | Default Value | Primary Rationale |
+|---------|---------------|-------------------|
+| **Jurisdiction** | South Africa | Default market for the tool |
+| **Accounting Framework** | IFRS | SA standard for groups |
+| **Corporate Tax Rate** | 27% | Current SA CIT rate |
+| **SA Tax Resident** | ✓ Both entities | Subject to SARS rules |
+| **Section 11(e) Type** | PC (2-year) | Accelerated depreciation for PC software |
+| **Related Parties** | ✓ Checked | Inter-company by definition |
+| **Same Group** | ☐ Unchecked | User must specify if consolidated group |
+| **Consolidation Required** | ☐ Unchecked | User must specify if consolidation applies |
+
+### Changing Defaults
+
+To modify any default setting:
+1. Expand the **Entity Configuration** panel (if collapsed)
+2. Adjust the relevant dropdown, checkbox, or input field
+3. Results update automatically when you recalculate
+
+All settings are session-based—they reset to defaults when you refresh the page.
 
 ---
 
