@@ -57,6 +57,32 @@ Users don't think in "scenarios" - they follow a **workflow**:
 
 ---
 
+## Alternative Entry Point: "We have an idea"
+
+A similar workflow but starting as a conversation between two parties:
+
+```
+"We have an idea"
+       ↓
+"How do we do it? Can you do it?"
+       ↓
+"What do we get? What do you get?"
+       ↓
+"How much is it going to cost?"
+       ↓
+"What are the options?"
+       ↓
+"What if this happens? What about that?"
+```
+
+This is the **negotiation flow** - two parties working through a deal together. The tool should support both:
+- Internal decision-making (first workflow)
+- Two-party negotiation (this workflow)
+
+Both converge on the same core needs: options, costs, what each party gets, and what-if scenarios.
+
+---
+
 ## Workflow Step 1: START
 
 **User thinking:** "We need software to improve our business. How much will it cost? What are our options?"
