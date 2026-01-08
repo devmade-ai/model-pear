@@ -1,1057 +1,802 @@
 # Business User Guide
-# Pricing Equilibrium Calculator
+# Inter-Company Software Transaction Tool
 
 > **Last Updated**: January 2026
-> **Target Audience**: Founders, Product Managers, Finance Teams, Business Analysts
+> **Target Audience**: CFOs, Tax Advisors, Transfer Pricing Specialists, Group Accountants, Business Analysts
 
 ## Table of Contents
 
 1. [What Is This Tool?](#what-is-this-tool)
 2. [Who Should Use It?](#who-should-use-it)
-3. [The 5 Pricing Models Explained](#the-5-pricing-models-explained)
-4. [How to Use the Calculator](#how-to-use-the-calculator)
-5. [Calculation Modes](#calculation-modes)
-6. [Understanding the Results](#understanding-the-results)
-7. [Common Scenarios & Examples](#common-scenarios--examples)
-8. [Best Practices](#best-practices)
-9. [Troubleshooting](#troubleshooting)
-10. [FAQ](#faq)
+3. [The Two Modes](#the-two-modes)
+4. [The 6 Inter-Company Transaction Models](#the-6-inter-company-transaction-models)
+5. [The 3 Core Modules](#the-3-core-modules)
+6. [Three-Perspective Analysis](#three-perspective-analysis)
+7. [Advanced Features](#advanced-features)
+8. [Common Scenarios & Examples](#common-scenarios--examples)
+9. [South African Tax Considerations](#south-african-tax-considerations)
+10. [Transfer Pricing Compliance](#transfer-pricing-compliance)
+11. [Glossary of Terms](#glossary-of-terms)
+12. [FAQ](#faq)
 
 ---
 
 ## What Is This Tool?
 
-The Pricing Equilibrium Calculator is a web-based tool designed to help South African B2B software businesses find the optimal pricing point where both sellers and buyers win.
+The Inter-Company Software Transaction Tool is a comprehensive web-based application designed to help South African businesses structure, price, and document inter-company software transactions between related entities.
 
-### Key Principle: Equilibrium Pricing
+### Key Capabilities
 
-**Equilibrium** exists when:
-- **Seller achieves target margin** (covers costs + desired profit)
-- **Buyer receives compelling ROI** (value exceeds price paid)
-- **Both parties win** (sustainable, long-term relationship)
+**What This Tool DOES**:
+- ✅ Model 6 different inter-company transaction structures
+- ✅ Analyse from three perspectives (Developer, Buyer, Combined)
+- ✅ Calculate accounting treatment under IFRS
+- ✅ Assess South African tax implications (Section 11(e), CGT)
+- ✅ Score transfer pricing risk against OECD benchmarks
+- ✅ Generate compliance checklists
+- ✅ Perform sensitivity analysis (best/base/worst case)
+- ✅ Project growth with NPV, IRR, and payback calculations
+- ✅ Visualise cash flows, asset values, and comparisons
 
-### What Makes This Tool Different
-
-**What This Tool DOESN'T Have** (by design):
-- ❌ Month-by-month revenue projections
-- ❌ Growth rate assumptions
-- ❌ Churn rate modeling
-- ❌ Customer acquisition cost calculations
-- ❌ Complex scenario planning
-- ❌ 20+ pricing models to choose from
-
-**What This Tool DOES Have** (intentionally simple):
-- ✅ Static unit economics (units × price = revenue)
-- ✅ Seller cost + margin analysis
-- ✅ Buyer value + ROI analysis
-- ✅ Equilibrium pricing (seller floor vs buyer ceiling)
-- ✅ 5 core pricing models only
-- ✅ South African defaults (ZAR)
-- ✅ Single, focused calculator
+**What This Tool IS NOT**:
+- ❌ Not legal or tax advice (consult professionals)
+- ❌ Not a complete transfer pricing study
+- ❌ Not a substitute for proper documentation
+- ❌ Not applicable to unrelated party transactions
 
 ---
 
 ## Who Should Use It?
 
-### For Founders
+### For CFOs & Finance Directors
 **Use Cases:**
-- "What should I charge for my SaaS product?"
-- "Is my pricing sustainable given my costs?"
-- "Will buyers find my pricing compelling?"
-- "Should I use subscription or usage-based pricing?"
+- "How should we structure this software development between our subsidiaries?"
+- "What's the accounting treatment for this inter-company transaction?"
+- "Which model minimises group tax while maintaining compliance?"
 
 **Value:**
-- Validate pricing assumptions before launch
-- Find equilibrium between profitability and market acceptance
-- Compare pricing model alternatives objectively
+- Compare 6 transaction structures side-by-side
+- Understand accounting impact on both entities
+- Identify optimal pricing for transfer pricing compliance
 
-### For Product Managers
+### For Tax Advisors & Transfer Pricing Specialists
 **Use Cases:**
-- "Which pricing model makes sense for this feature?"
-- "How do I price to create a win-win?"
-- "What's the revenue impact of different pricing strategies?"
+- "Is this margin within arm's length range?"
+- "What documentation do we need for this structure?"
+- "How do we support this royalty rate to SARS?"
 
 **Value:**
-- Data-driven pricing decisions
-- Clear understanding of unit economics
-- Alignment between product value and pricing
+- Transfer pricing risk scoring with OECD benchmarks
+- Compliance checklists for audit preparation
+- Documentation guidance per transaction type
 
-### For Finance Teams
+### For Group Accountants
 **Use Cases:**
-- "What's our minimum viable price?"
-- "What margin are we actually achieving?"
-- "Is our pricing aligned with our cost structure?"
+- "How do I account for this on both sides?"
+- "What journal entries are required?"
+- "How does consolidation affect the group?"
 
 **Value:**
-- Validate margin targets are achievable
-- Understand cost implications of pricing decisions
-- Ensure pricing supports business sustainability
+- Detailed accounting treatment summaries
+- Journal entry templates
+- Consolidation elimination guidance
+
+### For Business Analysts
+**Use Cases:**
+- "Which structure gives the best NPV?"
+- "What's the break-even point for this investment?"
+- "How sensitive is ROI to cost changes?"
+
+**Value:**
+- Multi-year projections with growth rates
+- Sensitivity analysis and scenario planning
+- Visualisations for executive presentations
 
 ---
 
-## The 5 Pricing Models Explained
+## The Two Modes
 
-### 1. Subscription (SaaS)
+The tool operates in two distinct modes:
 
-**Description**: Monthly recurring revenue per customer
+### Mode 1: Pricing Calculator (Original)
+**Purpose**: Find equilibrium pricing for B2B software products
 
-**Example**: R500/month × 100 customers = R50,000 MRR
+**Features**:
+- 5 pricing models (Subscription, Usage-Based, Per-Seat, One-Time, Marketplace)
+- Seller floor / Buyer ceiling analysis
+- Calculate missing inputs (reverse calculations)
 
-**Best For**:
-- SaaS platforms (CRM, project management, accounting software)
-- Cloud software with ongoing value delivery
-- Recurring services (backups, monitoring, support)
+**Best For**: Product pricing decisions, market entry pricing, competitive analysis
 
-**Typical South African Pricing**:
-- SMB SaaS: R250 - R1,500/month
-- Enterprise SaaS: R5,000 - R50,000/month
+### Mode 2: Inter-Company Transaction Tool (Advanced)
+**Purpose**: Structure and analyse inter-company software transactions
 
-**When to Use**:
-- Continuous value delivery to customers
-- Predictable, recurring costs to serve
-- Need for stable, predictable revenue
+**Features**:
+- 6 comprehensive transaction models with 47 variants
+- Three-perspective analysis (Developer, Buyer, Combined)
+- Transfer pricing compliance scoring
+- Sensitivity analysis and growth projections
+- Advanced visualisations
 
-**Seller Inputs**:
-- Monthly subscription price
-- Number of customers
-- Cost to serve per customer/month
-- Desired gross margin %
-
-**Buyer Inputs**:
-- Value received per month (revenue enabled or cost saved)
+**Best For**: Group restructuring, transfer pricing documentation, inter-company agreements
 
 ---
 
-### 2. Usage-Based
+## The 6 Inter-Company Transaction Models
 
-**Description**: Pay per unit consumed (API calls, transactions, build minutes)
+### Model 1: Development Services (Cost-Plus)
 
-**Example**: R2 per 1,000 API calls × 10,000 units = R20,000/month
+**Description**: Developer creates software for Buyer as a service. IP ownership goes to Buyer.
 
-**Best For**:
-- APIs (payment processing, SMS, maps, AI services)
-- CI/CD platforms (build minutes, deployments)
-- Infrastructure services (storage, compute, bandwidth)
-- Transaction processing (payments, invoicing)
+**Structure**: Developer → Service Fee → Buyer (who owns the resulting IP)
 
-**Typical South African Pricing**:
-- API calls: R0.50 - R5 per 1,000 calls
-- Build minutes: R10 - R50 per 1,000 minutes
-- Transactions: R0.10 - R2 per transaction
+**6 Variants:**
 
-**When to Use**:
-- Variable customer usage patterns
-- Cost scales directly with usage
-- Customers want to "pay for what they use"
+| Variant | Name | Best For |
+|---------|------|----------|
+| **1A** | Pure Cost Reimbursement | Cost validation, no-profit arrangements |
+| **1B** | Cost-Plus Fixed Margin | Standard arrangements (5-15% markup) |
+| **1C** | Cost-Plus with Bonus | Milestone-based incentives |
+| **1D** | Fixed Price Contract | Well-defined scope projects |
+| **1E** | Time and Materials | Uncertain scope, agile development |
+| **1F** | Dedicated Team | Ongoing development, monthly retainer |
 
-**Seller Inputs**:
-- Price per unit (e.g., per 1,000 API calls)
-- Average units per customer/month
-- Number of customers
-- Cost to serve per unit
-- Desired gross margin %
+**Typical Margin**: 5-15% (arm's length benchmark for development services)
 
-**Buyer Inputs**:
-- Value received per unit of usage
+**Key Considerations**:
+- Buyer capitalises the cost as an intangible asset
+- Developer recognises service revenue
+- Transfer pricing supported by cost-plus method
 
 ---
 
-### 3. Per-Seat (Per User)
+### Model 2: Software Licence with Royalties
 
-**Description**: Price per active user or seat
+**Description**: Developer retains IP and grants usage rights to Buyer via licence agreement.
 
-**Example**: R250/seat × 25 users = R6,250/month
+**Structure**: Developer (owns IP) → Licence/Royalty → Buyer (usage rights)
 
-**Best For**:
-- Collaboration tools (Slack, Microsoft Teams, Notion)
-- Business software (accounting, HR, sales tools)
-- Developer tools (IDEs, code repositories)
+**8 Variants:**
 
-**Typical South African Pricing**:
-- Collaboration tools: R100 - R500/seat/month
-- Professional tools: R500 - R2,000/seat/month
-- Enterprise software: R2,000 - R10,000/seat/month
+| Variant | Name | Best For |
+|---------|------|----------|
+| **2A** | Perpetual Licence | Large upfront payment, indefinite use |
+| **2B** | Term Licence | Time-limited agreements (1-5 years) |
+| **2C** | Usage-Based Royalties | Variable usage patterns |
+| **2D** | Minimum Guarantee + Royalties | Revenue certainty + upside |
+| **2E** | Revenue/Profit Share | Aligned incentives |
+| **2F** | White-Label / Reseller | Distribution partnerships |
+| **2G** | Exclusive vs Non-Exclusive | Territory/market exclusivity |
+| **2H** | Source Code Escrow | Risk mitigation for Buyer |
 
-**When to Use**:
-- Value increases with number of users
-- Cost to serve scales with user count
-- Clear per-user value proposition
+**Typical Royalty**: 5-25% of revenue (arm's length benchmark)
 
-**Seller Inputs**:
-- Price per seat/month
-- Average seats per customer
-- Number of customers
-- Cost to serve per seat/month
-- Desired gross margin %
-
-**Buyer Inputs**:
-- Value received per user/month
+**Key Considerations**:
+- Developer amortises development costs
+- Buyer expenses royalties or capitalises licence
+- Withholding tax may apply on royalty payments
 
 ---
 
-### 4. One-Time Purchase (Perpetual License)
+### Model 3: Joint Development / Cost-Sharing
 
-**Description**: Upfront license fee + optional annual maintenance
+**Description**: Both parties contribute to development and share ownership based on contributions.
 
-**Example**: R5,000 license + 20% annual maintenance (R1,000/year)
+**Structure**: Developer + Buyer → Shared Contribution → Joint IP Ownership
 
-**Best For**:
-- Desktop software (Adobe Creative Suite, Microsoft Office)
-- Enterprise platforms (ERP, accounting software)
-- Development tools (IDEs, compilers)
+**8 Variants:**
 
-**Typical South African Pricing**:
-- SMB software: R1,000 - R10,000 perpetual
-- Professional tools: R10,000 - R50,000 perpetual
-- Enterprise systems: R50,000 - R500,000+ perpetual
-- Maintenance: 15% - 25% of license fee annually
+| Variant | Name | Best For |
+|---------|------|----------|
+| **3A** | Equal 50/50 Sharing | Equal partners |
+| **3B** | Contribution-Based Sharing | Proportional to input value |
+| **3C** | Benefit-Based Sharing | Proportional to expected benefit |
+| **3D** | Platform + Application Split | Core vs derivative development |
+| **3E** | Development + Commercialisation | Build vs sell split |
+| **3F** | Joint Venture Entity | Separate legal vehicle |
+| **3G** | Consortium / Multi-Party | Three+ party arrangements |
+| **3H** | Pre-Competitive R&D | Industry collaboration |
 
-**When to Use**:
-- Software with long-term utility (multi-year use)
-- Customers prefer ownership over subscription
-- Minimal ongoing costs to serve after purchase
+**Typical Split**: 40-60% of residual profits (arm's length benchmark)
 
-**Seller Inputs**:
-- One-time license price
-- Annual maintenance % (optional)
-- Number of licenses sold per year
-- Cost to deliver per license
-- Desired gross margin %
-
-**Buyer Inputs**:
-- Value received from software ownership
-- Expected years of use
+**Key Considerations**:
+- Each party capitalises their share of development
+- Transfer pricing requires contribution analysis
+- Buy-in/buy-out payments if contributions change
 
 ---
 
-### 5. Marketplace (Two-Sided)
+### Model 4: Build-Operate-Transfer (BOT)
 
-**Description**: Commission-based marketplace connecting buyers and sellers
+**Description**: Developer builds and operates the software, then transfers ownership to Buyer.
 
-**Example**: 10% commission × R500 avg transaction × 100 transactions/month = R5,000/month
+**Structure**: Developer (builds, operates) → Service Period → Transfer to Buyer
 
-**Best For**:
-- Freelance platforms (Upwork, Fiverr, local equivalents)
-- Supplier marketplaces (e-commerce, B2B marketplaces)
-- Service booking platforms (appointments, consultations)
+**8 Variants:**
 
-**Typical South African Pricing**:
-- Service marketplaces: 5% - 20% commission
-- E-commerce platforms: 3% - 15% commission
-- High-value B2B: 1% - 10% commission
+| Variant | Name | Best For |
+|---------|------|----------|
+| **4A** | Fixed Transfer Price | Certainty on transfer cost |
+| **4B** | Formula-Based Price | Price linked to performance |
+| **4C** | Fair Market Value | Independent valuation at transfer |
+| **4D** | With Purchase Option | Buyer flexibility |
+| **4E** | Build-Operate-Own (BOO) | No transfer planned |
+| **4F** | Build-Transfer-Operate (BTO) | Early ownership transfer |
+| **4G** | Build-Lease-Transfer | IFRS 16 lease accounting |
+| **4H** | Phased Transfer | Gradual ownership transition |
 
-**When to Use**:
-- Facilitating transactions between buyers and sellers
-- Providing trust, discovery, and payment infrastructure
-- Revenue tied directly to transaction volume
-
-**Seller Inputs**:
-- Commission % per transaction
-- Average transaction value
-- Transactions per month
-- Cost to facilitate per transaction
-- Desired gross margin %
-
-**Buyer Inputs**:
-- Value created by the marketplace (trust, convenience, reach)
+**Key Considerations**:
+- Developer recognises service revenue during operation
+- Transfer triggers capital gain for Developer
+- Buyer capitalises at transfer date
 
 ---
 
-## How to Use the Calculator
+### Model 5: Software Sale with Ongoing Support
 
-### Step 1: Select Your Pricing Model
+**Description**: Outright sale of software asset with optional support/maintenance agreements.
 
-Choose one of the 5 pricing models that best fits your business:
-- Subscription (SaaS)
-- Usage-Based
-- Per-Seat (Per User)
-- One-Time Purchase
-- Marketplace
+**Structure**: Developer → Sale + Support Agreement → Buyer (full ownership)
 
-**Tip**: Not sure which model fits? See the detailed descriptions above or try multiple models to compare.
+**8 Variants:**
 
-### Step 2: Choose Your Calculation Mode
+| Variant | Name | Best For |
+|---------|------|----------|
+| **5A** | Clean Sale | No post-sale obligations |
+| **5B** | Sale + Maintenance | Ongoing fixes and updates |
+| **5C** | Sale + Support & Updates | Full support package |
+| **5D** | Sale with Warranty | Limited post-sale obligations |
+| **5E** | Sale with Buyback | Future optionality |
+| **5F** | Retained Improvements | Developer keeps enhancement rights |
+| **5G** | Asset Sale vs Share Sale | Different legal structures |
+| **5H** | Sale with Licence-Back | Developer retains usage |
 
-The calculator offers two modes:
-
-**Option 1: Manual Entry (Traditional)**
-- Enter all inputs manually
-- See complete results across all perspectives
-- Best when you have all your data ready
-
-**Option 2: Calculate Missing Input (NEW!)**
-- Let the calculator auto-calculate one missing input
-- Choose what to calculate: Price, Buyer Value, Margin, or Maximum Cost
-- Best when you want to explore "what if" scenarios
-
-### Step 3: Enter Your Inputs
-
-The calculator needs two categories of information:
-
-#### Seller/Vendor Inputs
-- **Pricing**: Current price, volume, units
-- **Costs**: Cost to serve/deliver per unit
-- **Margin**: Desired gross margin percentage
-
-#### Buyer Inputs
-- **Value**: How much value does your product deliver to customers?
-  - Revenue enabled (how much money does it help them make?)
-  - Cost saved (how much money does it save them?)
-
-**Example for SaaS Project Management Tool**:
-- Seller Cost: R150/customer/month (hosting, support, updates)
-- Desired Margin: 70%
-- Buyer Value: R5,000/month (saves 10 hours × R500/hour of project management time)
-
-### Step 4: Click Calculate
-
-The calculator processes your inputs and displays results across multiple perspectives.
+**Key Considerations**:
+- Developer recognises capital gain (CGT) on sale
+- IFRS 15 transaction price allocation for bundled deals
+- Buyer capitalises full purchase price
 
 ---
 
-## Calculation Modes
+### Model 6: Subscription/SaaS Enhancement
 
-### Mode 1: Manual Entry
+**Description**: Developer provides ongoing access to software as a service.
 
-**When to Use**: You have all your data and want to see complete results
+**Structure**: Developer (operates SaaS) → Subscription Fee → Buyer (service access)
+
+**9 Variants:**
+
+| Variant | Name | Best For |
+|---------|------|----------|
+| **6A** | Pure SaaS (Multi-Tenant) | Standard cloud delivery |
+| **6B** | Dedicated Instance | Single-tenant isolation |
+| **6C** | With Customisation | Bespoke modifications |
+| **6D** | Hybrid (Cloud + On-Premise) | Mixed deployment |
+| **6E** | Freemium / Tiered | Customer acquisition strategy |
+| **6F** | Consumption-Based | Variable usage pricing |
+| **6G** | Enterprise Agreement | Committed annual spend |
+| **6H** | Private Label SaaS | White-label distribution |
+| **6I** | Managed Service + Transition | Future ownership option |
+
+**Key Considerations**:
+- Developer retains asset, recognises recurring revenue
+- Buyer expenses subscription (usually no capitalisation)
+- Control assessment for customisation (6C)
+
+---
+
+## The 3 Core Modules
+
+### Module 1: Structure Selector
+
+**Purpose**: Help users choose the optimal transaction structure through guided questions.
 
 **How It Works**:
-1. Select "Enter All Inputs Manually"
-2. Fill in all fields:
-   - Pricing (price, volume)
-   - Seller costs (cost per unit, desired margin %)
-   - Buyer value (value received)
-3. Click "Calculate"
-4. View results across all perspectives
+1. Answer 6 key questions about your requirements
+2. System scores all 6 models based on your answers
+3. Receive ranked recommendations with rationale
+4. Drill down to specific variant recommendations
 
-**Example Workflow**:
-```
-Subscription SaaS Model
-├── Price: R500/month
-├── Volume: 100 customers
-├── Cost to Serve: R150/customer/month
-├── Desired Margin: 70%
-└── Buyer Value: R5,000/month
-
-Results:
-├── Revenue: R50,000/month
-├── Profit: R35,000/month (70% margin achieved)
-├── Seller Floor: R500 (minimum price for 70% margin)
-├── Buyer Ceiling: R2,000 (max price for 2.5x ROI)
-└── Equilibrium: YES (price within R500 - R2,000 range)
-```
+**Decision Factors**:
+- Who should own the IP?
+- What cash flow structure is preferred?
+- How should risk be allocated?
+- What asset recognition is needed?
+- Are the entities consolidated?
+- What is the transaction timeframe?
 
 ---
 
-### Mode 2: Calculate Missing Input
+### Module 2: Pricing Calculator
 
-**When to Use**: You want to explore scenarios or reverse-engineer targets
+**Purpose**: Calculate and analyse pricing for the selected transaction structure.
 
-#### Option A: Calculate Optimal Price
-
-**Use Case**: "What should I charge based on my costs and buyer value?"
-
-**You Provide**:
-- Cost to serve
-- Desired margin
-- Buyer value
-
-**Calculator Finds**:
-- **Seller Floor**: Minimum price to meet your margin (e.g., R500)
-- **Buyer Ceiling**: Maximum price maintaining buyer ROI (e.g., R2,000)
-- **Balanced Price**: Midpoint between floor and ceiling (e.g., R1,250)
-
-**Pricing Strategies**:
-- **Minimum Viable**: Price at seller floor (R500) - most competitive, lowest margin
-- **Balanced**: Price at midpoint (R1,250) - recommended, win-win
-- **Maximum Capture**: Price at buyer ceiling (R2,000) - highest profit, premium positioning
-
-**Example**:
-```
-Known Inputs:
-├── Cost to Serve: R150/month
-├── Desired Margin: 70%
-└── Buyer Value: R5,000/month
-
-Calculator Determines:
-├── Seller Floor: R500 (meets 70% margin)
-├── Buyer Ceiling: R2,000 (maintains 2.5x ROI)
-└── Recommended Balanced Price: R1,250
-
-At R1,250:
-├── Your Margin: 88% (exceeds 70% target)
-└── Buyer ROI: 4x (exceeds 2.5x threshold)
-```
+**Features**:
+- Dynamic input forms per model/variant
+- Three-perspective results (Developer, Buyer, Combined)
+- Accounting treatment summaries
+- Tax calculations (income tax, CGT, deferred tax)
+- Visualisations (charts, timelines, comparisons)
 
 ---
 
-#### Option B: Calculate Required Buyer Value
+### Module 3: Compliance Analyzer
 
-**Use Case**: "How much value do I need to deliver to justify my pricing?"
+**Purpose**: Assess transfer pricing risk and generate compliance documentation.
 
-**You Provide**:
-- Target price
-- Cost to serve
-- Desired margin
+**Features**:
+- **Transfer Pricing Risk Score**: Composite score based on 5 factors
+- **Accounting Treatment Summary**: IFRS guidance per entity
+- **Tax Impact Analysis**: Section 11(e), CGT, timing differences
+- **Compliance Checklists**: Interactive checklists for documentation
+- **Journal Entry Templates**: Suggested accounting entries
 
-**Calculator Finds**:
-- Minimum buyer value needed to maintain acceptable ROI at your target price
-
-**Example**:
-```
-Known Inputs:
-├── Target Price: R1,500/month
-├── Cost to Serve: R200/month
-└── Desired Margin: 75%
-
-Calculator Determines:
-└── Required Buyer Value: R3,750/month
-
-Interpretation:
-- To charge R1,500, you must deliver at least R3,750/month in value
-- This maintains 2.5x ROI for the buyer
-- Your margin: 87% (exceeds 75% target)
-```
+**Risk Scoring Factors**:
+| Factor | Weight | Description |
+|--------|--------|-------------|
+| Margin Compliance | 30% | Is margin within benchmark range? |
+| Documentation | 25% | Transfer pricing docs completeness |
+| Substance | 20% | Economic substance and rationale |
+| Comparability | 15% | Quality of comparable analysis |
+| Consistency | 10% | Year-on-year consistent application |
 
 ---
 
-#### Option C: Calculate Achievable Margin
+## Three-Perspective Analysis
 
-**Use Case**: "What margin can I realistically achieve at my current price?"
+Every transaction is analysed from three perspectives simultaneously:
 
-**You Provide**:
-- Current price
-- Cost to serve
-- Buyer value
+### Developer Perspective
+**Focus**: Revenue recognition, costs, profitability, tax position
 
-**Calculator Finds**:
-- Actual margin you're achieving
-- Whether pricing is sustainable
+**Key Outputs**:
+- Service revenue / Sale proceeds / Licence revenue
+- Development costs (capitalised or expensed)
+- Profit margin analysis
+- Income tax liability
+- Asset position (if IP retained)
 
-**Example**:
-```
-Known Inputs:
-├── Current Price: R800/month
-├── Cost to Serve: R300/month
-└── Buyer Value: R4,000/month
+### Buyer Perspective
+**Focus**: Asset recognition, amortisation, deductibility, cash flow
 
-Calculator Determines:
-├── Achievable Margin: 62.5%
-├── Seller Floor: R1,000 (for 70% margin)
-└── Buyer Ceiling: R1,600 (for 2.5x ROI)
+**Key Outputs**:
+- Capitalised asset value
+- Amortisation schedule (accounting vs tax)
+- Section 11(e) accelerated depreciation
+- Deferred tax position
+- Total cost of ownership
 
-Interpretation:
-- Current pricing leaves margin opportunity on the table
-- You could increase price to R1,000 (still below buyer ceiling)
-- This would increase margin from 62.5% to 70%
-```
+### Combined Perspective
+**Focus**: Group consolidation, elimination entries, overall efficiency
 
----
-
-#### Option D: Calculate Maximum Cost
-
-**Use Case**: "What's the maximum I can spend on costs while maintaining margin targets?"
-
-**You Provide**:
-- Target price
-- Desired margin
-- Buyer value
-
-**Calculator Finds**:
-- Maximum allowable cost per unit to meet margin target
-
-**Example**:
-```
-Known Inputs:
-├── Target Price: R1,000/month
-├── Desired Margin: 70%
-└── Buyer Value: R5,000/month
-
-Calculator Determines:
-└── Maximum Cost: R300/month
-
-Interpretation:
-- To charge R1,000 with 70% margin, costs must stay ≤ R300
-- Buyer ceiling: R2,000 (you have pricing headroom)
-- Consider either: (a) reduce costs or (b) increase price
-```
+**Key Outputs**:
+- Group profit (with eliminations)
+- Asset efficiency ratio
+- Consolidation adjustments
+- Transfer pricing reasonableness
+- Overall tax efficiency
 
 ---
 
-## Understanding the Results
+## Advanced Features
 
-The calculator displays results across four perspectives:
+### Sensitivity Analysis (Stage 2)
 
-### 1. Revenue & Profit Overview
+**Range Input Mode**:
+- Enter Low / Base / High values for key inputs
+- System calculates Best Case / Base Case / Worst Case scenarios
 
-**What You See**:
-- Total monthly revenue
-- Total monthly profit
-- Gross margin %
-- Unit economics (revenue and profit per unit)
+**Visualisations**:
+- **Tornado Chart**: Shows which inputs have biggest impact on outcomes
+- **Fan Chart**: Displays range of possible outcomes over time
+- **Break-Even Analysis**: Find break-even values for key inputs
 
-**How to Interpret**:
-- **Revenue**: Is it sufficient for your business goals?
-- **Profit**: Does it cover fixed costs and growth investments?
-- **Margin**: Is it healthy for your industry? (SaaS: 70-90%, Services: 40-60%)
-
----
-
-### 2. Seller Economics (Your Perspective)
-
-**What You See**:
-- **Seller Floor**: Minimum price to meet your margin target
-- Cost breakdown per unit
-- Margin analysis
-- Profitability assessment
-
-**Key Metrics**:
-- **Seller Floor = Cost ÷ (1 - Desired Margin)**
-  - Example: R150 ÷ (1 - 0.70) = R500
-- **Actual Margin = (Price - Cost) ÷ Price**
-  - Example: (R1,250 - R150) ÷ R1,250 = 88%
-
-**How to Interpret**:
-- **Price > Seller Floor**: ✅ You're meeting margin targets
-- **Price = Seller Floor**: ⚠️ Minimum viable pricing, no buffer
-- **Price < Seller Floor**: ❌ Unsustainable, losing money or margin too low
+**Monte Carlo Simulation** (optional):
+- Run 1,000+ simulations with random input variations
+- Generate probability distributions for outcomes
+- Calculate confidence intervals
 
 ---
 
-### 3. Buyer Economics (Customer Perspective)
+### Growth Projections (Stage 3)
 
-**What You See**:
-- **Buyer Ceiling**: Maximum price maintaining acceptable ROI
-- Value delivered to customer
-- ROI calculation
-- Value proposition assessment
+**Projection Inputs**:
+- Expected revenue (Buyer side)
+- Enhancement cost projections
+- Inflation rate
+- Discount rate
+- Projection period (3/5/7/10 years)
 
-**Key Metrics**:
-- **Buyer Ceiling = Buyer Value ÷ ROI Threshold**
-  - Example: R5,000 ÷ 2.5 = R2,000
-- **Actual ROI = Buyer Value ÷ Price**
-  - Example: R5,000 ÷ R1,250 = 4x
+**Calculated Metrics**:
+- **NPV (Net Present Value)**: Per party and combined
+- **IRR (Internal Rate of Return)**: Investment return rate
+- **Payback Period**: Simple and discounted
+- **Break-Even Revenue**: Revenue needed to justify investment
 
-**ROI Thresholds by Model**:
-- Subscription: 2.5x minimum (buyer pays R1, gets R2.50+ value)
-- Usage-Based: 3x minimum (higher variability requires buffer)
-- Per-Seat: 2.5x minimum
-- One-Time Purchase: 5x minimum (large upfront commitment)
-- Marketplace: 10x minimum (transaction friction must be overcome)
-
-**How to Interpret**:
-- **Price < Buyer Ceiling**: ✅ Compelling ROI for buyer
-- **Price = Buyer Ceiling**: ⚠️ Marginal ROI, buyer may hesitate
-- **Price > Buyer Ceiling**: ❌ ROI too low, buyer will not purchase
+**Visualisations**:
+- Multi-year cash flow projection charts
+- NPV waterfall by party
+- ROI trajectory with target comparison
+- Asset value over time with enhancements
 
 ---
 
-### 4. Equilibrium Analysis
+### Advanced Visualisations (Stage 1)
 
-**What You See**:
-- Seller Floor vs Buyer Ceiling comparison
-- Equilibrium zone (if it exists)
-- Recommended pricing strategy
-- Gap analysis (if equilibrium doesn't exist)
+**Cross-Model Comparison**:
+- Compare all 6 models side-by-side
+- Total cost to Buyer comparison
+- Developer return comparison
+- Risk score comparison
 
-**Possible Outcomes**:
+**Timeline Visualisations**:
+- Animated asset location timeline
+- Interactive cash flow waterfall
+- Multi-entity amortisation schedules
+- Project phase Gantt chart
 
-#### Scenario 1: Equilibrium Exists (Floor < Ceiling)
-```
-Seller Floor:     R500
-Buyer Ceiling:    R2,000
-Equilibrium Zone: R500 - R2,000
-Suggested Price:  R1,250 (midpoint)
-
-Status: ✅ WIN-WIN PRICING POSSIBLE
-```
-
-**What This Means**:
-- You can meet margin targets AND deliver compelling buyer ROI
-- You have pricing flexibility within the R500 - R2,000 range
-- Balanced pricing at R1,250 splits the value fairly
-
-**Recommended Strategies**:
-- **Minimum Viable** (R500): Competitive pricing, penetrate market quickly
-- **Balanced** (R1,250): Fair value split, sustainable growth
-- **Maximum Capture** (R2,000): Premium positioning, maximize profit
-
----
-
-#### Scenario 2: No Equilibrium (Floor > Ceiling)
-```
-Seller Floor:     R800
-Buyer Ceiling:    R600
-Gap:              R200 (33% shortfall)
-
-Status: ❌ NO WIN-WIN PRICING
-```
-
-**What This Means**:
-- Your minimum price (R800) exceeds buyer's maximum willingness to pay (R600)
-- No price exists where both seller and buyer win
-- Fundamental business model problem
-
-**Solutions**:
-1. **Reduce Costs**: Lower cost to serve from R640 to R480 → seller floor drops to R600
-2. **Increase Buyer Value**: Enhance product to deliver R2,000 value → buyer ceiling rises to R800
-3. **Reduce Margin Target**: Accept 60% margin instead of 70% → seller floor drops to R600
-4. **Pivot Business Model**: This pricing model may not work for your product
-
----
-
-#### Scenario 3: Underpricing (Price < Floor)
-```
-Current Price:    R400
-Seller Floor:     R500
-Status:           ⚠️ BELOW MINIMUM
-
-Your margin: 20% (target: 70%)
-```
-
-**What This Means**:
-- You're not meeting margin targets
-- Leaving profit on the table
-- Potentially unsustainable pricing
-
-**Actions**:
-- Increase price to at least R500 (seller floor)
-- Or reduce costs to lower the floor
-- Or accept lower margin if strategically justified (market penetration, land-and-expand)
-
----
-
-#### Scenario 4: Overpricing (Price > Ceiling)
-```
-Current Price:    R2,500
-Buyer Ceiling:    R2,000
-Status:           ⚠️ ABOVE MAXIMUM
-
-Buyer ROI: 2.0x (threshold: 2.5x)
-```
-
-**What This Means**:
-- Buyer ROI below acceptable threshold
-- Price resistance likely
-- Conversion rates may suffer
-
-**Actions**:
-- Reduce price to R2,000 or below (buyer ceiling)
-- Or increase value delivered to justify R2,500 price
-- Or target different buyer segment with higher value realization
+**Risk Visualisations**:
+- Transfer pricing risk heat map
+- Risk vs Return quadrant chart
+- Compliance score gauge
+- Sensitivity tornado chart
 
 ---
 
 ## Common Scenarios & Examples
 
-### Scenario 1: SaaS Subscription Pricing for CRM
+### Scenario 1: Software Development Subsidiary
 
-**Context**: You're launching a South African CRM for SMBs
+**Situation**: Parent company wants subsidiary to develop CRM software for the group.
 
-**Inputs**:
-- Cost to serve: R200/customer/month (hosting, support, development)
-- Desired margin: 75%
-- Buyer value: R8,000/month (saves 20 hours × R400/hour in manual admin)
+**Recommended Model**: Model 1B (Cost-Plus Fixed Margin)
 
-**Calculator Results**:
-```
-Seller Floor:     R800
-Buyer Ceiling:    R3,200 (R8,000 ÷ 2.5)
-Equilibrium Zone: R800 - R3,200
-Balanced Price:   R2,000
+**Setup**:
+- Developer: Development subsidiary
+- Buyer: Parent company
+- Margin: 10% (within 5-15% benchmark)
+- Development cost: R2,000,000
 
-At R2,000/month:
-├── Your Margin: 90% (R1,800 profit)
-├── Buyer ROI: 4x (excellent)
-└── Status: ✅ Strong win-win
-```
-
-**Recommendation**: Price at R1,500 - R2,000 for balanced positioning
+**Results**:
+- Developer revenue: R2,200,000
+- Developer profit: R200,000 (10% margin)
+- Buyer capitalises: R2,200,000 as intangible asset
+- Buyer amortises: R440,000/year (5 years, straight-line)
+- Section 11(e): R1,100,000/year (2 years, accelerated)
 
 ---
 
-### Scenario 2: Usage-Based API Pricing
+### Scenario 2: Software Licensing Between Subsidiaries
 
-**Context**: SMS API service for developers
+**Situation**: Group developed software that multiple subsidiaries need to use.
 
-**Inputs**:
-- Cost per 1,000 SMS: R30 (carrier fees, infrastructure)
-- Desired margin: 60%
-- Buyer value per 1,000 SMS: R200 (customer engagement, sales conversions)
+**Recommended Model**: Model 2B (Term Licence)
 
-**Calculator Results**:
-```
-Seller Floor:     R75 per 1,000 SMS
-Buyer Ceiling:    R67 per 1,000 SMS (R200 ÷ 3x)
-Gap:              -R8 (no equilibrium!)
+**Setup**:
+- Developer: IP holding company
+- Buyer: Operating subsidiaries
+- Royalty: 8% of revenue
+- Term: 3 years renewable
 
-Status: ❌ Business model issue
-```
-
-**Problem**: Costs too high relative to buyer value
-
-**Solutions**:
-1. **Negotiate better carrier rates**: Get cost to R20 → floor drops to R50 (below R67 ceiling)
-2. **Increase buyer value**: Add delivery analytics, templates → value rises to R300 → ceiling rises to R100
-3. **Target different segment**: Enterprise customers may value SMS at R500+ per 1,000
+**Results**:
+- Developer: Ongoing royalty income
+- Buyer: Expense royalties as incurred
+- Transfer pricing: CUP method with industry comparables
+- Withholding tax: May apply if cross-border
 
 ---
 
-### Scenario 3: Per-Seat Collaboration Tool
+### Scenario 3: Joint Development with Equal Investment
 
-**Context**: Team chat and collaboration platform
+**Situation**: Two subsidiaries jointly developing platform software.
 
-**Inputs**:
-- Cost per seat: R50/month (hosting, support)
-- Desired margin: 80%
-- Buyer value per seat: R1,500/month (productivity gains, reduced email overhead)
+**Recommended Model**: Model 3B (Contribution-Based Sharing)
 
-**Calculator Results**:
-```
-Seller Floor:     R250 per seat
-Buyer Ceiling:    R600 per seat (R1,500 ÷ 2.5)
-Equilibrium Zone: R250 - R600
-Balanced Price:   R425 per seat
+**Setup**:
+- Developer contribution: R3,000,000 (development resources)
+- Buyer contribution: R2,000,000 (infrastructure, testing)
+- Ownership split: 60% Developer / 40% Buyer
 
-At R425/seat:
-├── Your Margin: 88%
-├── Buyer ROI: 3.5x
-└── Status: ✅ Win-win
-```
-
-**Competitive Analysis**:
-- Slack: ~R150/user (international)
-- Microsoft Teams: Bundled with Office 365
-- Your pricing: R425 (premium but justified by local support + customization)
-
-**Recommendation**: Price at R399 - R450 per seat, emphasize local support and ZAR billing
+**Results**:
+- Developer capitalises: R3,000,000
+- Buyer capitalises: R2,000,000
+- Each party amortises their portion
+- Profit split method for transfer pricing
 
 ---
 
-### Scenario 4: One-Time Software License
+### Scenario 4: Build-Operate-Transfer for ERP System
 
-**Context**: Accounting software for small businesses
+**Situation**: Subsidiary builds ERP, operates for 3 years, then transfers.
 
-**Inputs**:
-- Cost to deliver: R1,000 (development, support, packaging)
-- Desired margin: 70%
-- Buyer value: R50,000 over 5 years (R10,000/year in accounting fees saved)
-- ROI threshold: 5x (one-time purchases require higher ROI)
+**Recommended Model**: Model 4A (Fixed Transfer Price)
 
-**Calculator Results**:
-```
-Seller Floor:     R3,333 (R1,000 ÷ 0.30)
-Buyer Ceiling:    R10,000 (R50,000 ÷ 5x)
-Equilibrium Zone: R3,333 - R10,000
-Balanced Price:   R6,667
+**Setup**:
+- Development cost: R5,000,000
+- Operation period: 3 years
+- Annual service fee: R1,000,000
+- Transfer price: R3,500,000
 
-At R6,667:
-├── Your Margin: 85%
-├── Buyer ROI: 7.5x (over 5 years)
-└── Status: ✅ Excellent value
-```
-
-**Annual Maintenance Option**:
-- 20% annual maintenance: R1,333/year
-- Year 1 revenue: R6,667 (license) + R1,333 (maintenance) = R8,000
-- Recurring revenue years 2-5: R1,333/year
-
-**Recommendation**: Price at R5,995 - R7,995 perpetual + 20% annual maintenance
+**Results**:
+- Developer: R3M service revenue + R3.5M transfer
+- Developer gain: Subject to CGT at transfer
+- Buyer: Expenses R3M during operation
+- Buyer capitalises: R3.5M at transfer
+- Total Buyer cost: R6.5M (spread over 3+ years)
 
 ---
 
-### Scenario 5: Marketplace Platform
+## South African Tax Considerations
 
-**Context**: Freelance marketplace for South African designers
+### Corporate Tax Rate
+- Standard rate: 27% (effective 2023)
+- Applied to both Developer and Buyer entities
 
-**Inputs**:
-- Cost per transaction: R15 (payment processing, escrow, support)
-- Desired margin: 70%
-- Average transaction: R2,500
-- Buyer value: R25,000 (trust, discovery, payment protection)
-- ROI threshold: 10x (marketplaces require overcoming high friction)
+### Section 11(e) Accelerated Depreciation
 
-**Calculator Results**:
+Software qualifies for accelerated write-off under Section 11(e):
+
+| Software Type | Depreciation Period | Annual Write-off |
+|---------------|---------------------|------------------|
+| **PC Software** | 2 years | 50% per year |
+| **Mainframe Software** | 5 years | 20% per year |
+
+**Important**: This creates timing differences between:
+- Tax depreciation (Section 11(e))
+- Accounting amortisation (useful life, often 3-10 years)
+
+### Deferred Tax
+
+The timing difference creates a deferred tax position:
+
 ```
-Seller Floor:     R50 per transaction (2% of R2,500)
-Buyer Ceiling:    R2,500 per transaction (R25,000 ÷ 10x = 10% of transaction)
-Equilibrium Zone: R50 - R250
-Balanced Price:   R150 per transaction (6% commission)
-
-At 6% commission (R150):
-├── Your Margin: 90%
-├── Buyer ROI: 167x (R25,000 ÷ R150)
-└── Status: ✅ Massive buyer value
+Deferred Tax = (Accounting Asset - Tax Base) × 27%
 ```
 
-**Competitive Benchmarks**:
-- Upwork: 10-20% (international)
-- Fiverr: 20% (international)
-- Local platforms: 5-15%
+**Example**:
+- Asset cost: R1,000,000
+- After Year 1 (accounting): R800,000 carrying value
+- After Year 1 (tax): R500,000 tax base (50% write-off)
+- Timing difference: R300,000
+- Deferred tax liability: R81,000
 
-**Recommendation**: Launch at 8-10% commission, reduce to 5% for high-volume users
+### Capital Gains Tax (CGT)
 
----
+When software is sold (Model 5):
+- Inclusion rate: 80% for companies
+- Effective CGT rate: 27% × 80% = 21.6%
 
-## Best Practices
-
-### 1. Start with Buyer Value
-
-**Why**: Pricing disconnected from value always fails
-
-**How to Estimate Buyer Value**:
-- **Revenue Enabled**: "Our product helps customers make R_____ per month"
-  - Example: Sales CRM enables R50,000 additional sales/month
-- **Cost Saved**: "Our product saves customers R_____ per month"
-  - Example: Automation tool saves 40 hours × R500/hour = R20,000/month
-- **Risk Reduced**: "Our product prevents R_____ in potential losses"
-  - Example: Backup service prevents R100,000 data loss risk
-
-**Validate Your Assumptions**:
-- Talk to 10+ potential customers
-- Ask: "How much would you pay for [specific outcome]?"
-- Benchmark against alternatives (competitors, manual processes)
+**Example**:
+- Sale price: R3,000,000
+- Cost base: R2,000,000
+- Capital gain: R1,000,000
+- Taxable gain: R800,000 (80% inclusion)
+- CGT payable: R216,000
 
 ---
 
-### 2. Know Your True Costs
+## Transfer Pricing Compliance
 
-**Why**: Underestimating costs leads to unsustainable pricing
+### OECD Methods Supported
 
-**Costs to Include**:
-- **Direct Costs**: Hosting, infrastructure, third-party services, transaction fees
-- **Support Costs**: Customer support time, onboarding, training
-- **Development Costs**: Bug fixes, maintenance, updates (amortized)
-- **Sales & Marketing**: For CAC-sensitive models
+| Method | Application | Typical Use |
+|--------|-------------|-------------|
+| **Cost Plus (CPM)** | Markup on costs | Development services (Model 1) |
+| **CUP** | Comparable prices | Licences, royalties (Model 2) |
+| **Profit Split** | Combined profit allocation | Joint development (Model 3) |
+| **TNMM** | Net margin comparison | Service arrangements |
+| **Resale Price** | Resale margin | Distribution (Model 2F) |
 
-**Example Cost Breakdown (SaaS)**:
-```
-Per Customer/Month:
-├── Hosting & infrastructure: R50
-├── Support (2 hours/month × R200/hour): R40
-├── Development (amortized): R30
-├── Payment processing (2% of R500): R10
-└── Total Cost to Serve: R130
-```
+### Benchmark Ranges (Indicative)
 
----
+| Transaction Type | Low Risk Range | Medium Risk | Typical |
+|------------------|----------------|-------------|---------|
+| Development services markup | 5-15% | 0-20% | 10% |
+| Software licence royalty | 5-25% | 2-35% | 15% |
+| Reseller margin | 20-40% | 15-50% | 30% |
+| Profit split | 40-60% | 30-70% | 50% |
+| Service provider margin | 3-10% | 1-15% | 6% |
 
-### 3. Set Realistic Margin Targets
+### Documentation Requirements
 
-**Industry Benchmarks**:
-- **SaaS**: 70-90% gross margin (world-class: 80%+)
-- **Services**: 40-60% gross margin
-- **Marketplaces**: 60-80% gross margin (low incremental costs)
-- **Hardware/Physical**: 30-50% gross margin
+**Master File**:
+- Group organisational structure
+- Description of business
+- Intangibles overview
+- Intercompany financial activities
+- Financial and tax positions
 
-**Why Margins Matter**:
-- Gross margin must cover fixed costs (salaries, rent, marketing)
-- SaaS needs high margins to fund growth and survive churn
-- Lower margins = less room for error, slower growth
+**Local File**:
+- Local entity details
+- Controlled transactions
+- Comparability analysis
+- Selection of TP method
+- Economic analysis
 
----
+### Compliance Checklists
 
-### 4. Understand ROI Thresholds
-
-**Why Different Models Have Different Thresholds**:
-- **Subscription (2.5x)**: Monthly commitment, easy to cancel
-- **Usage-Based (3x)**: Variable costs, harder to predict
-- **Per-Seat (2.5x)**: Similar to subscription
-- **One-Time (5x)**: Large upfront commitment, higher perceived risk
-- **Marketplace (10x)**: High friction, alternatives readily available
-
-**How to Increase Acceptable ROI Threshold**:
-- Build trust (case studies, testimonials, trials)
-- Reduce risk (money-back guarantee, month-to-month)
-- Improve UX (easier setup, faster time-to-value)
+The tool generates checklists for:
+1. Written Agreement Requirements
+2. Transfer Pricing Documentation
+3. Development Phase Documentation
+4. Cost Tracking Systems
+5. Control Assessment (for IP ownership)
+6. Related Party Disclosures
 
 ---
 
-### 5. Test Your Assumptions
+## Glossary of Terms
 
-**Validate Before Launch**:
-1. **Cost Assumptions**: Build a pilot or MVP to measure actual costs
-2. **Value Assumptions**: Run customer interviews, ask willingness-to-pay questions
-3. **Pricing Sensitivity**: Test 3 price points (low, medium, high) with sample customers
+### Accounting Terms
 
-**Iterate After Launch**:
-- Monitor conversion rates by price point
-- Track customer feedback on pricing
-- Measure actual costs vs estimates
-- Adjust pricing annually or when value increases significantly
+| Term | Definition |
+|------|------------|
+| **Amortisation** | Systematic allocation of intangible asset cost over useful life |
+| **Capitalisation** | Recording an expenditure as an asset rather than expense |
+| **Carrying Value** | Asset cost less accumulated amortisation/impairment |
+| **Consolidation** | Combining financial statements of group entities |
+| **Deferred Tax** | Tax effect of timing differences between accounting and tax |
+| **Fair Value** | Price in orderly transaction between market participants |
+| **IFRS** | International Financial Reporting Standards |
+| **Impairment** | Reduction in asset value when carrying exceeds recoverable amount |
+| **Intangible Asset** | Non-monetary asset without physical substance |
+| **Recognition** | Recording an item in financial statements |
+| **Useful Life** | Period over which asset is expected to provide benefits |
 
----
+### Tax Terms
 
-## Troubleshooting
+| Term | Definition |
+|------|------------|
+| **Arm's Length** | Price/terms that unrelated parties would agree to |
+| **CGT** | Capital Gains Tax - tax on profit from asset disposal |
+| **Cost Base** | Original cost plus improvements for CGT purposes |
+| **Inclusion Rate** | Percentage of capital gain included in taxable income |
+| **Section 11(e)** | SA tax provision for accelerated software depreciation |
+| **Tax Base** | Value of asset for tax purposes |
+| **Timing Difference** | Temporary difference between accounting and tax treatment |
+| **Transfer Pricing** | Pricing of transactions between related parties |
+| **Withholding Tax** | Tax deducted at source on payments (e.g., royalties) |
 
-### Issue: "No equilibrium exists - seller floor exceeds buyer ceiling"
+### Transaction Terms
 
-**Causes**:
-1. Costs too high relative to value delivered
-2. Margin target too aggressive
-3. Buyer value estimate too low
-4. Wrong pricing model for your product
+| Term | Definition |
+|------|------------|
+| **BOT** | Build-Operate-Transfer - developer builds, operates, then transfers |
+| **Cost-Plus** | Pricing based on costs plus agreed markup percentage |
+| **IP** | Intellectual Property - patents, copyrights, trade secrets |
+| **Joint Development** | Shared creation with proportional ownership |
+| **Licence** | Permission to use IP under specified conditions |
+| **Perpetual** | Licence with no end date (one-time fee) |
+| **Royalty** | Ongoing payment for use of IP (usually % of revenue) |
+| **SaaS** | Software as a Service - cloud-delivered software |
+| **Term Licence** | Licence with fixed duration (e.g., 3 years) |
 
-**Solutions**:
-1. **Reduce costs**: Optimize infrastructure, automate support, negotiate vendor contracts
-2. **Lower margin target**: Accept 60% instead of 80% (if sustainable)
-3. **Increase buyer value**: Add features, improve UX, target higher-value use cases
-4. **Change pricing model**: Try different model (e.g., usage-based instead of subscription)
+### Financial Metrics
 
----
-
-### Issue: "Buyer ROI is too low"
-
-**Diagnosis**: Price exceeds buyer ceiling
-
-**Solutions**:
-1. **Lower price**: Reduce to buyer ceiling or below
-2. **Increase value**: Add features, integrations, support that increase buyer value
-3. **Segment customers**: Target enterprise customers with higher value realization
-4. **Change value metric**: Reposition product around higher-value outcome
-
----
-
-### Issue: "Margin is below target"
-
-**Diagnosis**: Price below seller floor
-
-**Solutions**:
-1. **Increase price**: Raise to seller floor (if buyer ceiling allows)
-2. **Reduce costs**: Cut infrastructure, automate processes, outsource non-core
-3. **Accept lower margin temporarily**: If strategically justified (land-and-expand, network effects)
-
----
-
-### Issue: "Unsure which pricing model to use"
-
-**Decision Framework**:
-
-**Use Subscription when**:
-- Continuous value delivery (SaaS platforms, monitoring, backups)
-- Predictable costs to serve
-- Want recurring revenue stability
-
-**Use Usage-Based when**:
-- Variable customer usage patterns
-- Cost scales with usage (API calls, transactions, storage)
-- Customers prefer "pay for what you use"
-
-**Use Per-Seat when**:
-- Value increases with number of users (collaboration, communication)
-- Costs scale with user count
-- Easy to understand and sell
-
-**Use One-Time when**:
-- Software has long-term utility (5+ years)
-- Customers prefer ownership
-- Low ongoing costs to serve
-
-**Use Marketplace when**:
-- Facilitating transactions between parties
-- Providing trust/discovery infrastructure
-- Revenue tied to transaction volume
+| Term | Definition |
+|------|------------|
+| **Break-Even** | Point where revenue equals costs (zero profit/loss) |
+| **IRR** | Internal Rate of Return - discount rate making NPV zero |
+| **NPV** | Net Present Value - sum of discounted future cash flows |
+| **Payback Period** | Time to recover initial investment |
+| **ROI** | Return on Investment - gain divided by cost |
+| **TCO** | Total Cost of Ownership - all costs over asset lifetime |
 
 ---
 
 ## FAQ
 
-### Q: Can I use multiple pricing models simultaneously?
+### Q: Which model should I choose?
 
-**A**: Yes! Many successful companies use hybrid models:
-- **Base subscription + usage overages**: Mailchimp (plan + extra emails)
-- **Per-seat + usage**: Slack (per user + extra integrations)
-- **License + maintenance**: Microsoft Office (perpetual + annual updates)
+**A**: Use the **Structure Selector** (Module 1) to answer guided questions about:
+- Who should own the IP
+- Cash flow preferences
+- Risk allocation
+- Asset recognition needs
+- Consolidation status
 
-Use this calculator to model each component separately, then combine.
+The tool will recommend the best-fit model based on your answers.
 
 ---
 
-### Q: How often should I revisit my pricing?
+### Q: Is this tool a substitute for professional advice?
+
+**A**: **No**. This tool provides analysis and guidance but:
+- Does not constitute legal, tax, or accounting advice
+- Should be validated by qualified professionals
+- Is for planning and analysis purposes only
+- Results should be reviewed in context of specific circumstances
+
+---
+
+### Q: How do I determine arm's length pricing?
+
+**A**: The tool provides benchmark ranges based on OECD guidelines:
+1. Select your transaction type
+2. Review the benchmark range shown
+3. Ensure your margin/rate falls within the "low risk" range
+4. Document your analysis and comparable transactions
+
+For formal transfer pricing studies, engage a transfer pricing specialist.
+
+---
+
+### Q: What's the difference between accounting amortisation and tax depreciation?
 
 **A**:
-- **Annually**: Review costs, value delivery, competitive landscape
-- **After major feature launches**: New value = potential pricing increase
-- **When costs change significantly**: Infrastructure costs up/down 20%+
-- **Market shifts**: New competitors, economic changes
 
-**Caution**: Frequent price changes frustrate customers. Grandfather existing customers when possible.
+**Accounting Amortisation**:
+- Based on useful life of asset (management estimate)
+- Typically 3-10 years for software
+- Recognised in profit/loss
 
----
+**Tax Depreciation (Section 11(e))**:
+- Fixed by tax law: 2 years (PC) or 5 years (mainframe)
+- Claimed as tax deduction
+- May differ from accounting treatment
 
-### Q: What if my costs change over time?
-
-**A**: Model scenarios:
-- **Economies of scale**: Costs decrease as volume grows (infrastructure discounts, automation)
-- **Cost increases**: Inflation, vendor price hikes, new compliance requirements
-
-Run calculator at different cost levels to understand pricing implications.
+The difference creates a "timing difference" that results in deferred tax.
 
 ---
 
-### Q: How do I handle different customer segments with different value realization?
+### Q: How do related party rules affect my transaction?
 
-**A**: Create tiered pricing:
-- **SMB Tier**: R500/month (R5,000 value = 10x ROI)
-- **Mid-Market**: R2,000/month (R30,000 value = 15x ROI)
-- **Enterprise**: R10,000/month (R200,000 value = 20x ROI)
+**A**: Related party transactions require:
+- Arm's length pricing (as if unrelated)
+- Contemporaneous documentation
+- Consistent application
+- Economic substance (not just tax planning)
 
-Run calculator separately for each segment.
-
----
-
-### Q: What if competitors are priced much lower?
-
-**A**:
-1. **Validate value differentiation**: If you deliver 3x more value, you can charge 3x more
-2. **Segment differently**: Target customers who value your unique features
-3. **Compete on non-price**: Service, support, local presence, customization
-4. **Question their sustainability**: Are they profitable? VC-subsidized? Worth matching?
-
-**Don't compete on price alone** - race to bottom benefits no one.
+SARS can adjust transfer prices that are not arm's length and apply penalties.
 
 ---
 
-### Q: How do I price a completely new product category?
+### Q: What documentation do I need to maintain?
 
-**A**:
-1. **Anchor to buyer value**: What's the monetary outcome? (Revenue, cost savings, risk reduction)
-2. **Use value-based pricing**: Price at 20-40% of value delivered (2.5x - 5x ROI)
-3. **Test willingness to pay**: Customer interviews, landing page tests, pilot pricing
-4. **Start high, adjust down**: Easier to lower prices than raise them
+**A**: At minimum:
+1. **Written agreement** before transaction starts
+2. **Transfer pricing documentation** (master + local file)
+3. **Board resolutions** approving the arrangement
+4. **Cost tracking** (for cost-plus arrangements)
+5. **Valuation reports** (for asset transfers)
+6. **Comparable analysis** (benchmark data)
 
----
-
-### Q: Should I offer discounts?
-
-**A**:
-- **Annual prepay**: 10-20% discount (improves cash flow, reduces churn)
-- **Volume**: Tiered pricing for higher usage/seats
-- **Avoid**: Arbitrary discounts, "because competitor did"
-
-**Discounts should be strategic**, not reactive.
+The Compliance Analyzer generates checklists for each transaction type.
 
 ---
 
-### Q: What about freemium or free trials?
+### Q: How accurate are the calculations?
 
-**A**: This calculator focuses on paid pricing. For freemium:
-- Offer limited free tier to demonstrate value
-- Free → Paid conversion: 2-5% typical
-- Use this calculator to price paid tiers based on value delivered
+**A**: The calculations are mathematically accurate based on inputs provided. However:
+- Results depend on accuracy of your inputs
+- Estimates (useful life, growth rates) are uncertain
+- Tax rules change - verify current rates
+- Edge cases may need manual adjustment
+
+Always validate results against your specific circumstances.
 
 ---
 
-### Q: My calculator shows strong equilibrium, but customers still won't buy. Why?
+### Q: Can I export results?
 
-**Possible Causes**:
-1. **Value not realized**: You estimated R10k value, but customer only experiences R2k
-2. **Perception problem**: Value exists but not communicated clearly
-3. **Trust gap**: New vendor, no case studies, lack of social proof
-4. **Competitive alternatives**: Better options available
-5. **Budget constraints**: Value exists, but customer has no budget
+**A**: Currently the tool provides:
+- On-screen results and visualisations
+- Printable compliance checklists
+- Copy/paste capability for all outputs
 
-**Actions**: Customer research, improve messaging, build trust, validate value assumptions
+PDF export and formal report generation are planned for future releases.
+
+---
+
+### Q: What browsers are supported?
+
+**A**: The tool works best in:
+- Chrome (recommended)
+- Firefox
+- Safari
+- Edge
+
+Ensure JavaScript is enabled. The tool does not require installation.
 
 ---
 
@@ -1059,12 +804,13 @@ Run calculator separately for each segment.
 
 ### For Technical Questions
 - See **[CALCULATIONS.md](CALCULATIONS.md)** for detailed formula explanations
-- See **[CLAUDE.md](../CLAUDE.md)** for developer documentation
+- See **[CLAUDE.md](../claude.md)** for developer documentation
 
-### For Pricing Strategy
-- Consult pricing experts or fractional CFOs
-- Read: "Monetizing Innovation" by Madhavan Ramanujam
-- Study competitors' pricing pages and value propositions
+### For Business/Tax Questions
+- Consult a transfer pricing specialist
+- Engage your tax advisor
+- Review SARS transfer pricing guidelines
+- Consult OECD Transfer Pricing Guidelines
 
 ### For Product Questions
 - Open a GitHub issue: [github.com/devmade-ai/model-pear/issues](https://github.com/devmade-ai/model-pear/issues)
@@ -1073,4 +819,4 @@ Run calculator separately for each segment.
 
 **Last Updated**: January 2026
 
-**Version**: 2.0 (Simplified 5-Model Equilibrium Calculator)
+**Version**: 3.0 (Comprehensive Inter-Company Transaction Tool)

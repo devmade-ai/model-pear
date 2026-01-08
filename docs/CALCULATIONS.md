@@ -1090,6 +1090,344 @@ Defaults based on:
 
 ---
 
+---
+
+## Inter-Company Transaction Calculations
+
+The following calculations apply to the Inter-Company Transaction Tool (Mode 2).
+
+### Model 1: Development Services (Cost-Plus)
+
+**Developer Revenue**
+```
+Developer Revenue = Total Development Cost × (1 + Margin% / 100)
+```
+
+**Example**:
+- Total cost: R2,000,000
+- Margin: 10%
+- Developer revenue: R2,000,000 × 1.10 = **R2,200,000**
+
+**Developer Profit**
+```
+Developer Profit = Developer Revenue - Total Cost
+Developer Profit Margin = Developer Profit / Developer Revenue × 100
+```
+
+**Buyer Capitalisation**
+```
+Buyer Capitalised Asset = Developer Revenue (amount paid)
+```
+
+**Buyer Amortisation (Accounting)**
+```
+Annual Amortisation = Capitalised Asset / Useful Life Years
+```
+
+**Buyer Section 11(e) Depreciation (Tax)**
+```
+PC Software: Annual Deduction = Capitalised Asset / 2 (2 years)
+Mainframe: Annual Deduction = Capitalised Asset / 5 (5 years)
+```
+
+**Deferred Tax**
+```
+Timing Difference = Accounting Carrying Value - Tax Base
+Deferred Tax Liability = Timing Difference × Corporate Tax Rate (27%)
+```
+
+---
+
+### Model 2: Software Licence with Royalties
+
+**Upfront Licence (Perpetual)**
+```
+Developer Revenue = Licence Fee (recognised at transfer of control)
+Buyer Asset = Licence Fee (capitalised, amortised over useful life)
+```
+
+**Royalty Payments**
+```
+Annual Royalty = Buyer Revenue × Royalty Rate%
+Developer Revenue = Annual Royalty (recognised as earned)
+Buyer Expense = Annual Royalty (expensed as incurred)
+```
+
+**Minimum Guarantee + Royalties**
+```
+Guaranteed Amount = Fixed annual payment
+Variable Royalty = MAX(0, (Revenue × Rate%) - Guaranteed Amount)
+Total Payment = Guaranteed Amount + Variable Royalty
+```
+
+**Developer NPV (Multi-Year Royalty)**
+```
+NPV = Σ (Royalty_t / (1 + r)^t) for t = 1 to n
+where r = discount rate
+```
+
+---
+
+### Model 3: Joint Development / Cost-Sharing
+
+**Ownership Calculation**
+```
+Developer Ownership% = Developer Contribution / Total Contribution × 100
+Buyer Ownership% = Buyer Contribution / Total Contribution × 100
+```
+
+**Per-Party Capitalisation**
+```
+Developer Capitalised Asset = Developer Contribution
+Buyer Capitalised Asset = Buyer Contribution
+```
+
+**Benefit-Based Sharing (Alternative)**
+```
+Expected Developer Benefit = Projected Developer Revenue × Years
+Expected Buyer Benefit = Projected Buyer Revenue × Years
+Developer Share% = Developer Benefit / Total Benefit × 100
+```
+
+**Buy-In Payment (New Participant)**
+```
+Buy-In = Current Asset Value × Ownership% Acquired + Share of Future Benefits
+```
+
+---
+
+### Model 4: Build-Operate-Transfer (BOT)
+
+**Development Phase**
+```
+Developer Asset = Development Cost (capitalised during build)
+```
+
+**Operation Phase**
+```
+Annual Service Fee = Agreed amount for operation services
+Developer Revenue = Annual Service Fee × Operation Years
+Buyer Expense = Service Fee (expensed as incurred)
+Developer Amortisation = Asset Cost / Total Period (build + operate)
+```
+
+**Transfer Phase**
+```
+Transfer Price = Fixed price OR Fair Market Value OR Formula-based
+Developer Gain = Transfer Price - Developer Net Book Value
+Capital Gain = Transfer Price - Cost Base (for CGT)
+Taxable Gain = Capital Gain × 80% (inclusion rate)
+CGT Payable = Taxable Gain × 27%
+```
+
+**Buyer at Transfer**
+```
+Buyer Capitalised Asset = Transfer Price
+Buyer Amortisation = Transfer Price / Remaining Useful Life
+```
+
+**IFRS 16 Lease (Variant 4G)**
+```
+Lease Liability = PV of Lease Payments
+Right-of-Use Asset = Lease Liability + Initial Direct Costs
+Interest Expense = Lease Liability × Interest Rate
+Depreciation = ROU Asset / Lease Term
+```
+
+---
+
+### Model 5: Software Sale with Ongoing Support
+
+**Sale Transaction**
+```
+Sale Price = Agreed amount
+Developer Proceeds = Sale Price
+Developer Cost Base = Original Development Cost - Accumulated Amortisation
+Capital Gain = Sale Price - Cost Base
+CGT = Capital Gain × 80% × 27%
+```
+
+**IFRS 15 Bundled Transaction**
+```
+Total Transaction Price = Sale Price + Support Contract Value
+Allocation to Software = Total × (Standalone Software Price / Sum of Standalones)
+Allocation to Support = Total × (Standalone Support Price / Sum of Standalones)
+```
+
+**Support Revenue Recognition**
+```
+Support Revenue = Support Contract Value / Support Period (straight-line)
+Developer Support Revenue = Monthly Support Fee × Months
+```
+
+**Buyer Asset Recognition**
+```
+Buyer Asset = Allocated Software Price (from IFRS 15)
+Support Prepayment = Allocated Support Price (released over term)
+```
+
+---
+
+### Model 6: Subscription/SaaS
+
+**Developer Revenue**
+```
+Monthly Subscription Revenue = Monthly Fee × Customers
+Annual Recurring Revenue (ARR) = Monthly Revenue × 12
+```
+
+**Developer Asset Amortisation**
+```
+Annual Amortisation = Platform Development Cost / Useful Life
+Amortisation per Customer = Annual Amortisation / Number of Customers
+```
+
+**Buyer Expense**
+```
+Monthly Expense = Subscription Fee (expensed as incurred)
+```
+
+**Customisation Assessment (Variant 6C)**
+```
+If Buyer controls customisation:
+  Buyer capitalises customisation cost
+  Buyer amortises over benefit period
+
+If Developer controls:
+  Buyer expenses as paid
+  No asset recognition
+```
+
+**SaaS vs Build vs Buy Comparison**
+```
+SaaS Total Cost (n years) = Annual Fee × n
+Build Total Cost = Development + Annual Maintenance × n
+Buy Total Cost = Purchase Price + Annual Support × n
+```
+
+---
+
+### Transfer Pricing Risk Calculations
+
+**Composite Risk Score**
+```
+Risk Score = Σ (Factor Score × Factor Weight)
+
+Weights:
+- Margin Compliance: 30%
+- Documentation Status: 25%
+- Substance Requirements: 20%
+- Comparability Analysis: 15%
+- Consistent Application: 10%
+```
+
+**Margin Compliance Score**
+```
+If margin within low-risk range: Score = 100
+If margin within medium-risk range: Score = 60
+If margin outside ranges: Score = 20
+```
+
+**Risk Classification**
+```
+Score ≥ 80: Low Risk (Green)
+Score 50-79: Medium Risk (Amber)
+Score < 50: High Risk (Red)
+```
+
+---
+
+### Sensitivity Analysis Calculations
+
+**Scenario Analysis**
+```
+Best Case = Calculate with all inputs at favourable end of range
+Base Case = Calculate with all inputs at base values
+Worst Case = Calculate with all inputs at unfavourable end of range
+```
+
+**Tornado Chart Sensitivity**
+```
+For each input:
+  High Impact = Calculate with input at high value (others at base)
+  Low Impact = Calculate with input at low value (others at base)
+  Sensitivity = High Impact - Low Impact
+
+Rank inputs by absolute sensitivity (largest first)
+```
+
+**Break-Even Analysis**
+```
+Break-Even Input = Solve for input value where:
+  NPV = 0, or
+  Profit = 0, or
+  ROI = Target ROI
+```
+
+**Monte Carlo Simulation**
+```
+For iteration = 1 to 1000:
+  For each input:
+    Random Value = Sample from distribution (Normal or Uniform)
+  Calculate output with random values
+  Store result
+
+Mean = Average of all results
+Std Dev = Standard deviation of results
+P5 = 5th percentile (worst likely)
+P95 = 95th percentile (best likely)
+```
+
+---
+
+### Growth Projection Calculations
+
+**Net Present Value (NPV)**
+```
+NPV = Σ (CF_t / (1 + r)^t) for t = 0 to n
+
+where:
+  CF_t = Cash flow in period t
+  r = Discount rate
+  n = Number of periods
+```
+
+**Internal Rate of Return (IRR)**
+```
+IRR is the rate r where NPV = 0
+
+Solved iteratively using Newton-Raphson:
+r_{n+1} = r_n - NPV(r_n) / NPV'(r_n)
+
+where NPV'(r) = Σ (-t × CF_t / (1 + r)^(t+1))
+```
+
+**Payback Period (Simple)**
+```
+Payback = Years until cumulative cash flow ≥ Initial Investment
+```
+
+**Payback Period (Discounted)**
+```
+Discounted Payback = Years until cumulative discounted cash flow ≥ Initial Investment
+```
+
+**Break-Even Revenue**
+```
+Break-Even Revenue = Fixed Costs / Contribution Margin%
+
+where Contribution Margin% = (Price - Variable Cost) / Price
+```
+
+**Projected Asset Value**
+```
+Year n Asset Value = Original Cost - Accumulated Amortisation + Enhancements - Impairment
+
+Enhancement Addition = Annual Enhancement Cost (capitalised)
+```
+
+---
+
 ## Assumptions & Limitations
 
 ### What This Calculator Assumes
