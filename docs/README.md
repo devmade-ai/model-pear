@@ -6,17 +6,17 @@ A dual-mode tool for South African B2B software businesses:
 
 ## What It Does
 
+### Inter-Company Tool Mode (Default)
+Analyse inter-company software transactions from **three perspectives**:
+- **Developer Perspective**: Revenue recognition, costs, profit, tax position
+- **Buyer Perspective**: Asset capitalisation, amortisation, Section 11(e) tax benefits
+- **Combined Perspective**: Group consolidation, profit elimination, efficiency analysis
+
 ### Pricing Calculator Mode
 Find the **sweet spot** in pricing by showing you:
 - **Seller Perspective**: Minimum price needed to meet your margin goals
 - **Buyer Perspective**: Maximum price buyers will pay based on value received
 - **Equilibrium Zone**: The range where both seller and buyer win
-
-### Inter-Company Tool Mode (NEW)
-Analyse inter-company software transactions from **three perspectives**:
-- **Developer Perspective**: Revenue recognition, costs, profit, tax position
-- **Buyer Perspective**: Asset capitalisation, amortisation, Section 11(e) tax benefits
-- **Combined Perspective**: Group consolidation, profit elimination, efficiency analysis
 
 No growth projections, no complicated forecasting - just clear unit economics and transaction structuring.
 
@@ -61,6 +61,7 @@ Each inter-company model includes:
 - **South African Defaults**: Realistic ZAR pricing and 27% corporate tax
 - **Static Unit Economics**: No month-by-month projections - just simple math
 - **No Installation**: Runs entirely in the browser
+- **Comprehensive Help System**: Click `?` icons throughout for detailed explanations, formulas, and use cases
 - **Accessibility First**: Full keyboard navigation, ARIA support, screen reader friendly
 - **Mobile Optimized**: Responsive design with touch-friendly controls
 - **Real-time Validation**: Inline feedback as you type with helpful suggestions

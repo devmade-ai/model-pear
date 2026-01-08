@@ -9,6 +9,58 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### UI/UX Enhancement: Default Mode & Comprehensive Tooltips
+
+**Date**: January 8, 2026
+**Impact**: Improved discoverability, user guidance, and default experience
+
+**Changes**:
+
+**Default Mode Change**:
+- Inter-Company Tool is now the default mode (previously Pricing Calculator)
+- Mode switcher tabs reordered: Inter-Company first, Pricing Calculator second
+- URL hash `#pricing` can still be used to start in Pricing Calculator mode
+- URL hash `#intercompany` is no longer needed (it's now default)
+
+**Comprehensive Tooltip System**:
+Added help icons (`?`) with detailed modal explanations throughout the application:
+
+- **Mode Switcher Buttons**: Each mode button now has a help icon explaining the tool's purpose
+- **Pricing Model Selection**: All 5 pricing models (Subscription, Usage-Based, Per-Seat, One-Time, Marketplace) have help icons with formulas, key metrics, and use cases
+- **Intercompany Calculator Tabs**: All 5 tabs (Calculator, Compliance, Visualizations, Sensitivity, Projections) have tooltips explaining their purpose
+- **Selection Mode Toggle**: Wizard and Direct mode buttons have help icons explaining each approach
+- **Form Inputs (Pricing)**: All input fields now have help icon buttons that open detailed modal explanations
+- **Form Inputs (Intercompany)**: All input fields with hints now have clickable help icons
+
+**Tooltip Content**:
+- Each tooltip includes: explanation, key metrics/features, and common use cases
+- Pricing model tooltips also include formulas
+- Uses existing modal system for consistent UX
+- Event delegation pattern for efficient handling
+
+**Styling**:
+- Added CSS styles for help icons with hover effects
+- Help icons scale on hover for visual feedback
+- Proper focus states for accessibility
+
+**Files Modified**:
+- `index.html` (mode switcher order, visibility defaults, pricing model buttons)
+- `app.js` (default mode logic, TOOLTIP_CONTENT definitions, setupTooltipHelpers, event handlers)
+- `ui/forms.js` (input field help icons)
+- `ui/intercompany/calculator.js` (tab tooltips, mode toggle tooltips, input help icons)
+- `styles.css` (help icon styling)
+- `docs/UI_UX_GUIDE.md` (documentation update)
+- `docs/README.md` (documentation update)
+
+**Benefits**:
+- New users can immediately understand each feature without guessing
+- Reduced learning curve for both pricing and inter-company tools
+- Consistent help pattern across the entire application
+- Maintains clean UI with non-intrusive `?` icons
+- Inter-company tool highlighted as the primary feature
+
+---
+
 ### Performance Fix: Wizard Event Listener Accumulation
 
 **Date**: January 8, 2026

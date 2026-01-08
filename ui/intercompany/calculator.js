@@ -121,36 +121,46 @@ function renderCalculatorUI(container) {
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'calculator' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="calculator"
+                        title="Configure and calculate inter-company transactions"
                     >
                         <span class="mr-1">🧮</span> Calculator
+                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-calculator">?</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'compliance' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="compliance"
+                        title="Transfer pricing compliance and SARS risk analysis"
                     >
                         <span class="mr-1">✓</span> Compliance
+                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-compliance">?</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'visualizations' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="visualizations"
+                        title="Charts and visual analysis of results"
                     >
                         <span class="mr-1">📊</span> Visualizations
+                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-visualizations">?</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'sensitivity' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="sensitivity"
+                        title="What-if analysis and scenario comparison"
                     >
                         <span class="mr-1">📈</span> Sensitivity
+                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-sensitivity">?</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'projections' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="projections"
+                        title="Multi-year projections and growth scenarios"
                     >
                         <span class="mr-1">🚀</span> Projections
+                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-projections">?</span>
                     </button>
                 </div>
             </div>
@@ -164,7 +174,7 @@ function renderCalculatorUI(container) {
 
                 <!-- Selection Mode Toggle -->
             <div class="bg-gray-800 shadow-sm rounded-lg p-4 border border-gray-700 mb-6">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
                         <span class="text-2xl">🧭</span>
                         <div>
@@ -177,15 +187,19 @@ function renderCalculatorUI(container) {
                             id="modeWizardBtn"
                             class="selection-mode-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${selectionMode === 'wizard' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'}"
                             data-mode="wizard"
+                            title="Guided questions to recommend the best model"
                         >
                             <span class="mr-1">✨</span> Wizard
+                            <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="wizard-mode">?</span>
                         </button>
                         <button
                             id="modeDirectBtn"
                             class="selection-mode-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${selectionMode === 'direct' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'}"
                             data-mode="direct"
+                            title="Select model and variant directly"
                         >
                             <span class="mr-1">📋</span> Direct
+                            <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="direct-mode">?</span>
                         </button>
                     </div>
                 </div>
@@ -528,6 +542,7 @@ function renderInputField(input, modelId) {
                     id="${inputId}"
                     name="${input.name}"
                     class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    ${input.hint ? `aria-describedby="${inputId}-hint"` : ''}
                 >
                     ${input.options.map(opt => `
                         <option value="${opt.value}" ${opt.value === value ? 'selected' : ''}>${opt.label}</option>
@@ -553,6 +568,7 @@ function renderInputField(input, modelId) {
                         max="${input.max !== undefined ? input.max : ''}"
                         step="${input.step || 1}"
                         class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 ${prefix ? 'pl-8' : ''} ${suffix ? 'pr-8' : ''}"
+                        ${input.hint ? `aria-describedby="${inputId}-hint"` : ''}
                     >
                     ${suffix ? `<span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">${suffix}</span>` : ''}
                 </div>
@@ -568,15 +584,27 @@ function renderInputField(input, modelId) {
                     name="${input.name}"
                     value="${value}"
                     class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    ${input.hint ? `aria-describedby="${inputId}-hint"` : ''}
                 >
             `;
     }
 
     return `
         <div class="input-field">
-            <label for="${inputId}" class="block text-sm text-gray-400 mb-1">${input.label}</label>
+            <label for="${inputId}" class="block text-sm text-gray-400 mb-1">
+                <span class="flex items-center gap-2">
+                    <span>${input.label}</span>
+                    ${input.hint ? `
+                        <button type="button" class="intercompany-input-help text-gray-500 hover:text-blue-400 transition-colors" data-input-name="${input.name}" data-input-hint="${encodeURIComponent(input.hint)}" data-input-label="${encodeURIComponent(input.label)}" title="Click for more information" aria-label="Help for ${input.label}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </button>
+                    ` : ''}
+                </span>
+            </label>
             ${inputHtml}
-            ${input.hint ? `<p class="text-xs text-gray-500 mt-1">${input.hint}</p>` : ''}
+            ${input.hint ? `<p id="${inputId}-hint" class="text-xs text-gray-500 mt-1 flex items-start gap-1"><span class="text-blue-400">💡</span> ${input.hint}</p>` : ''}
         </div>
     `;
 }

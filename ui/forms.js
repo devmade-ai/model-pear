@@ -51,11 +51,21 @@ function generateInputHTML(modelKey, input, isCalculated = false) {
     const inputId = `${modelKey}-${input.name}`;
     const inputType = input.type === 'text' ? 'text' : 'number';
 
+    // Generate tooltip data attribute if input has hint or detailed info
+    const tooltipData = input.hint ? `data-input-tooltip="${modelKey}:${input.name}"` : '';
+
     return `
         <div class="mb-4 ${isCalculated ? 'relative' : ''}">
             <label for="${inputId}" class="block text-sm font-medium text-gray-300 mb-1">
-                ${input.label}
-                ${isCalculated ? '<span class="ml-2 text-xs px-2 py-0.5 bg-yellow-600 rounded" role="status">Auto-calculated</span>' : ''}
+                <span class="flex items-center gap-2">
+                    <span>${input.label}</span>
+                    ${isCalculated ? '<span class="text-xs px-2 py-0.5 bg-yellow-600 rounded" role="status">Auto-calculated</span>' : ''}
+                    <button type="button" class="input-help-btn text-gray-500 hover:text-blue-400 transition-colors" ${tooltipData} title="Click for more information about ${input.label}" aria-label="Help for ${input.label}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </button>
+                </span>
             </label>
             <div class="relative">
                 <input

@@ -285,3 +285,100 @@ details > div {
     opacity: 0.4;
     margin: 0 auto 1.5rem;
 }
+
+/* ========== HELP ICON STYLING ========== */
+.help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.15);
+    font-size: 11px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    /* Increase touch target without changing visual size */
+    position: relative;
+}
+
+/* Invisible touch target extension for mobile */
+.help-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+}
+
+.help-icon:hover,
+.help-icon:active {
+    background: rgba(59, 130, 246, 0.4);
+    color: #60A5FA;
+    transform: scale(1.15);
+}
+
+.input-help-btn,
+.intercompany-input-help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    /* Minimum touch target size */
+    min-width: 32px;
+    min-height: 32px;
+    position: relative;
+}
+
+/* Invisible touch target extension for mobile */
+.input-help-btn::before,
+.intercompany-input-help::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+}
+
+.input-help-btn:hover,
+.input-help-btn:active,
+.intercompany-input-help:hover,
+.intercompany-input-help:active {
+    background: rgba(59, 130, 246, 0.2);
+    transform: scale(1.1);
+}
+
+.input-help-btn:focus,
+.intercompany-input-help:focus {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
+}
+
+/* Mobile touch target improvements */
+@media (max-width: 1024px) {
+    .help-icon {
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+    }
+
+    .input-help-btn,
+    .intercompany-input-help {
+        min-width: 40px;
+        min-height: 40px;
+        padding: 8px;
+    }
+
+    .input-help-btn svg,
+    .intercompany-input-help svg {
+        width: 20px;
+        height: 20px;
+    }
+}
