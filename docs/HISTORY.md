@@ -9,6 +9,58 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Performance Fix: Wizard Event Listener Accumulation
+
+**Date**: January 8, 2026
+**Impact**: Fixed critical performance issue causing wizard to become unresponsive on restart
+
+**Issue**: After completing the wizard once and restarting, the page became progressively slower with each answer until it was completely unresponsive by the final question.
+
+**Root Cause**: Event listeners were accumulating without cleanup:
+- Every time `renderWizard()` was called (on each answer), `setupEventListeners()` added new listeners
+- Old listeners were never removed, causing exponential accumulation
+- After 7 questions: 14 duplicate listeners
+- After restart + 7 more: 28+ listeners all firing on every interaction
+- Browser struggled to process dozens of redundant event handlers
+
+**Fix**: Implemented proper listener cleanup pattern:
+1. Store references to bound event handlers in module-level variables
+2. Call `removeEventListeners()` before adding new listeners in `setupEventListeners()`
+3. Clean up listeners in `destroy*()` functions
+
+**Files Modified**:
+- `ui/intercompany/structure-selector.js` - Added `boundChangeHandler`, `boundClickHandler`, and `removeEventListeners()`
+- `ui/intercompany/calculator.js` - Same pattern for tab switching and mode changes
+- `ui/intercompany/entity-config.js` - Fixed `handleReset()` which also stacked listeners
+
+**Technical Pattern**:
+```javascript
+// Before (BAD - listeners accumulate)
+function setupEventListeners() {
+    container.addEventListener('click', (e) => { ... });
+}
+
+// After (GOOD - cleanup before adding)
+let boundClickHandler = null;
+
+function removeEventListeners() {
+    if (boundClickHandler) {
+        container.removeEventListener('click', boundClickHandler);
+        boundClickHandler = null;
+    }
+}
+
+function setupEventListeners() {
+    removeEventListeners(); // Clean up first
+    boundClickHandler = (e) => { ... };
+    container.addEventListener('click', boundClickHandler);
+}
+```
+
+**Lesson Learned**: When re-rendering UI that calls `setupEventListeners()`, always remove previous listeners first to prevent accumulation and memory leaks.
+
+---
+
 ### UI/UX Improvements: Layout Wrapping and Wizard Auto-Advance
 
 **Date**: January 8, 2026
