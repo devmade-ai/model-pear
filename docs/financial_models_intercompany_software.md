@@ -586,6 +586,18 @@ Developer hosts and maintains software, providing access to buyer via subscripti
 | Software Sale + Support | None after sale | High | Buyer-weighted | Sale price valuation |
 | SaaS/Subscription | High | None | Developer-weighted | Subscription pricing |
 
+### Model Selection by Capitalisation Priority
+
+When selecting a model based on where the asset should appear on balance sheets:
+
+| Capitalisation Priority | Recommended Models | Rationale |
+|------------------------|-------------------|-----------|
+| **Buyer balance sheet** | Model 1 (Cost-Plus), Model 5 (Sale) | Buyer capitalises development costs or purchase price; Developer has no ongoing asset |
+| **Developer balance sheet** | Model 2 (Licence), Model 6 (SaaS) | Developer retains IP and capitalises development; Buyer expenses fees or capitalises licence only |
+| **Both balance sheets** | Model 2 (Licence), Model 3 (Joint Development), Model 4 (BOT) | Model 2: Developer capitalises IP, Buyer capitalises licence; Model 3: Both parties capitalise proportional shares; Model 4: Developer capitalises initially, then transfers to Buyer |
+| **Minimise assets** | Model 6 (SaaS) | Buyer expenses subscription fees; Developer's asset is the only one recognised |
+| **Tax efficiency** | Model 1 or Model 5 | Buyer can claim Section 11(e) accelerated depreciation on capitalised software |
+
 ---
 
 ## South African Tax Considerations
