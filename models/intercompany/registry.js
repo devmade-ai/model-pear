@@ -11,6 +11,7 @@ import { MODEL_1_COST_PLUS } from './model-1-cost-plus.js';
 import { MODEL_2_LICENCE_ROYALTIES } from './model-2-licence-royalties.js';
 import { MODEL_3_JOINT_DEVELOPMENT } from './model-3-joint-development.js';
 import { MODEL_4_BOT } from './model-4-bot.js';
+import { MODEL_5_SOFTWARE_SALE } from './model-5-software-sale.js';
 import { MODEL_6_SAAS_SUBSCRIPTION } from './model-6-saas-subscription.js';
 
 // ========== MODEL REGISTRY ==========
@@ -20,9 +21,8 @@ export const INTERCOMPANY_MODELS = {
     'model-2': MODEL_2_LICENCE_ROYALTIES,
     'model-3': MODEL_3_JOINT_DEVELOPMENT,
     'model-4': MODEL_4_BOT,
+    'model-5': MODEL_5_SOFTWARE_SALE,
     'model-6': MODEL_6_SAAS_SUBSCRIPTION,
-    // Future models will be added here:
-    // 'model-5': MODEL_5_SOFTWARE_SALE,
 };
 
 // ========== REGISTRY HELPER FUNCTIONS ==========
