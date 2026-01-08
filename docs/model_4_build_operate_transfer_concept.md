@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This tool enables comparison of eight sub-variants within the Build-Operate-Transfer model to determine optimal fit for a software development project between related entities. The tool evaluates financial, accounting, tax, and risk outcomes from three perspectives: Developer, Buyer, and Combined.
+This tool enables comparison of eight sub-variants within the Build-Operate-Transfer model to determine optimal fit for a software development project. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer. When mutual ownership applies (you own both entities), a Shareholder Perspective shows your overall position.
 
 ---
 
@@ -200,38 +200,41 @@ The Developer builds the software, operates/maintains it for a period (providing
 - Transfer price
 - Total expenditure before asset recognition
 
-### Combined Perspective
+### Shareholder Perspective (When Mutual Ownership)
 
-**Aggregate Asset Position**
-- Combined intangible assets by year
+Only relevant when the same person/entity owns both Developer and Buyer. This is NOT about group accounting consolidation.
+
+**Your Asset Position Over Time**
+- Combined intangible assets by year across your entities
 - During operation: Developer holds asset
 - After transfer: Buyer holds asset
 - No asset duplication (shifts from one entity to other)
 
-**Net Cash Position**
-- Intercompany cash flows net to zero on consolidation
-- External cash impact only
+**Cash Flow to You**
+- Cash moves between your entities (internal)
+- Your net cash position unchanged
+- External cash impact only relevant if third parties involved
 
-**Intercompany Profit**
-- Developer service profit during operation (eliminated on consolidation)
-- Developer gain on transfer (eliminated on consolidation)
-- Pre-tax elimination amount
-- Post-tax elimination amount
+**Where Does Profit Sit?**
+- Developer service profit during operation
+- Developer gain on transfer
+- Which entity should hold the profit for tax efficiency?
+- What's your total after-tax position?
 
-**Transfer Pricing Risk Score**
-- Service fee vs market rate
+**Transfer Pricing Risk**
+- Service fee vs market rate (in case SARS queries)
 - Transfer price vs fair value
-- Documentation completeness factor
+- Documentation completeness
 
-**Combined Tax Efficiency**
+**Your Total Tax Position**
 - Total tax payable across both entities
 - Effective combined tax rate
 - Tax timing advantage/disadvantage
 
-**Value Shift Analysis**
+**Strategic Timing**
 - When does Buyer "get on balance sheet"?
 - Comparison: total Buyer expenditure vs asset recognised
-- Deferral cost (time value of delayed capitalisation)
+- Is the timing right for your overall strategy?
 
 ---
 

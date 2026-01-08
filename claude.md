@@ -78,8 +78,8 @@ model-pear/
 │   └── intercompany/           # Inter-company UI components
 │       ├── calculator.js               # Main inter-company calculator
 │       ├── entity-config.js            # Developer/Buyer entity configuration
-│       ├── perspective-toggle.js       # Three-perspective switcher
-│       ├── results-display.js          # Three-perspective results rendering
+│       ├── perspective-toggle.js       # Perspective switcher (Developer/Buyer/Shareholder)
+│       ├── results-display.js          # Perspective-based results rendering
 │       ├── structure-selector.js       # Module 1: Wizard UI
 │       ├── compliance-analyzer.js      # Module 3: Compliance UI
 │       ├── range-input.js              # Stage 2: Range input components
@@ -144,7 +144,7 @@ Decision tree wizard that helps users choose the optimal model by asking about:
 - Cash flow structure preferences
 - Risk allocation
 - Asset recognition needs
-- Consolidation status
+- Whether user owns both entities (mutual ownership)
 - Transaction timeframe
 
 ### Module 2: Pricing Calculator
@@ -152,7 +152,7 @@ Decision tree wizard that helps users choose the optimal model by asking about:
 
 Dynamic calculator that:
 - Generates input forms per model/variant
-- Calculates three-perspective results
+- Calculates results for both parties (plus shareholder view when mutual ownership)
 - Renders accounting treatment summaries
 - Shows tax calculations and journal entries
 - Displays visualisations
@@ -202,9 +202,9 @@ Transfer pricing compliance analysis:
 - Risk vs Return quadrant chart
 - Compliance score gauge
 
-## Three-Perspective Framework
+## Perspective Framework
 
-Every transaction is analysed from three perspectives:
+Transactions are analysed from two core perspectives, with a third available for related parties:
 
 ### Your Company (Developer)
 - Revenue recognition (service revenue, licence revenue, sale proceeds)
@@ -220,12 +220,15 @@ Every transaction is analysed from three perspectives:
 - Deferred tax position
 - Total cost of ownership
 
-### Net Effect (Both Parties)
-- Combined profit analysis
-- Asset distribution (who holds what)
-- Total tax impact
-- Key insights for decision-making
-- Transfer pricing considerations (if related parties)
+### Shareholder Perspective (When Mutual Ownership)
+Only shown when user owns both entities. This is NOT group accounting consolidation.
+
+**Focus**: What's best for the shareholder who owns both companies
+- Total profit across both entities
+- Where should profit sit for optimal tax treatment?
+- Overall cash flow to the shareholder
+- Transfer pricing risk assessment
+- Which structure benefits the shareholder most
 
 ## South African Tax Features
 
@@ -291,9 +294,9 @@ riskScore =
 The tool is pre-configured for **South African companies** doing software transactions. These defaults:
 - Reduce setup time for typical users
 - Assume independent parties by default (NOT related)
-- Focus on comparing net effects rather than consolidation
+- Show Developer and Buyer perspectives only (no Shareholder perspective by default)
 
-**Note**: Consolidated accounting is NOT in scope. The "Mutual Ownership" checkbox is available for cases where transfer pricing compliance is relevant.
+**Note**: When "Mutual Ownership" is checked, the Shareholder Perspective is shown. This is NOT group accounting consolidation - it shows what's best for the person who owns both entities.
 
 ```javascript
 DEFAULT_ENTITY_CONFIG = {
@@ -313,9 +316,7 @@ DEFAULT_ENTITY_CONFIG = {
     section11eType: 'pc-2yr'             // Accelerated depreciation (2yr for PC software)
   },
   relationship: {
-    relatedParties: false,               // Default: independent parties
-    sameGroup: false,                    // Consolidation not in scope
-    consolidationRequired: false         // Consolidation not in scope
+    mutualOwnership: false               // Default: independent parties (no shareholder view)
   }
 }
 ```
@@ -424,12 +425,13 @@ const profit = revenue - cost;
 - This tool is for a **software company** (the developer) working with **any client**
 - The goal is to compare models to maximize value for both parties
 - "Mutual ownership" (related parties) is just one scenario, NOT the default
-- Consolidated accounting is NOT in scope
+- When mutual ownership is enabled, a Shareholder Perspective shows what's best for the owner of both entities
+- This is NOT about group accounting consolidation
 - Focus is on: expenses, capitalization, and tax effects
 
 The tool includes:
 - Structure Selector (decision tree wizard)
-- Three-perspective analysis (Your Company, Client, Net Effect)
+- Perspective analysis (Developer, Buyer, plus Shareholder when mutual ownership)
 - Sensitivity Analysis (ranges, scenarios, Monte Carlo)
 - Growth Projections (NPV, IRR, payback)
 - Advanced Visualisations (comparisons, timelines, charts)

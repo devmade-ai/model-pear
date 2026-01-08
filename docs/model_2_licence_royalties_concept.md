@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This tool enables comparison of eight sub-variants within the Software Licence with Royalties model to determine optimal fit for a software licensing arrangement between related entities. The tool evaluates financial, accounting, tax, and risk outcomes from three perspectives: Developer, Buyer, and Combined.
+This tool enables comparison of eight sub-variants within the Software Licence with Royalties model to determine optimal fit for a software licensing arrangement. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer. When mutual ownership applies (you own both entities), a Shareholder Perspective shows your overall position.
 
 ---
 
@@ -192,30 +192,34 @@ The Developer develops and owns the IP, then grants a licence to the Buyer. The 
 - Intangible asset (licence) carrying value
 - Prepaid expenses (if annual paid upfront)
 
-### Combined Perspective
+### Shareholder Perspective (When Mutual Ownership)
 
-**Aggregate Asset Position**
+Only relevant when the same person/entity owns both Developer and Buyer. This is NOT about group accounting consolidation.
+
+**Your Overall Position**
 - Developer asset: Software intangible
 - Buyer asset: Licence intangible
-- Combined total (note: on consolidation, intercompany licence may eliminate)
+- Total assets across both your entities
 
-**Cash Flow Netting**
-- All intercompany cash flows net to zero on consolidation
-- External cash impact only relevant if third parties involved
+**Cash Flow to You**
+- What you receive from Developer (dividends, drawings)
+- What you receive from Buyer (dividends, drawings)
+- Net cash flow to you as shareholder
 
-**Profit Elimination**
+**Where Should Profit Sit?**
 - Developer's licence revenue = Buyer's licence cost
-- Elimination on consolidation
-- Only timing differences remain
+- Which entity has better tax treatment?
+- Where do you want the profit to land?
 
 **Transfer Pricing Risk**
 - Royalty rate vs benchmark range
 - Upfront fee vs comparable transactions
-- Documentation completeness
+- Documentation completeness (in case SARS queries)
 
-**Combined Tax Efficiency**
+**Your Total Tax Position**
 - Total tax across both entities
 - Timing of deductions vs income recognition
+- Which structure minimises your overall tax?
 
 ---
 

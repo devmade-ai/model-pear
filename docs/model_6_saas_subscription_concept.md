@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This tool enables comparison of nine sub-variants within the Subscription/SaaS model to determine optimal fit for a software arrangement between related entities. The tool evaluates financial, accounting, tax, and risk outcomes from three perspectives: Developer, Buyer, and Combined.
+This tool enables comparison of nine sub-variants within the Subscription/SaaS model to determine optimal fit for a software arrangement. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer. When mutual ownership applies (you own both entities), a Shareholder Perspective shows your overall position.
 
 ---
 
@@ -226,37 +226,41 @@ Developer hosts and maintains software, providing access to Buyer via subscripti
 - Switching cost estimate
 - Contract lock-in period
 
-### Combined Perspective
+### Shareholder Perspective (When Mutual Ownership)
 
-**Aggregate Asset Position**
+Only relevant when the same person/entity owns both Developer and Buyer. This is NOT about group accounting consolidation.
+
+**Your Asset Position**
 - Total intangible assets = Developer's asset only
 - Buyer contributes no assets
 - Asset concentrated in Developer
-- Asset efficiency: Low from combined view (significant cash exchanged, limited asset shift)
+- Note: Significant cash moves between your entities for limited asset shift
 
-**Net Cash Position**
-- Intercompany cash flows net to zero on consolidation
-- External cash impact only
+**Cash Flow to You**
+- Cash moves between your entities (internal)
+- Your net cash position unchanged
+- Recurring payments vs one-time models
 
-**Intercompany Profit**
-- Developer's gross profit (eliminated on consolidation)
+**Where Does Profit Sit?**
+- Developer's gross profit from subscription
 - Cumulative profit over contract term
+- Is this the right entity to hold the profit?
 
-**Transfer Pricing Risk Score**
-- Subscription fee vs market rate
+**Transfer Pricing Risk**
+- Subscription fee vs market rate (in case SARS queries)
 - Comparable SaaS pricing analysis
 - Documentation completeness
 
-**Combined Tax Efficiency**
+**Your Total Tax Position**
 - Developer: Tax on subscription profit
 - Buyer: Tax deduction on subscription expense
-- Net tax impact
+- Net tax impact across your entities
 
-**Comparison to Alternatives**
+**Should You Use a Different Model?**
 - Total cost if Buyer developed internally
-- Total cost if licensed outright
+- Total cost if licensed outright (Model 2)
 - Total cost if purchased (Model 5)
-- Break-even period for own development
+- Which structure is best for your overall position?
 
 ---
 
