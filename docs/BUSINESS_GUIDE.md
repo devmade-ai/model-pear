@@ -1,22 +1,22 @@
 # Business User Guide
-# Inter-Company Software Transaction Tool
+# Software Transaction Structuring Tool
 
 > **Last Updated**: January 2026
-> **Target Audience**: CFOs, Tax Advisors, Transfer Pricing Specialists, Group Accountants, Business Analysts
+> **Target Audience**: CFOs, Finance Directors, Business Owners, Software Company Leaders
 
 ## Table of Contents
 
 1. [What Is This Tool?](#what-is-this-tool)
 2. [Who Should Use It?](#who-should-use-it)
 3. [The Two Modes](#the-two-modes)
-4. [The 6 Inter-Company Transaction Models](#the-6-inter-company-transaction-models)
+4. [The 6 Transaction Models](#the-6-transaction-models)
 5. [The 3 Core Modules](#the-3-core-modules)
 6. [Three-Perspective Analysis](#three-perspective-analysis)
 7. [Advanced Features](#advanced-features)
 8. [Common Scenarios & Examples](#common-scenarios--examples)
 9. [South African Tax Considerations](#south-african-tax-considerations)
 10. [Default Entity Configuration](#default-entity-configuration)
-11. [Transfer Pricing Compliance](#transfer-pricing-compliance)
+11. [Transfer Pricing (When Applicable)](#transfer-pricing-when-applicable)
 12. [Glossary of Terms](#glossary-of-terms)
 13. [FAQ](#faq)
 
@@ -24,17 +24,16 @@
 
 ## What Is This Tool?
 
-The Inter-Company Software Transaction Tool is a comprehensive web-based application designed to help South African businesses structure, price, and document inter-company software transactions between related entities.
+The Software Transaction Structuring Tool is a web-based application that helps software companies compare different transaction models to maximize value for both your company and your client when starting new projects or products.
 
 ### Key Capabilities
 
 **What This Tool DOES**:
-- ✅ Model 6 different inter-company transaction structures
-- ✅ Analyse from three perspectives (Developer, Buyer, Combined)
+- ✅ Compare 6 different transaction structures
+- ✅ Analyse from three perspectives (Your Company, Client, Net Effect)
 - ✅ Calculate accounting treatment under IFRS
 - ✅ Assess South African tax implications (Section 11(e), CGT)
-- ✅ Score transfer pricing risk against OECD benchmarks
-- ✅ Generate compliance checklists
+- ✅ Show transfer pricing considerations (when mutual ownership applies)
 - ✅ Perform sensitivity analysis (best/base/worst case)
 - ✅ Project growth with NPV, IRR, and payback calculations
 - ✅ Visualise cash flows, asset values, and comparisons
@@ -43,44 +42,34 @@ The Inter-Company Software Transaction Tool is a comprehensive web-based applica
 - ❌ Not legal or tax advice (consult professionals)
 - ❌ Not a complete transfer pricing study
 - ❌ Not a substitute for proper documentation
-- ❌ Not applicable to unrelated party transactions
+
+**Important**: This tool works for ANY client - related or unrelated. Consolidated accounting is not in scope.
 
 ---
 
 ## Who Should Use It?
 
-### For CFOs & Finance Directors
+### For Software Company Owners & Leaders
 **Use Cases:**
-- "How should we structure this software development between our subsidiaries?"
-- "What's the accounting treatment for this inter-company transaction?"
-- "Which model minimises group tax while maintaining compliance?"
+- "How should we structure this new project with our client?"
+- "Which model maximizes value for both us and the client?"
+- "Should we license this, sell it, or offer it as a service?"
 
 **Value:**
 - Compare 6 transaction structures side-by-side
-- Understand accounting impact on both entities
-- Identify optimal pricing for transfer pricing compliance
+- See net effect on both parties
+- Make informed decisions for each project/product
 
-### For Tax Advisors & Transfer Pricing Specialists
+### For CFOs & Finance Directors
 **Use Cases:**
-- "Is this margin within arm's length range?"
-- "What documentation do we need for this structure?"
-- "How do we support this royalty rate to SARS?"
-
-**Value:**
-- Transfer pricing risk scoring with OECD benchmarks
-- Compliance checklists for audit preparation
-- Documentation guidance per transaction type
-
-### For Group Accountants
-**Use Cases:**
-- "How do I account for this on both sides?"
-- "What journal entries are required?"
-- "How does consolidation affect the group?"
+- "What's the accounting treatment for this transaction?"
+- "How does this affect our balance sheet and the client's?"
+- "Which structure gives us the best tax position?"
 
 **Value:**
 - Detailed accounting treatment summaries
-- Journal entry templates
-- Consolidation elimination guidance
+- Tax calculation with Section 11(e) benefits
+- Cash flow analysis for both parties
 
 ### For Business Analysts
 **Use Cases:**
@@ -99,7 +88,7 @@ The Inter-Company Software Transaction Tool is a comprehensive web-based applica
 
 The tool operates in two distinct modes:
 
-### Mode 1: Pricing Calculator (Original)
+### Mode 1: Pricing Calculator
 **Purpose**: Find equilibrium pricing for B2B software products
 
 **Features**:
@@ -109,27 +98,26 @@ The tool operates in two distinct modes:
 
 **Best For**: Product pricing decisions, market entry pricing, competitive analysis
 
-### Mode 2: Inter-Company Transaction Tool (Advanced)
-**Purpose**: Structure and analyse inter-company software transactions
+### Mode 2: Transaction Structuring Tool
+**Purpose**: Compare transaction models to find the best structure for your project
 
 **Features**:
 - 6 comprehensive transaction models with 47 variants
-- Three-perspective analysis (Developer, Buyer, Combined)
-- Transfer pricing compliance scoring
+- Three-perspective analysis (Your Company, Client, Net Effect)
 - Sensitivity analysis and growth projections
 - Advanced visualisations
 
-**Best For**: Group restructuring, transfer pricing documentation, inter-company agreements
+**Best For**: New project structuring, client negotiations, comparing options
 
 ---
 
-## The 6 Inter-Company Transaction Models
+## The 6 Transaction Models
 
 ### Model 1: Development Services (Cost-Plus)
 
-**Description**: Developer creates software for Buyer as a service. IP ownership goes to Buyer.
+**Description**: Your company creates software for the client as a service. IP ownership goes to the client.
 
-**Structure**: Developer → Service Fee → Buyer (who owns the resulting IP)
+**Structure**: Your Company → Service Fee → Client (who owns the resulting IP)
 
 **6 Variants:**
 
@@ -142,20 +130,20 @@ The tool operates in two distinct modes:
 | **1E** | Time and Materials | Uncertain scope, agile development |
 | **1F** | Dedicated Team | Ongoing development, monthly retainer |
 
-**Typical Margin**: 5-15% (arm's length benchmark for development services)
+**Typical Margin**: 5-15%
 
 **Key Considerations**:
-- Buyer capitalises the cost as an intangible asset
-- Developer recognises service revenue
-- Transfer pricing supported by cost-plus method
+- Client capitalises the cost as an intangible asset
+- Your company recognises service revenue
+- Client gets Section 11(e) tax deductions on the asset
 
 ---
 
 ### Model 2: Software Licence with Royalties
 
-**Description**: Developer retains IP and grants usage rights to Buyer via licence agreement.
+**Description**: Your company retains IP and grants usage rights to the client via licence agreement.
 
-**Structure**: Developer (owns IP) → Licence/Royalty → Buyer (usage rights)
+**Structure**: Your Company (owns IP) → Licence/Royalty → Client (usage rights)
 
 **8 Variants:**
 
@@ -183,7 +171,7 @@ The tool operates in two distinct modes:
 
 **Description**: Both parties contribute to development and share ownership based on contributions.
 
-**Structure**: Developer + Buyer → Shared Contribution → Joint IP Ownership
+**Structure**: Your Company + Client → Shared Contribution → Joint IP Ownership
 
 **8 Variants:**
 

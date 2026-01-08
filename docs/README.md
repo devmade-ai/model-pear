@@ -1,16 +1,16 @@
-# Software Transaction Tool
+# Software Transaction Structuring Tool
 
-A dual-mode tool for South African B2B software businesses:
+A dual-mode tool for South African B2B software companies:
 1. **Pricing Calculator**: Find equilibrium between seller costs and buyer value
-2. **Inter-Company Tool**: Structure and analyse inter-company software transactions
+2. **Transaction Structuring Tool**: Compare transaction models to optimize outcomes for both parties
 
 ## What It Does
 
-### Inter-Company Tool Mode (Default)
-Analyse inter-company software transactions from **three perspectives**:
-- **Developer Perspective**: Revenue recognition, costs, profit, tax position
-- **Buyer Perspective**: Asset capitalisation, amortisation, Section 11(e) tax benefits
-- **Combined Perspective**: Group consolidation, profit elimination, efficiency analysis
+### Transaction Structuring Mode (Default)
+Analyse software transactions from **three perspectives**:
+- **Your Company**: Revenue recognition, costs, profit, tax position
+- **Client**: Asset capitalisation, amortisation, Section 11(e) tax benefits
+- **Net Effect**: Combined financial impact to inform your structuring decision
 
 ### Pricing Calculator Mode
 Find the **sweet spot** in pricing by showing you:
@@ -28,22 +28,22 @@ No growth projections, no complicated forecasting - just clear unit economics an
 4. **One-Time Purchase** - Upfront license fee + optional annual maintenance
 5. **Marketplace (Two-Sided)** - Commission-based marketplace
 
-## The 6 Inter-Company Models
+## The 6 Transaction Models
 
 | Model | Name | Description | Status |
 |-------|------|-------------|--------|
 | 1 | Development Services | Cost-plus software development | ✅ Implemented |
 | 2 | Software Licence | Perpetual/term licences with royalties | ✅ Implemented |
-| 3 | Joint Development | Cost-sharing arrangements | Planned |
-| 4 | Build-Operate-Transfer | BOT/BTO/BOO structures | Planned |
-| 5 | Software Sale | Asset sale with ongoing support | Planned |
+| 3 | Joint Development | Cost-sharing arrangements | ✅ Implemented |
+| 4 | Build-Operate-Transfer | BOT/BTO/BOO structures | ✅ Implemented |
+| 5 | Software Sale | Asset sale with ongoing support | ✅ Implemented |
 | 6 | SaaS/Subscription | Enhanced subscription model | ✅ Implemented |
 
-Each inter-company model includes:
+Each model includes:
 - Multiple variants (e.g., Model 1 has 6 variants: 1A-1F)
-- Three-perspective calculations (Developer, Buyer, Combined)
+- Three-perspective calculations (Your Company, Client, Net Effect)
 - South African tax treatment (Section 11(e), CGT, deferred tax)
-- Transfer pricing risk assessment
+- Transfer pricing considerations (when mutual ownership applies)
 
 ## Key Features
 
@@ -51,14 +51,14 @@ Each inter-company model includes:
 - **Reverse Calculations**: Auto-calculate missing inputs (price, costs, margin, buyer value)
 - **Equilibrium Analysis**: Find win-win pricing zones
 
-### Inter-Company Tool
-- **Three-Perspective View**: Developer, Buyer, Combined (consolidation)
-- **Entity Configuration**: Customise developer/buyer settings
-- **Transfer Pricing**: Risk assessment with arm's length benchmarks
+### Transaction Structuring Tool
+- **Three-Perspective View**: Your Company, Client, Net Effect
+- **Entity Configuration**: Customise your company & client settings
+- **Model Comparison**: Compare structures to find the best fit
 - **Tax Calculations**: Section 11(e), deferred tax, CGT
 
 ### Both Modes
-- **South African Defaults**: Pre-configured for SA companies (IFRS, 27% tax, transfer pricing enabled). See [Default Entity Configuration](BUSINESS_GUIDE.md#default-entity-configuration) for full explanation of each setting.
+- **South African Defaults**: Pre-configured for SA companies (IFRS, 27% tax). See [Default Entity Configuration](BUSINESS_GUIDE.md#default-entity-configuration) for full explanation of each setting.
 - **Static Unit Economics**: No month-by-month projections - just simple math
 - **No Installation**: Runs entirely in the browser
 - **Comprehensive Help System**: Click info icons (`ⓘ`) throughout for detailed explanations, formulas, and use cases
@@ -110,7 +110,7 @@ No build process needed - it's pure HTML/CSS/JS.
 **For Understanding the Math:**
 - **[CALCULATIONS.md](CALCULATIONS.md)** - All formulas, rationale, and economic theory explained
 
-**For Inter-Company Transactions:**
+**For Transaction Models:**
 - **[financial_models_intercompany_software.md](financial_models_intercompany_software.md)** - Framework overview
 - **[model_1_cost_plus_concept.md](model_1_cost_plus_concept.md)** - Model 1 specifications
 - **[model_2_licence_royalties_concept.md](model_2_licence_royalties_concept.md)** - Model 2 specifications
