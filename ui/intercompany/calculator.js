@@ -11,13 +11,18 @@ import { initEntityConfig } from './entity-config.js';
 import { initStructureSelector } from './structure-selector.js';
 import { initComplianceAnalyzer, destroyComplianceAnalyzer } from './compliance-analyzer.js';
 import { initAdvancedVisualizations, destroyAdvancedVisualizations } from './advanced-visualizations.js';
+import { initRangeInputControls, renderRangeInputField, setupRangeSliders, gatherRangeValues, isRangeModeActive, getRangeInputState, getRangeInputStyles } from './range-input.js';
+import { initSensitivityVisualizations, updateSensitivityData, destroySensitivityVisualizations } from './sensitivity-visualizations.js';
+import { createInputRanges, calculateScenarios, calculateInputSensitivity, calculateBreakEven } from '../../models/intercompany/sensitivity-analysis.js';
 import { formatCurrency, formatPercentage, showToast } from '../../utils/index.js';
 
 // ========== STATE ==========
 
 let unsubscribers = [];
 let selectionMode = 'wizard';  // 'wizard' | 'direct' - start with wizard by default
-let activeMainTab = 'calculator';  // 'calculator' | 'compliance' | 'visualizations'
+let activeMainTab = 'calculator';  // 'calculator' | 'compliance' | 'visualizations' | 'sensitivity'
+let sensitivityData = null;  // Cached sensitivity analysis results
+let lastInputRanges = null;  // Cached input ranges for sensitivity analysis
 
 // ========== INITIALIZATION ==========
 
@@ -48,9 +53,14 @@ export function destroyIntercompanyCalculator() {
     unsubscribers.forEach(fn => fn());
     unsubscribers = [];
 
-    // Cleanup compliance and visualizations modules
+    // Cleanup compliance, visualizations, and sensitivity modules
     destroyComplianceAnalyzer();
     destroyAdvancedVisualizations();
+    destroySensitivityVisualizations();
+
+    // Reset local state
+    sensitivityData = null;
+    lastInputRanges = null;
 }
 
 // ========== RENDER FUNCTIONS ==========
@@ -87,6 +97,13 @@ function renderCalculatorUI(container) {
                         data-main-tab="visualizations"
                     >
                         <span class="mr-2">📊</span> Visualizations
+                    </button>
+                    <button
+                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               ${activeMainTab === 'sensitivity' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
+                        data-main-tab="sensitivity"
+                    >
+                        <span class="mr-2">📈</span> Sensitivity
                     </button>
                 </div>
             </div>
@@ -154,12 +171,18 @@ function renderCalculatorUI(container) {
             <!-- Input Form (shown when variant selected) -->
             <div id="inputSection" class="hidden bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
                 <h3 class="text-lg font-semibold text-gray-100 mb-4">Transaction Inputs</h3>
+
+                <!-- Range Input Controls -->
+                <div id="rangeInputControls" class="mb-6">
+                    <!-- Range controls will be populated dynamically -->
+                </div>
+
                 <form id="intercompanyInputForm" class="space-y-6">
                     <!-- Inputs will be populated dynamically -->
                 </form>
 
-                <div class="mt-6">
-                    <button id="calculateIntercompanyBtn" class="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-semibold">
+                <div class="mt-6 flex gap-3">
+                    <button id="calculateIntercompanyBtn" class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-semibold">
                         <span id="calcBtnText">Calculate Transaction</span>
                         <span id="calcBtnLoader" class="hidden">
                             <svg class="animate-spin inline-block h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -167,6 +190,9 @@ function renderCalculatorUI(container) {
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                         </span>
+                    </button>
+                    <button id="runSensitivityBtn" class="px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors font-semibold hidden" title="Run Sensitivity Analysis">
+                        <span>📈</span> Sensitivity
                     </button>
                 </div>
             </div>
@@ -198,7 +224,17 @@ function renderCalculatorUI(container) {
                     <!-- Advanced visualizations will be populated here -->
                 </div>
             </div>
+
+            <!-- Sensitivity Tab Content -->
+            <div id="sensitivityTabContent" class="${activeMainTab === 'sensitivity' ? '' : 'hidden'}">
+                <div id="sensitivitySection">
+                    <!-- Sensitivity visualizations will be populated here -->
+                </div>
+            </div>
         </div>
+
+        <!-- Range Input Styles -->
+        <style>${getRangeInputStyles()}</style>
     `;
 
     // Add event listeners
@@ -234,6 +270,21 @@ function renderCalculatorUI(container) {
         if (vizSection) {
             initAdvancedVisualizations(vizSection, {
                 calculationResults: state.intercompany?.results
+            });
+        }
+    }
+
+    // Initialize sensitivity visualizations if on that tab
+    if (activeMainTab === 'sensitivity') {
+        const sensitivitySection = container.querySelector('#sensitivitySection');
+        if (sensitivitySection) {
+            initSensitivityVisualizations(sensitivitySection, {
+                sensitivityData: sensitivityData,
+                modelId: state.intercompany?.selectedModel,
+                variantId: state.intercompany?.selectedVariant,
+                ranges: lastInputRanges,
+                entityConfig: state.entities,
+                taxParams: state.taxParams
             });
         }
     }
@@ -479,6 +530,8 @@ function setupEventListeners(container) {
                     destroyComplianceAnalyzer();
                 } else if (activeMainTab === 'visualizations') {
                     destroyAdvancedVisualizations();
+                } else if (activeMainTab === 'sensitivity') {
+                    destroySensitivityVisualizations();
                 }
 
                 activeMainTab = newTab;
@@ -519,6 +572,12 @@ function setupEventListeners(container) {
     const calcBtn = container.querySelector('#calculateIntercompanyBtn');
     if (calcBtn) {
         calcBtn.addEventListener('click', () => handleCalculate(container));
+    }
+
+    // Sensitivity button
+    const sensitivityBtn = container.querySelector('#runSensitivityBtn');
+    if (sensitivityBtn) {
+        sensitivityBtn.addEventListener('click', () => handleRunSensitivity(container));
     }
 }
 
@@ -563,10 +622,41 @@ function handleVariantSelect(variantId, container) {
     if (inputSection && inputForm) {
         inputForm.innerHTML = renderInputForm(modelId, variantId);
         inputSection.classList.remove('hidden');
+
+        // Initialize range input controls
+        const rangeControlsContainer = container.querySelector('#rangeInputControls');
+        if (rangeControlsContainer) {
+            initRangeInputControls(rangeControlsContainer, {
+                onToggle: (enabled) => {
+                    // Show/hide sensitivity button
+                    const sensitivityBtn = container.querySelector('#runSensitivityBtn');
+                    if (sensitivityBtn) {
+                        sensitivityBtn.classList.toggle('hidden', !enabled);
+                    }
+                    // Re-render form if range mode changes
+                    if (inputForm) {
+                        inputForm.innerHTML = renderInputForm(modelId, variantId);
+                        setupRangeSliders(inputForm);
+                    }
+                },
+                onModeChange: (mode) => {
+                    // Re-render form with range inputs
+                    if (inputForm) {
+                        inputForm.innerHTML = renderInputForm(modelId, variantId);
+                        setupRangeSliders(inputForm);
+                    }
+                }
+            });
+        }
+
+        // Set up range sliders if in range mode
+        setupRangeSliders(inputForm);
     }
 
-    // Hide results section
+    // Hide results section and reset sensitivity data
     container.querySelector('#resultsSection')?.classList.add('hidden');
+    sensitivityData = null;
+    lastInputRanges = null;
 
     // Update variant button styles
     container.querySelectorAll('.variant-select-btn').forEach(btn => {
@@ -618,6 +708,34 @@ function handleCalculate(container) {
             // Store results
             setIntercompanyResults(results);
 
+            // If range mode is active, also run sensitivity analysis
+            if (isRangeModeActive()) {
+                const inputForm = container.querySelector('#intercompanyInputForm');
+                lastInputRanges = inputForm ? gatherRangeValues(inputForm) : createInputRanges(inputs);
+
+                // If no explicit ranges gathered, create from inputs
+                if (Object.keys(lastInputRanges).length === 0) {
+                    lastInputRanges = createInputRanges(inputs);
+                }
+
+                // Run sensitivity calculations
+                try {
+                    sensitivityData = {
+                        scenarios: calculateScenarios(selectedModel, selectedVariant, lastInputRanges, state.entities, state.taxParams),
+                        sensitivity: calculateInputSensitivity(selectedModel, selectedVariant, inputs, state.entities, state.taxParams),
+                        breakEven: calculateBreakEven(selectedModel, selectedVariant, inputs, state.entities, state.taxParams),
+                        monteCarlo: null  // Will be run on-demand
+                    };
+                    showToast('Calculation and sensitivity analysis completed!', 'success');
+                } catch (sensitivityError) {
+                    console.warn('Sensitivity analysis error:', sensitivityError);
+                    sensitivityData = null;
+                    showToast('Calculation completed (sensitivity analysis had issues)', 'warning');
+                }
+            } else {
+                showToast('Calculation completed successfully!', 'success');
+            }
+
             // Show results section
             const resultsSection = container.querySelector('#resultsSection');
             if (resultsSection) {
@@ -636,8 +754,6 @@ function handleCalculate(container) {
                 }
             }
 
-            showToast('Calculation completed successfully!', 'success');
-
         } catch (error) {
             console.error('Calculation error:', error);
             showToast('Calculation error: ' + error.message, 'error');
@@ -651,6 +767,45 @@ function handleCalculate(container) {
             }
         }
     }, 100);
+}
+
+/**
+ * Handle running sensitivity analysis separately
+ */
+function handleRunSensitivity(container) {
+    const state = getState();
+    const { selectedModel, selectedVariant } = state.intercompany;
+
+    if (!selectedModel || !selectedVariant) {
+        showToast('Please select a model and variant first', 'warning');
+        return;
+    }
+
+    const inputs = gatherInputValues(container, selectedModel);
+    const inputForm = container.querySelector('#intercompanyInputForm');
+    lastInputRanges = inputForm ? gatherRangeValues(inputForm) : createInputRanges(inputs);
+
+    // If no explicit ranges, create from inputs
+    if (Object.keys(lastInputRanges).length === 0) {
+        lastInputRanges = createInputRanges(inputs);
+    }
+
+    try {
+        sensitivityData = {
+            scenarios: calculateScenarios(selectedModel, selectedVariant, lastInputRanges, state.entities, state.taxParams),
+            sensitivity: calculateInputSensitivity(selectedModel, selectedVariant, inputs, state.entities, state.taxParams),
+            breakEven: calculateBreakEven(selectedModel, selectedVariant, inputs, state.entities, state.taxParams),
+            monteCarlo: null
+        };
+
+        // Switch to sensitivity tab
+        activeMainTab = 'sensitivity';
+        renderCalculatorUI(container);
+        showToast('Sensitivity analysis completed!', 'success');
+    } catch (error) {
+        console.error('Sensitivity analysis error:', error);
+        showToast('Sensitivity analysis error: ' + error.message, 'error');
+    }
 }
 
 function gatherInputValues(container, modelId) {
