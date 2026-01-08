@@ -80,41 +80,41 @@ function renderCalculatorUI(container) {
         <div class="intercompany-calculator">
             <!-- Main Tab Navigation -->
             <div class="bg-gray-800 shadow-sm rounded-lg p-2 border border-gray-700 mb-6">
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     <button
-                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                        class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'calculator' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="calculator"
                     >
-                        <span class="mr-2">🧮</span> Calculator
+                        <span class="mr-1">🧮</span> Calculator
                     </button>
                     <button
-                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                        class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'compliance' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="compliance"
                     >
-                        <span class="mr-2">✓</span> Compliance
+                        <span class="mr-1">✓</span> Compliance
                     </button>
                     <button
-                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                        class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'visualizations' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="visualizations"
                     >
-                        <span class="mr-2">📊</span> Visualizations
+                        <span class="mr-1">📊</span> Visualizations
                     </button>
                     <button
-                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                        class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'sensitivity' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="sensitivity"
                     >
-                        <span class="mr-2">📈</span> Sensitivity
+                        <span class="mr-1">📈</span> Sensitivity
                     </button>
                     <button
-                        class="main-tab-btn flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                        class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'projections' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="projections"
                     >
-                        <span class="mr-2">🚀</span> Projections
+                        <span class="mr-1">🚀</span> Projections
                     </button>
                 </div>
             </div>

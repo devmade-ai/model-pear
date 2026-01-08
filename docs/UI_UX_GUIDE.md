@@ -131,6 +131,32 @@ On mobile devices, the calculate button stays visible at the bottom of the scree
 
 ## Form Interactions
 
+### Structure Selection Wizard
+
+The Inter-Company tool uses a progressive disclosure wizard for model selection:
+
+#### Auto-Advancing Flow
+- Questions are revealed one at a time as you answer
+- Selecting an option automatically shows the next question
+- No "Next" button needed - selections drive progress
+- Smooth scroll animation to the next question
+
+#### Answered Questions
+- Answered questions collapse to a compact summary
+- Shows checkmark (✓), question number, and selected answer
+- "Change" button allows modification at any time
+- Changing an answer clears subsequent answers for re-evaluation
+
+#### Live Preview
+- Top 3 recommendations update in real-time as you answer
+- Shows match percentage and model name
+- Helps users understand how their choices affect recommendations
+
+#### Completion
+- "See Recommendations" button appears after all questions answered
+- Full recommendation details with rationale
+- Variant selection within chosen model
+
 ### Collapsible Sections
 
 Form inputs are organized into collapsible sections for better readability:
@@ -487,6 +513,18 @@ Each error message includes a 💡 suggestion for how to fix it
 
 ## Changelog
 
+### Version 2.2 (2026-01-08)
+
+#### Improved
+- **Main tab navigation**: Added `flex-wrap` to tab buttons so they stack properly on mobile devices with `min-w-[120px]` for consistent sizing
+- **Structure Selection Wizard**: Converted from step-by-step wizard with Next/Previous buttons to progressive disclosure pattern
+  - Questions now auto-advance when an option is selected (no more confusing Next button)
+  - All answered questions remain visible in a compact format for easy review
+  - Users can click "Change" on any answered question to modify their selection
+  - Smooth scroll to next question after each selection
+  - "See Recommendations" button appears only after all questions are answered
+  - Live preview of top recommendations updates in real-time as questions are answered
+
 ### Version 2.1 (2025-01-07)
 
 #### Improved
@@ -524,4 +562,4 @@ Each error message includes a 💡 suggestion for how to fix it
 
 ---
 
-*Last updated: 2025-01-07*
+*Last updated: 2026-01-08*
