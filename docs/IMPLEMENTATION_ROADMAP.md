@@ -195,42 +195,42 @@ This document outlines the phased implementation plan for integrating the Financ
 ---
 
 ## Phase 5: Model 4 - Build-Operate-Transfer (BOT)
-**Status:** Not Started
+**Status:** Completed
 **Estimated Sessions:** 3-4
-**Dependencies:** Phase 1
+**Dependencies:** Phase 1 (Completed)
 
 ### 5.1 Core BOT Model
-- [ ] Create Model 4 input form
-- [ ] Add development cost inputs
-- [ ] Add operation period inputs (duration, service fee)
-- [ ] Add operating cost inputs
-- [ ] Add transfer pricing method selector
+- [x] Create Model 4 input form
+- [x] Add development cost inputs
+- [x] Add operation period inputs (duration, service fee)
+- [x] Add operating cost inputs
+- [x] Add transfer pricing method selector
 
 ### 5.2 Variant Implementation (4A-4H)
-- [ ] 4A: Fixed Transfer Price
-- [ ] 4B: Formula-Based Transfer Price
-- [ ] 4C: Fair Market Value at Transfer
-- [ ] 4D: BOT with Purchase Option
-- [ ] 4E: Build-Operate-Own (BOO) - no transfer
-- [ ] 4F: Build-Transfer-Operate (BTO)
-- [ ] 4G: Build-Lease-Transfer (IFRS 16)
-- [ ] 4H: Phased Transfer
+- [x] 4A: Fixed Transfer Price
+- [x] 4B: Formula-Based Transfer Price
+- [x] 4C: Fair Market Value at Transfer
+- [x] 4D: BOT with Purchase Option
+- [x] 4E: Build-Operate-Own (BOO) - no transfer
+- [x] 4F: Build-Transfer-Operate (BTO)
+- [x] 4G: Build-Lease-Transfer (IFRS 16)
+- [x] 4H: Phased Transfer
 
 ### 5.3 Model 4 Calculations
-- [ ] Developer service revenue over operation period
-- [ ] Developer asset amortisation during operation
-- [ ] Developer gain/loss at transfer
-- [ ] Buyer expense during operation (SaaS treatment)
-- [ ] Buyer asset at transfer
-- [ ] Lease calculations for 4G (IFRS 16)
-- [ ] Option valuation for 4D
+- [x] Developer service revenue over operation period
+- [x] Developer asset amortisation during operation
+- [x] Developer gain/loss at transfer
+- [x] Buyer expense during operation (SaaS treatment)
+- [x] Buyer asset at transfer
+- [x] Lease calculations for 4G (IFRS 16)
+- [x] Option valuation for 4D
 
 ### 5.4 Model 4 Outputs & Visualisations
-- [ ] Asset location over time area chart
-- [ ] Cumulative buyer cash outflow timeline
-- [ ] Developer profit accumulation chart
-- [ ] Ownership timeline Gantt chart
-- [ ] Value split stacked bar
+- [~] Asset location over time area chart (deferred to Phase 10)
+- [~] Cumulative buyer cash outflow timeline (deferred to Phase 10)
+- [~] Developer profit accumulation chart (deferred to Phase 10)
+- [~] Ownership timeline Gantt chart (deferred to Phase 10)
+- [~] Value split stacked bar (deferred to Phase 10)
 
 ---
 
@@ -563,6 +563,7 @@ Phase 13 (Polish)
 | 2026-01-07 | Phase 3 | Completed - Model 2 with all 8 variants (2A-2H) fully implemented | Claude |
 | 2026-01-07 | Phase 7 | Completed - Model 6 with all 9 variants (6A-6I) fully implemented | Claude |
 | 2026-01-07 | Phase 4 | Completed - Model 3 with all 8 variants (3A-3H) fully implemented | Claude |
+| 2026-01-08 | Phase 5 | Completed - Model 4 (BOT) with all 8 variants (4A-4H) fully implemented | Claude |
 
 ---
 
