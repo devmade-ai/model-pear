@@ -498,8 +498,28 @@ Planned UI/UX improvements:
 ### Keyboard Shortcuts
 Press `?` anywhere to view all keyboard shortcuts
 
-### Tooltips
-Click the ℹ️ icon next to any field for detailed explanations
+### Tooltips & Help Icons
+
+The application features a comprehensive tooltip system with `?` help icons throughout:
+
+**Where to Find Help Icons**:
+- **Mode Switcher**: Click `?` next to "Inter-Company Tool" or "Pricing Calculator" buttons
+- **Pricing Models**: Each model button (Subscription, Usage-Based, etc.) has a `?` icon
+- **Calculator Tabs**: All 5 tabs (Calculator, Compliance, Visualizations, Sensitivity, Projections) have help icons
+- **Selection Mode**: Wizard and Direct mode buttons include tooltips
+- **Input Fields**: Every form input has a `?` button for detailed field explanations
+
+**Tooltip Content Includes**:
+- Detailed explanation of the feature/field
+- Key metrics or values tracked
+- Common use cases
+- Formulas (for pricing models)
+- Best practices
+
+**How to Use**:
+1. Click any `?` icon to open a modal with detailed information
+2. Press `Esc` or click outside the modal to close
+3. Inline hints (with 💡) below inputs provide quick reference
 
 ### Validation Help
 Each error message includes a 💡 suggestion for how to fix it
@@ -512,6 +532,21 @@ Each error message includes a 💡 suggestion for how to fix it
 ---
 
 ## Changelog
+
+### Version 2.3 (2026-01-08)
+
+#### Changed
+- **Default Mode**: Inter-Company Tool is now the default mode (previously Pricing Calculator)
+- **Tab Order**: Mode switcher tabs reordered with Inter-Company first
+
+#### Added
+- **Comprehensive Tooltip System**: Added help icons (`?`) with detailed modal explanations:
+  - Mode switcher buttons explain each tool's purpose
+  - All 5 pricing models have tooltips with formulas, key metrics, and use cases
+  - All 5 intercompany calculator tabs have tooltips explaining their function
+  - Wizard/Direct mode toggle buttons have help explanations
+  - All form input fields have clickable help icons opening detailed modals
+- **Help Icon Styling**: New CSS styles for help icons with hover effects and accessibility
 
 ### Version 2.2 (2026-01-08)
 

@@ -303,6 +303,201 @@ function showKeyboardShortcutsHelp() {
 // Add keyboard event listener
 document.addEventListener('keydown', handleKeyboardShortcuts);
 
+// ========== TOOLTIP HELPER SYSTEM ==========
+
+/**
+ * Tooltip content definitions for all UI elements
+ */
+const TOOLTIP_CONTENT = {
+    // Mode switcher tooltips
+    'intercompany-mode': {
+        explanation: 'The Inter-Company Tool helps you structure and analyse inter-company software transactions between related entities. It provides multi-perspective analysis from Developer, Buyer, and Combined (consolidation) viewpoints.',
+        keyMetrics: [
+            'Developer perspective: Revenue recognition, costs, profit, tax position',
+            'Buyer perspective: Asset capitalisation, amortisation, Section 11(e) tax benefits',
+            'Combined perspective: Group consolidation, profit elimination, efficiency analysis'
+        ],
+        useCases: 'Use this for transfer pricing analysis, inter-company transaction structuring, and tax planning for software transactions within corporate groups.'
+    },
+    'pricing-mode': {
+        explanation: 'The Pricing Calculator helps you find the equilibrium zone between your minimum acceptable price (seller floor) and the maximum price buyers will pay (buyer ceiling).',
+        keyMetrics: [
+            'Seller Floor: Minimum price based on your costs + desired margin',
+            'Buyer Ceiling: Maximum price based on value delivered to customers',
+            'Equilibrium Zone: The win-win range where both parties benefit'
+        ],
+        useCases: 'Use this for pricing new products, validating existing prices, or understanding the value-cost dynamics of your software offerings.'
+    },
+    // Pricing model tooltips
+    'model-subscription': {
+        explanation: 'Monthly recurring revenue model where customers pay a fixed fee per month. Ideal for SaaS businesses with predictable, recurring revenue streams.',
+        formula: 'MRR = Customers × Monthly Price',
+        keyMetrics: ['Monthly Recurring Revenue (MRR)', 'Annual Recurring Revenue (ARR)', 'Churn Rate', 'Customer Lifetime Value'],
+        useCases: 'Cloud software, SaaS products, membership services, hosted applications'
+    },
+    'model-usage-based': {
+        explanation: 'Pay-per-use model where customers are charged based on their actual consumption. Revenue scales directly with customer usage.',
+        formula: 'Revenue = Units Consumed × Price Per Unit',
+        keyMetrics: ['Average Revenue Per User (ARPU)', 'Usage Volume', 'Unit Economics', 'Cost Per Unit'],
+        useCases: 'API services, cloud computing, transaction processing, build minutes, storage services'
+    },
+    'model-per-seat': {
+        explanation: 'Pricing based on the number of users or seats. Each active user represents a unit of revenue.',
+        formula: 'Revenue = Active Seats × Price Per Seat',
+        keyMetrics: ['Seats Sold', 'Revenue Per Seat', 'Seat Expansion Rate', 'Cost Per Seat'],
+        useCases: 'Team collaboration tools, enterprise software, productivity suites, CRM systems'
+    },
+    'model-one-time': {
+        explanation: 'Perpetual license model with upfront payment and optional annual maintenance. Customer owns the software indefinitely.',
+        formula: 'Revenue = License Fee + (Annual Maintenance × Years)',
+        keyMetrics: ['License Revenue', 'Maintenance Revenue', 'Renewal Rate', 'Upgrade Revenue'],
+        useCases: 'Desktop software, on-premise enterprise solutions, perpetual licenses, one-time purchases'
+    },
+    'model-marketplace': {
+        explanation: 'Two-sided platform model where you facilitate transactions between buyers and sellers, taking a commission on each transaction.',
+        formula: 'Revenue = GMV × Take Rate',
+        keyMetrics: ['Gross Merchandise Value (GMV)', 'Take Rate', 'Transaction Volume', 'Platform Fees'],
+        useCases: 'App stores, e-commerce platforms, service marketplaces, freelance platforms'
+    },
+    // Intercompany tab tooltips
+    'tab-calculator': {
+        explanation: 'The main calculation interface where you configure your inter-company transaction. Select a model, variant, and input your transaction parameters.',
+        keyMetrics: ['Model Selection', 'Variant Configuration', 'Transaction Inputs', 'Calculate Results'],
+        useCases: 'Setting up new transactions, modifying existing calculations, comparing scenarios'
+    },
+    'tab-compliance': {
+        explanation: 'Transfer pricing compliance analysis including arm\'s length benchmarking, SARS risk indicators, and documentation requirements.',
+        keyMetrics: ['Arm\'s Length Range', 'Transfer Pricing Risk Score', 'Documentation Checklist', 'SARS Red Flags'],
+        useCases: 'Compliance review, audit preparation, transfer pricing documentation, risk assessment'
+    },
+    'tab-visualizations': {
+        explanation: 'Advanced charts and visualizations showing tax impact, cash flows, and comparative analysis between perspectives.',
+        keyMetrics: ['Tax Impact Charts', 'Cash Flow Waterfall', 'Perspective Comparison', 'Timeline Analysis'],
+        useCases: 'Presentations, stakeholder reporting, visual analysis, decision support'
+    },
+    'tab-sensitivity': {
+        explanation: 'What-if analysis showing how changes in key inputs affect your transaction outcomes. Includes scenario comparison and break-even analysis.',
+        keyMetrics: ['Tornado Charts', 'Scenario Analysis', 'Break-Even Points', 'Monte Carlo Simulation'],
+        useCases: 'Risk analysis, decision modelling, understanding variable impact, stress testing'
+    },
+    'tab-projections': {
+        explanation: 'Future scenario projections showing how your transaction might evolve over multiple years with different growth assumptions.',
+        keyMetrics: ['Multi-Year Forecasts', 'Growth Scenarios', 'NPV Analysis', 'Cumulative Impact'],
+        useCases: 'Long-term planning, investment decisions, board presentations, strategic analysis'
+    },
+    // Wizard mode tooltips
+    'wizard-mode': {
+        explanation: 'The guided wizard asks you questions about your transaction to recommend the best inter-company model. It uses progressive disclosure to show questions one at a time.',
+        keyMetrics: ['Guided Question Flow', 'Real-time Recommendations', 'Model Matching Score', 'Variant Suggestions'],
+        useCases: 'New users, complex transactions, when unsure which model to use, training purposes'
+    },
+    'direct-mode': {
+        explanation: 'Direct selection mode lets experienced users skip the wizard and select their preferred model and variant directly.',
+        keyMetrics: ['Quick Model Selection', 'Direct Variant Access', 'Faster Workflow', 'Expert Mode'],
+        useCases: 'Experienced users, repeat transactions, when you know exactly which model to use'
+    }
+};
+
+/**
+ * Set up click handlers for tooltip help icons
+ */
+function setupTooltipHelpers() {
+    // Use event delegation for all help icons
+    document.addEventListener('click', (e) => {
+        // Handle mode/model help icons
+        const helpIcon = e.target.closest('.help-icon[data-tooltip]');
+        if (helpIcon) {
+            e.preventDefault();
+            e.stopPropagation();
+            const tooltipId = helpIcon.dataset.tooltip;
+            showTooltipForId(tooltipId);
+            return;
+        }
+
+        // Handle input help buttons
+        const inputHelpBtn = e.target.closest('.input-help-btn[data-input-tooltip]');
+        if (inputHelpBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const tooltipData = inputHelpBtn.dataset.inputTooltip;
+            if (tooltipData) {
+                const [modelKey, inputName] = tooltipData.split(':');
+                showInputTooltip(modelKey, inputName);
+            }
+            return;
+        }
+
+        // Handle intercompany input help buttons
+        const intercompanyHelpBtn = e.target.closest('.intercompany-input-help');
+        if (intercompanyHelpBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const inputName = intercompanyHelpBtn.dataset.inputName;
+            const inputHint = decodeURIComponent(intercompanyHelpBtn.dataset.inputHint || '');
+            const inputLabel = decodeURIComponent(intercompanyHelpBtn.dataset.inputLabel || inputName);
+            showIntercompanyInputTooltip(inputName, inputHint, inputLabel);
+            return;
+        }
+    });
+}
+
+/**
+ * Show tooltip for an input field
+ */
+function showInputTooltip(modelKey, inputName) {
+    import('./ui/modals.js').then(modals => {
+        modals.showInputInfo(modelKey, inputName);
+    });
+}
+
+/**
+ * Show tooltip for an intercompany input field
+ */
+function showIntercompanyInputTooltip(inputName, inputHint, inputLabel) {
+    import('./ui/modals.js').then(modals => {
+        modals.showTooltipModal(`📋 ${inputLabel}`, {
+            explanation: inputHint,
+            useCases: 'This input affects the transaction calculation. Adjust based on your specific transaction parameters.'
+        });
+    });
+}
+
+/**
+ * Show tooltip modal for a given tooltip ID
+ */
+function showTooltipForId(tooltipId) {
+    const content = TOOLTIP_CONTENT[tooltipId];
+    if (!content) {
+        console.warn(`No tooltip content found for: ${tooltipId}`);
+        return;
+    }
+
+    // Determine title from tooltip ID
+    const titles = {
+        'intercompany-mode': '📊 Inter-Company Tool',
+        'pricing-mode': '💰 Pricing Calculator',
+        'model-subscription': '📅 Subscription (SaaS) Model',
+        'model-usage-based': '📈 Usage-Based Model',
+        'model-per-seat': '👥 Per-Seat Model',
+        'model-one-time': '🎯 One-Time Purchase Model',
+        'model-marketplace': '🏪 Marketplace Model',
+        'tab-calculator': '🧮 Calculator Tab',
+        'tab-compliance': '✓ Compliance Tab',
+        'tab-visualizations': '📊 Visualizations Tab',
+        'tab-sensitivity': '📈 Sensitivity Tab',
+        'tab-projections': '🚀 Projections Tab',
+        'wizard-mode': '✨ Wizard Mode',
+        'direct-mode': '📋 Direct Selection Mode'
+    };
+
+    const title = titles[tooltipId] || 'Help';
+
+    // Use the modal system to show tooltip
+    import('./ui/modals.js').then(modals => {
+        modals.showTooltipModal(title, content);
+    });
+}
+
 // ========== AUTO-INITIALIZE ==========
 
 // Initialize when DOM is ready
@@ -314,8 +509,14 @@ function initApp() {
         // Set up mode switching
         setupModeSwitching();
 
-        // Check URL hash for initial mode
-        if (window.location.hash === '#intercompany') {
+        // Set up tooltip help icons
+        setupTooltipHelpers();
+
+        // Default to intercompany mode unless URL hash specifies pricing
+        if (window.location.hash === '#pricing') {
+            switchMode('pricing');
+        } else {
+            // Default: intercompany mode
             switchMode('intercompany');
         }
 

@@ -285,3 +285,45 @@ details > div {
     opacity: 0.4;
     margin: 0 auto 1.5rem;
 }
+
+/* ========== HELP ICON STYLING ========== */
+.help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.1);
+    font-size: 10px;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.help-icon:hover {
+    background: rgba(59, 130, 246, 0.3);
+    color: #60A5FA;
+    transform: scale(1.1);
+}
+
+.input-help-btn,
+.intercompany-input-help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.input-help-btn:hover,
+.intercompany-input-help:hover {
+    background: rgba(59, 130, 246, 0.2);
+    transform: scale(1.1);
+}
+
+.input-help-btn:focus,
+.intercompany-input-help:focus {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
+}

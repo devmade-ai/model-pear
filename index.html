@@ -28,18 +28,20 @@
 
                 <!-- Mode Switcher -->
                 <div class="flex gap-2 bg-gray-700 p-1 rounded-lg">
-                    <button id="mode-pricing" class="mode-btn px-4 py-2 rounded-md font-medium transition-all duration-200 bg-blue-600 text-white" data-mode="pricing">
-                        <span class="hidden sm:inline">Pricing</span> Calculator
-                    </button>
-                    <button id="mode-intercompany" class="mode-btn px-4 py-2 rounded-md font-medium transition-all duration-200 text-gray-300 hover:bg-gray-600" data-mode="intercompany">
+                    <button id="mode-intercompany" class="mode-btn px-4 py-2 rounded-md font-medium transition-all duration-200 bg-blue-600 text-white" data-mode="intercompany" title="Analyse inter-company software transactions with multi-perspective views">
                         Inter-Company <span class="hidden sm:inline">Tool</span>
+                        <span class="ml-1 text-xs opacity-75 help-icon cursor-help" data-tooltip="intercompany-mode">?</span>
+                    </button>
+                    <button id="mode-pricing" class="mode-btn px-4 py-2 rounded-md font-medium transition-all duration-200 text-gray-300 hover:bg-gray-600" data-mode="pricing" title="Calculate equilibrium pricing between seller costs and buyer value">
+                        <span class="hidden sm:inline">Pricing</span> Calculator
+                        <span class="ml-1 text-xs opacity-75 help-icon cursor-help" data-tooltip="pricing-mode">?</span>
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- Pricing Calculator (Default Mode) -->
-        <div id="pricingCalculatorSection" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Pricing Calculator (Hidden by Default) -->
+        <div id="pricingCalculatorSection" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Left Sidebar: Model Selection & Input Form -->
             <div class="lg:col-span-1">
                 <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
@@ -49,24 +51,39 @@
                         <p class="text-sm text-gray-400 mb-4">Choose the model that best fits your business</p>
 
                         <div class="space-y-2">
-                            <button id="model-subscription" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
-                                <div class="font-semibold">Subscription (SaaS)</div>
+                            <button id="model-subscription" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent" title="Monthly recurring revenue model for SaaS businesses">
+                                <div class="font-semibold flex items-center justify-between">
+                                    <span>Subscription (SaaS)</span>
+                                    <span class="help-icon cursor-help text-xs opacity-50 hover:opacity-100" data-tooltip="model-subscription">?</span>
+                                </div>
                                 <div class="text-xs opacity-75">Monthly recurring revenue</div>
                             </button>
-                            <button id="model-usage-based" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
-                                <div class="font-semibold">Usage-Based</div>
+                            <button id="model-usage-based" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent" title="Pay-per-use model based on consumption">
+                                <div class="font-semibold flex items-center justify-between">
+                                    <span>Usage-Based</span>
+                                    <span class="help-icon cursor-help text-xs opacity-50 hover:opacity-100" data-tooltip="model-usage-based">?</span>
+                                </div>
                                 <div class="text-xs opacity-75">Pay per API call, transaction, build minute</div>
                             </button>
-                            <button id="model-per-seat" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
-                                <div class="font-semibold">Per-Seat</div>
+                            <button id="model-per-seat" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent" title="Pricing based on number of users or seats">
+                                <div class="font-semibold flex items-center justify-between">
+                                    <span>Per-Seat</span>
+                                    <span class="help-icon cursor-help text-xs opacity-50 hover:opacity-100" data-tooltip="model-per-seat">?</span>
+                                </div>
                                 <div class="text-xs opacity-75">Price per user/seat</div>
                             </button>
-                            <button id="model-one-time" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
-                                <div class="font-semibold">One-Time</div>
+                            <button id="model-one-time" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent" title="Perpetual license with optional maintenance">
+                                <div class="font-semibold flex items-center justify-between">
+                                    <span>One-Time</span>
+                                    <span class="help-icon cursor-help text-xs opacity-50 hover:opacity-100" data-tooltip="model-one-time">?</span>
+                                </div>
                                 <div class="text-xs opacity-75">Perpetual license + maintenance</div>
                             </button>
-                            <button id="model-marketplace" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent">
-                                <div class="font-semibold">Marketplace</div>
+                            <button id="model-marketplace" class="model-btn w-full text-left px-4 py-3 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border-2 border-transparent" title="Commission-based two-sided marketplace platform">
+                                <div class="font-semibold flex items-center justify-between">
+                                    <span>Marketplace</span>
+                                    <span class="help-icon cursor-help text-xs opacity-50 hover:opacity-100" data-tooltip="model-marketplace">?</span>
+                                </div>
                                 <div class="text-xs opacity-75">Commission-based two-sided platform</div>
                             </button>
                         </div>
@@ -155,8 +172,8 @@
             </div>
         </div>
 
-        <!-- Inter-Company Calculator (Hidden by Default) -->
-        <div id="intercompanyCalculatorSection" class="hidden">
+        <!-- Inter-Company Calculator (Default Mode) -->
+        <div id="intercompanyCalculatorSection" class="">
             <div id="intercompanyCalculator">
                 <!-- Inter-company calculator will be dynamically populated here -->
             </div>
