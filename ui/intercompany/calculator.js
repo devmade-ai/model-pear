@@ -1,17 +1,20 @@
 // ========== INTER-COMPANY CALCULATOR UI ==========
 // Main UI component for the Inter-Company Software Transaction Tool.
 // Integrates model selection, variant selection, input forms, and results display.
+// Now includes Structure Selector wizard for guided model selection.
 
 import { getState, subscribe, selectIntercompanyModel, selectVariant, setIntercompanyResults, setCalculating } from '../../state/app-state.js';
 import { getModelMetadata, getModelVariants, getVariantInputs, calculateIntercompany, DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from '../../models/intercompany/registry.js';
 import { initPerspectiveToggle } from './perspective-toggle.js';
 import { renderIntercompanyResults } from './results-display.js';
 import { initEntityConfig } from './entity-config.js';
+import { initStructureSelector } from './structure-selector.js';
 import { formatCurrency, formatPercentage, showToast } from '../../utils/index.js';
 
 // ========== STATE ==========
 
 let unsubscribers = [];
+let selectionMode = 'wizard';  // 'wizard' | 'direct' - start with wizard by default
 
 // ========== INITIALIZATION ==========
 
@@ -59,8 +62,42 @@ function renderCalculatorUI(container) {
                 <!-- Entity config will be populated here -->
             </div>
 
-            <!-- Model Selection -->
-            <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
+            <!-- Selection Mode Toggle -->
+            <div class="bg-gray-800 shadow-sm rounded-lg p-4 border border-gray-700 mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🧭</span>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-200">Model Selection Mode</h3>
+                            <p class="text-xs text-gray-400">Choose how you want to select a transaction model</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 bg-gray-700 p-1 rounded-lg">
+                        <button
+                            id="modeWizardBtn"
+                            class="selection-mode-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${selectionMode === 'wizard' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'}"
+                            data-mode="wizard"
+                        >
+                            <span class="mr-1">✨</span> Wizard
+                        </button>
+                        <button
+                            id="modeDirectBtn"
+                            class="selection-mode-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${selectionMode === 'direct' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'}"
+                            data-mode="direct"
+                        >
+                            <span class="mr-1">📋</span> Direct
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Structure Selector Wizard (shown in wizard mode) -->
+            <div id="structureSelectorSection" class="${selectionMode === 'wizard' ? '' : 'hidden'} bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
+                <!-- Wizard will be populated here -->
+            </div>
+
+            <!-- Model Selection (shown in direct mode or after wizard selection) -->
+            <div id="modelSelectionSection" class="${selectionMode === 'direct' || state.intercompany.selectedModel ? '' : 'hidden'} bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
                 <h2 class="text-xl font-semibold text-gray-100 mb-3">Select Transaction Model</h2>
                 <p class="text-sm text-gray-400 mb-4">Choose the inter-company transaction structure</p>
 
@@ -120,6 +157,85 @@ function renderCalculatorUI(container) {
     const entityConfigSection = container.querySelector('#entityConfigSection');
     if (entityConfigSection) {
         initEntityConfig(entityConfigSection);
+    }
+
+    // Initialize structure selector wizard if in wizard mode
+    if (selectionMode === 'wizard') {
+        const wizardSection = container.querySelector('#structureSelectorSection');
+        if (wizardSection) {
+            initStructureSelector(wizardSection, handleWizardModelSelected);
+        }
+    }
+}
+
+/**
+ * Handle model selection from wizard
+ */
+function handleWizardModelSelected(modelId, variantId) {
+    if (!modelId) {
+        // User skipped wizard, switch to direct mode
+        selectionMode = 'direct';
+        const container = document.getElementById('intercompanyCalculator');
+        if (container) {
+            renderCalculatorUI(container);
+        }
+        return;
+    }
+
+    // Model was selected, update the UI to show variant/input sections
+    const container = document.getElementById('intercompanyCalculator');
+    if (!container) return;
+
+    // Show model selection section with selected model highlighted
+    const modelSection = container.querySelector('#modelSelectionSection');
+    if (modelSection) {
+        modelSection.classList.remove('hidden');
+    }
+
+    // Update model button styles
+    container.querySelectorAll('.model-select-btn').forEach(btn => {
+        const isSelected = btn.dataset.modelId === modelId;
+        btn.classList.toggle('bg-blue-600/20', isSelected);
+        btn.classList.toggle('border-blue-500', isSelected);
+        btn.classList.toggle('text-blue-300', isSelected);
+        btn.classList.toggle('bg-gray-700', !isSelected);
+        btn.classList.toggle('border-gray-600', !isSelected);
+        btn.classList.toggle('text-gray-300', !isSelected);
+    });
+
+    // Show variant section
+    const variantSection = container.querySelector('#variantSection');
+    const variantSelector = container.querySelector('#variantSelector');
+    if (variantSection && variantSelector) {
+        variantSelector.innerHTML = renderVariantButtons(modelId);
+        variantSection.classList.remove('hidden');
+
+        // If variant was pre-selected by wizard, highlight it
+        if (variantId) {
+            container.querySelectorAll('.variant-select-btn').forEach(btn => {
+                const isSelected = btn.dataset.variantId === variantId;
+                btn.classList.toggle('bg-green-600/20', isSelected);
+                btn.classList.toggle('border-green-500', isSelected);
+                btn.classList.toggle('text-green-300', isSelected);
+                btn.classList.toggle('bg-gray-700', !isSelected);
+                btn.classList.toggle('border-gray-600', !isSelected);
+                btn.classList.toggle('text-gray-300', !isSelected);
+            });
+
+            // Show input section
+            const inputSection = container.querySelector('#inputSection');
+            const inputForm = container.querySelector('#intercompanyInputForm');
+            if (inputSection && inputForm) {
+                inputForm.innerHTML = renderInputForm(modelId, variantId);
+                inputSection.classList.remove('hidden');
+            }
+        }
+    }
+
+    // Hide wizard section since selection is complete
+    const wizardSection = container.querySelector('#structureSelectorSection');
+    if (wizardSection) {
+        wizardSection.classList.add('hidden');
     }
 }
 
@@ -281,18 +397,32 @@ function renderInputField(input, modelId) {
 // ========== EVENT HANDLERS ==========
 
 function setupEventListeners(container) {
-    // Model selection
+    // Selection mode toggle
     container.addEventListener('click', (e) => {
+        const modeBtn = e.target.closest('.selection-mode-btn');
+        if (modeBtn) {
+            const newMode = modeBtn.dataset.mode;
+            if (newMode !== selectionMode) {
+                selectionMode = newMode;
+                renderCalculatorUI(container);
+            }
+            return;
+        }
+
+        // Model selection
         const modelBtn = e.target.closest('.model-select-btn');
         if (modelBtn) {
             const modelId = modelBtn.dataset.modelId;
             handleModelSelect(modelId, container);
+            return;
         }
 
+        // Variant selection
         const variantBtn = e.target.closest('.variant-select-btn');
         if (variantBtn) {
             const variantId = variantBtn.dataset.variantId;
             handleVariantSelect(variantId, container);
+            return;
         }
     });
 
