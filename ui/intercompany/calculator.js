@@ -124,7 +124,7 @@ function renderCalculatorUI(container) {
                         title="Configure and calculate inter-company transactions"
                     >
                         <span class="mr-1">🧮</span> Calculator
-                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-calculator">?</span>
+                        <span class="help-icon cursor-help" data-tooltip="tab-calculator">i</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
@@ -133,7 +133,7 @@ function renderCalculatorUI(container) {
                         title="Transfer pricing compliance and SARS risk analysis"
                     >
                         <span class="mr-1">✓</span> Compliance
-                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-compliance">?</span>
+                        <span class="help-icon cursor-help" data-tooltip="tab-compliance">i</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
@@ -142,7 +142,7 @@ function renderCalculatorUI(container) {
                         title="Charts and visual analysis of results"
                     >
                         <span class="mr-1">📊</span> Visualizations
-                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-visualizations">?</span>
+                        <span class="help-icon cursor-help" data-tooltip="tab-visualizations">i</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
@@ -151,7 +151,7 @@ function renderCalculatorUI(container) {
                         title="What-if analysis and scenario comparison"
                     >
                         <span class="mr-1">📈</span> Sensitivity
-                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-sensitivity">?</span>
+                        <span class="help-icon cursor-help" data-tooltip="tab-sensitivity">i</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
@@ -160,7 +160,7 @@ function renderCalculatorUI(container) {
                         title="Multi-year projections and growth scenarios"
                     >
                         <span class="mr-1">🚀</span> Projections
-                        <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="tab-projections">?</span>
+                        <span class="help-icon cursor-help" data-tooltip="tab-projections">i</span>
                     </button>
                 </div>
             </div>
@@ -190,7 +190,7 @@ function renderCalculatorUI(container) {
                             title="Guided questions to recommend the best model"
                         >
                             <span class="mr-1">✨</span> Wizard
-                            <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="wizard-mode">?</span>
+                            <span class="help-icon cursor-help" data-tooltip="wizard-mode">i</span>
                         </button>
                         <button
                             id="modeDirectBtn"
@@ -199,7 +199,7 @@ function renderCalculatorUI(container) {
                             title="Select model and variant directly"
                         >
                             <span class="mr-1">📋</span> Direct
-                            <span class="ml-1 text-xs opacity-50 help-icon cursor-help" data-tooltip="direct-mode">?</span>
+                            <span class="help-icon cursor-help" data-tooltip="direct-mode">i</span>
                         </button>
                     </div>
                 </div>
