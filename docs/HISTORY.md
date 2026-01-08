@@ -9,6 +9,31 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Fix: Reserved Keyword in Destructuring
+
+**Date**: January 8, 2026
+**Impact**: Fixed SyntaxError preventing compliance analyzer from loading
+
+**Issue**: `Uncaught SyntaxError: Invalid destructuring assignment target` at `compliance-analyzer.js:1075`
+
+- **Root Cause**: Used `eval` as a variable name in destructuring assignment: `([id, eval]) => ...`
+- **Why It Fails**: `eval` is a reserved keyword in JavaScript and cannot be used as a variable name in strict mode or destructuring
+- **Fix**: Renamed variable from `eval` to `evaluation`
+- **Impact**: Compliance analyzer module now loads correctly
+
+**Technical Details**:
+
+- JavaScript reserves certain keywords that cannot be used as identifiers
+- `eval` is a built-in function and reserved keyword
+- Using it in destructuring (`[id, eval]`) triggers a SyntaxError
+- Other reserved keywords to avoid: `arguments`, `class`, `function`, `new`, `return`, `typeof`, etc.
+
+**Files Modified**:
+
+- `ui/intercompany/compliance-analyzer.js` (line 1075-1078: renamed `eval` to `evaluation`)
+
+---
+
 ### Quality & Error Handling Improvements
 
 **Date**: January 8, 2026

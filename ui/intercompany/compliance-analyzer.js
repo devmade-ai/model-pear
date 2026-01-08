@@ -1072,10 +1072,10 @@ function generatePrintableReport(report) {
 
             <div class="section">
                 <h2>Compliance Checklists</h2>
-                ${Object.entries(report.checklistEvaluation.evaluations).map(([id, eval]) => `
-                    <h3>${eval.name}</h3>
-                    <p>${eval.summary.completed}/${eval.summary.total} items complete (${eval.summary.completionRate}%)</p>
-                    ${eval.items.filter(i => !i.completed).map(i => `
+                ${Object.entries(report.checklistEvaluation.evaluations).map(([id, evaluation]) => `
+                    <h3>${evaluation.name}</h3>
+                    <p>${evaluation.summary.completed}/${evaluation.summary.total} items complete (${evaluation.summary.completionRate}%)</p>
+                    ${evaluation.items.filter(i => !i.completed).map(i => `
                         <div class="checklist-item ${i.critical ? 'critical' : ''}">
                             [ ] ${i.text} ${i.critical ? '(Critical)' : ''}
                         </div>
