@@ -51,7 +51,7 @@ function renderEntityConfigPanel(container) {
                     <span class="text-xl">🏢</span>
                     <div class="text-left">
                         <span class="font-medium text-gray-200">Entity Configuration</span>
-                        <p class="text-xs text-gray-400">Developer & Buyer settings</p>
+                        <p class="text-xs text-gray-400">Your company & client settings</p>
                     </div>
                 </div>
                 <svg
@@ -70,20 +70,20 @@ function renderEntityConfigPanel(container) {
                 id="entityConfigContent"
                 class="${isExpanded ? '' : 'hidden'} mt-4 space-y-6"
             >
-                <!-- Developer Entity -->
+                <!-- Your Company -->
                 <div class="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">
                     <h4 class="text-md font-semibold text-blue-300 mb-4 flex items-center gap-2">
-                        <span>💻</span> Developer Entity
+                        <span>💻</span> Your Company (Developer)
                     </h4>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm text-gray-400 mb-1" for="developer-name">Entity Name</label>
+                            <label class="block text-sm text-gray-400 mb-1" for="developer-name">Company Name</label>
                             <input
                                 type="text"
                                 id="developer-name"
                                 name="developer.name"
-                                value="${entities.developer?.name || 'Developer Entity'}"
+                                value="${entities.developer?.name || 'Your Company'}"
                                 class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                             >
                         </div>
@@ -129,20 +129,20 @@ function renderEntityConfigPanel(container) {
                     </div>
                 </div>
 
-                <!-- Buyer Entity -->
+                <!-- Client -->
                 <div class="bg-green-900/20 border border-green-700/50 rounded-lg p-4">
                     <h4 class="text-md font-semibold text-green-300 mb-4 flex items-center gap-2">
-                        <span>🏢</span> Buyer Entity
+                        <span>🏢</span> Client (Buyer)
                     </h4>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm text-gray-400 mb-1" for="buyer-name">Entity Name</label>
+                            <label class="block text-sm text-gray-400 mb-1" for="buyer-name">Client Name</label>
                             <input
                                 type="text"
                                 id="buyer-name"
                                 name="buyer.name"
-                                value="${entities.buyer?.name || 'Buyer Entity'}"
+                                value="${entities.buyer?.name || 'Client'}"
                                 class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                             >
                         </div>
@@ -191,46 +191,22 @@ function renderEntityConfigPanel(container) {
                 <!-- Relationship Settings -->
                 <div class="bg-purple-900/20 border border-purple-700/50 rounded-lg p-4">
                     <h4 class="text-md font-semibold text-purple-300 mb-4 flex items-center gap-2">
-                        <span>🔗</span> Relationship & Consolidation
+                        <span>🔗</span> Relationship
                     </h4>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="flex items-center gap-3">
-                            <input
-                                type="checkbox"
-                                id="relationship-relatedParties"
-                                name="relationship.relatedParties"
-                                ${entities.relationship?.relatedParties !== false ? 'checked' : ''}
-                                class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
-                            >
-                            <label class="text-sm text-gray-400" for="relationship-relatedParties">Related Parties</label>
-                        </div>
-
-                        <div class="flex items-center gap-3">
-                            <input
-                                type="checkbox"
-                                id="relationship-sameGroup"
-                                name="relationship.sameGroup"
-                                ${entities.relationship?.sameGroup !== false ? 'checked' : ''}
-                                class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
-                            >
-                            <label class="text-sm text-gray-400" for="relationship-sameGroup">Same Group</label>
-                        </div>
-
-                        <div class="flex items-center gap-3">
-                            <input
-                                type="checkbox"
-                                id="relationship-consolidationRequired"
-                                name="relationship.consolidationRequired"
-                                ${entities.relationship?.consolidationRequired !== false ? 'checked' : ''}
-                                class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
-                            >
-                            <label class="text-sm text-gray-400" for="relationship-consolidationRequired">Consolidation Required</label>
-                        </div>
+                    <div class="flex items-center gap-3">
+                        <input
+                            type="checkbox"
+                            id="relationship-relatedParties"
+                            name="relationship.relatedParties"
+                            ${entities.relationship?.relatedParties === true ? 'checked' : ''}
+                            class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
+                        >
+                        <label class="text-sm text-gray-400" for="relationship-relatedParties">Mutual Ownership (Related Parties)</label>
                     </div>
 
                     <p class="mt-3 text-xs text-gray-500">
-                        If consolidation is required, intercompany profits will be eliminated in the combined view.
+                        Enable this if both entities share common ownership. This affects transfer pricing considerations and disclosure requirements.
                     </p>
                 </div>
 

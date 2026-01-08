@@ -1,5 +1,8 @@
-// ========== INTER-COMPANY RESULTS DISPLAY ==========
-// Renders calculation results for the three perspectives.
+// ========== TRANSACTION RESULTS DISPLAY ==========
+// Renders calculation results for the three perspectives:
+// - Your Company (Developer): Revenue, costs, profit, tax
+// - Client (Buyer): Asset capitalization, amortization, tax benefits
+// - Net Effect: Combined financial impact for decision-making
 // Formats financial data with South African conventions.
 
 import { getState, subscribe } from '../../state/app-state.js';
@@ -42,11 +45,11 @@ function renderDeveloperPerspective(container, results) {
     const tp = results.transferPricing;
 
     container.innerHTML = `
-        <!-- Developer Summary Header -->
+        <!-- Your Company Summary Header -->
         <div class="bg-blue-900/30 border border-blue-700 rounded-lg p-6 mb-6">
             <div class="flex items-center gap-3 mb-4">
                 <span class="text-2xl">💻</span>
-                <h3 class="text-xl font-bold text-blue-300">Developer Perspective</h3>
+                <h3 class="text-xl font-bold text-blue-300">Your Company (Developer)</h3>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -127,11 +130,11 @@ function renderBuyerPerspective(container, results) {
     const buyer = results.buyer;
 
     container.innerHTML = `
-        <!-- Buyer Summary Header -->
+        <!-- Client Summary Header -->
         <div class="bg-green-900/30 border border-green-700 rounded-lg p-6 mb-6">
             <div class="flex items-center gap-3 mb-4">
                 <span class="text-2xl">🏢</span>
-                <h3 class="text-xl font-bold text-green-300">Buyer Perspective</h3>
+                <h3 class="text-xl font-bold text-green-300">Client (Buyer)</h3>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -252,27 +255,27 @@ function renderCombinedPerspective(container, results) {
     const tp = results.transferPricing;
 
     container.innerHTML = `
-        <!-- Combined Summary Header -->
+        <!-- Net Effect Summary Header -->
         <div class="bg-purple-900/30 border border-purple-700 rounded-lg p-6 mb-6">
             <div class="flex items-center gap-3 mb-4">
-                <span class="text-2xl">🔗</span>
-                <h3 class="text-xl font-bold text-purple-300">Combined / Group Perspective</h3>
+                <span class="text-2xl">⚖️</span>
+                <h3 class="text-xl font-bold text-purple-300">Net Effect (Both Parties)</h3>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 ${renderMetricCard('Transaction Value', formatCurrency(combined.metrics.totalTransactionValue), 'text-gray-300')}
-                ${renderMetricCard('Group Asset', formatCurrency(combined.assetEfficiency.groupAsset), 'text-blue-400')}
-                ${renderMetricCard('Profit Eliminated', formatCurrency(combined.elimination.profitEliminated), 'text-yellow-400')}
-                ${renderMetricCard('Net Tax Cost', formatCurrency(combined.metrics.groupTaxCost), 'text-red-400')}
+                ${renderMetricCard('Your Asset', formatCurrency(combined.assetEfficiency.developerAsset), 'text-blue-400')}
+                ${renderMetricCard('Client Asset', formatCurrency(combined.assetEfficiency.buyerAsset), 'text-green-400')}
+                ${renderMetricCard('Combined Tax', formatCurrency(combined.metrics.groupTaxCost), 'text-red-400')}
             </div>
         </div>
 
         <!-- Side-by-Side Comparison -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Developer Summary -->
+            <!-- Your Company Summary -->
             <div class="bg-blue-900/20 border border-blue-700/50 rounded-lg p-5">
                 <h4 class="text-lg font-semibold text-blue-300 mb-4 flex items-center gap-2">
-                    <span>💻</span> Developer
+                    <span>💻</span> Your Company
                 </h4>
                 <table class="w-full text-sm">
                     <tbody>
@@ -300,10 +303,10 @@ function renderCombinedPerspective(container, results) {
                 </table>
             </div>
 
-            <!-- Buyer Summary -->
+            <!-- Client Summary -->
             <div class="bg-green-900/20 border border-green-700/50 rounded-lg p-5">
                 <h4 class="text-lg font-semibold text-green-300 mb-4 flex items-center gap-2">
-                    <span>🏢</span> Buyer
+                    <span>🏢</span> Client
                 </h4>
                 <table class="w-full text-sm">
                     <tbody>
@@ -332,87 +335,58 @@ function renderCombinedPerspective(container, results) {
             </div>
         </div>
 
-        <!-- Consolidation Adjustments -->
-        ${combined.elimination.required ? `
+        <!-- Net Effect Summary -->
         <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
             <h4 class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2">
-                <span>📝</span> Consolidation Eliminations
+                <span>📋</span> Transaction Summary
             </h4>
 
-            <div class="p-4 bg-yellow-900/20 border border-yellow-700/50 rounded-lg mb-4">
-                <p class="text-sm text-yellow-400 mb-2">Intercompany Profit Elimination Required</p>
-                <p class="text-gray-300">Eliminate ${formatCurrency(combined.elimination.profitEliminated)} unrealised profit from group asset value.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <p class="text-sm text-gray-400 mb-3">Elimination Journal Entry</p>
-                    <div class="font-mono text-sm bg-gray-900 rounded p-4">
-                        <p class="text-gray-300">Dr Revenue (Developer)</p>
-                        <p class="text-gray-300 pl-8">${formatCurrency(combined.elimination.journalEntry?.debit?.amount || 0)}</p>
-                        <p class="text-gray-300 mt-2 pl-4">Cr Intangible Asset (Buyer)</p>
-                        <p class="text-gray-300 pl-12">${formatCurrency(combined.elimination.journalEntry?.credit?.amount || 0)}</p>
-                        <p class="text-gray-300 mt-2 pl-4">Cr Cost of Sales</p>
-                        <p class="text-gray-300 pl-12">${formatCurrency(combined.elimination.journalEntry?.credit2?.amount || 0)}</p>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="text-center p-4 bg-gray-700/30 rounded-lg">
+                    <p class="text-sm text-gray-400 mb-1">Your Company Profit</p>
+                    <p class="text-xl font-bold text-blue-400">${formatCurrency(dev.profit.gross)}</p>
                 </div>
-
-                <div>
-                    <p class="text-sm text-gray-400 mb-3">Group Position</p>
-                    <table class="w-full text-sm">
-                        <tbody>
-                            <tr class="border-b border-gray-700">
-                                <td class="py-2 text-gray-400">Buyer's asset (pre-elimination)</td>
-                                <td class="py-2 text-right text-gray-300">${formatCurrency(buyer.asset.capitalised)}</td>
-                            </tr>
-                            <tr class="border-b border-gray-700">
-                                <td class="py-2 text-gray-400">Less: Unrealised profit</td>
-                                <td class="py-2 text-right text-yellow-400">(${formatCurrency(combined.elimination.profitEliminated)})</td>
-                            </tr>
-                            <tr>
-                                <td class="py-2 text-gray-400 font-medium">Group asset value</td>
-                                <td class="py-2 text-right font-bold text-blue-400">${formatCurrency(combined.assetEfficiency.groupAsset)}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="text-center p-4 bg-gray-700/30 rounded-lg">
+                    <p class="text-sm text-gray-400 mb-1">Client Asset Value</p>
+                    <p class="text-xl font-bold text-green-400">${formatCurrency(buyer.asset.capitalised)}</p>
+                </div>
+                <div class="text-center p-4 bg-gray-700/30 rounded-lg">
+                    <p class="text-sm text-gray-400 mb-1">Combined Net Cash</p>
+                    <p class="text-xl font-bold ${combined.cashFlow.netCashFlow >= 0 ? 'text-green-400' : 'text-red-400'}">${formatCurrency(combined.cashFlow.netCashFlow || 0)}</p>
                 </div>
             </div>
-        </div>
-        ` : `
-        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
-            <div class="flex items-center gap-3">
-                <span class="text-2xl">ℹ️</span>
-                <p class="text-gray-400">No consolidation elimination required (entities not in same group)</p>
+
+            <div class="p-4 bg-purple-900/20 border border-purple-700/50 rounded-lg">
+                <p class="text-sm text-gray-400 mb-2">Key Insight</p>
+                <p class="text-gray-300">
+                    This model generates ${formatCurrency(dev.profit.gross)} profit for your company while creating a ${formatCurrency(buyer.asset.capitalised)} asset for the client
+                    ${buyer.tax.taxBenefit > 0 ? `, who benefits from ${formatCurrency(buyer.tax.taxBenefit)} annual tax savings (Section 11(e))` : ''}.
+                </p>
             </div>
         </div>
-        `}
 
-        <!-- Asset Efficiency -->
+        <!-- Asset Distribution -->
         <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
             <h4 class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2">
-                <span>📊</span> Asset Efficiency Analysis
+                <span>📊</span> Asset Distribution
             </h4>
 
-            <div class="grid grid-cols-3 gap-4 mb-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
                 <div class="text-center p-4 bg-blue-900/20 rounded-lg">
-                    <p class="text-sm text-gray-400 mb-1">Developer Asset</p>
+                    <p class="text-sm text-gray-400 mb-1">Your Company Asset</p>
                     <p class="text-xl font-bold text-blue-400">${formatCurrency(combined.assetEfficiency.developerAsset)}</p>
+                    <p class="text-xs text-gray-500 mt-1">${combined.assetEfficiency.developerAsset > 0 ? 'IP retained on your balance sheet' : 'No asset retained'}</p>
                 </div>
                 <div class="text-center p-4 bg-green-900/20 rounded-lg">
-                    <p class="text-sm text-gray-400 mb-1">Buyer Asset</p>
+                    <p class="text-sm text-gray-400 mb-1">Client Asset</p>
                     <p class="text-xl font-bold text-green-400">${formatCurrency(combined.assetEfficiency.buyerAsset)}</p>
-                </div>
-                <div class="text-center p-4 bg-purple-900/20 rounded-lg">
-                    <p class="text-sm text-gray-400 mb-1">Group Asset</p>
-                    <p class="text-xl font-bold text-purple-400">${formatCurrency(combined.assetEfficiency.groupAsset)}</p>
+                    <p class="text-xs text-gray-500 mt-1">${combined.assetEfficiency.buyerAsset > 0 ? 'Asset on client balance sheet' : 'No asset recognised'}</p>
                 </div>
             </div>
 
-            <div class="flex items-center justify-center gap-2 p-3 ${combined.assetEfficiency.efficiencyRatio >= 0.9 ? 'bg-green-900/20' : 'bg-yellow-900/20'} rounded">
-                <span>${combined.assetEfficiency.efficiencyRatio >= 0.9 ? '✅' : '⚠️'}</span>
-                <span class="${combined.assetEfficiency.efficiencyRatio >= 0.9 ? 'text-green-400' : 'text-yellow-400'}">
-                    Efficiency Ratio: ${formatPercentage(combined.assetEfficiency.efficiencyRatio * 100)}
-                    ${combined.assetEfficiency.efficiencyRatio >= 0.9 ? '(Optimal - no asset duplication)' : '(Review for potential inefficiency)'}
+            <div class="p-3 bg-gray-700/30 rounded text-center">
+                <span class="text-gray-400 text-sm">
+                    Total assets created: ${formatCurrency((combined.assetEfficiency.developerAsset || 0) + (combined.assetEfficiency.buyerAsset || 0))}
                 </span>
             </div>
         </div>

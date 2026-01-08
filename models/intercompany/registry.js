@@ -1,11 +1,14 @@
-// ========== INTER-COMPANY MODEL REGISTRY ==========
-// Registry system for inter-company software transaction models.
+// ========== TRANSACTION MODEL REGISTRY ==========
+// Registry system for software transaction structuring models.
 // Each model represents a different transaction structure with multiple variants.
+//
+// Purpose: Help software companies analyze different transaction models to
+// maximize value for both parties (your company and client) on any project/product.
 //
 // Architecture:
 // - Models define the overall transaction type (e.g., Cost-Plus, Licence, BOT)
 // - Variants define specific implementations within each model
-// - All models produce three-perspective outputs (Developer, Buyer, Combined)
+// - All models produce three-perspective outputs (Your Company, Client, Net Effect)
 
 import { MODEL_1_COST_PLUS } from './model-1-cost-plus.js';
 import { MODEL_2_LICENCE_ROYALTIES } from './model-2-licence-royalties.js';
@@ -141,14 +144,14 @@ export function calculateIntercompany(modelId, variantId, inputs, entityConfig, 
 
 export const DEFAULT_ENTITY_CONFIG = {
     developer: {
-        name: 'Developer Entity',
+        name: 'Your Company',
         jurisdiction: 'South Africa',
         taxResident: true,
         corporateTaxRate: 0.27,
         accountingFramework: 'IFRS'
     },
     buyer: {
-        name: 'Buyer Entity',
+        name: 'Client',
         jurisdiction: 'South Africa',
         taxResident: true,
         corporateTaxRate: 0.27,
@@ -156,7 +159,11 @@ export const DEFAULT_ENTITY_CONFIG = {
         section11eType: 'pc-2yr'
     },
     relationship: {
-        relatedParties: true,
+        // Default: independent parties (not related)
+        // Set to true only when entities share common ownership
+        relatedParties: false,
+        // Consolidated accounting is NOT in scope - these flags exist for
+        // edge cases but should rarely be used
         sameGroup: false,
         consolidationRequired: false
     }

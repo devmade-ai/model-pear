@@ -311,13 +311,13 @@ document.addEventListener('keydown', handleKeyboardShortcuts);
 const TOOLTIP_CONTENT = {
     // Mode switcher tooltips
     'intercompany-mode': {
-        explanation: 'The Inter-Company Tool helps you structure and analyse inter-company software transactions between related entities. It provides multi-perspective analysis from Developer, Buyer, and Combined (consolidation) viewpoints.',
+        explanation: 'The Transaction Structuring Tool helps you compare different models for software projects to maximize value for both your company and your client. Analyze expenses, capitalization, and tax effects to decide which model works best.',
         keyMetrics: [
-            'Developer perspective: Revenue recognition, costs, profit, tax position',
-            'Buyer perspective: Asset capitalisation, amortisation, Section 11(e) tax benefits',
-            'Combined perspective: Group consolidation, profit elimination, efficiency analysis'
+            'Your Company: Revenue recognition, costs, profit, tax position',
+            'Client: Asset capitalisation, amortisation, Section 11(e) tax benefits',
+            'Net Effect: Combined financial impact for both parties'
         ],
-        useCases: 'Use this for transfer pricing analysis, inter-company transaction structuring, and tax planning for software transactions within corporate groups.'
+        useCases: 'Use this when starting new projects or products to determine the optimal transaction structure. Compare models like cost-plus, licensing, joint development, or SaaS to find the best fit.'
     },
     'pricing-mode': {
         explanation: 'The Pricing Calculator helps you find the equilibrium zone between your minimum acceptable price (seller floor) and the maximum price buyers will pay (buyer ceiling).',

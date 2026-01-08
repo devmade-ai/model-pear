@@ -1,7 +1,9 @@
-// ========== INTER-COMPANY CALCULATOR UI ==========
-// Main UI component for the Inter-Company Software Transaction Tool.
+// ========== TRANSACTION STRUCTURING CALCULATOR UI ==========
+// Main UI component for the Software Transaction Structuring Tool.
+// Helps software companies analyze different transaction models to maximize value
+// for both parties (your company and client) on any project or product.
 // Integrates model selection, variant selection, input forms, and results display.
-// Now includes Structure Selector wizard for guided model selection.
+// Includes Structure Selector wizard for guided model selection.
 
 import { getState, subscribe, selectIntercompanyModel, selectVariant, setIntercompanyResults, setCalculating } from '../../state/app-state.js';
 import { getModelMetadata, getModelVariants, getVariantInputs, calculateIntercompany, DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from '../../models/intercompany/registry.js';
@@ -213,7 +215,7 @@ function renderCalculatorUI(container) {
             <!-- Model Selection (shown in direct mode or after wizard selection) -->
             <div id="modelSelectionSection" class="${selectionMode === 'direct' || state.intercompany.selectedModel ? '' : 'hidden'} bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
                 <h2 class="text-xl font-semibold text-gray-100 mb-3">Select Transaction Model</h2>
-                <p class="text-sm text-gray-400 mb-4">Choose the inter-company transaction structure</p>
+                <p class="text-sm text-gray-400 mb-4">Choose how to structure the transaction for this project</p>
 
                 <div id="modelSelector" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     ${models.map(model => renderModelButton(model, state.intercompany.selectedModel === model.id)).join('')}

@@ -1,6 +1,6 @@
 // ========== STRUCTURE SELECTOR - DECISION TREE ==========
 // Intelligent decision tree to help users select the optimal
-// inter-company software transaction structure (model and variant).
+// software transaction structure (model and variant).
 //
 // The selector asks a series of questions and scores each model
 // based on user responses to recommend the best fit.
@@ -17,14 +17,14 @@ export const DECISION_FACTORS = {
         options: [
             {
                 value: 'buyer',
-                label: 'Buyer should own IP',
-                description: 'Buyer controls development and owns the resulting asset',
+                label: 'Client should own IP',
+                description: 'Client controls development and owns the resulting asset',
                 modelScores: { 'model-1': 10, 'model-3': 5, 'model-4': 3, 'model-5': 8, 'model-2': 0, 'model-6': 0 }
             },
             {
                 value: 'developer',
-                label: 'Developer should retain IP',
-                description: 'Developer keeps IP and grants usage rights to Buyer',
+                label: 'Your company should retain IP',
+                description: 'You keep IP and grant usage rights to client',
                 modelScores: { 'model-1': 0, 'model-2': 10, 'model-6': 10, 'model-4': 5, 'model-3': 3, 'model-5': 0 }
             },
             {
@@ -35,8 +35,8 @@ export const DECISION_FACTORS = {
             },
             {
                 value: 'transfer-later',
-                label: 'Developer initially, transfer to Buyer later',
-                description: 'Developer builds and operates, ownership transfers at agreed point',
+                label: 'Your company initially, transfer to client later',
+                description: 'You build and operate, ownership transfers at agreed point',
                 modelScores: { 'model-4': 10, 'model-5': 8, 'model-2': 3, 'model-1': 0, 'model-3': 2, 'model-6': 5 }
             }
         ]
@@ -87,14 +87,14 @@ export const DECISION_FACTORS = {
         options: [
             {
                 value: 'buyer-bears-all',
-                label: 'Buyer bears all risk',
-                description: 'Developer is paid regardless of outcome; Buyer takes development and commercial risk',
+                label: 'Client bears all risk',
+                description: 'You are paid regardless of outcome; client takes development and commercial risk',
                 modelScores: { 'model-1': 10, 'model-6': 7, 'model-5': 3, 'model-2': 2, 'model-3': 0, 'model-4': 2 }
             },
             {
                 value: 'developer-bears-dev',
-                label: 'Developer bears development risk',
-                description: 'Developer takes risk on building; Buyer takes commercial risk',
+                label: 'Your company bears development risk',
+                description: 'You take risk on building; client takes commercial risk',
                 modelScores: { 'model-2': 10, 'model-5': 8, 'model-4': 7, 'model-6': 5, 'model-3': 3, 'model-1': 0 }
             },
             {
@@ -105,8 +105,8 @@ export const DECISION_FACTORS = {
             },
             {
                 value: 'performance-linked',
-                label: 'Performance-linked (Developer skin in game)',
-                description: 'Developer compensation tied to software performance',
+                label: 'Performance-linked (your skin in game)',
+                description: 'Your compensation tied to software performance',
                 modelScores: { 'model-2': 10, 'model-3': 8, 'model-4': 5, 'model-6': 5, 'model-1': 3, 'model-5': 2 }
             }
         ]
@@ -119,14 +119,14 @@ export const DECISION_FACTORS = {
         options: [
             {
                 value: 'buyer-balance-sheet',
-                label: 'Asset on Buyer balance sheet',
-                description: 'Buyer wants to capitalise and show the asset',
+                label: 'Asset on client balance sheet',
+                description: 'Client wants to capitalise and show the asset',
                 modelScores: { 'model-1': 10, 'model-5': 10, 'model-3': 7, 'model-4': 5, 'model-2': 3, 'model-6': 0 }
             },
             {
                 value: 'developer-balance-sheet',
-                label: 'Asset on Developer balance sheet',
-                description: 'Developer wants to retain and show the asset',
+                label: 'Asset on your balance sheet',
+                description: 'You want to retain and show the asset',
                 modelScores: { 'model-2': 10, 'model-6': 10, 'model-4': 7, 'model-3': 5, 'model-1': 0, 'model-5': 0 }
             },
             {
@@ -215,14 +215,14 @@ export const DECISION_FACTORS = {
         options: [
             {
                 value: 'buyer-controls',
-                label: 'Buyer controls development',
-                description: 'Buyer specifies requirements and directs development',
+                label: 'Client controls development',
+                description: 'Client specifies requirements and directs development',
                 modelScores: { 'model-1': 10, 'model-3': 5, 'model-4': 3, 'model-5': 3, 'model-2': 0, 'model-6': 0 }
             },
             {
                 value: 'developer-controls',
-                label: 'Developer controls development',
-                description: 'Developer makes technical decisions independently',
+                label: 'Your company controls development',
+                description: 'You make technical decisions independently',
                 modelScores: { 'model-2': 10, 'model-6': 10, 'model-4': 7, 'model-5': 5, 'model-3': 3, 'model-1': 0 }
             },
             {
@@ -236,14 +236,14 @@ export const DECISION_FACTORS = {
 };
 
 // Define the order of questions in the wizard
+// Note: 'consolidation' removed - consolidated accounting is not in scope
 export const QUESTION_ORDER = [
     'softwareMaturity',
     'ipOwnership',
     'controlPreference',
     'cashFlowPreference',
     'riskAllocation',
-    'assetRecognition',
-    'consolidation'
+    'assetRecognition'
 ];
 
 // ========== SCORING ENGINE ==========
