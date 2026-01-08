@@ -1281,6 +1281,20 @@ function generateAssetTimeline(inputs, developer, buyer, transferDetails) {
  * Assess transfer pricing risk
  */
 function assessTransferPricing(inputs, variant, transferDetails, developer) {
+    // BOO (Build-Operate-Own) has no transfer - transfer pricing not applicable
+    if (variant.transferMethod === 'none') {
+        return {
+            notApplicable: true,
+            reason: 'No transfer pricing assessment required - BOO model has no ownership transfer',
+            serviceFeeAnalysis: {
+                margin: developer.operation.operatingMargin,
+                benchmarkRange: '5-15%',
+                withinRange: developer.operation.operatingMargin >= 5 && developer.operation.operatingMargin <= 15,
+                note: 'Service fee pricing should still follow arm\'s length principles'
+            }
+        };
+    }
+
     let riskScore, riskLevel, recommendation;
     const risks = [];
     const mitigations = [];
