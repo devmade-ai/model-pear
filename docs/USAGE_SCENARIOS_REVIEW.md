@@ -15,208 +15,209 @@ This document reviews realistic usage scenarios to validate whether the tool ade
 
 ---
 
-## Scenario 1: "A client approached us about building something"
+## The Real User Journey
 
-**Context:** A potential client has reached out about custom software development. No decisions have been made yet about structure, IP ownership, or pricing.
+Users don't think in "scenarios" - they follow a **workflow**:
 
-### Typical Process
+```
+┌─────────────────────────────────────────────────────────────┐
+│  START: "We need software to [increase profits/reduce costs]" │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│  EXPLORE: What are our options?                             │
+│  - Build it ourselves                                       │
+│  - Pay someone to build it                                  │
+│  - License existing software                                │
+│  - Subscribe to SaaS                                        │
+│  - Joint development                                        │
+│  → For each: Cost? Monthly vs once-off? Capitalize/expense? │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│  COMPARE: Show me options side-by-side                      │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│  ITERATE: "What if we change X?" → See updated options      │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│  SCENARIOS: "What if this happens? What about that?"        │
+└─────────────────────────────────────────────────────────────┘
+```
 
-| Step | Activity | Key Questions | Who's Involved | Rating | Findings |
-|------|----------|---------------|----------------|--------|----------|
-| 1 | Initial client meeting | What do they want? Why? Timeline? | Sales, Tech Lead | 🤔 | Not tool's job - requirements gathering |
-| 2 | Internal feasibility | Can we build this? Do we want to? | Dev team, Management | 🤔 | Not tool's job - technical assessment |
-| 3 | Scoping & estimation | How much effort? What resources? | Tech Lead, PM | ❌ | **Gap** - No help translating scope to cost |
-| 4 | Commercial strategy | How do we structure this? Who owns IP? | Management, Finance | ✅ | Structure Selector wizard guides this well |
-| 5 | Pricing | What do we charge? What's our margin? | Finance, Management | ✅ | Calculator handles cost + margin |
-| 6 | Proposal preparation | Put it all together | Sales, Finance | ⚠️ | Results exist but no export/proposal format |
-| 7 | Client negotiation | Back and forth on terms | Sales, Management | ⚠️ | Can model alternatives but no side-by-side comparison view |
-| 8 | Contract & delivery | Execute and invoice | Legal, Delivery team | 🤔 | Not tool's job - legal/execution |
-
-### Summary
-
-**Strengths:**
-- Wizard helps think through structure decisions
-- Calculator provides clear pricing with margin
-
-**Gaps/Improvements:**
-- No bridge from "scope" to "cost" (effort estimation)
-- No client-facing output format
-- No easy way to compare 2-3 options side-by-side for negotiation
-
----
-
-## Scenario 2: "We have software we built - how do we monetize it?"
-
-**Context:** Company has internal IP (software they built) and wants to explore ways to generate revenue from it.
-
-### Typical Process
-
-| Step | Activity | Key Questions | Who's Involved | Rating | Findings |
-|------|----------|---------------|----------------|--------|----------|
-| 1 | Asset assessment | What do we actually have? What's it worth? | Tech, Finance | ❌ | **Gap** - No help assessing/valuing existing IP |
-| 2 | Market research | Who would want this? What would they pay? | Sales, Management | 🤔 | Not tool's job - market research |
-| 3 | Strategic decision | Sell it? License it? SaaS it? Keep it internal? | Board, Management | ✅ | Wizard helps compare models |
-| 4 | Business model design | Recurring vs one-time? Pricing tiers? | Management, Finance | ⚠️ | Pricing Mode helps but limited on tiers |
-| 5 | Financial modeling | What revenue can we expect? Break-even? | Finance | ✅ | Projections tab handles this |
-| 6 | Go-to-market | How do we sell this? | Sales, Marketing | 🤔 | Not tool's job - marketing |
-| 7 | First customer | Test the model with real buyer | Sales | ⚠️ | Can model a deal but no "test pricing" mode |
-
-### Summary
-
-**Strengths:**
-- Good at comparing sell vs license vs SaaS options
-- Projections help with financial planning
-
-**Gaps/Improvements:**
-- No "what is my IP worth?" starting point
-- Could help more with "what would market pay?" equilibrium
+**Throughout the entire journey, there are 2 perspectives:**
+1. **Independent parties** - Random person/client (arm's length)
+2. **Related parties** - You're a shareholder in both developer and buyer
 
 ---
 
-## Scenario 3: "We need to quote on a project"
+## Workflow Step 1: START
 
-**Context:** Company received an RFP or enquiry and needs to prepare a quote/proposal.
+**User thinking:** "We need software to improve our business. How much will it cost? What are our options?"
 
-### Typical Process
-
-| Step | Activity | Key Questions | Who's Involved | Rating | Findings |
-|------|----------|---------------|----------------|--------|----------|
-| 1 | RFP received | What are they asking for? | Sales | 🤔 | Not tool's job |
-| 2 | Requirements analysis | What's the actual scope? | Tech Lead, BA | 🤔 | Not tool's job |
-| 3 | Effort estimation | How many hours/days? What skills? | Dev team | ❌ | **Gap** - No effort-to-cost calculator |
-| 4 | Cost calculation | What will this cost us? | Finance | ❌ | **Gap** - Tool starts at "cost" not "effort" |
-| 5 | Structure decision | Fixed price? T&M? Phases? IP ownership? | Management | ✅ | Wizard covers this well |
-| 6 | Margin & pricing | What markup? Final price? | Finance, Management | ✅ | Calculator handles this |
-| 7 | Proposal submission | Document and send | Sales | ⚠️ | No export/proposal output |
-| 8 | Negotiation | Client pushback on price/terms | Sales, Management | ⚠️ | Can re-run but no comparison view |
-
-### Summary
-
-**Strengths:**
-- Structure decision is well-supported
-- Margin calculation is clear
-
-**Gaps/Improvements:**
-- Missing "effort estimation" step before costing
-- No proposal/quote output format
-- No negotiation comparison view
+| Aspect | Rating | Current State | Gap |
+|--------|--------|---------------|-----|
+| Entry point | ⚠️ | Tool starts with "pick a model" | Should start with "I need software" |
+| Cost estimation | ❌ | Tool assumes you know cost | No help getting from need → cost |
+| Quick overview | ❌ | Must complete wizard for one model | No "show me all options at a glance" |
 
 ---
 
-## Scenario 4: "We're starting a software business"
+## Workflow Step 2: EXPLORE
 
-**Context:** Founders/entrepreneurs deciding how to structure their new software venture.
+**User thinking:** "What are my options? For each option: What does it cost? Do I pay monthly or once-off? What do I capitalize vs expense? What do I show on my balance sheet?"
 
-### Typical Process
-
-| Step | Activity | Key Questions | Who's Involved | Rating | Findings |
-|------|----------|---------------|----------------|--------|----------|
-| 1 | Idea validation | Is there a real problem to solve? | Founders | 🤔 | Not tool's job |
-| 2 | Market sizing | How big is the opportunity? | Founders | 🤔 | Not tool's job |
-| 3 | Business model selection | SaaS? Licenses? Services? Marketplace? | Founders | ✅ | Pricing Mode covers this well |
-| 4 | Unit economics | Cost to serve? Price point? Margins? | Founders, Advisors | ✅ | Calculator handles this |
-| 5 | Financial projections | Revenue forecasts? Break-even? Runway? | Founders, Finance | ✅ | Projections tab |
-| 6 | Pricing strategy | How do we price to win customers AND make money? | Founders | ✅ | Pricing Mode equilibrium analysis |
-| 7 | MVP & launch | Build and test with real users | Dev team | 🤔 | Not tool's job |
-
-### Summary
-
-**Strengths:**
-- This scenario is well-covered by Pricing Mode
-- Good unit economics and equilibrium pricing
-- Projections help with planning
-
-**Gaps/Improvements:**
-- Could link better to Transaction Mode when they land first customer
+| Aspect | Rating | Current State | Gap |
+|--------|--------|---------------|-----|
+| List all options | ⚠️ | Wizard recommends models | No overview of ALL options with key metrics |
+| Cost breakdown | ✅ | Calculator shows this well | - |
+| Payment structure | ✅ | Different models have different structures | - |
+| Capitalize vs expense | ✅ | Accounting treatment shown | - |
+| Balance sheet impact | ✅ | Asset recognition covered | - |
 
 ---
 
-## Scenario 5: "Our client wants flexibility on how they pay"
+## Workflow Step 3: COMPARE
 
-**Context:** During negotiation, client indicates they can't or won't pay in the proposed structure.
+**User thinking:** "Show me these options side-by-side so I can see trade-offs."
 
-### Typical Process
-
-| Step | Activity | Key Questions | Who's Involved | Rating | Findings |
-|------|----------|---------------|----------------|--------|----------|
-| 1 | Client raises concern | "We can't pay upfront" / "Budget is tight" | Sales | 🤔 | Not tool's job - conversation |
-| 2 | Understand constraints | Cash flow issue? Budget cycle? Risk concern? | Sales | 🤔 | Not tool's job - discovery |
-| 3 | Explore alternatives internally | What options can we offer? What's the impact on us? | Finance, Management | ⚠️ | Can re-run wizard but tedious |
-| 4 | Model different structures | Subscription? Deferred? Milestone-based? | Finance | ✅ | Calculator can model each |
-| 5 | Present options to client | Here are 3 ways we could do this... | Sales | ❌ | **Gap** - No multi-option comparison output |
-| 6 | Negotiate & agree | Find the win-win | Sales, Management | ⚠️ | No side-by-side trade-off view |
-
-### Summary
-
-**Strengths:**
-- Can model any structure the client might prefer
-
-**Gaps/Improvements:**
-- **Key gap**: No "compare 3 options" view for client presentation
-- Need easy way to show "here's what each option means for both of us"
+| Aspect | Rating | Current State | Gap |
+|--------|--------|---------------|-----|
+| Save a scenario | ❌ | Results not saved | Can't bookmark for comparison |
+| Side-by-side view | ❌ | Must re-run and remember | No comparison mode |
+| Key metrics comparison | ❌ | No summary view | Need: total cost, cash flow, tax impact per option |
+| Share with stakeholders | ❌ | No export | Can't send comparison to decision-makers |
 
 ---
 
-## Scenario 6: "We're doing work for a related company"
+## Workflow Step 4: ITERATE
 
-**Context:** The client is a subsidiary, sister company, or has common shareholders with the software company.
+**User thinking:** "We discussed and want to change some assumptions. Show me the options again with these changes."
 
-### Typical Process
-
-| Step | Activity | Key Questions | Who's Involved | Rating | Findings |
-|------|----------|---------------|----------------|--------|----------|
-| 1 | Understand the relationship | Subsidiary? Common shareholder? How related? | Management, Legal | ⚠️ | Mutual Ownership checkbox exists but could guide more |
-| 2 | Understand the rules | What's different? What are the risks? | Finance, Tax advisor | ✅ | Help content explains transfer pricing |
-| 3 | Determine arm's length price | What would unrelated parties pay? | Finance | ✅ | Benchmarks provided |
-| 4 | Document the rationale | Can we defend this to SARS? | Finance, Tax advisor | ✅ | Compliance tab with checklists |
-| 5 | Structure appropriately | Which model is cleanest? | Finance | ✅ | Wizard helps |
-| 6 | Ongoing compliance | Keep records, review annually | Finance | ⚠️ | No reminder/tracking for annual review |
-
-### Summary
-
-**Strengths:**
-- Transfer pricing is well-covered
-- Compliance checklists are helpful
-- Benchmarks guide arm's length pricing
-
-**Gaps/Improvements:**
-- Could guide relationship classification more clearly upfront
-- No ongoing compliance tracking/reminders
+| Aspect | Rating | Current State | Gap |
+|--------|--------|---------------|-----|
+| Change inputs | ✅ | Can modify and recalculate | - |
+| See impact | ✅ | Results update | - |
+| Compare before/after | ❌ | Previous results lost | No "what changed?" view |
+| Track versions | ❌ | No history | Can't see evolution of thinking |
 
 ---
 
-## Overall Findings
+## Workflow Step 5: SCENARIOS
 
-### Key Strengths Across Scenarios
+**User thinking:** "There are a few ways this could play out. What if X happens? What about Y?"
 
-1. **Structure selection** - Wizard does a good job guiding users to the right model
-2. **Pricing calculations** - Clear cost + margin = price logic
-3. **Transfer pricing/compliance** - Well-covered for related party scenarios
-4. **Financial projections** - NPV, IRR, break-even analysis is solid
-5. **Pricing Mode** - Works well for startup/product pricing decisions
+| Aspect | Rating | Current State | Gap |
+|--------|--------|---------------|-----|
+| Sensitivity analysis | ✅ | Sensitivity tab exists | - |
+| Best/worst case | ✅ | Range inputs supported | - |
+| Custom scenarios | ⚠️ | Can run manually | No "save scenario A, save scenario B, compare" |
+| Probability weighting | ❌ | Not supported | No "60% chance of X, 40% chance of Y" |
 
-### Common Gaps
+---
 
-1. **Effort-to-cost bridge** - Tool assumes you know your cost; no help getting from "scope" to "cost"
-2. **Client-facing output** - No proposal/quote/presentation format for sharing with clients
-3. **Multi-option comparison** - Can't easily compare 2-3 structures side-by-side
-4. **IP valuation starting point** - No help assessing "what is my existing software worth?"
-5. **Negotiation support** - No trade-off visualization for "if we change X, here's what happens"
+## The Two Perspectives
 
-### Recommended Improvements
+**Key insight:** Every step in the workflow can be viewed from two perspectives:
 
-(To be prioritized after discussion)
+### Perspective A: Independent Parties
+- You are the buyer OR the developer
+- The other party is unrelated
+- Arm's length pricing applies naturally
+- No special compliance requirements
 
-1. **Effort Estimation Module** - Simple calculator: hours × rate = cost as input to pricing
-2. **Compare Mode** - Save and compare 2-3 scenarios side-by-side
-3. **Export/Proposal Output** - Client-friendly PDF or summary view
-4. **IP Valuation Guide** - Questionnaire to help value existing software
-5. **Negotiation View** - Show trade-offs: "Option A vs Option B - impact on both parties"
+### Perspective B: Related Parties (Mutual Ownership)
+- You're a shareholder in BOTH the developer and buyer
+- Transfer pricing rules apply
+- Need to document arm's length rationale
+- SARS compliance matters
+
+| Aspect | Rating | Current State | Gap |
+|--------|--------|---------------|-----|
+| Toggle between perspectives | ⚠️ | "Mutual Ownership" checkbox exists | Buried in entity config, not prominent |
+| Impact on calculations | ✅ | Transfer pricing benchmarks apply | - |
+| Compliance requirements | ✅ | Compliance tab shows requirements | - |
+| Clear explanation | ⚠️ | Help content exists | Could be clearer what changes |
+
+---
+
+## Current Tool vs User's Mental Model
+
+| Current Tool | User's Mental Model |
+|--------------|---------------------|
+| Pick a model first | Start with the need |
+| Deep-dive one option at a time | See all options at once |
+| Re-run wizard to try another | Easy comparison and iteration |
+| Sensitivity is a separate tab | "What if" is natural flow |
+| Related party is buried in config | Simple toggle that's always visible |
+| Results disappear on recalculate | Save and compare versions |
+
+---
+
+## Prioritized Gaps
+
+Based on the workflow analysis:
+
+| Priority | Gap | Why |
+|----------|-----|-----|
+| **1** | **Compare Mode** | Core of the workflow - can't make decisions without comparing |
+| **2** | **"All options" overview** | Users want to see landscape before diving deep |
+| **3** | **Prominent related/unrelated toggle** | Fundamental to every calculation |
+| **4** | **Save & iterate** | Support the natural back-and-forth of decision making |
+| **5** | **Export/share** | Get results to stakeholders |
+| **6** | **Cost estimation helper** | Nice to have, but users can work around it |
+
+---
+
+## Recommended Improvements
+
+### High Priority
+
+1. **Compare Mode**
+   - Save current calculation as "Option A"
+   - Run another, save as "Option B"
+   - Side-by-side view with key metrics
+   - Highlight differences
+
+2. **Options Overview**
+   - New starting view: "Here are 6 ways to structure this"
+   - High-level comparison: payment type, IP ownership, risk profile
+   - Click to explore any option in detail
+
+3. **Perspective Toggle**
+   - Move related/unrelated toggle to top-level
+   - Make it visible throughout the workflow
+   - Clear indicator of which mode you're in
+
+### Medium Priority
+
+4. **Save & Iterate**
+   - Save calculation state
+   - Track versions/history
+   - "What changed?" diff view
+
+5. **Export/Share**
+   - PDF summary of comparison
+   - Client-friendly view
+   - Internal decision document
+
+### Lower Priority
+
+6. **Cost Estimation Helper**
+   - Simple: hours × rate calculator
+   - Optional - users can skip if they know their cost
 
 ---
 
 ## Next Steps
 
-- [ ] Prioritize which gaps to address
-- [ ] Design solutions for top priorities
-- [ ] Update roadmap
+- [ ] Design Compare Mode UX
+- [ ] Prototype "All Options" overview
+- [ ] Move perspective toggle to prominent position
+- [ ] Update roadmap with new priorities
