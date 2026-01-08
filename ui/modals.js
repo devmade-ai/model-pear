@@ -152,6 +152,35 @@ function handleModalKeydown(event) {
 // Add keyboard event listener
 if (typeof document !== 'undefined') {
     document.addEventListener('keydown', handleModalKeydown);
+
+    // Set up modal close handlers when DOM is ready
+    const setupModalCloseHandlers = () => {
+        const modal = document.getElementById('tooltipModal');
+        const closeBtn = document.getElementById('tooltipCloseBtn');
+
+        // Close on backdrop click
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                // Only close if clicking the backdrop itself, not the modal content
+                if (e.target === modal) {
+                    closeTooltipModal();
+                }
+            });
+        }
+
+        // Close on button click
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                closeTooltipModal();
+            });
+        }
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupModalCloseHandlers);
+    } else {
+        setupModalCloseHandlers();
+    }
 }
 
 /**
