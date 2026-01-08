@@ -799,22 +799,50 @@ function calculateDeveloperPerspective(inputs, variant, taxParams) {
             totalCost: licenceBackCosts,
             termYears: inputs.licenceBackTerm || 5
         } : null,
+        // For results-display.js compatibility
+        asset: {
+            recognised: carryingValue > 0,
+            reason: carryingValue > 0
+                ? 'Development costs were capitalised under IAS 38 and derecognised on sale'
+                : 'No intangible asset was recognised - costs expensed'
+        },
         revenue: {
+            total: totalRevenue, // For results-display.js compatibility
             saleProceeds: effectiveSalePrice,
             ongoingRevenue: ongoingRevenue.totalRevenue,
             totalRevenue: totalRevenue,
             recognitionTiming: ongoingRevenue.totalRevenue > 0 ? 'point-in-time-and-over-time' : 'point-in-time',
             recognitionBasis: ongoingRevenue.totalRevenue > 0
                 ? 'Sale at point of transfer; support over time'
-                : 'Full recognition at point of transfer'
+                : 'Full recognition at point of transfer',
+            breakdown: {
+                saleProceeds: effectiveSalePrice,
+                supportRevenue: ongoingRevenue.totalRevenue
+            }
+        },
+        // For results-display.js compatibility
+        costs: {
+            total: carryingValue + ongoingRevenue.totalCosts + warrantyProvision + licenceBackCosts,
+            breakdown: {
+                assetCarryingValue: carryingValue,
+                supportCosts: ongoingRevenue.totalCosts,
+                warrantyProvision: warrantyProvision,
+                licenceBackCosts: licenceBackCosts
+            }
         },
         profit: {
+            gross: totalProfit, // For results-display.js compatibility
+            margin: totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0, // For results-display.js compatibility
+            net: netProfitAfterTax, // For results-display.js compatibility
             saleGain: gainOnSale,
             supportMargin: ongoingRevenue.totalRevenue - ongoingRevenue.totalCosts,
             totalProfit: totalProfit,
             netProfitAfterTax: netProfitAfterTax
         },
         tax: {
+            taxableIncome: totalProfit, // For results-display.js compatibility
+            corporateTaxRate: taxRate, // For results-display.js compatibility
+            taxPayable: totalTax, // For results-display.js compatibility
             assetClassification: inputs.assetClassification || 'capital-asset',
             cgtInclusionRate: isCapitalAsset ? cgtInclusion * 100 : null,
             taxOnSale: taxOnSale,
@@ -1060,11 +1088,17 @@ function calculateBuyerPerspective(inputs, variant, taxParams) {
         } : null,
         asset: {
             recognised: capitalisedAmount > 0,
+            capitalised: capitalisedAmount, // For results-display.js compatibility
+            expensed: ongoingCosts.totalCost, // For results-display.js compatibility (ongoing costs are expensed)
+            section11eType: inputs.section11eType || 'pc-2yr', // For results-display.js compatibility
             amount: capitalisedAmount,
             usefulLife: usefulLife,
             amortisationMethod: 'straight-line',
             annualAmortisation: annualAmortisation,
             schedule: schedule
+        },
+        expenses: {
+            schedule: schedule // For results-display.js compatibility (amortisation schedule)
         },
         tax: {
             section11eYears: section11eYears,
@@ -1073,7 +1107,8 @@ function calculateBuyerPerspective(inputs, variant, taxParams) {
             timingDifference: timingDifference,
             deferredTaxAsset: deferredTax > 0 ? deferredTax : 0,
             deferredTaxLiability: deferredTax < 0 ? Math.abs(deferredTax) : 0,
-            annualTaxBenefit: taxDeduction * taxRate
+            annualTaxBenefit: taxDeduction * taxRate,
+            taxBenefit: taxDeduction * taxRate // For results-display.js compatibility
         },
         ongoingCosts: ongoingCosts,
         licenceBack: variant.saleType === 'licence-back' ? {
@@ -1088,7 +1123,8 @@ function calculateBuyerPerspective(inputs, variant, taxParams) {
             securitiesTransferTax: securitiesTransferTax,
             accountingTreatment: 'Acquisition accounting - allocate purchase price to identifiable assets'
         } : null,
-        totalCost: {
+        totalCost: totalCashPaid, // For results-display.js compatibility (direct value)
+        totalCostDetails: {
             purchasePrice: salePrice,
             ongoingCosts: ongoingCosts.totalCost,
             securitiesTransferTax: securitiesTransferTax,
@@ -1190,8 +1226,8 @@ function calculateCombinedPerspective(developer, buyer, entityConfig, inputs, va
     const supportMargin = developer.profit.supportMargin || 0;
     const totalProfitToEliminate = saleGain + supportMargin;
 
-    // Asset efficiency
-    const totalCashExchanged = buyer.totalCost.totalCashPaid;
+    // Asset efficiency - use buyer.totalCost directly (now a number)
+    const totalCashExchanged = buyer.totalCost;
     const finalAssetValue = buyer.asset.amount;
     const assetEfficiency = totalCashExchanged > 0 ?
         (finalAssetValue / totalCashExchanged) * 100 : 0;
@@ -1200,24 +1236,32 @@ function calculateCombinedPerspective(developer, buyer, entityConfig, inputs, va
     const consolidatedAsset = isConsolidated ?
         Math.max(0, finalAssetValue - saleGain) : finalAssetValue;
 
+    // Group tax cost calculation
+    const groupTaxCost = developer.tax.totalTax - (buyer.tax.annualTaxBenefit * buyer.tax.section11eYears);
+
     return {
         elimination: {
             required: isConsolidated && totalProfitToEliminate > 0,
+            profitEliminated: totalProfitToEliminate, // For results-display.js compatibility
             saleGain: saleGain,
             supportMargin: supportMargin,
             totalProfitEliminated: totalProfitToEliminate,
             assetWriteDown: saleGain > 0 ? saleGain : 0,
+            assetAdjustment: saleGain > 0 ? saleGain : 0, // For results-display.js compatibility
             journalEntry: isConsolidated && totalProfitToEliminate > 0 ? {
                 debit: { account: 'Retained Earnings / Gain on Sale', amount: totalProfitToEliminate },
-                credit: { account: 'Intangible Asset', amount: totalProfitToEliminate }
+                credit: { account: 'Intangible Asset', amount: totalProfitToEliminate },
+                credit2: { account: 'Cost of Sales', amount: 0 }
             } : null
         },
         assetEfficiency: {
+            developerAsset: developer.development.carryingValueAtSale, // For results-display.js compatibility
             developerCarryingValue: developer.development.carryingValueAtSale,
             buyerAsset: finalAssetValue,
             groupAsset: consolidatedAsset,
+            duplication: 0, // For results-display.js compatibility
             totalCashExchanged: totalCashExchanged,
-            efficiencyRatio: assetEfficiency,
+            efficiencyRatio: assetEfficiency / 100, // For results-display.js compatibility (as decimal)
             efficiencyAssessment: assetEfficiency >= 80 ?
                 'High efficiency - majority capitalised' :
                 assetEfficiency >= 50 ?
@@ -1239,14 +1283,17 @@ function calculateCombinedPerspective(developer, buyer, entityConfig, inputs, va
             cleanTransfer: true
         },
         cashFlow: {
+            developerNetCash: developer.cashFlow.saleProceeds + developer.cashFlow.ongoingInflows - developer.tax.totalTax, // For results-display.js compatibility
+            buyerNetCash: buyer.cashFlow.totalOutflow + (buyer.tax.annualTaxBenefit * buyer.tax.section11eYears), // For results-display.js compatibility
             developerTotalInflow: developer.cashFlow.saleProceeds + developer.cashFlow.ongoingInflows,
             buyerTotalOutflow: buyer.cashFlow.totalOutflow,
             netIntercompany: 0,
+            groupNetCash: developer.profit.net, // For results-display.js compatibility
             externalImpact: developer.cashFlow.licenceBackOutflows || 0
         },
         valueCreation: {
             totalDeveloperRevenue: developer.revenue.totalRevenue,
-            totalBuyerCost: buyer.totalCost.totalCashPaid,
+            totalBuyerCost: buyer.totalCost,
             developerProfit: developer.profit.totalProfit,
             buyerAssetAcquired: finalAssetValue,
             consolidatedAsset: consolidatedAsset
@@ -1254,14 +1301,15 @@ function calculateCombinedPerspective(developer, buyer, entityConfig, inputs, va
         taxPosition: {
             developerTax: developer.tax.totalTax,
             buyerTaxBenefit: buyer.tax.annualTaxBenefit * buyer.tax.section11eYears,
-            netTaxCost: developer.tax.totalTax - (buyer.tax.annualTaxBenefit * buyer.tax.section11eYears),
+            netTaxCost: groupTaxCost,
             timing: 'Developer tax immediate; Buyer benefit over Section 11(e) period'
         },
         metrics: {
             totalTransactionValue: totalCashExchanged,
+            groupTaxCost: groupTaxCost, // For results-display.js compatibility
             developerMargin: developer.profit.totalProfit > 0 ?
                 (developer.profit.totalProfit / developer.revenue.totalRevenue) * 100 : 0,
-            buyerCapitalisationRatio: buyer.totalCost.capitalisationRatio,
+            buyerCapitalisationRatio: buyer.totalCostDetails.capitalisationRatio,
             combinedTaxRate: developer.revenue.totalRevenue > 0 ?
                 (developer.tax.totalTax / developer.revenue.totalRevenue) * 100 : 0
         }
@@ -1337,13 +1385,24 @@ function assessTransferPricing(inputs, variant, developer) {
         recommendation = 'Obtain independent valuation and document business rationale thoroughly';
     }
 
+    // For results-display.js compatibility
+    const withinRange = markup >= 10 && markup <= 100;
+
     return {
+        // For results-display.js compatibility - top-level properties
+        margin: markup,
+        method: 'comparable-uncontrolled-price',
+        withinRange: withinRange,
+        benchmarkRange: {
+            low: 10,
+            high: 100
+        },
+        // Original detailed properties
         salePrice: {
             amount: salePrice,
             carryingValue: carryingValue,
             markup: markup,
-            assessment: markup >= 10 && markup <= 100 ?
-                'Within acceptable range' : 'Outside typical range - document basis'
+            assessment: withinRange ? 'Within acceptable range' : 'Outside typical range - document basis'
         },
         supportFees: variant.saleType === 'with-maintenance' || variant.saleType === 'with-support-updates' ? {
             annualFee: inputs.annualMaintenanceFee || inputs.annualSupportFee || 0,

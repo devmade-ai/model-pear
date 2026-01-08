@@ -923,6 +923,10 @@ function calculateDeveloperPerspective(inputs, variant, transferDetails, taxPara
             developmentCapitalised: capitalisedAmount
         },
         asset: {
+            recognised: capitalisedAmount > 0, // For results-display.js compatibility
+            reason: capitalisedAmount > 0
+                ? 'Development costs capitalised under IAS 38 during build phase'
+                : 'No intangible asset recognised - costs expensed', // For results-display.js compatibility
             initialCarryingValue: capitalisedAmount,
             usefulLife: amortisationPeriod,
             annualAmortisation: annualAmortisation,
@@ -950,13 +954,30 @@ function calculateDeveloperPerspective(inputs, variant, transferDetails, taxPara
             details: transferDetails.details
         },
         revenue: {
+            total: totalRevenue, // For results-display.js compatibility
             totalServiceRevenue: totalServiceRevenue,
             transferProceeds: transferPrice,
             totalRevenue: totalRevenue,
             recognitionTiming: 'over-time-and-point',
-            recognitionBasis: 'Service revenue over time, transfer at point of transfer'
+            recognitionBasis: 'Service revenue over time, transfer at point of transfer',
+            breakdown: {
+                serviceRevenue: totalServiceRevenue,
+                transferProceeds: transferPrice
+            }
+        },
+        // For results-display.js compatibility
+        costs: {
+            total: researchCost + developmentCost + totalOperatingCosts,
+            breakdown: {
+                research: researchCost,
+                development: developmentCost,
+                operating: totalOperatingCosts
+            }
         },
         profit: {
+            gross: totalProfit, // For results-display.js compatibility
+            margin: totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0, // For results-display.js compatibility
+            net: netProfitAfterTax, // For results-display.js compatibility
             grossOperatingProfit: totalServiceRevenue - totalOperatingCosts,
             operatingProfitAfterAmort: operatingProfit,
             transferGain: transferGain,
@@ -964,6 +985,9 @@ function calculateDeveloperPerspective(inputs, variant, transferDetails, taxPara
             netProfitAfterTax: netProfitAfterTax
         },
         tax: {
+            taxableIncome: operatingProfit + transferGain, // For results-display.js compatibility
+            corporateTaxRate: taxRate, // For results-display.js compatibility
+            taxPayable: totalTax, // For results-display.js compatibility
             taxableOperatingProfit: operatingProfit,
             taxOnOperatingProfit: taxOnOperatingProfit,
             transferGain: transferGain,
@@ -1071,12 +1095,18 @@ function calculateBuyerPerspective(inputs, variant, transferDetails, taxParams) 
         },
         asset: {
             recognised: assetRecognised > 0,
+            capitalised: assetRecognised, // For results-display.js compatibility
+            expensed: totalServiceFees, // For results-display.js compatibility (service fees are expensed)
+            section11eType: inputs.section11eType || 'pc-2yr', // For results-display.js compatibility
             amount: assetRecognised,
             recognitionMonth: assetRecognitionMonth,
             usefulLife: usefulLife,
             amortisationMethod: 'straight-line',
             annualAmortisation: annualAmortisation,
             schedule: schedule
+        },
+        expenses: {
+            schedule: schedule // For results-display.js compatibility (amortisation schedule)
         },
         tax: {
             section11eYears: section11eYears,
@@ -1085,9 +1115,11 @@ function calculateBuyerPerspective(inputs, variant, transferDetails, taxParams) 
             timingDifference: timingDifference,
             deferredTaxAsset: deferredTax > 0 ? deferredTax : 0,
             deferredTaxLiability: deferredTax < 0 ? Math.abs(deferredTax) : 0,
-            annualTaxBenefit: taxDepreciation * taxRate
+            annualTaxBenefit: taxDepreciation * taxRate,
+            taxBenefit: taxDepreciation * taxRate // For results-display.js compatibility
         },
-        totalCost: {
+        totalCost: totalCashPaid, // For results-display.js compatibility (direct value)
+        totalCostDetails: {
             serviceFees: totalServiceFees,
             transferPrice: transferDetails.price,
             optionPremium: inputs.optionPremium || 0,
@@ -1125,8 +1157,8 @@ function calculateCombinedPerspective(developer, buyer, entityConfig, inputs, tr
     const transferGain = developer.transfer.gainOnTransfer;
     const totalProfitToEliminate = serviceProfit + transferGain;
 
-    // Asset efficiency
-    const totalCashExchanged = buyer.totalCost.totalCashPaid;
+    // Asset efficiency - use totalCost directly (now a number) or totalCostDetails
+    const totalCashExchanged = buyer.totalCost;
     const finalAssetValue = buyer.asset.amount;
     const assetEfficiency = totalCashExchanged > 0 ?
         (finalAssetValue / totalCashExchanged) * 100 : 0;
@@ -1134,55 +1166,67 @@ function calculateCombinedPerspective(developer, buyer, entityConfig, inputs, tr
     // Asset position over time
     const assetTimeline = generateAssetTimeline(inputs, developer, buyer, transferDetails);
 
+    // Group tax cost calculation
+    const groupTaxCost = developer.tax.totalTax - (buyer.tax.annualTaxBenefit * 5);
+
     return {
         elimination: {
             required: isConsolidated && totalProfitToEliminate > 0,
+            profitEliminated: totalProfitToEliminate, // For results-display.js compatibility
             serviceProfit: serviceProfit,
             transferGain: transferGain,
             totalProfitEliminated: totalProfitToEliminate,
             assetWriteDown: transferGain,  // Buyer's asset reduced by Developer's gain
+            assetAdjustment: transferGain, // For results-display.js compatibility
             journalEntry: isConsolidated && totalProfitToEliminate > 0 ? {
                 debit: { account: 'Retained Earnings / Revenue', amount: totalProfitToEliminate },
-                credit: { account: 'Intangible Asset / Deferred Income', amount: totalProfitToEliminate }
+                credit: { account: 'Intangible Asset / Deferred Income', amount: totalProfitToEliminate },
+                credit2: { account: 'Cost of Sales', amount: 0 }
             } : null
         },
         assetEfficiency: {
+            developerAsset: developer.asset.carryingValueAtTransfer, // For results-display.js compatibility
             developerAssetAtTransfer: developer.asset.carryingValueAtTransfer,
             buyerAsset: finalAssetValue,
             groupAsset: isConsolidated ?
                 finalAssetValue - transferGain : finalAssetValue,
+            duplication: 0, // For results-display.js compatibility
             totalCashExchanged: totalCashExchanged,
-            efficiencyRatio: assetEfficiency,
+            efficiencyRatio: assetEfficiency / 100, // For results-display.js compatibility (as decimal)
             efficiencyAssessment: assetEfficiency >= 50 ?
                 'Acceptable - significant portion capitalised' :
                 'Low efficiency - majority expensed during operation'
         },
         assetTimeline: assetTimeline,
         cashFlow: {
+            developerNetCash: developer.cashFlow.operatingInflows + developer.cashFlow.transferInflow - developer.tax.totalTax, // For results-display.js compatibility
+            buyerNetCash: buyer.cashFlow.totalOutflow + (buyer.tax.annualTaxBenefit * 5), // For results-display.js compatibility
             developerTotalInflow: developer.cashFlow.operatingInflows +
                 developer.cashFlow.transferInflow,
             buyerTotalOutflow: buyer.cashFlow.totalOutflow,
             netIntercompany: 0,  // Nets to zero on consolidation
+            groupNetCash: developer.profit.net, // For results-display.js compatibility
             externalImpact: developer.cashFlow.developmentOutflow +
                 developer.cashFlow.operatingOutflows
         },
         valueCreation: {
             totalDeveloperRevenue: developer.revenue.totalRevenue,
-            totalBuyerCost: buyer.totalCost.totalCashPaid,
+            totalBuyerCost: buyer.totalCost,
             developerProfit: developer.profit.totalProfit,
             consolidatedAsset: isConsolidated ?
                 finalAssetValue - transferGain : finalAssetValue,
             valueShift: {
                 whenBuyerGetsAsset: buyer.transfer.month ?
                     `Month ${buyer.transfer.month}` : 'No transfer',
-                deferralCostEstimate: buyer.totalCost.serviceFees * 0.1  // Rough estimate
+                deferralCostEstimate: buyer.totalCostDetails.serviceFees * 0.1  // Rough estimate
             }
         },
         metrics: {
             totalTransactionValue: totalCashExchanged,
+            groupTaxCost: groupTaxCost, // For results-display.js compatibility
             developerMargin: developer.operation.operatingMargin,
-            buyerCapitalisationRatio: buyer.totalCost.capitalisationRatio,
-            groupTaxImpact: developer.tax.totalTax - buyer.tax.annualTaxBenefit * 5
+            buyerCapitalisationRatio: buyer.totalCostDetails.capitalisationRatio,
+            groupTaxImpact: groupTaxCost
         }
     };
 }
@@ -1291,12 +1335,23 @@ function assessTransferPricing(inputs, variant, transferDetails, developer) {
         recommendation = 'Review pricing - consider independent valuation or restructure';
     }
 
+    // For results-display.js compatibility
+    const withinRange = operatingMargin >= 5 && operatingMargin <= 15;
+
     return {
+        // For results-display.js compatibility - top-level properties
+        margin: operatingMargin,
+        method: 'cost-plus',
+        withinRange: withinRange,
+        benchmarkRange: {
+            low: 5,
+            high: 15
+        },
+        // Original detailed properties
         serviceFee: {
             margin: operatingMargin,
             benchmarkRange: '5-15%',
-            assessment: operatingMargin >= 5 && operatingMargin <= 15 ?
-                'Within range' : 'Outside typical range'
+            assessment: withinRange ? 'Within range' : 'Outside typical range'
         },
         transferPrice: {
             method: variant.transferMethod,

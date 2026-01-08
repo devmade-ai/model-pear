@@ -9,6 +9,62 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Critical Fix: Intercompany Model 4 & 5 Calculation Error
+
+**Date**: January 8, 2026
+**Impact**: Fixed "Cannot read properties of undefined (reading 'total')" error when calculating BOT or Software Sale transactions
+
+**Issue**: When users selected Model-4 (Build-Operate-Transfer) or Model-5 (Software Sale with Ongoing Support) and clicked "Calculate Transaction", the application showed both a success message and an error: `Calculation error: Cannot read properties of undefined (reading 'total')`.
+
+**Root Cause**: Inconsistent property naming between the model calculation returns and what `results-display.js` expected:
+
+| Property | Expected by UI | Model-4 Had | Model-5 Had |
+|----------|---------------|-------------|-------------|
+| `dev.revenue.total` | Yes | `dev.revenue.totalRevenue` | `dev.revenue.totalRevenue` |
+| `dev.costs.total` | Yes | (no costs object) | (no costs object) |
+| `dev.profit.gross` | Yes | `dev.profit.totalProfit` | `dev.profit.totalProfit` |
+| `dev.tax.taxPayable` | Yes | `dev.tax.totalTax` | `dev.tax.totalTax` |
+| `buyer.totalCost` (number) | Yes | `buyer.totalCost` (object) | `buyer.totalCost` (object) |
+
+**Fix**: Added compatibility properties to both Model-4 and Model-5 to match the expected interface:
+
+**Developer Perspective Changes**:
+- Added `revenue.total` as alias for total revenue
+- Added `revenue.breakdown` object for component visibility
+- Added new `costs` object with `costs.total` and `costs.breakdown`
+- Added `profit.gross`, `profit.margin`, `profit.net` aliases
+- Added `tax.taxableIncome`, `tax.corporateTaxRate`, `tax.taxPayable` aliases
+- Added `asset.recognised` and `asset.reason` for asset display
+
+**Buyer Perspective Changes**:
+- Changed `totalCost` from object to direct value (number)
+- Moved detailed cost breakdown to `totalCostDetails` object
+- Added `asset.capitalised`, `asset.expensed`, `asset.section11eType`
+- Added `expenses.schedule` for amortisation display
+- Added `tax.taxBenefit` alias
+
+**Combined Perspective Changes**:
+- Updated references from `buyer.totalCost.xxx` to `buyer.totalCostDetails.xxx`
+- Added `elimination.profitEliminated` alias
+- Added `assetEfficiency.developerAsset`, `assetEfficiency.duplication`
+- Added `cashFlow.developerNetCash`, `cashFlow.buyerNetCash`, `cashFlow.groupNetCash`
+- Added `metrics.groupTaxCost` alias
+- Fixed `efficiencyRatio` to be a decimal (0-1) as expected by UI
+
+**Transfer Pricing Assessment Changes**:
+- Added top-level `margin`, `method`, `withinRange` properties
+- Added `benchmarkRange` as object with `low` and `high` properties
+
+**Files Modified**:
+- `models/intercompany/model-4-bot.js` (developer, buyer, combined perspectives + transfer pricing)
+- `models/intercompany/model-5-software-sale.js` (developer, buyer, combined perspectives + transfer pricing)
+
+**Result**: Model-4 (BOT) and Model-5 (Software Sale) now calculate and display results correctly across all three perspectives (Developer, Buyer, Combined).
+
+**Technical Note**: The fix maintains backward compatibility - original property names are preserved alongside the new compatibility aliases.
+
+---
+
 ### UI/UX Enhancement: Default Mode & Comprehensive Tooltips
 
 **Date**: January 8, 2026
