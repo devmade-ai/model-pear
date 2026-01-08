@@ -411,27 +411,27 @@ This document outlines the phased implementation plan for integrating the Financ
 ---
 
 ## Phase 11: Stage 2 - Range Selections & Sensitivity
-**Status:** Not Started
+**Status:** Completed
 **Estimated Sessions:** 3-4
-**Dependencies:** Phases 2-10
+**Dependencies:** Phases 2-10 (Completed)
 
 ### 11.1 Range Input Framework
-- [ ] Design range input UI component
-- [ ] Low / Base / High input mode
-- [ ] Slider-based range selection
-- [ ] Apply to key inputs across all models
+- [x] Design range input UI component
+- [x] Low / Base / High input mode
+- [x] Slider-based range selection
+- [x] Apply to key inputs across all models
 
 ### 11.2 Sensitivity Calculations
-- [ ] Best case / Base case / Worst case scenarios
-- [ ] Break-even analysis calculations
-- [ ] Input sensitivity ranking
-- [ ] Monte Carlo simulation (optional)
+- [x] Best case / Base case / Worst case scenarios
+- [x] Break-even analysis calculations
+- [x] Input sensitivity ranking
+- [x] Monte Carlo simulation (optional)
 
 ### 11.3 Sensitivity Visualisations
-- [ ] Tornado chart (input sensitivity)
-- [ ] Fan chart (projection ranges)
-- [ ] Break-even analysis chart
-- [ ] Range bars on comparison charts
+- [x] Tornado chart (input sensitivity)
+- [x] Fan chart (projection ranges)
+- [x] Break-even analysis chart
+- [x] Range bars on comparison charts
 
 ---
 
@@ -567,6 +567,8 @@ Phase 13 (Polish)
 | 2026-01-08 | Phase 6 | Completed - Model 5 (Software Sale) with all 8 variants (5A-5H) fully implemented | Claude |
 | 2026-01-08 | Phase 8 | Completed - Structure Selector wizard with decision tree and variant recommendations | Claude |
 | 2026-01-08 | Phase 9 | Completed - Compliance Analyzer with TP risk scoring, accounting summaries, tax analysis, and checklists | Claude |
+| 2026-01-08 | Phase 10 | Completed - Advanced Visualizations with cross-model comparison, timeline, and risk charts | Claude |
+| 2026-01-08 | Phase 11 | Completed - Range Selections & Sensitivity Analysis with scenarios, tornado charts, break-even, and Monte Carlo | Claude |
 
 ---
 
