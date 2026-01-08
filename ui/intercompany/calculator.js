@@ -26,6 +26,12 @@ let sensitivityData = null;  // Cached sensitivity analysis results
 let lastInputRanges = null;  // Cached input ranges for sensitivity analysis
 let projectionData = null;   // Cached projection data
 
+// Store bound event handlers for cleanup
+let boundClickHandler = null;
+let boundCalcClickHandler = null;
+let boundSensitivityClickHandler = null;
+let currentContainer = null;
+
 // ========== INITIALIZATION ==========
 
 /**
@@ -55,6 +61,9 @@ export function destroyIntercompanyCalculator() {
     unsubscribers.forEach(fn => fn());
     unsubscribers = [];
 
+    // Remove event listeners
+    removeEventListeners();
+
     // Cleanup compliance, visualizations, sensitivity, and projections modules
     destroyComplianceAnalyzer();
     destroyAdvancedVisualizations();
@@ -65,6 +74,33 @@ export function destroyIntercompanyCalculator() {
     sensitivityData = null;
     lastInputRanges = null;
     projectionData = null;
+    currentContainer = null;
+}
+
+/**
+ * Remove event listeners from container to prevent accumulation
+ */
+function removeEventListeners() {
+    if (!currentContainer) return;
+
+    if (boundClickHandler) {
+        currentContainer.removeEventListener('click', boundClickHandler);
+        boundClickHandler = null;
+    }
+    if (boundCalcClickHandler) {
+        const calcBtn = currentContainer.querySelector('#calculateIntercompanyBtn');
+        if (calcBtn) {
+            calcBtn.removeEventListener('click', boundCalcClickHandler);
+        }
+        boundCalcClickHandler = null;
+    }
+    if (boundSensitivityClickHandler) {
+        const sensitivityBtn = currentContainer.querySelector('#runSensitivityBtn');
+        if (sensitivityBtn) {
+            sensitivityBtn.removeEventListener('click', boundSensitivityClickHandler);
+        }
+        boundSensitivityClickHandler = null;
+    }
 }
 
 // ========== RENDER FUNCTIONS ==========
@@ -548,8 +584,14 @@ function renderInputField(input, modelId) {
 // ========== EVENT HANDLERS ==========
 
 function setupEventListeners(container) {
-    // Main tab navigation
-    container.addEventListener('click', (e) => {
+    // Remove any existing listeners first to prevent accumulation
+    removeEventListeners();
+
+    // Store reference to current container
+    currentContainer = container;
+
+    // Create bound handler for click events (event delegation)
+    boundClickHandler = (e) => {
         const mainTabBtn = e.target.closest('.main-tab-btn');
         if (mainTabBtn) {
             const newTab = mainTabBtn.dataset.mainTab;
@@ -597,18 +639,23 @@ function setupEventListeners(container) {
             handleVariantSelect(variantId, container);
             return;
         }
-    });
+    };
+
+    // Add the main click handler
+    container.addEventListener('click', boundClickHandler);
 
     // Calculate button
     const calcBtn = container.querySelector('#calculateIntercompanyBtn');
     if (calcBtn) {
-        calcBtn.addEventListener('click', () => handleCalculate(container));
+        boundCalcClickHandler = () => handleCalculate(container);
+        calcBtn.addEventListener('click', boundCalcClickHandler);
     }
 
     // Sensitivity button
     const sensitivityBtn = container.querySelector('#runSensitivityBtn');
     if (sensitivityBtn) {
-        sensitivityBtn.addEventListener('click', () => handleRunSensitivity(container));
+        boundSensitivityClickHandler = () => handleRunSensitivity(container);
+        sensitivityBtn.addEventListener('click', boundSensitivityClickHandler);
     }
 }
 

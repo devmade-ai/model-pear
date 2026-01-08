@@ -9,6 +9,13 @@ import { DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from '../../models/intercom
 
 let isExpanded = false;
 
+// Store bound event handlers for cleanup
+let boundChangeHandler = null;
+let boundInputHandler = null;
+let boundToggleHandler = null;
+let boundResetHandler = null;
+let currentContainer = null;
+
 // ========== INITIALIZATION ==========
 
 /**
@@ -312,11 +319,47 @@ function renderEntityConfigPanel(container) {
 
 // ========== EVENT HANDLERS ==========
 
+/**
+ * Remove event listeners from container to prevent accumulation
+ */
+function removeEventListeners() {
+    if (!currentContainer) return;
+
+    if (boundChangeHandler) {
+        currentContainer.removeEventListener('change', boundChangeHandler);
+        boundChangeHandler = null;
+    }
+    if (boundInputHandler) {
+        currentContainer.removeEventListener('input', boundInputHandler);
+        boundInputHandler = null;
+    }
+    if (boundToggleHandler) {
+        const toggleBtn = currentContainer.querySelector('#entityConfigToggle');
+        if (toggleBtn) {
+            toggleBtn.removeEventListener('click', boundToggleHandler);
+        }
+        boundToggleHandler = null;
+    }
+    if (boundResetHandler) {
+        const resetBtn = currentContainer.querySelector('#resetEntityConfigBtn');
+        if (resetBtn) {
+            resetBtn.removeEventListener('click', boundResetHandler);
+        }
+        boundResetHandler = null;
+    }
+}
+
 function setupEventListeners(container) {
+    // Remove any existing listeners first to prevent accumulation
+    removeEventListeners();
+
+    // Store reference to current container
+    currentContainer = container;
+
     // Toggle collapse/expand
     const toggleBtn = container.querySelector('#entityConfigToggle');
     if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
+        boundToggleHandler = () => {
             isExpanded = !isExpanded;
             const content = container.querySelector('#entityConfigContent');
             const chevron = container.querySelector('#entityConfigChevron');
@@ -328,17 +371,21 @@ function setupEventListeners(container) {
                 chevron.classList.toggle('rotate-180', isExpanded);
             }
             toggleBtn.setAttribute('aria-expanded', isExpanded);
-        });
+        };
+        toggleBtn.addEventListener('click', boundToggleHandler);
     }
 
     // Handle input changes
-    container.addEventListener('change', handleInputChange);
-    container.addEventListener('input', debounce(handleInputChange, 300));
+    boundChangeHandler = handleInputChange;
+    boundInputHandler = debounce(handleInputChange, 300);
+    container.addEventListener('change', boundChangeHandler);
+    container.addEventListener('input', boundInputHandler);
 
     // Reset button
     const resetBtn = container.querySelector('#resetEntityConfigBtn');
     if (resetBtn) {
-        resetBtn.addEventListener('click', handleReset);
+        boundResetHandler = handleReset;
+        resetBtn.addEventListener('click', boundResetHandler);
     }
 }
 
