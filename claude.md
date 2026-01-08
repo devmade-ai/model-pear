@@ -282,11 +282,12 @@ riskScore =
 
 ## Entity Configuration
 
-The tool is pre-configured for **South African group companies**. These defaults represent the most common scenario and are selected to:
+The tool is pre-configured for **South African companies** doing inter-company transactions. These defaults:
 - Reduce setup time for typical users
-- Ensure transfer pricing rules apply automatically
-- Enable proper consolidation accounting treatment
+- Ensure transfer pricing rules apply automatically (related parties = true)
 - Activate compliance scoring and documentation checklists
+
+**Note**: Consolidation is NOT assumed by default. Users must explicitly enable `sameGroup` and `consolidationRequired` if applicable.
 
 ```javascript
 DEFAULT_ENTITY_CONFIG = {
@@ -307,13 +308,13 @@ DEFAULT_ENTITY_CONFIG = {
   },
   relationship: {
     relatedParties: true,                // Inter-company = related parties by definition
-    sameGroup: true,                     // Common ownership/control assumed
-    consolidationRequired: true          // Triggers intercompany profit elimination
+    sameGroup: false,                    // User must specify if same group
+    consolidationRequired: false         // User must specify if consolidation applies
   }
 }
 ```
 
-**Why consolidation matters**: When `consolidationRequired: true`, the developer's profit margin is eliminated from the group's capitalised asset. This reflects the true cost to the group rather than an inflated intercompany value.
+**When to enable consolidation**: Check `sameGroup` and `consolidationRequired` if both entities are in a consolidated group. This triggers intercompany profit elimination in the Combined perspective.
 
 See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#default-entity-configuration)** for detailed explanations of each setting.
 

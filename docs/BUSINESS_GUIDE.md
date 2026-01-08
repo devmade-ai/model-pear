@@ -591,13 +591,12 @@ When you first load the Inter-Company Tool, several settings are pre-selected. T
 
 ### Why Defaults Are Pre-Selected
 
-The tool is designed for **South African group companies** structuring inter-company software transactions. The defaults represent the **most common scenario**: two related South African entities in the same group that need to consolidate their financial statements.
+The tool is designed for **South African companies** structuring inter-company software transactions. The defaults are configured to:
+- Reduce setup time for typical users
+- Ensure transfer pricing rules are automatically applied (since inter-company = related parties)
+- Activate compliance scoring and documentation checklists
 
-Pre-selecting these defaults:
-- Reduces setup time for typical users
-- Ensures transfer pricing rules are automatically applied
-- Enables proper consolidation accounting treatment
-- Activates compliance scoring and documentation checklists
+**Note**: Consolidation settings (`Same Group`, `Consolidation Required`) are **not** pre-selected. Users must explicitly enable these if their entities prepare consolidated financial statements together.
 
 ### Entity Settings
 
@@ -659,26 +658,26 @@ Pre-selecting these defaults:
 
 **When to change**: Generally should remain checked. If entities are truly unrelated, this tool may not be appropriate—standard commercial pricing applies.
 
-#### Same Group: Checked
+#### Same Group: Unchecked
 
 | Setting | Default | Why |
 |---------|---------|-----|
-| **Same Group** | ✓ Checked | Assumes both entities have common ownership/control |
+| **Same Group** | ☐ Unchecked | Not all related party transactions are within a consolidated group |
 
 **What it affects**:
-- Enables consolidation accounting treatment
-- Triggers intercompany profit elimination logic
+- When checked: Indicates entities are under common ownership/control
+- Enables consolidation accounting treatment options
 - Affects combined perspective calculations
 
-**When to change**: Uncheck if entities are associated but not consolidated (e.g., joint venture with outside partners where you don't consolidate).
+**When to check**: Enable if both entities are part of the same corporate group (e.g., parent-subsidiary, common parent).
 
-#### Consolidation Required: Checked
+#### Consolidation Required: Unchecked
 
 | Setting | Default | Why |
 |---------|---------|-----|
-| **Consolidation Required** | ✓ Checked | Most group transactions require consolidated financial statements |
+| **Consolidation Required** | ☐ Unchecked | Not all inter-company transactions require consolidated accounts |
 
-**What it affects**:
+**What it affects when checked**:
 - **Intercompany profit elimination**: Developer's profit margin is eliminated from the group's capitalised asset value
 - **Combined perspective journal entries**: Shows elimination entries for consolidation
 - **Group asset efficiency**: Asset values reflect true cost to the group, not inflated by internal markups
@@ -689,7 +688,7 @@ Pre-selecting these defaults:
 - **With consolidation**: Group asset = R800,000 (R80,000 profit eliminated)
 - **Without consolidation**: Group asset = R880,000 (no elimination)
 
-**When to change**: Uncheck if you're analysing entities that don't prepare consolidated accounts (rare for typical users of this tool).
+**When to check**: Enable if your group prepares consolidated financial statements that include both entities.
 
 ### Summary: Default Settings at a Glance
 
@@ -701,8 +700,8 @@ Pre-selecting these defaults:
 | **SA Tax Resident** | ✓ Both entities | Subject to SARS rules |
 | **Section 11(e) Type** | PC (2-year) | Accelerated depreciation for PC software |
 | **Related Parties** | ✓ Checked | Inter-company by definition |
-| **Same Group** | ✓ Checked | Common control assumed |
-| **Consolidation Required** | ✓ Checked | Group accounts required |
+| **Same Group** | ☐ Unchecked | User must specify if consolidated group |
+| **Consolidation Required** | ☐ Unchecked | User must specify if consolidation applies |
 
 ### Changing Defaults
 
