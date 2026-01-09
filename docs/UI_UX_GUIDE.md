@@ -629,7 +629,7 @@ Features:
 │  Cost      │  R 880,000  │  R 850,000  │  -R 30,000 ▼              │
 │  Asset     │  R 880,000  │  R 750,000  │  -R 130,000 ▼             │
 └────────────┴─────────────┴─────────────┴───────────────────────────┘
-│  Legend: [■ Best] [■ Worst]        [Export JSON] [Export CSV]       │
+│  Legend: [■ Best] [■ Worst]   [🖨️ Print/PDF] [Export JSON] [CSV]    │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -655,13 +655,13 @@ Planned UI/UX improvements:
 1. **Dark/Light Mode Toggle**: User preference for theme
 2. **Hover Tooltips**: Show info on hover (in addition to click)
 3. **Undo/Redo**: History navigation for inputs
-4. **PDF Export**: Formal report generation (CSV/JSON export already available)
-5. **Guided Tour**: First-time user walkthrough
+4. **Guided Tour**: First-time user walkthrough
 
 **Recently Implemented:**
 - ✅ **Save/Load**: Compare Mode with local storage for saved options
 - ✅ **Export**: JSON and CSV export from Compare Mode
 - ✅ **Options Overview**: Visual model selection grid
+- ✅ **Print/PDF Export**: Print-friendly styles with browser Print-to-PDF support
 
 ---
 
@@ -725,6 +725,8 @@ Each error message includes a 💡 suggestion for how to fix it
   - Import from JSON file
   - Storage info display (count, size, max limit)
   - Maximum 20 saved options in localStorage
+  - **Print/PDF export**: Print button with print-friendly CSS styles
+  - Comparison view formatted for A4 landscape PDF output
 
 #### Changed
 - Default view changed from Wizard to Options Overview

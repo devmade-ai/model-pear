@@ -548,7 +548,10 @@ From the Comparison Manager:
 - **Export JSON**: Full data export for backup or sharing
 - **Export CSV**: Spreadsheet-compatible format for Excel/Google Sheets
 
-The comparison view also has export buttons for the current comparison.
+From the Comparison View:
+- **Print / PDF**: Opens print dialog for saving as PDF or printing directly
+- **Export JSON**: Export only the compared options
+- **Export CSV**: Export comparison data to spreadsheet
 
 #### Import Options
 
@@ -1113,7 +1116,11 @@ Always validate results against your specific circumstances.
 2. Open the Comparison Manager (click "View Saved")
 3. Click "Export JSON" or "Export CSV"
 
-PDF export for formal reports is planned for future releases.
+**For PDF Export:**
+1. Open the Comparison View (select 2+ options and click Compare)
+2. Click the "Print / PDF" button in the toolbar
+3. In your browser's print dialog, select "Save as PDF" as the destination
+4. The comparison table is formatted for professional presentation
 
 ---
 

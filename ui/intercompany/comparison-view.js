@@ -323,6 +323,156 @@ export const comparisonViewStyles = `
             min-width: 120px;
         }
     }
+
+    /* Print styles for PDF export */
+    @media print {
+        /* Hide everything except the comparison view content */
+        body * {
+            visibility: hidden;
+        }
+
+        .comparison-view-overlay,
+        .comparison-view-overlay * {
+            visibility: visible;
+        }
+
+        .comparison-view-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white !important;
+            padding: 0;
+        }
+
+        .comparison-view-panel {
+            max-width: 100%;
+            max-height: none;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            background: white !important;
+        }
+
+        .comparison-view-header {
+            background: white !important;
+            border-bottom: 2px solid #333;
+            padding: 0.5rem 0;
+        }
+
+        .comparison-view-title {
+            color: #000 !important;
+            font-size: 1.5rem;
+        }
+
+        /* Hide close button and toolbar buttons in print */
+        .comparison-view-close,
+        .comparison-view-toolbar {
+            display: none !important;
+        }
+
+        .comparison-view-content {
+            padding: 1rem 0;
+            overflow: visible;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ccc;
+            padding: 0.5rem;
+            background: white !important;
+            color: #000 !important;
+        }
+
+        .comparison-table th {
+            background: #f0f0f0 !important;
+            font-weight: bold;
+        }
+
+        .comparison-table .section-header td {
+            background: #e0e0e0 !important;
+            font-weight: bold;
+            color: #333 !important;
+        }
+
+        .comparison-table .positive {
+            color: #059669 !important;
+        }
+
+        .comparison-table .negative {
+            color: #dc2626 !important;
+        }
+
+        .comparison-table .highlight-best {
+            background: #d1fae5 !important;
+        }
+
+        .comparison-table .highlight-worst {
+            background: #fee2e2 !important;
+        }
+
+        .option-badge {
+            background: #e5e7eb !important;
+            color: #374151 !important;
+            border: 1px solid #9ca3af;
+        }
+
+        .comparison-view-footer {
+            border-top: 1px solid #ccc;
+            padding: 0.5rem 0;
+            background: white !important;
+        }
+
+        .comparison-view-legend {
+            color: #374151 !important;
+        }
+
+        .legend-color.best {
+            background: #d1fae5 !important;
+            border-color: #059669 !important;
+        }
+
+        .legend-color.worst {
+            background: #fee2e2 !important;
+            border-color: #dc2626 !important;
+        }
+
+        /* Hide warnings in print - or style them appropriately */
+        .comparison-warnings {
+            padding: 0 0 0.5rem 0;
+        }
+
+        .comparison-warning {
+            background: #fef3c7 !important;
+            border: 1px solid #d97706 !important;
+            color: #92400e !important;
+            page-break-inside: avoid;
+        }
+
+        .comparison-warning.info {
+            background: #dbeafe !important;
+            border-color: #2563eb !important;
+            color: #1e40af !important;
+        }
+
+        .comparison-warning.error {
+            background: #fee2e2 !important;
+            border-color: #dc2626 !important;
+            color: #991b1b !important;
+        }
+
+        /* Page setup */
+        @page {
+            size: A4 landscape;
+            margin: 1cm;
+        }
+    }
 `;
 
 // ========== COMPONENT STATE ==========
@@ -490,6 +640,9 @@ function render() {
 
                 <!-- Toolbar -->
                 <div class="comparison-view-toolbar">
+                    <button class="comparison-view-btn" id="printComparison" title="Print or save as PDF">
+                        <span>🖨️</span> Print / PDF
+                    </button>
                     <button class="comparison-view-btn" id="exportComparisonJSON">
                         <span>📥</span> Export JSON
                     </button>
@@ -740,6 +893,12 @@ function handleClick(e) {
         return;
     }
 
+    // Print button
+    if (target.closest('#printComparison')) {
+        handlePrint();
+        return;
+    }
+
     // Export buttons
     if (target.closest('#exportComparisonJSON')) {
         handleExportJSON();
@@ -780,6 +939,11 @@ function handleExportCSV() {
 
     downloadAsCSV(comparisons, `comparison-${comparisons.length}-options.csv`);
     showToast('Comparison exported as CSV', 'success');
+}
+
+function handlePrint() {
+    // Trigger browser print dialog - users can select "Save as PDF" from there
+    window.print();
 }
 
 // ========== HELPERS ==========
