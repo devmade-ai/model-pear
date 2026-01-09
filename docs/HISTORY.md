@@ -9,6 +9,52 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### UI/UX Terminology Standardization
+
+**Date**: January 9, 2026
+**Impact**: Improved clarity and consistency throughout the user interface
+
+**Changes Made**:
+
+**Terminology Standardization**:
+- Perspectives now consistently use "Your Company", "Client", and "Combined View"
+- Removed confusing dual naming ("Net Effect"/"Shareholder") for the combined perspective
+- Input categories renamed to "Your Company Costs" and "Client Treatment"
+
+**Navigation Improvements**:
+- Renamed "Visualizations" tab to "Charts" for clarity
+- Renamed "Sensitivity" tab to "What-If" for better user understanding
+- Renamed "Direct" selection mode to "Manual"
+- Changed "Explore" button to "Select Model" for clearer action
+- Changed Compliance tab emoji from ✓ to ⚖️
+
+**Tax Terminology**:
+- Modernized Section 11(e) labels from "PC Software (2 years)"/"Mainframe Software (5 years)" to "Standard Software (2-year write-off)"/"Complex Systems (5-year write-off)"
+- Added clearer help text explaining when to use each tax write-off option
+
+**Party Selector**:
+- Improved wording for related/independent party selection
+- Made transfer pricing warning generic (not SA-specific)
+- Removed perspective count badges that were causing confusion
+
+**Keyboard Shortcuts**:
+- Changed Combined View shortcut from `S` to `C`
+- Removed `M` shortcut for toggling mutual ownership (use UI toggle instead)
+
+**Files Modified**:
+- `ui/intercompany/perspective-toggle.js`
+- `ui/intercompany/party-selector.js`
+- `ui/intercompany/calculator.js`
+- `ui/intercompany/options-overview.js`
+- `ui/intercompany/results-display.js`
+- `ui/intercompany/compliance-analyzer.js`
+- `models/intercompany/model-1-cost-plus.js` through `model-6-saas-subscription.js`
+- `app.js`
+- `docs/UI_UX_GUIDE.md`
+- `docs/BUSINESS_GUIDE.md`
+
+---
+
 ### Critical Fix: Intercompany Model 4 & 5 Calculation Error
 
 **Date**: January 8, 2026

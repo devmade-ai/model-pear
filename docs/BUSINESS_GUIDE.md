@@ -344,13 +344,9 @@ The tool operates in two distinct modes:
 
 ## Perspective Analysis
 
-The tool analyses every transaction from two core perspectives, with a third perspective available when you have ownership in both parties.
+The tool analyses every transaction from three perspectives to help you understand the full financial impact.
 
-### When Independent Parties (2 Perspectives)
-
-When the developer and buyer are unrelated parties, each party only cares about their own position:
-
-#### Developer Perspective
+### Your Company Perspective
 **Focus**: Revenue recognition, costs, profitability, tax position
 
 **Key Outputs**:
@@ -360,7 +356,7 @@ When the developer and buyer are unrelated parties, each party only cares about 
 - Income tax liability
 - Asset position (if IP retained)
 
-#### Buyer Perspective
+### Client Perspective
 **Focus**: Asset recognition, amortisation, deductibility, cash flow
 
 **Key Outputs**:
@@ -370,27 +366,23 @@ When the developer and buyer are unrelated parties, each party only cares about 
 - Deferred tax position
 - Total cost of ownership
 
-### When Related Parties / Mutual Ownership (3 Perspectives)
-
-When you are a shareholder in BOTH the developer and buyer companies, a third perspective becomes relevant:
-
-#### Shareholder Perspective (Your Overall Position)
-**Focus**: What's best for YOU as the person who owns both entities
+### Combined View
+**Focus**: Net financial impact across both entities
 
 **Key Questions**:
-- "Should I price high (profit sits in developer) or low (profit sits in buyer)?"
-- "Which side has better tax treatment for me?"
-- "Where do I WANT the profit to land?"
-- "What's my total outcome across both entities?"
+- "What's the total transaction value?"
+- "How are assets distributed between parties?"
+- "What's the combined tax position?"
+- "Which structure benefits the overall arrangement most?"
 
 **Key Outputs**:
 - Total profit across both entities
 - Combined tax position
-- Overall cash flow to you
-- Transfer pricing risk assessment
-- Which structure benefits you most
+- Overall cash flow impact
+- Transfer pricing risk assessment (for related parties)
+- Asset distribution summary
 
-**Important**: This is NOT about group accounting consolidation or IFRS elimination entries. It's about your personal financial outcome as a shareholder in both companies.
+**Note**: When parties are related (mutual ownership), transfer pricing rules apply and this view becomes especially important for understanding your overall financial position.
 
 ---
 
@@ -420,9 +412,9 @@ Each model is displayed as a card showing:
 - **Payment Type**: How payments are structured
 - **IP Ownership**: Who owns the intellectual property
 
-#### Explore a Model
+#### Select a Model
 
-Click the "Explore →" button on any card to:
+Click the "Select Model →" button on any card to:
 1. Select that model in the calculator
 2. View available variants
 3. Enter your specific values
@@ -845,33 +837,32 @@ The tool is designed for **South African companies** structuring inter-company s
 
 **When to change**: Generally should remain checked. If entities are truly unrelated, this tool may not be appropriate—standard commercial pricing applies.
 
-#### Mutual Ownership (Related Parties): Unchecked
+#### Related Parties Setting: Unchecked
 
 | Setting | Default | Why |
 |---------|---------|-----|
-| **Mutual Ownership** | ☐ Unchecked | Only check if you have ownership in both entities |
+| **Related Parties** | ☐ Unchecked | Only check if there's common ownership/control between entities |
 
 **What it affects**:
-- When checked: Enables the Shareholder Perspective (your overall position)
-- Shows what's best for YOU across both entities
-- Activates transfer pricing compliance requirements
+- When checked: Activates transfer pricing compliance requirements
+- Shows Combined View with transfer pricing risk assessment
 - Enables arm's length benchmark validation
 
-**When to check**: Enable if you are a shareholder in BOTH the developer and buyer companies.
+**When to check**: Enable if there is common ownership or control between your company and the client.
 
-**What the Shareholder Perspective shows** (when enabled):
-- Total profit across both your entities
-- Where profit should sit for optimal tax treatment
-- Your overall cash flow from both companies
-- Transfer pricing risk if SARS queries the arrangement
+**What the Combined View shows**:
+- Total profit across both entities
+- Asset distribution between parties
+- Combined tax position
+- Transfer pricing risk if tax authorities query the arrangement
 
 **Example** (Model 1 at 10% margin):
-- Developer charges R880,000 (R800,000 cost + R80,000 profit)
-- Developer profit: R80,000, tax: R21,600
-- Buyer capitalises R880,000, gets Section 11(e) deduction
-- **Shareholder view**: "My total profit is R80,000 minus R21,600 tax = R58,400. Is this the best structure for me?"
+- Your Company charges R880,000 (R800,000 cost + R80,000 profit)
+- Your Company profit: R80,000, tax: R21,600
+- Client capitalises R880,000, gets Section 11(e) deduction
+- **Combined View**: "Total profit is R80,000 minus R21,600 tax = R58,400. Is this the best structure?"
 
-**Important**: This is about YOUR personal financial outcome as shareholder, not group accounting consolidation.
+**Important**: When related parties are involved, transfer pricing rules require arm's length pricing to be documented and defensible.
 
 ### Summary: Default Settings at a Glance
 
@@ -881,8 +872,8 @@ The tool is designed for **South African companies** structuring inter-company s
 | **Accounting Framework** | IFRS | SA standard for groups |
 | **Corporate Tax Rate** | 27% | Current SA CIT rate |
 | **SA Tax Resident** | ✓ Both entities | Subject to SARS rules |
-| **Section 11(e) Type** | PC (2-year) | Accelerated depreciation for PC software |
-| **Mutual Ownership** | ☐ Unchecked | User must specify if they own both entities |
+| **Tax Write-Off Period** | Standard Software (2-year) | Accelerated depreciation for most software |
+| **Related Parties** | ☐ Unchecked | User must specify if common ownership exists |
 
 ### Changing Defaults
 

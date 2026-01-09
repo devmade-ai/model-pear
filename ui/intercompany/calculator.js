@@ -183,9 +183,9 @@ function renderCalculatorUI(container) {
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                ${activeMainTab === 'compliance' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
                         data-main-tab="compliance"
-                        title="Transfer pricing compliance and SARS risk analysis"
+                        title="Transfer pricing compliance and risk analysis"
                     >
-                        <span class="mr-1">✓</span> Compliance
+                        <span class="mr-1">⚖️</span> Compliance
                         <span class="help-icon cursor-help" data-tooltip="tab-compliance">i</span>
                     </button>
                     <button
@@ -194,8 +194,8 @@ function renderCalculatorUI(container) {
                         data-main-tab="visualizations"
                         title="Charts and visual analysis of results"
                     >
-                        <span class="mr-1">📊</span> Visualizations
-                        <span class="help-icon cursor-help" data-tooltip="tab-visualizations">i</span>
+                        <span class="mr-1">📊</span> Charts
+                        <span class="help-icon cursor-help" data-tooltip="tab-charts">i</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
@@ -203,8 +203,8 @@ function renderCalculatorUI(container) {
                         data-main-tab="sensitivity"
                         title="What-if analysis and scenario comparison"
                     >
-                        <span class="mr-1">📈</span> Sensitivity
-                        <span class="help-icon cursor-help" data-tooltip="tab-sensitivity">i</span>
+                        <span class="mr-1">📈</span> What-If
+                        <span class="help-icon cursor-help" data-tooltip="tab-whatif">i</span>
                     </button>
                     <button
                         class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
@@ -262,10 +262,10 @@ function renderCalculatorUI(container) {
                             id="modeDirectBtn"
                             class="selection-mode-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${selectionMode === 'direct' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'}"
                             data-mode="direct"
-                            title="Select model and variant directly"
+                            title="Manually select model and variant from dropdown lists"
                         >
-                            <span class="mr-1">📋</span> Direct
-                            <span class="help-icon cursor-help" data-tooltip="direct-mode">i</span>
+                            <span class="mr-1">📋</span> Manual
+                            <span class="help-icon cursor-help" data-tooltip="manual-mode">i</span>
                         </button>
                     </div>
                 </div>
@@ -727,8 +727,8 @@ function renderInputForm(modelId, variantId) {
     const categoryOrder = ['transaction', 'developer', 'buyer', 'tax', 'other'];
     const categoryLabels = {
         transaction: { label: 'Transaction Details', icon: '📋' },
-        developer: { label: 'Developer Inputs', icon: '💻' },
-        buyer: { label: 'Buyer Inputs', icon: '🏢' },
+        developer: { label: 'Your Company Costs', icon: '💻' },
+        buyer: { label: 'Client Treatment', icon: '🏢' },
         tax: { label: 'Tax Parameters', icon: '💰' },
         other: { label: 'Other', icon: '📁' }
     };

@@ -100,15 +100,15 @@ const BASE_INPUTS = [
     },
     {
         name: 'section11eType',
-        label: 'Section 11(e) Classification',
+        label: 'Tax Write-Off Period',
         type: 'select',
         default: 'pc-2yr',
         options: [
-            { value: 'pc-2yr', label: 'PC Software (2 years)' },
-            { value: 'mainframe-5yr', label: 'Mainframe Software (5 years)' }
+            { value: 'pc-2yr', label: 'Standard Software (2-year write-off)' },
+            { value: 'mainframe-5yr', label: 'Complex Systems (5-year write-off)' }
         ],
         category: 'tax',
-        hint: 'SARS accelerated depreciation classification'
+        hint: 'Section 11(e) tax depreciation. Most software qualifies for 2-year treatment. Select 5-year only for mainframe/complex enterprise systems.'
     },
 
     // Tax Parameters

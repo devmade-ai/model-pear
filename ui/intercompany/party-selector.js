@@ -14,26 +14,24 @@ export const RELATIONSHIP_TYPES = {
         id: 'independent',
         name: 'Independent Parties',
         icon: '🤝',
-        description: 'Developer & Buyer are unrelated',
+        description: 'Your Company & Client are unrelated',
         details: [
             'Standard arm\'s length transaction',
-            'No common ownership',
-            '2 perspectives: Your Company, Client'
+            'No common ownership or control',
+            'Market-based pricing applies'
         ],
-        perspectiveCount: 2,
         color: 'blue'
     },
     related: {
         id: 'related',
         name: 'Related Parties',
         icon: '🔗',
-        description: 'Mutual ownership between entities',
+        description: 'Common ownership or control between entities',
         details: [
-            'You hold shares in BOTH entities',
+            'Entities share common ownership or control',
             'Transfer pricing rules apply',
-            '3 perspectives: Your Company, Client, Shareholder'
+            'Arm\'s length pricing required'
         ],
-        perspectiveCount: 3,
         color: 'purple'
     }
 };
@@ -95,12 +93,6 @@ export function renderPartySelector(container) {
                             `).join('')}
                         </ul>
 
-                        <div class="mt-4 ml-12 flex items-center gap-2 text-sm ${currentType === type.id ? `text-${type.color}-300` : 'text-gray-500'}">
-                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-${type.color}-600/30 text-xs font-bold">
-                                ${type.perspectiveCount}
-                            </span>
-                            <span>perspective${type.perspectiveCount > 1 ? 's' : ''} available</span>
-                        </div>
 
                         ${currentType === type.id ? `
                             <div class="absolute top-3 right-3">
@@ -123,8 +115,8 @@ export function renderPartySelector(container) {
                         <h4 class="font-medium text-yellow-300">Transfer Pricing Applies</h4>
                         <p class="text-sm text-yellow-200/80 mt-1">
                             Related party transactions must comply with arm's length principles.
-                            SARS scrutinizes pricing between connected entities. Ensure your transaction
-                            pricing is defensible and documented.
+                            Tax authorities scrutinize pricing between connected entities. Ensure your
+                            transaction pricing is defensible and documented.
                         </p>
                     </div>
                 </div>

@@ -486,7 +486,7 @@ function renderAccountingSummary(entityType, data) {
                     </div>
                     ${entityType === 'Buyer' && data.tax?.section11eType ? `
                         <div class="text-xs text-gray-500">
-                            Section 11(e): ${data.tax.section11eType === 'pc-2yr' ? 'PC Software (2 years)' : 'Mainframe (5 years)'}
+                            Tax Write-Off: ${data.tax.section11eType === 'pc-2yr' ? 'Standard Software (2 years)' : 'Complex Systems (5 years)'}
                         </div>
                     ` : ''}
                     ${(data.tax?.deferredTax?.asset > 0 || data.tax?.deferredTax?.liability > 0) ? `

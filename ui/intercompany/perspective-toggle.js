@@ -15,7 +15,7 @@ export const PERSPECTIVES = {
         id: 'developer',
         name: 'Your Company',
         icon: '💻',
-        description: 'Revenue, costs, profit, and tax position for your software company',
+        description: 'Revenue, costs, profit, and tax position for your company',
         color: 'blue',
         shortcut: 'D',
         alwaysAvailable: true
@@ -31,15 +31,12 @@ export const PERSPECTIVES = {
     },
     combined: {
         id: 'combined',
-        name: 'Net Effect',
-        nameRelated: 'Shareholder',
+        name: 'Combined View',
         icon: '⚖️',
-        iconRelated: '👤',
-        description: 'Combined financial impact for both parties to inform your decision',
-        descriptionRelated: 'Your combined position as shareholder in both entities. Shows the net effect on your ownership.',
+        description: 'Combined financial impact across both entities to inform your decision',
         color: 'purple',
-        shortcut: 'S',
-        alwaysAvailable: true  // Always available but label changes based on relationship
+        shortcut: 'C',
+        alwaysAvailable: true
     }
 };
 
@@ -56,19 +53,6 @@ export function getAvailablePerspectives() {
 export function getPerspectiveDisplayInfo(perspectiveId) {
     const perspective = PERSPECTIVES[perspectiveId];
     if (!perspective) return null;
-
-    const isRelated = arePartiesRelated();
-
-    // For the combined perspective, adjust name/icon/description based on relationship
-    if (perspectiveId === 'combined') {
-        return {
-            ...perspective,
-            name: isRelated ? perspective.nameRelated : perspective.name,
-            icon: isRelated ? perspective.iconRelated : perspective.icon,
-            description: isRelated ? perspective.descriptionRelated : perspective.description
-        };
-    }
-
     return perspective;
 }
 
@@ -92,13 +76,13 @@ export function renderPerspectiveToggle(container) {
                 <span class="text-xl">👁️</span>
                 <div>
                     <h3 class="text-sm font-medium text-gray-200">Viewing as</h3>
-                    <p class="text-xs text-gray-400">${isRelated ? 'Related Parties (3 perspectives)' : 'Independent Parties (2 perspectives)'}</p>
+                    <p class="text-xs text-gray-400">${isRelated ? 'Related Parties' : 'Independent Parties'}</p>
                 </div>
             </div>
             <div class="text-xs text-gray-500 hidden md:block">
                 Keyboard: <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400">D</kbd>
                 <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400 ml-1">B</kbd>
-                <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400 ml-1">S</kbd>
+                <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400 ml-1">C</kbd>
             </div>
         </div>
 
@@ -267,18 +251,8 @@ function setupKeyboardShortcuts(container) {
                 setPerspective('buyer');
                 e.preventDefault();
                 break;
-            case 'S':
+            case 'C':
                 setPerspective('combined');
-                e.preventDefault();
-                break;
-            case 'M':
-                // Toggle mutual ownership (related parties)
-                const state = getState();
-                const isCurrentlyRelated = state.entities?.relationship?.relatedParties === true;
-                // Import not available here, so use updateState directly
-                import('../../state/app-state.js').then(({ setRelationshipType }) => {
-                    setRelationshipType(!isCurrentlyRelated);
-                });
                 e.preventDefault();
                 break;
         }
