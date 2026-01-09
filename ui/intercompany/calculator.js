@@ -7,7 +7,8 @@
 
 import {
     getState, subscribe, selectIntercompanyModel, selectVariant, setIntercompanyResults, setCalculating,
-    initializeComparisons, saveComparison, getComparisons, setSaveModalOpen, setComparisonViewOpen
+    initializeComparisons, saveComparison, getComparisons, setSaveModalOpen, setComparisonViewOpen,
+    setActiveComparisons
 } from '../../state/app-state.js';
 import { getModelMetadata, getModelVariants, getVariantInputs, calculateIntercompany, DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from '../../models/intercompany/registry.js';
 import { initPerspectiveToggle } from './perspective-toggle.js';
@@ -16,6 +17,8 @@ import { initEntityConfig } from './entity-config.js';
 import { initStructureSelector } from './structure-selector.js';
 import { initPartySelector, partySelectorStyles } from './party-selector.js';
 import { initOptionsOverview, destroyOptionsOverview, optionsOverviewStyles } from './options-overview.js';
+import { initComparisonManager, destroyComparisonManager, showComparisonManager, comparisonManagerStyles } from './comparison-manager.js';
+import { initComparisonView, destroyComparisonView, showComparisonView, comparisonViewStyles } from './comparison-view.js';
 import { initComplianceAnalyzer, destroyComplianceAnalyzer } from './compliance-analyzer.js';
 import { initAdvancedVisualizations, destroyAdvancedVisualizations } from './advanced-visualizations.js';
 import { initRangeInputControls, renderRangeInputField, setupRangeSliders, gatherRangeValues, isRangeModeActive, getRangeInputState, getRangeInputStyles } from './range-input.js';
@@ -109,6 +112,10 @@ export function destroyIntercompanyCalculator() {
     if (overviewSection) {
         destroyOptionsOverview(overviewSection);
     }
+
+    // Cleanup comparison manager and view
+    destroyComparisonManager();
+    destroyComparisonView();
 
     // Cleanup compliance, visualizations, sensitivity, and projections modules
     destroyComplianceAnalyzer();
@@ -411,12 +418,26 @@ function renderCalculatorUI(container) {
             </div>
         </div>
 
+        <!-- Comparison Manager Panel (hidden by default) -->
+            <div id="comparisonManagerContainer" class="hidden">
+                <!-- Comparison manager will be rendered here -->
+            </div>
+
+            <!-- Comparison View Panel (hidden by default) -->
+            <div id="comparisonViewContainer" class="hidden">
+                <!-- Comparison view will be rendered here -->
+            </div>
+
         <!-- Range Input Styles -->
         <style>${getRangeInputStyles()}</style>
         <!-- Party Selector Styles -->
         <style>${partySelectorStyles}</style>
         <!-- Options Overview Styles -->
         <style>${optionsOverviewStyles}</style>
+        <!-- Comparison Manager Styles -->
+        <style>${comparisonManagerStyles}</style>
+        <!-- Comparison View Styles -->
+        <style>${comparisonViewStyles}</style>
     `;
 
     // Add event listeners
@@ -501,6 +522,17 @@ function renderCalculatorUI(container) {
 
     // Initialize saved options UI (comparisons)
     initSavedOptionsUI(container);
+
+    // Initialize comparison manager and view
+    const comparisonManagerContainer = container.querySelector('#comparisonManagerContainer');
+    if (comparisonManagerContainer) {
+        initComparisonManager(comparisonManagerContainer);
+    }
+
+    const comparisonViewContainer = container.querySelector('#comparisonViewContainer');
+    if (comparisonViewContainer) {
+        initComparisonView(comparisonViewContainer);
+    }
 }
 
 /**
@@ -1251,17 +1283,18 @@ function handleConfirmSave(container) {
 }
 
 /**
- * Open the saved options panel (placeholder for future comparison-manager)
+ * Open the saved options panel
  */
 function handleViewSavedOptions(container) {
-    // For now, show a toast - full implementation comes in comparison-manager.js
-    const comparisons = getComparisons();
-    showToast(`You have ${comparisons.length} saved option${comparisons.length !== 1 ? 's' : ''}. Full comparison view coming soon!`, 'info');
-    setComparisonViewOpen(true);
+    const comparisonManagerContainer = container.querySelector('#comparisonManagerContainer');
+    if (comparisonManagerContainer) {
+        comparisonManagerContainer.classList.remove('hidden');
+        showComparisonManager();
+    }
 }
 
 /**
- * Open the comparison view (placeholder for future comparison-view)
+ * Open the comparison view
  */
 function handleCompareOptions(container) {
     const comparisons = getComparisons();
@@ -1269,9 +1302,17 @@ function handleCompareOptions(container) {
         showToast('Save at least 2 options to compare them side-by-side', 'info');
         return;
     }
-    // Placeholder - full implementation comes in comparison-view.js
-    showToast(`Compare mode with ${comparisons.length} options coming soon!`, 'info');
-    setComparisonViewOpen(true);
+
+    // Select all comparisons for side-by-side view (max 4)
+    const idsToCompare = comparisons.slice(0, 4).map(c => c.id);
+    setActiveComparisons(idsToCompare);
+
+    // Show comparison view
+    const comparisonViewContainer = container.querySelector('#comparisonViewContainer');
+    if (comparisonViewContainer) {
+        comparisonViewContainer.classList.remove('hidden');
+        showComparisonView(idsToCompare);
+    }
 }
 
 /**
