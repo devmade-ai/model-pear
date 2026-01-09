@@ -12,13 +12,15 @@
 4. [The 6 Transaction Models](#the-6-transaction-models)
 5. [The 3 Core Modules](#the-3-core-modules)
 6. [Perspective Analysis](#perspective-analysis)
-7. [Advanced Features](#advanced-features)
-8. [Common Scenarios & Examples](#common-scenarios--examples)
-9. [South African Tax Considerations](#south-african-tax-considerations)
-10. [Default Entity Configuration](#default-entity-configuration)
-11. [Transfer Pricing (When Applicable)](#transfer-pricing-when-applicable)
-12. [Glossary of Terms](#glossary-of-terms)
-13. [FAQ](#faq)
+7. [Options Overview](#options-overview)
+8. [Compare Mode](#compare-mode)
+9. [Advanced Features](#advanced-features)
+10. [Common Scenarios & Examples](#common-scenarios--examples)
+11. [South African Tax Considerations](#south-african-tax-considerations)
+12. [Default Entity Configuration](#default-entity-configuration)
+13. [Transfer Pricing (When Applicable)](#transfer-pricing-when-applicable)
+14. [Glossary of Terms](#glossary-of-terms)
+15. [FAQ](#faq)
 
 ---
 
@@ -389,6 +391,184 @@ When you are a shareholder in BOTH the developer and buyer companies, a third pe
 - Which structure benefits you most
 
 **Important**: This is NOT about group accounting consolidation or IFRS elimination entries. It's about your personal financial outcome as a shareholder in both companies.
+
+---
+
+## Options Overview
+
+The Options Overview is the default landing view when you open the Transaction Structuring Tool. It provides a visual grid showing all 6 transaction models at a glance.
+
+### Purpose
+
+**User Need**: "What are my options? Show me everything at once before I dive deep."
+
+The Options Overview helps you quickly understand:
+- What models are available
+- Key features of each model
+- Which situations each model is best suited for
+- IP ownership and payment structures
+
+### Using the Options Overview
+
+#### Model Cards
+
+Each model is displayed as a card showing:
+- **Icon & Name**: Visual identifier for the model
+- **Summary**: One-line description of what the model does
+- **Key Features**: 3-4 bullet points highlighting the main characteristics
+- **Best For**: Tags showing ideal use cases
+- **Payment Type**: How payments are structured
+- **IP Ownership**: Who owns the intellectual property
+
+#### Explore a Model
+
+Click the "Explore →" button on any card to:
+1. Select that model in the calculator
+2. View available variants
+3. Enter your specific values
+4. Calculate results
+
+#### Quick Comparison Table
+
+Below the cards, a compact table shows all 6 models side-by-side:
+
+| Model | IP Owner | Payment | Asset? | Risk |
+|-------|----------|---------|--------|------|
+| Dev Services | Buyer | Fee | Buyer: Yes | Low → |
+| Licence | Developer | Royalties | Buyer: Maybe | Medium |
+| Joint Dev | Shared | Cost share | Both: Yes | Shared |
+| BOT | Developer → Buyer | Phased | Buyer: Yes* | Medium |
+| Software Sale | Buyer | Once-off | Buyer: Yes | High → |
+| Subscription | Developer | Recurring | Buyer: No | Low → |
+
+#### Alternative Navigation
+
+If you prefer a guided approach, click "Use the guided wizard" at the bottom to answer questions and receive model recommendations.
+
+### View Mode Toggle
+
+Switch between three view modes using the toggle buttons:
+- **Overview**: Visual grid of all models (default)
+- **Wizard**: Guided question-based selection
+- **Direct**: Manual model and variant selection
+
+Your preferred view mode is saved and restored on return visits.
+
+---
+
+## Compare Mode
+
+Compare Mode allows you to save calculation results as named options and compare them side-by-side to make informed decisions.
+
+### Purpose
+
+**User Need**: "Show me these options side-by-side so I can see trade-offs."
+
+Compare Mode solves the problem of:
+- Results being ephemeral (lost when you change inputs)
+- Having to re-run the wizard and remember values
+- No easy way to compare different scenarios
+- Difficulty exporting results for stakeholders
+
+### Saving Options
+
+After calculating results for any model/variant combination:
+
+1. **Click "Save as Option"** in the results area
+2. **Enter a name** for this option (e.g., "Option A - Licence Model at 15%")
+3. **Add optional notes** to remember key assumptions
+4. **Click Save**
+
+Each saved option captures:
+- Model and variant selected
+- All input values used
+- Entity configuration at time of save
+- Tax parameters
+- Full calculation results
+- Current perspective view
+
+### Managing Saved Options
+
+Click "View Saved" to open the Comparison Manager panel:
+
+#### List View
+- See all saved options with name, timestamp, and key metrics
+- Each card shows: Developer Revenue, Developer Profit, Buyer Cost, Combined Net
+
+#### Actions
+- **Load**: Restore a saved option to the calculator (re-populates all inputs)
+- **Delete**: Remove an option (with confirmation)
+- **Rename**: Change the option name
+- **Edit Notes**: Update notes for any option
+
+#### Selection
+- Use checkboxes to select 2-4 options for comparison
+- Click "Compare Selected" to open the comparison view
+
+### Comparing Options
+
+The comparison view displays selected options in a side-by-side table:
+
+#### Metrics Compared
+
+| Category | Metrics |
+|----------|---------|
+| **Developer** | Revenue, Costs, Profit, Tax, Effective Margin |
+| **Buyer** | Total Cost, Asset Value, Tax Benefit |
+| **Combined/Net** | Net Cost, Combined Tax, Net Profit |
+| **Risk** | Transfer Pricing Risk Score |
+
+#### Visual Indicators
+
+- **Green cells**: Best value among options
+- **Red cells**: Worst value among options
+- **Difference column**: Shows +/- vs first option with arrows (▲ ▼)
+
+#### Example Comparison
+
+```
+┌────────────┬────────────┬────────────┬────────────────────┐
+│  Metric    │  Option A  │  Option B  │  Difference        │
+├────────────┼────────────┼────────────┼────────────────────┤
+│  DEVELOPER │            │            │                    │
+│  Revenue   │  R 850,000 │  R 950,000 │  +R 100,000 ▲      │
+│  Profit    │  R 200,000 │  R 180,000 │  -R 20,000 ▼       │
+├────────────┼────────────┼────────────┼────────────────────┤
+│  BUYER     │            │            │                    │
+│  Cost      │  R 850,000 │  R 950,000 │  +R 100,000 ▲      │
+│  Tax Ben   │  R 54,000  │  R 20,000  │  -R 34,000 ▼       │
+└────────────┴────────────┴────────────┴────────────────────┘
+```
+
+### Export & Import
+
+#### Export Options
+
+From the Comparison Manager:
+- **Export JSON**: Full data export for backup or sharing
+- **Export CSV**: Spreadsheet-compatible format for Excel/Google Sheets
+
+The comparison view also has export buttons for the current comparison.
+
+#### Import Options
+
+- **Import JSON**: Load previously exported options
+- Merge modes: Replace all, or merge with existing options
+
+### Storage
+
+- Options are stored in your browser's local storage
+- Maximum 20 options can be saved (to prevent storage overflow)
+- Storage is persistent across browser sessions
+- Data stays on your device - never uploaded anywhere
+
+### Tips for Effective Comparisons
+
+1. **Name options clearly**: Include model type and key variable (e.g., "Licence 10% royalty")
+2. **Use notes**: Record assumptions that aren't captured in the data
+3. **Compare similar timeframes**: Ensure options use comparable periods
+4. **Consider all perspectives**: Review Developer, Buyer, and Combined views
+5. **Export for stakeholders**: Use CSV export to share in presentations
 
 ---
 
@@ -916,12 +1096,24 @@ Always validate results against your specific circumstances.
 
 ### Q: Can I export results?
 
-**A**: Currently the tool provides:
+**A**: Yes! The tool provides several export options:
+
+**From Compare Mode:**
+- **JSON Export**: Full data backup with all saved options
+- **CSV Export**: Spreadsheet-compatible format for Excel/Google Sheets
+- **Import**: Load previously exported JSON files
+
+**From Results View:**
 - On-screen results and visualisations
 - Printable compliance checklists
 - Copy/paste capability for all outputs
 
-PDF export and formal report generation are planned for future releases.
+**How to Export:**
+1. Save your calculation results as an option (click "Save as Option")
+2. Open the Comparison Manager (click "View Saved")
+3. Click "Export JSON" or "Export CSV"
+
+PDF export for formal reports is planned for future releases.
 
 ---
 

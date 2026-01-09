@@ -56,6 +56,8 @@ Each model includes:
 - **Entity Configuration**: Customise your company & client settings
 - **Model Comparison**: Compare structures to find the best fit
 - **Tax Calculations**: Section 11(e), deferred tax, CGT
+- **Options Overview**: Visual grid showing all 6 models at a glance with key features
+- **Compare Mode**: Save calculations and compare up to 4 options side-by-side
 
 ### Both Modes
 - **South African Defaults**: Pre-configured for SA companies (IFRS, 27% tax). See [Default Entity Configuration](BUSINESS_GUIDE.md#default-entity-configuration) for full explanation of each setting.
@@ -65,6 +67,7 @@ Each model includes:
 - **Accessibility First**: Full keyboard navigation, ARIA support, screen reader friendly
 - **Mobile Optimized**: Responsive design with touch-friendly controls
 - **Real-time Validation**: Inline feedback as you type with helpful suggestions
+- **Export**: JSON and CSV export of saved comparisons
 
 ## Quick Start
 

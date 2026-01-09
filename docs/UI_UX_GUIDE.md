@@ -493,6 +493,161 @@ Consistent spacing scale using Tailwind's spacing system:
 
 ---
 
+## Options Overview
+
+The Options Overview provides a visual grid showing all 6 transaction models at a glance.
+
+### Layout
+
+```
+┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
+│ 💼 Development       │  │ 📜 Licence           │  │ 🤝 Joint Dev         │
+│    Services          │  │    with Royalties    │  │                      │
+│                      │  │                      │  │                      │
+│ [Key features...]    │  │ [Key features...]    │  │ [Key features...]    │
+│ [Best for tags]      │  │ [Best for tags]      │  │ [Best for tags]      │
+│                      │  │                      │  │                      │
+│ [Explore →]          │  │ [Explore →]          │  │ [Explore →]          │
+└──────────────────────┘  └──────────────────────┘  └──────────────────────┘
+```
+
+### Card Design
+
+Each model card includes:
+- **Icon**: Visual identifier (emoji)
+- **Name**: Model name as header
+- **Summary**: One-line description
+- **Key Features**: 3-4 bullet points
+- **Best For**: Tag badges showing ideal use cases
+- **Footer**: IP ownership, payment type, and variant count
+- **Action**: "Explore →" button
+
+### Quick Comparison Table
+
+Below the cards, a compact table shows all models side-by-side with columns for:
+- Model name
+- IP ownership
+- Payment type
+- Asset recognition
+- Risk profile
+
+### View Mode Toggle
+
+Three-way toggle for navigation preference:
+- **Overview**: Visual grid (default)
+- **Wizard**: Guided questions
+- **Direct**: Manual selection
+
+Toggle state persists in localStorage.
+
+### Responsive Design
+
+- **Desktop**: 3-column grid
+- **Tablet**: 2-column grid
+- **Mobile**: Single-column stack
+
+---
+
+## Compare Mode
+
+Compare Mode allows saving and comparing calculation results.
+
+### Save Modal
+
+```
+┌──────────────────────────────────────────────────────┐
+│  Save as Option                              [×]     │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│  Model: Development Services (1A)                    │
+│                                                      │
+│  Option Name:                                        │
+│  ┌────────────────────────────────────────────────┐  │
+│  │ Option A - Dev Services                        │  │
+│  └────────────────────────────────────────────────┘  │
+│                                                      │
+│  Notes (optional):                                   │
+│  ┌────────────────────────────────────────────────┐  │
+│  │ Assumptions: 10% margin, R2M dev cost          │  │
+│  │                                                │  │
+│  └────────────────────────────────────────────────┘  │
+│                                                      │
+│                    [Cancel]  [Save Option]           │
+└──────────────────────────────────────────────────────┘
+```
+
+### Save Actions Bar
+
+Appears in results area after successful calculation:
+- **Save as Option** button (always visible)
+- Saved options count badge
+- **View Saved** button (when 1+ saved)
+- **Compare** button (when 2+ saved)
+
+### Comparison Manager Panel
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Saved Options                                          [×]     │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │ ☐  Option A - Dev Services              2h ago   [⋮]    │   │
+│  │    Model 1A • Dev: R880K Rev • Buyer: R880K Cost        │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │ ☐  Option B - Licence                   1d ago   [⋮]    │   │
+│  │    Model 2A • Dev: R750K Rev • Buyer: R850K Cost        │   │
+│  └─────────────────────────────────────────────────────────┘   │
+├─────────────────────────────────────────────────────────────────┤
+│  [Compare Selected]  [Export JSON]  [Export CSV]  [Import]      │
+├─────────────────────────────────────────────────────────────────┤
+│  Storage: 2 of 20 options • 4.2 KB used                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+Features:
+- Checkbox selection for comparison
+- Relative timestamps
+- Key metrics preview
+- Actions menu (Load, Delete, Rename, Edit Notes)
+- Export/Import buttons
+- Storage info display
+
+### Comparison View
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  Compare Options                                             [×]     │
+├────────────┬─────────────┬─────────────┬───────────────────────────┤
+│  Metric    │  Option A   │  Option B   │  Difference               │
+├────────────┼─────────────┼─────────────┼───────────────────────────┤
+│  DEVELOPER │             │             │                           │
+│  Revenue   │  R 880,000  │  R 750,000  │  -R 130,000 ▼             │
+│  Profit    │  R 80,000   │  R 120,000  │  +R 40,000 ▲              │
+├────────────┼─────────────┼─────────────┼───────────────────────────┤
+│  BUYER     │             │             │                           │
+│  Cost      │  R 880,000  │  R 850,000  │  -R 30,000 ▼              │
+│  Asset     │  R 880,000  │  R 750,000  │  -R 130,000 ▼             │
+└────────────┴─────────────┴─────────────┴───────────────────────────┘
+│  Legend: [■ Best] [■ Worst]        [Export JSON] [Export CSV]       │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+Visual Indicators:
+- **Green background**: Best value in row
+- **Red background**: Worst value in row
+- **▲ Arrow**: Higher than first option
+- **▼ Arrow**: Lower than first option
+
+### Storage
+
+- Uses localStorage with key `model-pear-comparisons`
+- Maximum 20 saved options
+- Versioned format for future migrations
+- Auto-persists on every change
+
+---
+
 ## Future Enhancements
 
 Planned UI/UX improvements:
@@ -500,9 +655,13 @@ Planned UI/UX improvements:
 1. **Dark/Light Mode Toggle**: User preference for theme
 2. **Hover Tooltips**: Show info on hover (in addition to click)
 3. **Undo/Redo**: History navigation for inputs
-4. **Save/Load**: Local storage for calculation sessions
-5. **Export**: PDF/CSV export of results
-6. **Guided Tour**: First-time user walkthrough
+4. **PDF Export**: Formal report generation (CSV/JSON export already available)
+5. **Guided Tour**: First-time user walkthrough
+
+**Recently Implemented:**
+- ✅ **Save/Load**: Compare Mode with local storage for saved options
+- ✅ **Export**: JSON and CSV export from Compare Mode
+- ✅ **Options Overview**: Visual model selection grid
 
 ---
 
@@ -545,6 +704,31 @@ Each error message includes a 💡 suggestion for how to fix it
 ---
 
 ## Changelog
+
+### Version 2.5 (2026-01-09)
+
+#### Added
+- **Options Overview**: New default landing view showing all 6 models in a visual grid
+  - Model cards with icon, summary, key features, and best-for tags
+  - Quick comparison table showing all models side-by-side
+  - "Explore →" buttons to select models directly
+  - Three-way mode toggle: Overview / Wizard / Direct
+  - Mode preference persists in localStorage
+
+- **Compare Mode**: Save and compare calculation results
+  - "Save as Option" button in results area
+  - Save modal with name and notes fields
+  - Comparison Manager panel for viewing/managing saved options
+  - Side-by-side comparison view for 2-4 options
+  - Difference highlighting with best/worst indicators
+  - Export to JSON and CSV
+  - Import from JSON file
+  - Storage info display (count, size, max limit)
+  - Maximum 20 saved options in localStorage
+
+#### Changed
+- Default view changed from Wizard to Options Overview
+- Results area now shows save actions bar when results are available
 
 ### Version 2.4 (2026-01-09)
 
