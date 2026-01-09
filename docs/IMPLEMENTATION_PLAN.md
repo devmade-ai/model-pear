@@ -153,8 +153,8 @@ Add to comparison view:
 - [x] Add import functionality (load from JSON)
 - [x] Add clear all option with confirmation
 - [x] Update tab navigation to include Comparison tab (or use modal) - using modal approach
+- [x] Handle edge cases (missing data, incompatible comparisons) - warnings implemented
 - [ ] Test with various models/variants
-- [ ] Handle edge cases (missing data, incompatible comparisons)
 
 ---
 
@@ -962,8 +962,7 @@ This section consolidates all remaining optional work for easy reference in futu
 
 | Item | Priority | Effort | Notes |
 |------|----------|--------|-------|
-| Handle incompatible comparisons | Medium | Medium | Warn when comparing different model types or mismatched data |
-| Handle missing data gracefully | Medium | Low | Show placeholders or warnings for null/undefined values |
+| ~~Handle incompatible comparisons~~ | ~~Medium~~ | ~~Medium~~ | ✅ Warnings implemented for different models, perspectives, and missing data |
 | Edge case testing | Medium | Medium | Test with extreme values, empty states, storage limits |
 
 ### Testing
@@ -982,3 +981,43 @@ This section consolidates all remaining optional work for easy reference in futu
 4. Move completed items to session notes
 
 **Last Updated:** 2026-01-09
+
+---
+
+### Session: 2026-01-09 (Robustness Enhancement - Incompatible Comparisons)
+
+**What was implemented:**
+
+#### Comparison View Compatibility Warnings
+
+1. **Updated: `ui/intercompany/comparison-view.js`**
+   - Added `checkComparisonCompatibility(comparisons)` function that checks for:
+     - Different models being compared (warning)
+     - Different perspectives at time of save (info)
+     - Missing or incomplete calculation results (error)
+   - Added CSS styles for warning banners with severity levels (warning/info/error)
+   - Added `renderWarnings(warnings)` function to display warnings
+   - Warnings appear at the top of the comparison view, before the table
+
+**Warning Types:**
+| Type | Severity | Message |
+|------|----------|---------|
+| Different models | Warning | "Comparing different models (X, Y). Some metrics may not be directly comparable." |
+| Different perspectives | Info | "Options were saved from different perspectives. Results reflect the perspective at time of save." |
+| Missing data | Error | "X option(s) have missing or incomplete calculation results." |
+
+**Visual Design:**
+- Warning (amber): Different model types
+- Info (blue): Different perspectives
+- Error (red): Missing data
+
+**Notes:**
+- This is a focused enhancement that improves user experience when comparing options
+- Users are now informed when comparisons may not be meaningful
+- Error-level warnings indicate data issues that may need attention
+- Warnings don't block the comparison, just inform the user
+
+**Ready to proceed with:**
+- User testing of comparison warnings
+- Additional edge case handling as needed
+- Other optional enhancements from Future Work list

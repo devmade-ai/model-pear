@@ -263,6 +263,50 @@ export const comparisonViewStyles = `
         border: 1px solid #ef4444;
     }
 
+    /* Warning banners */
+    .comparison-warnings {
+        padding: 0 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .comparison-warning {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .comparison-warning.warning {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: #fbbf24;
+    }
+
+    .comparison-warning.info {
+        background: rgba(59, 130, 246, 0.15);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #60a5fa;
+    }
+
+    .comparison-warning.error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #f87171;
+    }
+
+    .comparison-warning-icon {
+        flex-shrink: 0;
+        font-size: 1rem;
+    }
+
+    .comparison-warning-text {
+        flex: 1;
+    }
+
     /* Mobile responsive */
     @media (max-width: 768px) {
         .comparison-view-panel {
@@ -286,6 +330,60 @@ export const comparisonViewStyles = `
 let containerElement = null;
 let unsubscriber = null;
 let comparisonIds = [];
+
+// ========== COMPATIBILITY HELPERS ==========
+
+/**
+ * Check if comparisons are compatible for meaningful comparison
+ * @param {Array} comparisons - Array of comparison objects
+ * @returns {Object} - Compatibility info with warnings
+ */
+function checkComparisonCompatibility(comparisons) {
+    if (!comparisons || comparisons.length < 2) {
+        return { compatible: true, warnings: [] };
+    }
+
+    const warnings = [];
+
+    // Check for different models
+    const modelIds = [...new Set(comparisons.map(c => c.modelId))];
+    if (modelIds.length > 1) {
+        const modelNames = modelIds.map(id => {
+            const meta = getModelMetadata(id);
+            return meta?.shortName || meta?.name || id;
+        });
+        warnings.push({
+            type: 'different-models',
+            severity: 'warning',
+            message: `Comparing different models (${modelNames.join(', ')}). Some metrics may not be directly comparable.`
+        });
+    }
+
+    // Check for different perspectives
+    const perspectives = [...new Set(comparisons.map(c => c.perspective))];
+    if (perspectives.length > 1) {
+        warnings.push({
+            type: 'different-perspectives',
+            severity: 'info',
+            message: `Options were saved from different perspectives. Results reflect the perspective at time of save.`
+        });
+    }
+
+    // Check for missing results data
+    const missingData = comparisons.filter(c => !c.results || Object.keys(c.results).length === 0);
+    if (missingData.length > 0) {
+        warnings.push({
+            type: 'missing-data',
+            severity: 'error',
+            message: `${missingData.length} option(s) have missing or incomplete calculation results.`
+        });
+    }
+
+    return {
+        compatible: warnings.filter(w => w.severity === 'error').length === 0,
+        warnings
+    };
+}
 
 // ========== INITIALIZATION ==========
 
@@ -372,6 +470,9 @@ function render() {
         return;
     }
 
+    // Check compatibility
+    const compatibility = checkComparisonCompatibility(comparisons);
+
     // Generate comparison summary
     const summary = generateComparisonSummary(comparisons);
 
@@ -396,6 +497,9 @@ function render() {
                         <span>📊</span> Export CSV
                     </button>
                 </div>
+
+                <!-- Warnings -->
+                ${renderWarnings(compatibility.warnings)}
 
                 <!-- Content -->
                 <div class="comparison-view-content">
@@ -444,6 +548,34 @@ function renderNoComparisons() {
                     <p style="color: #6b7280;">Select at least 2 saved options from the Saved Options panel to compare them side-by-side.</p>
                 </div>
             </div>
+        </div>
+    `;
+}
+
+function renderWarnings(warnings) {
+    if (!warnings || warnings.length === 0) {
+        return '';
+    }
+
+    const getIcon = (severity) => {
+        switch (severity) {
+            case 'error': return '❌';
+            case 'warning': return '⚠️';
+            case 'info': return 'ℹ️';
+            default: return 'ℹ️';
+        }
+    };
+
+    const warningsHtml = warnings.map(w => `
+        <div class="comparison-warning ${w.severity}">
+            <span class="comparison-warning-icon">${getIcon(w.severity)}</span>
+            <span class="comparison-warning-text">${escapeHtml(w.message)}</span>
+        </div>
+    `).join('');
+
+    return `
+        <div class="comparison-warnings">
+            ${warningsHtml}
         </div>
     `;
 }
