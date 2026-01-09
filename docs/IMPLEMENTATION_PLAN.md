@@ -937,3 +937,48 @@ All three phases from the implementation plan are now complete:
 - All core functionality is implemented and documented
 - Ready for user testing and feedback
 - Future sessions can focus on polish, testing, and user-requested enhancements
+
+---
+
+## Future Work (Optional Enhancements)
+
+This section consolidates all remaining optional work for easy reference in future sessions.
+
+### Visual Polish
+
+| Item | Priority | Effort | Notes |
+|------|----------|--------|-------|
+| Perspective colors on results components | Low | Medium | Apply blue/green/purple theming to results cards based on active perspective |
+
+### Features
+
+| Item | Priority | Effort | Notes |
+|------|----------|--------|-------|
+| "Clear All" button in results area | Low | Low | Quick way to clear saved comparisons without opening manager |
+| Comparison tab in main navigation | Low | Medium | Alternative to modal-based comparison view |
+| PDF export | Medium | High | Formal report generation for stakeholders |
+
+### Robustness
+
+| Item | Priority | Effort | Notes |
+|------|----------|--------|-------|
+| Handle incompatible comparisons | Medium | Medium | Warn when comparing different model types or mismatched data |
+| Handle missing data gracefully | Medium | Low | Show placeholders or warnings for null/undefined values |
+| Edge case testing | Medium | Medium | Test with extreme values, empty states, storage limits |
+
+### Testing
+
+| Item | Priority | Effort | Notes |
+|------|----------|--------|-------|
+| User testing of Phase 1 (Perspective Toggle) | High | Low | Manual testing of keyboard shortcuts, perspective switching |
+| User testing of Phase 2 (Options Overview) | High | Low | Test navigation flows, model selection, responsive design |
+| User testing of Phase 3 (Compare Mode) | High | Medium | Test save/load/compare/export workflows |
+
+### How to Use This List
+
+1. Pick items based on priority and available time
+2. Mark items complete in the checkbox format when done
+3. Add new items as they're discovered
+4. Move completed items to session notes
+
+**Last Updated:** 2026-01-09
