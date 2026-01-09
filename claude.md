@@ -106,7 +106,6 @@ model-pear/
     ├── CALCULATIONS.md         # Formula explanations
     ├── UI_UX_GUIDE.md          # Accessibility features
     ├── HISTORY.md              # Changelog
-    ├── IMPLEMENTATION_PLAN.md  # Implementation plan and session notes
     ├── financial_models_intercompany_software.md  # Framework overview
     └── model_*_concept.md      # Concept docs for Models 1-6
 ```
