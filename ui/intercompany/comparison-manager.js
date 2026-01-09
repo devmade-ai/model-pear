@@ -549,6 +549,9 @@ function render() {
                         <button class="comparison-manager-btn comparison-manager-btn-secondary" id="selectAllBtn" ${comparisons.length === 0 ? 'disabled' : ''}>
                             ${activeIds.length === comparisons.length && comparisons.length > 0 ? 'Deselect All' : 'Select All'}
                         </button>
+                        <button class="comparison-manager-btn comparison-manager-btn-secondary" id="whatChangedBtn" ${activeIds.length !== 2 ? 'disabled' : ''} title="Compare exactly 2 options to see what changed">
+                            <span>🔄</span> What Changed?
+                        </button>
                         <button class="comparison-manager-btn comparison-manager-btn-primary" id="compareSelectedBtn" ${activeIds.length < 2 ? 'disabled' : ''}>
                             <span>⚖️</span> Compare Selected (${activeIds.length})
                         </button>
@@ -755,6 +758,10 @@ function handleClick(e) {
     }
     if (target.closest('#compareSelectedBtn')) {
         handleCompareSelected();
+        return;
+    }
+    if (target.closest('#whatChangedBtn')) {
+        handleWhatChanged();
         return;
     }
 
@@ -964,6 +971,26 @@ function handleCompareSelected() {
     // Dispatch custom event for comparison view
     const event = new CustomEvent('comparison:open', {
         detail: { comparisonIds: activeIds }
+    });
+    document.dispatchEvent(event);
+    hideComparisonManager();
+}
+
+function handleWhatChanged() {
+    const state = getState();
+    const activeIds = state.ui.activeComparisonIds || [];
+
+    if (activeIds.length !== 2) {
+        showToast('Select exactly 2 options to see what changed', 'warning');
+        return;
+    }
+
+    // Dispatch custom event for diff view (first selected is "before", second is "after")
+    const event = new CustomEvent('diff:open', {
+        detail: {
+            beforeId: activeIds[0],
+            afterId: activeIds[1]
+        }
     });
     document.dispatchEvent(event);
     hideComparisonManager();

@@ -19,6 +19,8 @@ import { initPartySelector, partySelectorStyles } from './party-selector.js';
 import { initOptionsOverview, destroyOptionsOverview, optionsOverviewStyles } from './options-overview.js';
 import { initComparisonManager, destroyComparisonManager, showComparisonManager, comparisonManagerStyles } from './comparison-manager.js';
 import { initComparisonView, destroyComparisonView, showComparisonView, comparisonViewStyles } from './comparison-view.js';
+import { initCostEstimator, destroyCostEstimator, showCostEstimator, costEstimatorStyles } from './cost-estimator.js';
+import { initDiffView, destroyDiffView, showDiffView, diffViewStyles } from './diff-view.js';
 import { initComplianceAnalyzer, destroyComplianceAnalyzer } from './compliance-analyzer.js';
 import { initAdvancedVisualizations, destroyAdvancedVisualizations } from './advanced-visualizations.js';
 import { initRangeInputControls, renderRangeInputField, setupRangeSliders, gatherRangeValues, isRangeModeActive, getRangeInputState, getRangeInputStyles } from './range-input.js';
@@ -116,6 +118,8 @@ export function destroyIntercompanyCalculator() {
     // Cleanup comparison manager and view
     destroyComparisonManager();
     destroyComparisonView();
+    destroyDiffView();
+    destroyCostEstimator();
 
     // Cleanup compliance, visualizations, sensitivity, and projections modules
     destroyComplianceAnalyzer();
@@ -313,7 +317,15 @@ function renderCalculatorUI(container) {
                     <!-- Inputs will be populated dynamically -->
                 </form>
 
-                <div class="mt-6 flex gap-3">
+                <!-- Cost Estimation Helper Button -->
+                <div class="mt-4 flex items-center gap-2 text-sm">
+                    <span class="text-gray-400">Need help estimating development cost?</span>
+                    <button type="button" id="openCostEstimatorBtn" class="text-blue-400 hover:text-blue-300 underline flex items-center gap-1">
+                        <span>🧮</span> Use Cost Estimator
+                    </button>
+                </div>
+
+                <div class="mt-4 flex gap-3">
                     <button id="calculateIntercompanyBtn" class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-semibold">
                         <span id="calcBtnText">Calculate Transaction</span>
                         <span id="calcBtnLoader" class="hidden">
@@ -431,6 +443,16 @@ function renderCalculatorUI(container) {
                 <!-- Comparison view will be rendered here -->
             </div>
 
+            <!-- Diff View Panel (hidden by default) -->
+            <div id="diffViewContainer" class="hidden">
+                <!-- Diff view will be rendered here -->
+            </div>
+
+            <!-- Cost Estimator Panel (hidden by default) -->
+            <div id="costEstimatorContainer" class="hidden">
+                <!-- Cost estimator will be rendered here -->
+            </div>
+
         <!-- Range Input Styles -->
         <style>${getRangeInputStyles()}</style>
         <!-- Party Selector Styles -->
@@ -441,6 +463,10 @@ function renderCalculatorUI(container) {
         <style>${comparisonManagerStyles}</style>
         <!-- Comparison View Styles -->
         <style>${comparisonViewStyles}</style>
+        <!-- Diff View Styles -->
+        <style>${diffViewStyles}</style>
+        <!-- Cost Estimator Styles -->
+        <style>${costEstimatorStyles}</style>
     `;
 
     // Add event listeners
@@ -535,6 +561,20 @@ function renderCalculatorUI(container) {
     const comparisonViewContainer = container.querySelector('#comparisonViewContainer');
     if (comparisonViewContainer) {
         initComparisonView(comparisonViewContainer);
+    }
+
+    // Initialize diff view
+    const diffViewContainer = container.querySelector('#diffViewContainer');
+    if (diffViewContainer) {
+        initDiffView(diffViewContainer);
+    }
+
+    // Initialize cost estimator
+    const costEstimatorContainer = container.querySelector('#costEstimatorContainer');
+    if (costEstimatorContainer) {
+        initCostEstimator(costEstimatorContainer, {
+            onUse: handleCostEstimateUse
+        });
     }
 }
 
@@ -912,6 +952,12 @@ function setupEventListeners(container) {
         // Clear All Options button
         if (e.target.closest('#clearAllOptionsBtn')) {
             handleClearAllOptions(container);
+            return;
+        }
+
+        // Open Cost Estimator button
+        if (e.target.closest('#openCostEstimatorBtn')) {
+            openCostEstimator();
             return;
         }
 
@@ -1425,6 +1471,53 @@ function handleStateChange(newState, oldState, container) {
     if (newState.savedComparisons?.length !== oldState?.savedComparisons?.length) {
         updateSavedOptionsUI(container);
     }
+}
+
+// ========== COST ESTIMATOR HANDLERS ==========
+
+/**
+ * Handle when user clicks "Use Estimate" in the cost estimator
+ * @param {Object} estimate - The estimate data from the cost estimator
+ */
+function handleCostEstimateUse(estimate) {
+    if (!estimate || !estimate.totalCost) return;
+
+    const container = document.getElementById('intercompanyCalculator');
+    if (!container) return;
+
+    // Try to populate the development cost input field
+    // Look for common field names that represent development cost
+    const costFieldNames = ['totalCost', 'developmentCost', 'projectCost', 'totalDevelopmentCost', 'cost'];
+
+    for (const fieldName of costFieldNames) {
+        const input = container.querySelector(`#input-${fieldName}`);
+        if (input) {
+            input.value = Math.round(estimate.totalCost);
+            // Trigger change event to update any dependent calculations
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            showToast(`Development cost set to ${formatCurrency(estimate.totalCost)}`, 'success');
+            return;
+        }
+    }
+
+    // If no specific field found, show the value to copy
+    showToast(`Estimated cost: ${formatCurrency(estimate.totalCost)} - Enter this in the development cost field`, 'info');
+}
+
+/**
+ * Open the cost estimator modal
+ */
+function openCostEstimator() {
+    showCostEstimator();
+}
+
+/**
+ * Open the diff view to compare two saved options
+ * @param {string} beforeId - ID of the "before" option
+ * @param {string} afterId - ID of the "after" option
+ */
+function openDiffView(beforeId, afterId) {
+    showDiffView(beforeId, afterId);
 }
 
 // ========== EXPORTS ==========
