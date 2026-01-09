@@ -302,10 +302,10 @@ Update `ui/intercompany/calculator.js`:
 - [x] Add "Use the guided wizard" link
 - [x] Integrate as new landing view in calculator
 - [x] Add view toggle: Overview ↔ Wizard ↔ Direct
-- [ ] Make view selection persistent (localStorage preference)
+- [x] Make view selection persistent (localStorage preference)
 - [x] Ensure mobile responsiveness (stack cards) - CSS grid with auto-fit
-- [ ] Update app.js to route to overview by default (already defaults to overview)
-- [ ] Test navigation flows
+- [x] Update app.js to route to overview by default (already defaults to overview)
+- [x] Test navigation flows
 
 ---
 
@@ -530,7 +530,7 @@ app.js                       # Priority 2 - Default landing view
 1. [x] Review and approve this plan
 2. [x] Begin Phase 1: Perspective Toggle Enhancement - **COMPLETED (Session 2026-01-09)**
 3. [ ] User testing after Phase 1
-4. [x] Begin Phase 2: Options Overview - **IN PROGRESS (Session 2026-01-09)**
+4. [x] Begin Phase 2: Options Overview - **COMPLETED (Session 2026-01-09)**
 5. [ ] Begin Phase 3: Compare Mode
 6. [ ] Iterate based on feedback
 
@@ -634,11 +634,48 @@ app.js                       # Priority 2 - Default landing view
 4. User can toggle between Overview/Wizard/Direct at any time
 
 **What remains for Phase 2:**
-- Make view selection persistent (localStorage preference)
-- Verify app.js routing (should work as-is)
-- Test navigation flows
+- ~~Make view selection persistent (localStorage preference)~~ ✅
+- ~~Verify app.js routing (should work as-is)~~ ✅
+- ~~Test navigation flows~~ ✅
 
 **Ready to proceed with:**
 - Completing Phase 2 persistence feature
 - Phase 3: Compare Mode
 - Or user testing of Phase 2 changes
+
+---
+
+### Session: 2026-01-09 (Phase 2 - Options Overview Completed)
+
+**What was implemented:**
+
+1. **Updated: `ui/intercompany/calculator.js`**
+   - Added `STORAGE_KEY_SELECTION_MODE` constant for localStorage key
+   - Added `VALID_SELECTION_MODES` array for validation
+   - Added `loadSelectionModePreference()` function to load from localStorage
+   - Added `saveSelectionModePreference()` function to persist preference
+   - Initial `selectionMode` now loads from localStorage (defaults to 'overview')
+   - All mode change locations now call `saveSelectionModePreference()`
+
+**localStorage Persistence:**
+- Key: `model-pear-selection-mode`
+- Valid values: `overview`, `wizard`, `direct`
+- Default: `overview`
+- Saved when: User clicks mode toggle buttons, selects model from overview, switches to wizard
+
+**Phase 2 Complete!**
+
+All tasks for Priority 2 (Options Overview) are now complete:
+- ✅ Create options-overview.js component
+- ✅ Enhanced model metadata with overview fields
+- ✅ Model cards with icon, summary, features, best-for tags
+- ✅ Quick comparison table
+- ✅ Explore buttons and wizard link
+- ✅ Integrated as default landing view
+- ✅ Three-way mode toggle (Overview/Wizard/Direct)
+- ✅ localStorage persistence for mode preference
+- ✅ Mobile responsiveness
+
+**Ready to proceed with:**
+- Phase 3: Compare Mode (Priority 1 - most complex)
+- User testing of Phase 1 & Phase 2 changes

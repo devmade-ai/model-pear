@@ -23,8 +23,41 @@ import { formatCurrency, formatPercentage, showToast } from '../../utils/index.j
 
 // ========== STATE ==========
 
+// localStorage keys for user preferences
+const STORAGE_KEY_SELECTION_MODE = 'model-pear-selection-mode';
+const VALID_SELECTION_MODES = ['overview', 'wizard', 'direct'];
+
+/**
+ * Load selection mode preference from localStorage
+ * Returns 'overview' as default if not set or invalid
+ */
+function loadSelectionModePreference() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY_SELECTION_MODE);
+        if (saved && VALID_SELECTION_MODES.includes(saved)) {
+            return saved;
+        }
+    } catch (e) {
+        console.warn('Failed to load selection mode preference:', e);
+    }
+    return 'overview';  // Default
+}
+
+/**
+ * Save selection mode preference to localStorage
+ */
+function saveSelectionModePreference(mode) {
+    try {
+        if (VALID_SELECTION_MODES.includes(mode)) {
+            localStorage.setItem(STORAGE_KEY_SELECTION_MODE, mode);
+        }
+    } catch (e) {
+        console.warn('Failed to save selection mode preference:', e);
+    }
+}
+
 let unsubscribers = [];
-let selectionMode = 'overview';  // 'overview' | 'wizard' | 'direct' - start with overview by default
+let selectionMode = loadSelectionModePreference();  // Load from localStorage or default to 'overview'
 let activeMainTab = 'calculator';  // 'calculator' | 'compliance' | 'visualizations' | 'sensitivity' | 'projections'
 let sensitivityData = null;  // Cached sensitivity analysis results
 let lastInputRanges = null;  // Cached input ranges for sensitivity analysis
@@ -432,6 +465,7 @@ function handleOverviewModelSelected(modelId) {
 
     // Switch to direct mode to show model details
     selectionMode = 'direct';
+    saveSelectionModePreference('direct');
 
     // Re-render to show model selection section
     renderCalculatorUI(container);
@@ -462,6 +496,7 @@ function handleOverviewModelSelected(modelId) {
  */
 function handleSwitchToWizard() {
     selectionMode = 'wizard';
+    saveSelectionModePreference('wizard');
     const container = document.getElementById('intercompanyCalculator');
     if (container) {
         renderCalculatorUI(container);
@@ -475,6 +510,7 @@ function handleWizardModelSelected(modelId, variantId) {
     if (!modelId) {
         // User skipped wizard, switch to direct mode
         selectionMode = 'direct';
+        saveSelectionModePreference('direct');
         const container = document.getElementById('intercompanyCalculator');
         if (container) {
             renderCalculatorUI(container);
@@ -746,6 +782,7 @@ function setupEventListeners(container) {
             const newMode = modeBtn.dataset.mode;
             if (newMode !== selectionMode) {
                 selectionMode = newMode;
+                saveSelectionModePreference(newMode);
                 renderCalculatorUI(container);
             }
             return;
