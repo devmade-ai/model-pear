@@ -30,7 +30,7 @@ This tool helps **software companies** analyse and compare different transaction
 | Technology | Purpose |
 |------------|---------|
 | HTML5 | Structure |
-| ES6 JavaScript | ~35 modules (~12,000 lines) |
+| ES6 JavaScript | ~40 modules (~28,000 lines) |
 | Tailwind CSS (CDN) | Styling |
 | ApexCharts (CDN) | Visualisations |
 | GitHub Pages | Free hosting, no backend |
@@ -106,6 +106,7 @@ model-pear/
     ├── CALCULATIONS.md         # Formula explanations
     ├── UI_UX_GUIDE.md          # Accessibility features
     ├── HISTORY.md              # Changelog
+    ├── USAGE_SCENARIOS_REVIEW.md  # User workflow analysis
     ├── financial_models_intercompany_software.md  # Framework overview
     └── model_*_concept.md      # Concept docs for Models 1-6
 ```
@@ -172,6 +173,31 @@ Transfer pricing compliance analysis:
 - Journal entry templates
 
 ## Advanced Features
+
+### Options Overview
+**File**: `ui/intercompany/options-overview.js`
+
+Default landing view showing all 6 transaction models at a glance:
+- Visual grid of model cards with icons, summaries, key features
+- "Best for" tags showing ideal use cases
+- Quick comparison table (IP ownership, payment type, risk profile)
+- "Explore →" buttons to select a model
+- "Use the guided wizard" link for decision tree flow
+- View mode persisted in localStorage
+
+### Compare Mode
+**Files**: `ui/intercompany/comparison-manager.js`, `ui/intercompany/comparison-view.js`, `utils/storage.js`
+
+Save and compare calculation results side-by-side:
+- Save calculations as named options (up to 20)
+- Comparison manager panel (list, load, delete, rename, edit notes)
+- Side-by-side comparison view (2-4 options)
+- Difference column with directional arrows (▲ ▼)
+- Best/worst value highlighting (green/red)
+- Compatibility warnings for different models/perspectives
+- Export: JSON, CSV, Print/PDF
+- Import: Load from JSON file
+- localStorage persistence with version tracking
 
 ### Stage 2: Sensitivity Analysis
 **Files**: `models/intercompany/sensitivity-analysis.js`, `ui/intercompany/range-input.js`, `ui/intercompany/sensitivity-visualizations.js`
@@ -392,7 +418,6 @@ const profit = revenue - cost;
 | **claude.md** (root) | Architecture, models, or major features change |
 | **BUSINESS_GUIDE.md** | User workflows, features, or terminology change |
 | **CALCULATIONS.md** | Formulas or calculation logic change |
-| **IMPLEMENTATION_ROADMAP.md** | Phase completion or new phases added |
 | **HISTORY.md** | Any change to the application |
 
 ## Troubleshooting
@@ -433,10 +458,10 @@ const profit = revenue - cost;
 - Focus is on: expenses, capitalization, and tax effects
 
 The tool includes:
+- Options Overview (visual model selection grid)
 - Structure Selector (decision tree wizard)
 - Perspective analysis (Developer, Buyer, plus Shareholder when mutual ownership)
+- Compare Mode (save, compare, export options side-by-side)
 - Sensitivity Analysis (ranges, scenarios, Monte Carlo)
 - Growth Projections (NPV, IRR, payback)
 - Advanced Visualisations (comparisons, timelines, charts)
-
-All 13 phases of the roadmap have been completed.
