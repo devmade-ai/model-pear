@@ -5,7 +5,10 @@
 // Integrates model selection, variant selection, input forms, and results display.
 // Includes Structure Selector wizard for guided model selection.
 
-import { getState, subscribe, selectIntercompanyModel, selectVariant, setIntercompanyResults, setCalculating } from '../../state/app-state.js';
+import {
+    getState, subscribe, selectIntercompanyModel, selectVariant, setIntercompanyResults, setCalculating,
+    initializeComparisons, saveComparison, getComparisons, setSaveModalOpen, setComparisonViewOpen
+} from '../../state/app-state.js';
 import { getModelMetadata, getModelVariants, getVariantInputs, calculateIntercompany, DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from '../../models/intercompany/registry.js';
 import { initPerspectiveToggle } from './perspective-toggle.js';
 import { renderIntercompanyResults } from './results-display.js';
@@ -326,9 +329,55 @@ function renderCalculatorUI(container) {
                     <!-- Perspective toggle will be rendered here -->
                 </div>
 
+                <!-- Save Actions Bar -->
+                <div id="saveActionsBar" class="flex items-center justify-between bg-gray-800/50 border border-gray-700 rounded-lg p-4 mb-6">
+                    <div class="flex items-center gap-4">
+                        <button id="saveAsOptionBtn" class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium">
+                            <span>💾</span> Save as Option
+                        </button>
+                        <span id="savedOptionsCount" class="text-sm text-gray-400"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="viewSavedOptionsBtn" class="flex items-center gap-2 px-4 py-2 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-600 transition-colors text-sm hidden">
+                            <span>📋</span> View Saved (<span id="savedCount">0</span>)
+                        </button>
+                        <button id="compareOptionsBtn" class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm hidden">
+                            <span>⚖️</span> Compare
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Results Display -->
                 <div id="intercompanyResults" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
                     <!-- Results will be rendered here -->
+                </div>
+
+                <!-- Save Modal -->
+                <div id="saveOptionModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+                    <div class="bg-gray-800 rounded-lg shadow-xl max-w-md w-full border border-gray-700">
+                        <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                            <h3 class="text-lg font-semibold text-gray-200">💾 Save as Option</h3>
+                            <button id="closeSaveModal" class="text-gray-400 hover:text-gray-200 text-2xl leading-none">&times;</button>
+                        </div>
+                        <div class="p-4">
+                            <div class="mb-4">
+                                <label for="optionName" class="block text-sm font-medium text-gray-300 mb-2">Option Name *</label>
+                                <input type="text" id="optionName" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., License Model - Low Royalty">
+                            </div>
+                            <div class="mb-4">
+                                <label for="optionNotes" class="block text-sm font-medium text-gray-300 mb-2">Notes (optional)</label>
+                                <textarea id="optionNotes" rows="3" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Add any notes about this option..."></textarea>
+                            </div>
+                            <div id="saveModalInfo" class="text-sm text-gray-400 mb-4 p-3 bg-gray-700/50 rounded">
+                                <p><strong>Model:</strong> <span id="modalModelName">-</span></p>
+                                <p><strong>Variant:</strong> <span id="modalVariantName">-</span></p>
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-3 p-4 border-t border-gray-700">
+                            <button id="cancelSaveBtn" class="px-4 py-2 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-600 transition-colors">Cancel</button>
+                            <button id="confirmSaveBtn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium">Save Option</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             </div><!-- End Calculator Tab Content -->
@@ -449,6 +498,9 @@ function renderCalculatorUI(container) {
             });
         }
     }
+
+    // Initialize saved options UI (comparisons)
+    initSavedOptionsUI(container);
 }
 
 /**
@@ -803,6 +855,42 @@ function setupEventListeners(container) {
             handleVariantSelect(variantId, container);
             return;
         }
+
+        // Save as Option button
+        if (e.target.closest('#saveAsOptionBtn')) {
+            handleOpenSaveModal(container);
+            return;
+        }
+
+        // View Saved Options button
+        if (e.target.closest('#viewSavedOptionsBtn')) {
+            handleViewSavedOptions(container);
+            return;
+        }
+
+        // Compare Options button
+        if (e.target.closest('#compareOptionsBtn')) {
+            handleCompareOptions(container);
+            return;
+        }
+
+        // Save modal - close button or backdrop click
+        if (e.target.closest('#closeSaveModal') || e.target.id === 'saveOptionModal') {
+            handleCloseSaveModal(container);
+            return;
+        }
+
+        // Save modal - cancel button
+        if (e.target.closest('#cancelSaveBtn')) {
+            handleCloseSaveModal(container);
+            return;
+        }
+
+        // Save modal - confirm save button
+        if (e.target.closest('#confirmSaveBtn')) {
+            handleConfirmSave(container);
+            return;
+        }
     };
 
     // Add the main click handler
@@ -1071,6 +1159,174 @@ function gatherInputValues(container, modelId) {
     return inputs;
 }
 
+// ========== SAVE OPTION HANDLERS ==========
+
+// Store reference to current inputs for saving
+let currentInputsForSave = {};
+
+/**
+ * Open the save modal and populate with current model/variant info
+ */
+function handleOpenSaveModal(container) {
+    const state = getState();
+    const { selectedModel, selectedVariant, results } = state.intercompany;
+
+    if (!results) {
+        showToast('Please run a calculation first before saving', 'warning');
+        return;
+    }
+
+    // Get model and variant metadata
+    const modelMeta = getModelMetadata(selectedModel);
+    const variants = getModelVariants(selectedModel);
+    const variantMeta = variants?.find(v => v.id === selectedVariant);
+
+    // Update modal info
+    const modalModelName = container.querySelector('#modalModelName');
+    const modalVariantName = container.querySelector('#modalVariantName');
+    if (modalModelName) modalModelName.textContent = modelMeta?.name || selectedModel;
+    if (modalVariantName) modalVariantName.textContent = variantMeta ? `${variantMeta.id} - ${variantMeta.name}` : selectedVariant;
+
+    // Store current inputs
+    currentInputsForSave = gatherInputValues(container, selectedModel);
+
+    // Generate a default name suggestion
+    const existingCount = getComparisons().length;
+    const defaultName = `${modelMeta?.shortName || modelMeta?.name || 'Option'} - ${variantMeta?.name || selectedVariant}`;
+    const optionNameInput = container.querySelector('#optionName');
+    if (optionNameInput) {
+        optionNameInput.value = defaultName;
+        optionNameInput.select();
+    }
+
+    // Clear notes
+    const optionNotesInput = container.querySelector('#optionNotes');
+    if (optionNotesInput) optionNotesInput.value = '';
+
+    // Show modal
+    const modal = container.querySelector('#saveOptionModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        setSaveModalOpen(true);
+    }
+}
+
+/**
+ * Close the save modal
+ */
+function handleCloseSaveModal(container) {
+    const modal = container.querySelector('#saveOptionModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        setSaveModalOpen(false);
+    }
+}
+
+/**
+ * Confirm and save the current calculation as an option
+ */
+function handleConfirmSave(container) {
+    const optionNameInput = container.querySelector('#optionName');
+    const optionNotesInput = container.querySelector('#optionNotes');
+
+    const name = optionNameInput?.value.trim();
+    const notes = optionNotesInput?.value.trim() || '';
+
+    if (!name) {
+        showToast('Please enter a name for this option', 'warning');
+        optionNameInput?.focus();
+        return;
+    }
+
+    // Save the comparison
+    const saved = saveComparison(name, notes, currentInputsForSave);
+
+    if (saved) {
+        showToast(`Option "${name}" saved successfully!`, 'success');
+        handleCloseSaveModal(container);
+        updateSavedOptionsUI(container);
+    } else {
+        showToast('Failed to save option. Please try again.', 'error');
+    }
+}
+
+/**
+ * Open the saved options panel (placeholder for future comparison-manager)
+ */
+function handleViewSavedOptions(container) {
+    // For now, show a toast - full implementation comes in comparison-manager.js
+    const comparisons = getComparisons();
+    showToast(`You have ${comparisons.length} saved option${comparisons.length !== 1 ? 's' : ''}. Full comparison view coming soon!`, 'info');
+    setComparisonViewOpen(true);
+}
+
+/**
+ * Open the comparison view (placeholder for future comparison-view)
+ */
+function handleCompareOptions(container) {
+    const comparisons = getComparisons();
+    if (comparisons.length < 2) {
+        showToast('Save at least 2 options to compare them side-by-side', 'info');
+        return;
+    }
+    // Placeholder - full implementation comes in comparison-view.js
+    showToast(`Compare mode with ${comparisons.length} options coming soon!`, 'info');
+    setComparisonViewOpen(true);
+}
+
+/**
+ * Update the saved options count and button visibility
+ */
+function updateSavedOptionsUI(container) {
+    const comparisons = getComparisons();
+    const count = comparisons.length;
+
+    // Update count display
+    const countSpan = container.querySelector('#savedOptionsCount');
+    if (countSpan) {
+        if (count > 0) {
+            countSpan.textContent = `${count} saved option${count !== 1 ? 's' : ''}`;
+        } else {
+            countSpan.textContent = '';
+        }
+    }
+
+    // Update saved count in button
+    const savedCount = container.querySelector('#savedCount');
+    if (savedCount) savedCount.textContent = count;
+
+    // Show/hide buttons based on count
+    const viewBtn = container.querySelector('#viewSavedOptionsBtn');
+    const compareBtn = container.querySelector('#compareOptionsBtn');
+
+    if (viewBtn) {
+        if (count > 0) {
+            viewBtn.classList.remove('hidden');
+        } else {
+            viewBtn.classList.add('hidden');
+        }
+    }
+
+    if (compareBtn) {
+        if (count >= 2) {
+            compareBtn.classList.remove('hidden');
+        } else {
+            compareBtn.classList.add('hidden');
+        }
+    }
+}
+
+/**
+ * Initialize saved options UI on load
+ */
+function initSavedOptionsUI(container) {
+    // Initialize comparisons from localStorage
+    initializeComparisons();
+
+    // Update UI
+    updateSavedOptionsUI(container);
+}
+
 // ========== STATE CHANGE HANDLER ==========
 
 function handleStateChange(newState, oldState, container) {
@@ -1083,6 +1339,11 @@ function handleStateChange(newState, oldState, container) {
                 renderIntercompanyResults(resultsContainer, results);
             }
         }
+    }
+
+    // Handle saved comparisons changes
+    if (newState.savedComparisons?.length !== oldState?.savedComparisons?.length) {
+        updateSavedOptionsUI(container);
     }
 }
 
