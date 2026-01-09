@@ -44,18 +44,188 @@ export function getIntercompanyModelIds() {
     return Object.keys(INTERCOMPANY_MODELS);
 }
 
+// ========== MODEL OVERVIEW METADATA ==========
+// Enhanced metadata for Options Overview display
+// Helps users understand and compare models at a glance
+
+const MODEL_OVERVIEW_DATA = {
+    'model-1': {
+        icon: '💼',
+        summary: 'Cost-plus approach where developer provides services and buyer capitalises the costs.',
+        keyFeatures: [
+            'Developer retains no IP (created for buyer)',
+            'Buyer capitalises development costs as intangible asset',
+            'Lower risk for developer (guaranteed margin)'
+        ],
+        bestFor: [
+            'Custom development projects',
+            'When buyer wants to own the IP',
+            'Risk-averse developers'
+        ],
+        paymentType: 'Service fee (cost + margin)',
+        ipOwnership: 'Buyer',
+        riskProfile: { developer: 'Low', buyer: 'Medium' }
+    },
+    'model-2': {
+        icon: '📜',
+        summary: 'Developer owns IP and grants licence to buyer with upfront fees and/or royalties.',
+        keyFeatures: [
+            'Developer retains IP ownership',
+            'Ongoing royalty revenue stream',
+            'Buyer capitalises licence costs'
+        ],
+        bestFor: [
+            'Reusable software products',
+            'When developer wants ongoing revenue',
+            'Multiple potential licensees'
+        ],
+        paymentType: 'Licence fee + Royalties',
+        ipOwnership: 'Developer',
+        riskProfile: { developer: 'Medium', buyer: 'Low' }
+    },
+    'model-3': {
+        icon: '🤝',
+        summary: 'Both parties contribute resources and share ownership proportionally.',
+        keyFeatures: [
+            'Shared IP ownership',
+            'Both parties capitalise their contributions',
+            'No intercompany profit element'
+        ],
+        bestFor: [
+            'Strategic partnerships',
+            'Related party transactions',
+            'When both parties want skin in the game'
+        ],
+        paymentType: 'Cost sharing (no markup)',
+        ipOwnership: 'Shared',
+        riskProfile: { developer: 'Shared', buyer: 'Shared' }
+    },
+    'model-4': {
+        icon: '🔄',
+        summary: 'Developer builds and operates software, then transfers ownership to buyer.',
+        keyFeatures: [
+            'Phased IP transfer',
+            'Operational period before handover',
+            'Developer bears initial risk'
+        ],
+        bestFor: [
+            'Complex implementations',
+            'When buyer lacks operational capability',
+            'Proof-of-concept projects'
+        ],
+        paymentType: 'Service fees + Transfer payment',
+        ipOwnership: 'Developer → Buyer',
+        riskProfile: { developer: 'High initially', buyer: 'Low initially' }
+    },
+    'model-5': {
+        icon: '💰',
+        summary: 'Outright sale of software with optional ongoing support agreement.',
+        keyFeatures: [
+            'Full IP transfer on sale',
+            'One-time purchase price',
+            'Optional support revenue stream'
+        ],
+        bestFor: [
+            'Complete solutions ready for handover',
+            'When buyer wants full ownership immediately',
+            'Developer exit scenarios'
+        ],
+        paymentType: 'Once-off purchase + Support fees',
+        ipOwnership: 'Buyer (on sale)',
+        riskProfile: { developer: 'Low after sale', buyer: 'High' }
+    },
+    'model-6': {
+        icon: '📊',
+        summary: 'Subscription/SaaS model with recurring fees. Developer retains IP, buyer expenses fees.',
+        keyFeatures: [
+            'Developer retains all IP',
+            'Recurring subscription revenue',
+            'Buyer has no asset to capitalise'
+        ],
+        bestFor: [
+            'Cloud-hosted solutions',
+            'When buyer prefers OpEx over CapEx',
+            'Ongoing product development'
+        ],
+        paymentType: 'Monthly/Annual subscription',
+        ipOwnership: 'Developer',
+        riskProfile: { developer: 'Medium', buyer: 'Low' }
+    }
+};
+
 /**
  * Get model metadata for UI display
+ * Enhanced with overview data for Options Overview component
  */
 export function getModelMetadata() {
-    return Object.entries(INTERCOMPANY_MODELS).map(([id, model]) => ({
-        id,
-        name: model.name,
-        shortName: model.shortName,
-        description: model.description,
-        variantCount: Object.keys(model.variants).length,
-        defaultVariant: model.defaultVariant
-    }));
+    return Object.entries(INTERCOMPANY_MODELS).map(([id, model]) => {
+        const overview = MODEL_OVERVIEW_DATA[id] || {};
+        return {
+            id,
+            name: model.name,
+            shortName: model.shortName,
+            description: model.description,
+            variantCount: Object.keys(model.variants).length,
+            defaultVariant: model.defaultVariant,
+            // Overview fields for Options Overview component
+            icon: overview.icon || '📦',
+            summary: overview.summary || model.description,
+            keyFeatures: overview.keyFeatures || [],
+            bestFor: overview.bestFor || [],
+            paymentType: overview.paymentType || 'Various',
+            ipOwnership: overview.ipOwnership || 'Varies',
+            riskProfile: overview.riskProfile || { developer: 'Varies', buyer: 'Varies' }
+        };
+    });
+}
+
+/**
+ * Get quick comparison data for all models
+ * Returns a compact table-friendly format for side-by-side comparison
+ */
+export function getModelComparisonData() {
+    return Object.entries(INTERCOMPANY_MODELS).map(([id, model]) => {
+        const overview = MODEL_OVERVIEW_DATA[id] || {};
+        return {
+            id,
+            shortName: model.shortName,
+            ipOwnership: overview.ipOwnership || 'Varies',
+            paymentType: overview.paymentType || 'Various',
+            buyerAsset: getBuyerAssetIndicator(id),
+            riskDirection: getRiskDirection(id)
+        };
+    });
+}
+
+/**
+ * Get buyer asset recognition indicator for a model
+ */
+function getBuyerAssetIndicator(modelId) {
+    const indicators = {
+        'model-1': 'Yes',           // Buyer capitalises development costs
+        'model-2': 'Maybe',         // Depends on licence terms
+        'model-3': 'Yes (partial)', // Buyer capitalises their share
+        'model-4': 'Yes (deferred)',// Buyer gets asset at transfer
+        'model-5': 'Yes',           // Buyer capitalises purchase price
+        'model-6': 'No'             // SaaS = no asset for buyer
+    };
+    return indicators[modelId] || 'Varies';
+}
+
+/**
+ * Get risk direction indicator
+ * Arrow shows who bears more risk
+ */
+function getRiskDirection(modelId) {
+    const directions = {
+        'model-1': '→ Buyer',    // Risk transfers to buyer
+        'model-2': 'Developer',   // Developer bears product risk
+        'model-3': 'Shared',      // Both parties share
+        'model-4': 'Dev → Buyer', // Risk transfers over time
+        'model-5': '→ Buyer',     // Risk transfers on sale
+        'model-6': 'Developer'    // Developer bears ongoing risk
+    };
+    return directions[modelId] || 'Varies';
 }
 
 /**
