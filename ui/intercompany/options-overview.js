@@ -414,7 +414,7 @@ function renderModelCard(model) {
 
             <div class="model-card-actions">
                 <button class="model-explore-btn" data-model-id="${model.id}">
-                    Explore <span>→</span>
+                    Select Model <span>→</span>
                 </button>
             </div>
         </div>

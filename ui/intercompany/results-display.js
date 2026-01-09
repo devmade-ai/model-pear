@@ -195,8 +195,8 @@ function renderBuyerPerspective(container, results) {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <div class="p-4 bg-green-900/20 border border-green-700/50 rounded-lg mb-4">
-                        <p class="text-sm text-gray-400">Section 11(e) Classification</p>
-                        <p class="text-lg font-bold text-green-400">${buyer.asset.section11eType === 'mainframe-5yr' ? 'Mainframe (5 years)' : 'PC Software (2 years)'}</p>
+                        <p class="text-sm text-gray-400">Tax Write-Off Period</p>
+                        <p class="text-lg font-bold text-green-400">${buyer.asset.section11eType === 'mainframe-5yr' ? 'Complex Systems (5 years)' : 'Standard Software (2 years)'}</p>
                     </div>
 
                     <table class="w-full text-sm">
@@ -255,11 +255,11 @@ function renderCombinedPerspective(container, results) {
     const tp = results.transferPricing;
 
     container.innerHTML = `
-        <!-- Net Effect Summary Header -->
+        <!-- Combined View Summary Header -->
         <div class="bg-purple-900/30 border border-purple-700 rounded-lg p-6 mb-6">
             <div class="flex items-center gap-3 mb-4">
                 <span class="text-2xl">⚖️</span>
-                <h3 class="text-xl font-bold text-purple-300">Net Effect (Both Parties)</h3>
+                <h3 class="text-xl font-bold text-purple-300">Combined View</h3>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">

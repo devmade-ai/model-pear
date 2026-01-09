@@ -75,18 +75,15 @@ Power users can navigate the calculator using keyboard shortcuts:
 
 | Shortcut | Action |
 |----------|--------|
-| `D` | Switch to Developer (Your Company) perspective |
-| `B` | Switch to Buyer (Client) perspective |
-| `S` | Switch to Shareholder/Net Effect perspective |
-| `M` | Toggle Mutual Ownership (Independent ↔ Related parties) |
+| `D` | Switch to Your Company perspective |
+| `B` | Switch to Client perspective |
+| `C` | Switch to Combined View perspective |
 
 ### How to Use
 
-1. Press `?` anywhere in the application to view all available shortcuts
-2. Use `Ctrl+Enter` (Windows/Linux) or `Cmd+Enter` (Mac) to quickly calculate
-3. Press `Esc` to dismiss any open modal or dialog
-4. Use `D`, `B`, `S` to quickly switch perspectives in results view
-5. Press `M` to toggle between independent and related party mode
+1. Use `Ctrl+Enter` (Windows/Linux) or `Cmd+Enter` (Mac) to quickly calculate
+2. Press `Esc` to dismiss any open modal or dialog
+3. Use `D`, `B`, `C` to quickly switch perspectives in results view
 
 ---
 
@@ -507,7 +504,7 @@ The Options Overview provides a visual grid showing all 6 transaction models at 
 │ [Key features...]    │  │ [Key features...]    │  │ [Key features...]    │
 │ [Best for tags]      │  │ [Best for tags]      │  │ [Best for tags]      │
 │                      │  │                      │  │                      │
-│ [Explore →]          │  │ [Explore →]          │  │ [Explore →]          │
+│ [Select Model →]     │  │ [Select Model →]     │  │ [Select Model →]     │
 └──────────────────────┘  └──────────────────────┘  └──────────────────────┘
 ```
 
@@ -520,7 +517,7 @@ Each model card includes:
 - **Key Features**: 3-4 bullet points
 - **Best For**: Tag badges showing ideal use cases
 - **Footer**: IP ownership, payment type, and variant count
-- **Action**: "Explore →" button
+- **Action**: "Select Model →" button
 
 ### Quick Comparison Table
 
@@ -536,7 +533,7 @@ Below the cards, a compact table shows all models side-by-side with columns for:
 Three-way toggle for navigation preference:
 - **Overview**: Visual grid (default)
 - **Wizard**: Guided questions
-- **Direct**: Manual selection
+- **Manual**: Dropdown selection
 
 Toggle state persists in localStorage.
 
@@ -677,8 +674,8 @@ The application features a comprehensive tooltip system with info icons (`ⓘ`) 
 **Where to Find Help Icons**:
 - **Mode Switcher**: Click the `ⓘ` icon next to "Inter-Company Tool" or "Pricing Calculator" buttons
 - **Pricing Models**: Each model button (Subscription, Usage-Based, etc.) has an info icon
-- **Calculator Tabs**: All 5 tabs (Calculator, Compliance, Visualizations, Sensitivity, Projections) have help icons
-- **Selection Mode**: Wizard and Direct mode buttons include tooltips
+- **Calculator Tabs**: All 5 tabs (Calculator, Compliance, Charts, What-If, Projections) have help icons
+- **Selection Mode**: Wizard and Manual mode buttons include tooltips
 - **Input Fields**: Every form input has an info button for detailed field explanations
 
 **Tooltip Content Includes**:
@@ -705,14 +702,44 @@ Each error message includes a 💡 suggestion for how to fix it
 
 ## Changelog
 
+### Version 2.6 (2026-01-09)
+
+#### Changed
+- **Terminology Standardization**: Unified terminology throughout the application
+  - Perspectives now consistently use "Your Company", "Client", and "Combined View"
+  - Removed "Net Effect"/"Shareholder" dual naming for clearer user experience
+  - Input categories renamed to "Your Company Costs" and "Client Treatment"
+
+- **Navigation Tab Improvements**:
+  - Renamed "Visualizations" tab to "Charts" for clarity
+  - Renamed "Sensitivity" tab to "What-If" for better user understanding
+  - Changed Compliance tab emoji from ✓ to ⚖️
+
+- **Selection Mode**: Renamed "Direct" mode to "Manual" mode
+
+- **Model Cards**: Changed "Explore" button to "Select Model" for clearer action
+
+- **Keyboard Shortcuts**:
+  - Changed Combined View shortcut from `S` to `C`
+  - Removed `M` shortcut for toggling mutual ownership (use UI toggle instead)
+
+- **Tax Terminology**: Modernized Section 11(e) labels
+  - "PC Software (2 years)" → "Standard Software (2-year write-off)"
+  - "Mainframe Software (5 years)" → "Complex Systems (5-year write-off)"
+  - Added clearer help text explaining when to use each option
+
+- **Party Selector**: Improved wording for related/independent party selection
+  - More user-friendly descriptions
+  - Generic transfer pricing warning (not SA-specific)
+
 ### Version 2.5 (2026-01-09)
 
 #### Added
 - **Options Overview**: New default landing view showing all 6 models in a visual grid
   - Model cards with icon, summary, key features, and best-for tags
   - Quick comparison table showing all models side-by-side
-  - "Explore →" buttons to select models directly
-  - Three-way mode toggle: Overview / Wizard / Direct
+  - "Select Model →" buttons to select models directly
+  - Three-way mode toggle: Overview / Wizard / Manual
   - Mode preference persists in localStorage
 
 - **Compare Mode**: Save and compare calculation results
@@ -743,14 +770,12 @@ Each error message includes a 💡 suggestion for how to fix it
 - **Enhanced Perspective Toggle**: Improved perspective switching experience
   - Header shows current mode (Independent/Related parties)
   - Description box updates with each perspective
-  - "Net Effect" label changes to "Shareholder" when Related Parties is selected
   - Keyboard shortcut hints displayed in the UI
 
 - **Perspective Keyboard Shortcuts**: New keyboard shortcuts for fast perspective switching
-  - `D` - Switch to Developer (Your Company) perspective
-  - `B` - Switch to Buyer (Client) perspective
-  - `S` - Switch to Shareholder/Net Effect perspective
-  - `M` - Toggle Mutual Ownership (Independent ↔ Related parties)
+  - `D` - Switch to Your Company perspective
+  - `B` - Switch to Client perspective
+  - `C` - Switch to Combined View perspective
 
 #### Changed
 - **Entity Configuration**: Removed "Relationship Settings" section (moved to Party Relationship Selector)

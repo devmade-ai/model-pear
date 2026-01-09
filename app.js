@@ -482,12 +482,12 @@ function showTooltipForId(tooltipId) {
         'model-one-time': '🎯 One-Time Purchase Model',
         'model-marketplace': '🏪 Marketplace Model',
         'tab-calculator': '🧮 Calculator Tab',
-        'tab-compliance': '✓ Compliance Tab',
-        'tab-visualizations': '📊 Visualizations Tab',
-        'tab-sensitivity': '📈 Sensitivity Tab',
+        'tab-compliance': '⚖️ Compliance Tab',
+        'tab-charts': '📊 Charts Tab',
+        'tab-whatif': '📈 What-If Analysis Tab',
         'tab-projections': '🚀 Projections Tab',
         'wizard-mode': '✨ Wizard Mode',
-        'direct-mode': '📋 Direct Selection Mode'
+        'manual-mode': '📋 Manual Selection Mode'
     };
 
     const title = titles[tooltipId] || 'Help';
