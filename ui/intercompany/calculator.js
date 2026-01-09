@@ -12,6 +12,7 @@ import { renderIntercompanyResults } from './results-display.js';
 import { initEntityConfig } from './entity-config.js';
 import { initStructureSelector } from './structure-selector.js';
 import { initPartySelector, partySelectorStyles } from './party-selector.js';
+import { initOptionsOverview, destroyOptionsOverview, optionsOverviewStyles } from './options-overview.js';
 import { initComplianceAnalyzer, destroyComplianceAnalyzer } from './compliance-analyzer.js';
 import { initAdvancedVisualizations, destroyAdvancedVisualizations } from './advanced-visualizations.js';
 import { initRangeInputControls, renderRangeInputField, setupRangeSliders, gatherRangeValues, isRangeModeActive, getRangeInputState, getRangeInputStyles } from './range-input.js';
@@ -23,7 +24,7 @@ import { formatCurrency, formatPercentage, showToast } from '../../utils/index.j
 // ========== STATE ==========
 
 let unsubscribers = [];
-let selectionMode = 'wizard';  // 'wizard' | 'direct' - start with wizard by default
+let selectionMode = 'overview';  // 'overview' | 'wizard' | 'direct' - start with overview by default
 let activeMainTab = 'calculator';  // 'calculator' | 'compliance' | 'visualizations' | 'sensitivity' | 'projections'
 let sensitivityData = null;  // Cached sensitivity analysis results
 let lastInputRanges = null;  // Cached input ranges for sensitivity analysis
@@ -66,6 +67,12 @@ export function destroyIntercompanyCalculator() {
 
     // Remove event listeners
     removeEventListeners();
+
+    // Cleanup options overview
+    const overviewSection = document.querySelector('#optionsOverviewSection');
+    if (overviewSection) {
+        destroyOptionsOverview(overviewSection);
+    }
 
     // Cleanup compliance, visualizations, sensitivity, and projections modules
     destroyComplianceAnalyzer();
@@ -192,6 +199,14 @@ function renderCalculatorUI(container) {
                     </div>
                     <div class="flex gap-2 bg-gray-700 p-1 rounded-lg">
                         <button
+                            id="modeOverviewBtn"
+                            class="selection-mode-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${selectionMode === 'overview' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'}"
+                            data-mode="overview"
+                            title="See all models at a glance"
+                        >
+                            <span class="mr-1">📊</span> Overview
+                        </button>
+                        <button
                             id="modeWizardBtn"
                             class="selection-mode-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${selectionMode === 'wizard' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'}"
                             data-mode="wizard"
@@ -213,13 +228,18 @@ function renderCalculatorUI(container) {
                 </div>
             </div>
 
+            <!-- Options Overview (shown in overview mode) -->
+            <div id="optionsOverviewSection" class="${selectionMode === 'overview' ? '' : 'hidden'} bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
+                <!-- Options overview will be populated here -->
+            </div>
+
             <!-- Structure Selector Wizard (shown in wizard mode) -->
             <div id="structureSelectorSection" class="${selectionMode === 'wizard' ? '' : 'hidden'} bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
                 <!-- Wizard will be populated here -->
             </div>
 
-            <!-- Model Selection (shown in direct mode or after wizard selection) -->
-            <div id="modelSelectionSection" class="${selectionMode === 'direct' || state.intercompany.selectedModel ? '' : 'hidden'} bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
+            <!-- Model Selection (shown in direct mode or after model selected from overview/wizard) -->
+            <div id="modelSelectionSection" class="${(selectionMode === 'direct' || state.intercompany.selectedModel) && selectionMode !== 'overview' ? '' : 'hidden'} bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
                 <h2 class="text-xl font-semibold text-gray-100 mb-3">Select Transaction Model</h2>
                 <p class="text-sm text-gray-400 mb-4">Choose how to structure the transaction for this project</p>
 
@@ -313,6 +333,8 @@ function renderCalculatorUI(container) {
         <style>${getRangeInputStyles()}</style>
         <!-- Party Selector Styles -->
         <style>${partySelectorStyles}</style>
+        <!-- Options Overview Styles -->
+        <style>${optionsOverviewStyles}</style>
     `;
 
     // Add event listeners
@@ -328,6 +350,17 @@ function renderCalculatorUI(container) {
     const entityConfigSection = container.querySelector('#entityConfigSection');
     if (entityConfigSection) {
         initEntityConfig(entityConfigSection);
+    }
+
+    // Initialize options overview if in overview mode
+    if (selectionMode === 'overview') {
+        const overviewSection = container.querySelector('#optionsOverviewSection');
+        if (overviewSection) {
+            initOptionsOverview(overviewSection, {
+                onModelSelect: handleOverviewModelSelected,
+                onWizardClick: handleSwitchToWizard
+            });
+        }
     }
 
     // Initialize structure selector wizard if in wizard mode
@@ -382,6 +415,56 @@ function renderCalculatorUI(container) {
                 projectionParams: projectionData?.params
             });
         }
+    }
+}
+
+/**
+ * Handle model selection from options overview
+ */
+function handleOverviewModelSelected(modelId) {
+    if (!modelId) return;
+
+    const container = document.getElementById('intercompanyCalculator');
+    if (!container) return;
+
+    // Select the model in state
+    selectIntercompanyModel(modelId);
+
+    // Switch to direct mode to show model details
+    selectionMode = 'direct';
+
+    // Re-render to show model selection section
+    renderCalculatorUI(container);
+
+    // Show variant section immediately since model is selected
+    const variantSection = container.querySelector('#variantSection');
+    const variantSelector = container.querySelector('#variantSelector');
+
+    if (variantSection && variantSelector) {
+        variantSelector.innerHTML = renderVariantButtons(modelId);
+        variantSection.classList.remove('hidden');
+    }
+
+    // Update model button styles to show selection
+    container.querySelectorAll('.model-select-btn').forEach(btn => {
+        const isSelected = btn.dataset.modelId === modelId;
+        btn.classList.toggle('bg-blue-600/20', isSelected);
+        btn.classList.toggle('border-blue-500', isSelected);
+        btn.classList.toggle('text-blue-300', isSelected);
+        btn.classList.toggle('bg-gray-700', !isSelected);
+        btn.classList.toggle('border-gray-600', !isSelected);
+        btn.classList.toggle('text-gray-300', !isSelected);
+    });
+}
+
+/**
+ * Handle switching to wizard mode from overview
+ */
+function handleSwitchToWizard() {
+    selectionMode = 'wizard';
+    const container = document.getElementById('intercompanyCalculator');
+    if (container) {
+        renderCalculatorUI(container);
     }
 }
 

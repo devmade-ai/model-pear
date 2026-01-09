@@ -293,18 +293,18 @@ Update `ui/intercompany/calculator.js`:
 
 ### Tasks for Options Overview
 
-- [ ] Create `ui/intercompany/options-overview.js`
-- [ ] Enhance `getModelMetadata()` with overview fields
-- [ ] Design model cards with key info (icon, summary, features)
-- [ ] Add quick comparison table below cards
-- [ ] Create "Best For" tags/badges for each model
-- [ ] Add "Explore →" button per card
-- [ ] Add "Use the guided wizard" link
-- [ ] Integrate as new landing view in calculator
-- [ ] Add view toggle: Overview ↔ Wizard ↔ Direct
+- [x] Create `ui/intercompany/options-overview.js`
+- [x] Enhance `getModelMetadata()` with overview fields
+- [x] Design model cards with key info (icon, summary, features)
+- [x] Add quick comparison table below cards
+- [x] Create "Best For" tags/badges for each model
+- [x] Add "Explore →" button per card
+- [x] Add "Use the guided wizard" link
+- [x] Integrate as new landing view in calculator
+- [x] Add view toggle: Overview ↔ Wizard ↔ Direct
 - [ ] Make view selection persistent (localStorage preference)
-- [ ] Ensure mobile responsiveness (stack cards)
-- [ ] Update app.js to route to overview by default
+- [x] Ensure mobile responsiveness (stack cards) - CSS grid with auto-fit
+- [ ] Update app.js to route to overview by default (already defaults to overview)
 - [ ] Test navigation flows
 
 ---
@@ -530,7 +530,7 @@ app.js                       # Priority 2 - Default landing view
 1. [x] Review and approve this plan
 2. [x] Begin Phase 1: Perspective Toggle Enhancement - **COMPLETED (Session 2026-01-09)**
 3. [ ] User testing after Phase 1
-4. [ ] Begin Phase 2: Options Overview
+4. [x] Begin Phase 2: Options Overview - **IN PROGRESS (Session 2026-01-09)**
 5. [ ] Begin Phase 3: Compare Mode
 6. [ ] Iterate based on feedback
 
@@ -585,3 +585,60 @@ app.js                       # Priority 2 - Default landing view
 **Ready to proceed with:**
 - Phase 2: Options Overview
 - Or user testing of Phase 1 changes
+
+---
+
+### Session: 2026-01-09 (Phase 2 - Options Overview Started)
+
+**What was implemented:**
+
+1. **Updated: `models/intercompany/registry.js`**
+   - Added `MODEL_OVERVIEW_DATA` object with comprehensive metadata for all 6 models
+   - Each model now has: icon, summary, keyFeatures, bestFor, paymentType, ipOwnership, riskProfile
+   - Enhanced `getModelMetadata()` to include overview fields
+   - Added `getModelComparisonData()` for quick comparison table
+   - Added helper functions `getBuyerAssetIndicator()` and `getRiskDirection()`
+
+2. **New File: `ui/intercompany/options-overview.js`**
+   - Complete options overview component with model cards grid
+   - Each card shows: icon, name, summary, key features, best-for tags, IP/payment badges
+   - "Explore →" button on each card to select model
+   - Quick comparison table showing all models side-by-side
+   - "Use the guided wizard" link at bottom
+   - Responsive CSS grid layout (auto-fit for mobile)
+   - Event handling for model selection and wizard navigation
+
+3. **Updated: `ui/intercompany/calculator.js`**
+   - Added "Overview" button to selection mode toggle
+   - Changed default selection mode from 'wizard' to 'overview'
+   - Added `#optionsOverviewSection` container
+   - Integrated options overview styles
+   - Added `handleOverviewModelSelected()` handler
+   - Added `handleSwitchToWizard()` handler
+   - Added cleanup in `destroyIntercompanyCalculator()`
+
+**Model Overview Data Added:**
+| Model | Icon | IP Ownership | Payment Type |
+|-------|------|--------------|--------------|
+| Dev Services | 💼 | Buyer | Service fee (cost + margin) |
+| Licence | 📜 | Developer | Licence fee + Royalties |
+| Joint Dev | 🤝 | Shared | Cost sharing (no markup) |
+| BOT | 🔄 | Developer → Buyer | Service fees + Transfer payment |
+| Software Sale | 💰 | Buyer (on sale) | Once-off purchase + Support fees |
+| SaaS | 📊 | Developer | Monthly/Annual subscription |
+
+**Navigation Flow:**
+1. App loads → Shows Overview mode (default)
+2. User clicks card → Switches to Direct mode with model selected
+3. User clicks "Use wizard" → Switches to Wizard mode
+4. User can toggle between Overview/Wizard/Direct at any time
+
+**What remains for Phase 2:**
+- Make view selection persistent (localStorage preference)
+- Verify app.js routing (should work as-is)
+- Test navigation flows
+
+**Ready to proceed with:**
+- Completing Phase 2 persistence feature
+- Phase 3: Compare Mode
+- Or user testing of Phase 2 changes
