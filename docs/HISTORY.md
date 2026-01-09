@@ -9,6 +9,173 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Configuration File Naming Convention Fix
+
+**Date**: January 9, 2026
+**Impact**: Claude Code now properly detects the project configuration file
+
+**Changes Made**:
+
+**File Rename**:
+- Renamed `claude.md` → `CLAUDE.md` (uppercase) to match Claude Code's expected naming convention
+
+**Reference Updates**:
+- Updated file tree reference in `CLAUDE.md`
+- Updated documentation maintenance table in `CLAUDE.md`
+- Fixed link in `docs/README.md`
+- Fixed link in `docs/BUSINESS_GUIDE.md`
+
+**Files Modified**:
+- `CLAUDE.md` (renamed from `claude.md`)
+- `docs/README.md`
+- `docs/BUSINESS_GUIDE.md`
+
+---
+
+### Version Tracking Diff View & Cost Estimation Helper
+
+**Date**: January 9, 2026
+**Impact**: Enhanced comparison workflow and simplified cost estimation
+
+**New Features**:
+
+**Diff View (What Changed?)**:
+- Side-by-side comparison showing differences between two saved options
+- Displays input changes, setting changes, and result impact
+- Visual badges for added/removed/changed fields
+- "What Changed?" button in comparison manager (requires 2 selections)
+
+**Cost Estimation Helper**:
+- Hours × rate calculator for project cost estimation
+- Phase breakdown: Discovery, Design, Development, Testing, Deployment
+- Contingency percentage calculation
+- "Use Estimate" button populates calculator inputs directly
+- Accessible via link in input form section
+
+**Files Created**:
+- `ui/intercompany/diff-view.js` (977 lines)
+- `ui/intercompany/cost-estimator.js` (725 lines)
+
+**Files Modified**:
+- `ui/intercompany/calculator.js`
+- `ui/intercompany/comparison-manager.js`
+- `docs/USAGE_SCENARIOS_REVIEW.md`
+
+---
+
+### Major Feature: Compare Mode (Phase 3)
+
+**Date**: January 9, 2026
+**Impact**: Users can now save, manage, and compare multiple pricing options side-by-side
+
+**New Features**:
+
+**Save & Storage System**:
+- Save calculated results as named options with notes
+- localStorage persistence with version tracking
+- 20 comparison limit with storage info display
+- Export to JSON/CSV and import from JSON
+- Auto-generated default names from model/variant
+
+**Comparison Manager Panel**:
+- List, load, delete, rename saved comparisons
+- Edit notes for each saved option
+- Select 2-4 options for side-by-side comparison
+- Clear all with confirmation dialog
+
+**Comparison View**:
+- Side-by-side comparison table for 2-4 options
+- Developer, Buyer, Combined metrics sections
+- Transfer pricing risk display
+- Difference column with directional arrows
+- Best/worst value highlighting (green/red)
+- Compatibility warnings for mismatched comparisons
+
+**Print/PDF Export**:
+- Browser-native print functionality
+- Print-friendly CSS styles (@media print)
+- A4 landscape layout optimized for comparison tables
+- Best/worst highlighting preserved in print output
+
+**UI Integration**:
+- Save Actions Bar with Save/View/Compare buttons
+- Save Modal with name and notes input
+- Clear All button (shown when options exist)
+
+**Files Created**:
+- `utils/storage.js` (479 lines)
+- `ui/intercompany/comparison-manager.js` (1,065 lines)
+- `ui/intercompany/comparison-view.js` (767 lines)
+
+**Files Modified**:
+- `state/app-state.js` (added comparison state management)
+- `ui/intercompany/calculator.js`
+- `docs/BUSINESS_GUIDE.md`
+- `docs/UI_UX_GUIDE.md`
+
+---
+
+### Major Feature: Options Overview (Phase 2)
+
+**Date**: January 9, 2026
+**Impact**: Users can now see all 6 transaction models at a glance before selecting one
+
+**New Features**:
+
+**Options Overview Landing View**:
+- Model cards grid with icon, summary, key features, and best-for tags
+- Quick comparison table for side-by-side model analysis
+- "Explore" buttons to dive into specific models
+- "Use the guided wizard" link for recommendation-based selection
+
+**Selection Mode Toggle**:
+- Three-way toggle: Overview / Wizard / Direct selection modes
+- Overview is now the default landing view
+- Remembers user preference
+
+**Model Metadata Enhancement**:
+- Rich `getModelMetadata()` with overview data
+- `getModelComparisonData()` for comparison table population
+
+**Files Created**:
+- `ui/intercompany/options-overview.js` (544 lines)
+
+**Files Modified**:
+- `models/intercompany/registry.js` (added metadata functions)
+- `ui/intercompany/calculator.js`
+
+---
+
+### Major Feature: Party Relationship Selector (Phase 1)
+
+**Date**: January 9, 2026
+**Impact**: Clearer party relationship selection and enhanced perspective navigation
+
+**New Features**:
+
+**Party Relationship Selector**:
+- Prominent radio cards for selecting relationship type
+- "Independent Parties" option (2 perspectives: Developer, Buyer)
+- "Related Parties" option (3 perspectives with Shareholder/Combined view)
+- Visual feedback and clear explanations for each option
+
+**Enhanced Perspective Toggle**:
+- Dynamic labels that change based on relationship type
+- "Net Effect" becomes "Shareholder" when Related Parties selected
+- Keyboard shortcuts: D (Developer), B (Buyer), S (Shareholder/Net Effect)
+
+**Files Created**:
+- `ui/intercompany/party-selector.js` (259 lines)
+
+**Files Modified**:
+- `state/app-state.js` (added `setRelationshipType()`, `arePartiesRelated()`)
+- `ui/intercompany/calculator.js`
+- `ui/intercompany/entity-config.js` (removed duplicate relationship settings)
+- `ui/intercompany/perspective-toggle.js`
+- `docs/UI_UX_GUIDE.md`
+
+---
+
 ### UI/UX Terminology Standardization
 
 **Date**: January 9, 2026
