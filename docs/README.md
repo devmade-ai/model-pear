@@ -118,7 +118,6 @@ No build process needed - it's pure HTML/CSS/JS.
 - **[model_1_cost_plus_concept.md](model_1_cost_plus_concept.md)** - Model 1 specifications
 - **[model_2_licence_royalties_concept.md](model_2_licence_royalties_concept.md)** - Model 2 specifications
 - **[model_6_saas_subscription_concept.md](model_6_saas_subscription_concept.md)** - Model 6 specifications
-- **[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)** - Implementation plan and session notes
 
 **For Developers:**
 - **[claude.md](../claude.md)** - Technical architecture and development guide (AI assistant context)
