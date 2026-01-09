@@ -236,6 +236,29 @@ export function updateTaxParams(params) {
 }
 
 /**
+ * Set party relationship type
+ * @param {boolean} isRelated - true for related parties (mutual ownership), false for independent
+ */
+export function setRelationshipType(isRelated) {
+    updateState({
+        entities: {
+            ...state.entities,
+            relationship: {
+                ...state.entities.relationship,
+                relatedParties: isRelated
+            }
+        }
+    });
+}
+
+/**
+ * Check if parties are related (mutual ownership)
+ */
+export function arePartiesRelated() {
+    return state.entities?.relationship?.relatedParties === true;
+}
+
+/**
  * Set UI loading state
  */
 export function setCalculating(isCalculating) {
@@ -301,5 +324,7 @@ export default {
     setIntercompanyResults,
     updateEntityConfig,
     updateTaxParams,
+    setRelationshipType,
+    arePartiesRelated,
     setCalculating
 };

@@ -62,6 +62,8 @@ button:focus-visible {
 
 Power users can navigate the calculator using keyboard shortcuts:
 
+### Global Shortcuts
+
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl/Cmd + Enter` | Calculate equilibrium |
@@ -69,11 +71,22 @@ Power users can navigate the calculator using keyboard shortcuts:
 | `Tab` | Navigate between form fields |
 | `?` | Show keyboard shortcuts help |
 
+### Perspective Shortcuts (Inter-Company Tool)
+
+| Shortcut | Action |
+|----------|--------|
+| `D` | Switch to Developer (Your Company) perspective |
+| `B` | Switch to Buyer (Client) perspective |
+| `S` | Switch to Shareholder/Net Effect perspective |
+| `M` | Toggle Mutual Ownership (Independent ↔ Related parties) |
+
 ### How to Use
 
 1. Press `?` anywhere in the application to view all available shortcuts
 2. Use `Ctrl+Enter` (Windows/Linux) or `Cmd+Enter` (Mac) to quickly calculate
 3. Press `Esc` to dismiss any open modal or dialog
+4. Use `D`, `B`, `S` to quickly switch perspectives in results view
+5. Press `M` to toggle between independent and related party mode
 
 ---
 
@@ -533,6 +546,30 @@ Each error message includes a 💡 suggestion for how to fix it
 
 ## Changelog
 
+### Version 2.4 (2026-01-09)
+
+#### Added
+- **Party Relationship Selector**: New prominent UI component for selecting party relationship type
+  - Two options: "Independent Parties" (2 perspectives) or "Related Parties" (3 perspectives)
+  - Visual radio cards with color-coded borders and selection indicators
+  - Transfer pricing warning shown when Related Parties is selected
+
+- **Enhanced Perspective Toggle**: Improved perspective switching experience
+  - Header shows current mode (Independent/Related parties)
+  - Description box updates with each perspective
+  - "Net Effect" label changes to "Shareholder" when Related Parties is selected
+  - Keyboard shortcut hints displayed in the UI
+
+- **Perspective Keyboard Shortcuts**: New keyboard shortcuts for fast perspective switching
+  - `D` - Switch to Developer (Your Company) perspective
+  - `B` - Switch to Buyer (Client) perspective
+  - `S` - Switch to Shareholder/Net Effect perspective
+  - `M` - Toggle Mutual Ownership (Independent ↔ Related parties)
+
+#### Changed
+- **Entity Configuration**: Removed "Relationship Settings" section (moved to Party Relationship Selector)
+- **Perspective Framework**: Clarified that perspectives are about the two/three parties in a transaction, not group accounting consolidation
+
 ### Version 2.3 (2026-01-08)
 
 #### Changed
@@ -597,4 +634,4 @@ Each error message includes a 💡 suggestion for how to fix it
 
 ---
 
-*Last updated: 2026-01-08*
+*Last updated: 2026-01-09*
