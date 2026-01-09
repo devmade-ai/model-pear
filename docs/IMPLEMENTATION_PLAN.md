@@ -954,7 +954,7 @@ This section consolidates all remaining optional work for easy reference in futu
 
 | Item | Priority | Effort | Notes |
 |------|----------|--------|-------|
-| "Clear All" button in results area | Low | Low | Quick way to clear saved comparisons without opening manager |
+| ~~"Clear All" button in results area~~ | ~~Low~~ | ~~Low~~ | ✅ Added to save actions bar with confirmation dialog |
 | Comparison tab in main navigation | Low | Medium | Alternative to modal-based comparison view |
 | PDF export | Medium | High | Formal report generation for stakeholders |
 
@@ -1021,3 +1021,30 @@ This section consolidates all remaining optional work for easy reference in futu
 - User testing of comparison warnings
 - Additional edge case handling as needed
 - Other optional enhancements from Future Work list
+
+---
+
+### Session: 2026-01-09 (Feature - Clear All Button)
+
+**What was implemented:**
+
+#### Clear All Button in Results Area
+
+1. **Updated: `ui/intercompany/calculator.js`**
+   - Added `clearAllComparisons` to imports from app-state.js
+   - Added "Clear All" button to save actions bar (red styling, hidden by default)
+   - Updated `updateSavedOptionsUI()` to show/hide the Clear All button based on saved count
+   - Added click handler for the button in the event delegation
+   - Added `handleClearAllOptions()` function with browser confirmation dialog
+
+**Button Behavior:**
+- Only visible when 1+ options are saved
+- Uses native browser `confirm()` dialog for confirmation
+- Shows count of options to be deleted
+- Displays success toast after clearing
+- Updates UI immediately after clearing
+
+**Notes:**
+- Uses native confirm dialog for simplicity (matches browser UX patterns)
+- Button styled with red background to indicate destructive action
+- Quick, low-effort enhancement that improves workflow efficiency

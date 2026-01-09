@@ -7,7 +7,7 @@
 
 import {
     getState, subscribe, selectIntercompanyModel, selectVariant, setIntercompanyResults, setCalculating,
-    initializeComparisons, saveComparison, getComparisons, setSaveModalOpen, setComparisonViewOpen,
+    initializeComparisons, saveComparison, getComparisons, clearAllComparisons, setSaveModalOpen, setComparisonViewOpen,
     setActiveComparisons
 } from '../../state/app-state.js';
 import { getModelMetadata, getModelVariants, getVariantInputs, calculateIntercompany, DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from '../../models/intercompany/registry.js';
@@ -350,6 +350,9 @@ function renderCalculatorUI(container) {
                         </button>
                         <button id="compareOptionsBtn" class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm hidden">
                             <span>⚖️</span> Compare
+                        </button>
+                        <button id="clearAllOptionsBtn" class="flex items-center gap-2 px-4 py-2 bg-red-600/80 text-white rounded-md hover:bg-red-600 transition-colors text-sm hidden" title="Clear all saved options">
+                            <span>🗑️</span> Clear All
                         </button>
                     </div>
                 </div>
@@ -906,6 +909,12 @@ function setupEventListeners(container) {
             return;
         }
 
+        // Clear All Options button
+        if (e.target.closest('#clearAllOptionsBtn')) {
+            handleClearAllOptions(container);
+            return;
+        }
+
         // Save modal - close button or backdrop click
         if (e.target.closest('#closeSaveModal') || e.target.id === 'saveOptionModal') {
             handleCloseSaveModal(container);
@@ -1316,6 +1325,27 @@ function handleCompareOptions(container) {
 }
 
 /**
+ * Clear all saved options with confirmation
+ */
+function handleClearAllOptions(container) {
+    const comparisons = getComparisons();
+    if (comparisons.length === 0) {
+        return;
+    }
+
+    const count = comparisons.length;
+    const confirmed = confirm(
+        `Are you sure you want to delete all ${count} saved option${count !== 1 ? 's' : ''}?\n\nThis cannot be undone.`
+    );
+
+    if (confirmed) {
+        clearAllComparisons();
+        updateSavedOptionsUI(container);
+        showToast(`Cleared ${count} saved option${count !== 1 ? 's' : ''}`, 'success');
+    }
+}
+
+/**
  * Update the saved options count and button visibility
  */
 function updateSavedOptionsUI(container) {
@@ -1339,6 +1369,7 @@ function updateSavedOptionsUI(container) {
     // Show/hide buttons based on count
     const viewBtn = container.querySelector('#viewSavedOptionsBtn');
     const compareBtn = container.querySelector('#compareOptionsBtn');
+    const clearAllBtn = container.querySelector('#clearAllOptionsBtn');
 
     if (viewBtn) {
         if (count > 0) {
@@ -1353,6 +1384,14 @@ function updateSavedOptionsUI(container) {
             compareBtn.classList.remove('hidden');
         } else {
             compareBtn.classList.add('hidden');
+        }
+    }
+
+    if (clearAllBtn) {
+        if (count > 0) {
+            clearAllBtn.classList.remove('hidden');
+        } else {
+            clearAllBtn.classList.add('hidden');
         }
     }
 }
