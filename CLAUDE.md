@@ -98,7 +98,7 @@ model-pear/
 │   ├── index.js                # Formatting, validation, helpers
 │   └── storage.js              # Compare Mode: localStorage persistence
 │
-├── claude.md                   # This file (AI assistant context)
+├── CLAUDE.md                   # This file (AI assistant context)
 │
 └── docs/
     ├── README.md               # Quick start
@@ -415,7 +415,7 @@ const profit = revenue - cost;
 
 | File | Update When |
 |------|-------------|
-| **claude.md** (root) | Architecture, models, or major features change |
+| **CLAUDE.md** (root) | Architecture, models, or major features change |
 | **BUSINESS_GUIDE.md** | User workflows, features, or terminology change |
 | **CALCULATIONS.md** | Formulas or calculation logic change |
 | **HISTORY.md** | Any change to the application |

@@ -120,7 +120,7 @@ No build process needed - it's pure HTML/CSS/JS.
 - **[model_6_saas_subscription_concept.md](model_6_saas_subscription_concept.md)** - Model 6 specifications
 
 **For Developers:**
-- **[claude.md](../claude.md)** - Technical architecture and development guide (AI assistant context)
+- **[CLAUDE.md](../CLAUDE.md)** - Technical architecture and development guide (AI assistant context)
 - **[HISTORY.md](HISTORY.md)** - Changelog and bug fixes
 
 ## Technology Stack

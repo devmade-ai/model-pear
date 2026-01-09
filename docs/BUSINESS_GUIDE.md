@@ -1131,7 +1131,7 @@ Ensure JavaScript is enabled. The tool does not require installation.
 
 ### For Technical Questions
 - See **[CALCULATIONS.md](CALCULATIONS.md)** for detailed formula explanations
-- See **[CLAUDE.md](../claude.md)** for developer documentation
+- See **[CLAUDE.md](../CLAUDE.md)** for developer documentation
 
 ### For Business/Tax Questions
 - Consult a transfer pricing specialist
