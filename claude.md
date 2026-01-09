@@ -79,8 +79,12 @@ model-pear/
 │       ├── calculator.js               # Main inter-company calculator
 │       ├── entity-config.js            # Developer/Buyer entity configuration
 │       ├── perspective-toggle.js       # Perspective switcher (Developer/Buyer/Shareholder)
+│       ├── party-selector.js           # Party relationship selector (Independent/Related)
 │       ├── results-display.js          # Perspective-based results rendering
 │       ├── structure-selector.js       # Module 1: Wizard UI
+│       ├── options-overview.js         # Options Overview: Model selection grid
+│       ├── comparison-manager.js       # Compare Mode: Saved options panel
+│       ├── comparison-view.js          # Compare Mode: Side-by-side comparison
 │       ├── compliance-analyzer.js      # Module 3: Compliance UI
 │       ├── range-input.js              # Stage 2: Range input components
 │       ├── sensitivity-visualizations.js # Stage 2: Tornado, fan, break-even charts
@@ -91,7 +95,8 @@ model-pear/
 │   └── index.js                # Equilibrium chart rendering (pricing mode)
 │
 ├── utils/
-│   └── index.js                # Formatting, validation, helpers
+│   ├── index.js                # Formatting, validation, helpers
+│   └── storage.js              # Compare Mode: localStorage persistence
 │
 ├── claude.md                   # This file (AI assistant context)
 │
@@ -101,8 +106,7 @@ model-pear/
     ├── CALCULATIONS.md         # Formula explanations
     ├── UI_UX_GUIDE.md          # Accessibility features
     ├── HISTORY.md              # Changelog
-    ├── IMPLEMENTATION_ROADMAP.md  # 13-phase implementation plan
-    ├── PHASE_0_PREPARATION.md     # Phase 0 audit findings
+    ├── IMPLEMENTATION_PLAN.md  # Implementation plan and session notes
     ├── financial_models_intercompany_software.md  # Framework overview
     └── model_*_concept.md      # Concept docs for Models 1-6
 ```
