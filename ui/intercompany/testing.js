@@ -373,9 +373,37 @@ function renderTestCard(testCase, result, isExpanded) {
 function renderTestDetails(testCase, result) {
     return `
         <div class="mt-4 border-t border-gray-600 pt-4 space-y-4">
+            <!-- Business Rule (WHY this test exists) -->
+            ${testCase.businessRule ? `
+                <div>
+                    <h5 class="text-sm font-medium text-gray-300 mb-2">📖 Business Rule</h5>
+                    <div class="bg-blue-900/20 border border-blue-700/30 rounded-lg p-3">
+                        <pre class="text-xs text-gray-300 whitespace-pre-wrap font-sans">${testCase.businessRule.trim()}</pre>
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- Formula (HOW expected values are calculated) -->
+            ${testCase.formula ? `
+                <div>
+                    <h5 class="text-sm font-medium text-gray-300 mb-2">🔢 Formula / Calculation</h5>
+                    <div class="bg-gray-900/50 border border-gray-600 rounded-lg p-3">
+                        <pre class="text-xs text-green-300 whitespace-pre-wrap font-mono">${testCase.formula.trim()}</pre>
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- Source Reference -->
+            ${testCase.source ? `
+                <div>
+                    <h5 class="text-sm font-medium text-gray-300 mb-2">📚 Source</h5>
+                    <p class="text-xs text-gray-400 bg-gray-700/30 rounded px-2 py-1 inline-block">${testCase.source}</p>
+                </div>
+            ` : ''}
+
             <!-- Inputs -->
             <div>
-                <h5 class="text-sm font-medium text-gray-300 mb-2">📥 Inputs</h5>
+                <h5 class="text-sm font-medium text-gray-300 mb-2">📥 Test Inputs</h5>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
                     ${Object.entries(testCase.inputs).map(([key, value]) => `
                         <div class="bg-gray-600/50 rounded px-2 py-1 text-xs">
@@ -386,13 +414,13 @@ function renderTestDetails(testCase, result) {
                 </div>
             </div>
 
-            <!-- Expected Outcomes -->
+            <!-- Expected Outcomes with Assertions -->
             <div>
-                <h5 class="text-sm font-medium text-gray-300 mb-2">🎯 Expected Outcomes</h5>
+                <h5 class="text-sm font-medium text-gray-300 mb-2">🎯 Expected vs Actual</h5>
                 <div class="space-y-2">
                     ${Object.entries(testCase.expected).map(([perspective, expectations]) => `
                         <div class="bg-gray-600/30 rounded p-2">
-                            <div class="text-xs text-gray-400 mb-1 uppercase">${perspective}</div>
+                            <div class="text-xs text-gray-400 mb-1 uppercase font-medium">${perspective}</div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-1">
                                 ${Object.entries(expectations).map(([path, expected]) => {
                                     const assertion = result?.assertions.find(a => a.path === `${perspective}.${path}`);
@@ -405,7 +433,7 @@ function renderTestDetails(testCase, result) {
                                             <span class="text-gray-400">${path}:</span>
                                             <span class="font-medium">${formatValue(expected)}</span>
                                             ${actual !== undefined && !passed ? `
-                                                <span class="text-red-400">(got: ${formatValue(actual)})</span>
+                                                <span class="text-red-400 text-xs">(got: ${formatValue(actual)})</span>
                                             ` : ''}
                                         </div>
                                     `;
