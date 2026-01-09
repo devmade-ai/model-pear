@@ -9,6 +9,38 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Testing Lab Tab
+
+**Date**: January 9, 2026
+**Impact**: Developers and testers can now validate calculation correctness with pre-defined test cases
+
+**New Features**:
+
+**Testing Tab (UI)**:
+- New "Testing" tab in the inter-company calculator section
+- Run all tests or individual tests with one click
+- Visual pass/fail indicators with detailed assertions
+- Filter tests by model (Model 1, Model 2, etc.)
+- Expandable test details showing inputs and expected vs actual values
+- Summary panel with pass rate, duration, and test counts
+
+**Test Utilities (Backend)**:
+- Pre-defined test cases for Model 1 variants (1A-1F)
+- Test cases for Model 2 and Model 3
+- Edge case tests (zero cost, high margin, custom tax rates)
+- Tolerance-based comparison for floating point values
+- Test runner with detailed assertion tracking
+- Custom test creation from current calculator state
+
+**Files Added**:
+- `models/intercompany/testing-utilities.js` - Test case definitions and runner
+- `ui/intercompany/testing.js` - Testing tab UI component
+
+**Files Modified**:
+- `ui/intercompany/calculator.js` - Integration of testing tab
+
+---
+
 ### Configuration File Naming Convention Fix
 
 **Date**: January 9, 2026

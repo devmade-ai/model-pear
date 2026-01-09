@@ -26,6 +26,7 @@ import { initAdvancedVisualizations, destroyAdvancedVisualizations } from './adv
 import { initRangeInputControls, renderRangeInputField, setupRangeSliders, gatherRangeValues, isRangeModeActive, getRangeInputState, getRangeInputStyles } from './range-input.js';
 import { initSensitivityVisualizations, updateSensitivityData, destroySensitivityVisualizations } from './sensitivity-visualizations.js';
 import { initProjectionVisualizations, updateProjectionData, destroyProjectionVisualizations } from './projection-visualizations.js';
+import { initTesting, destroyTesting, testingStyles } from './testing.js';
 import { createInputRanges, calculateScenarios, calculateInputSensitivity, calculateBreakEven } from '../../models/intercompany/sensitivity-analysis.js';
 import { formatCurrency, formatPercentage, showToast } from '../../utils/index.js';
 
@@ -66,7 +67,7 @@ function saveSelectionModePreference(mode) {
 
 let unsubscribers = [];
 let selectionMode = loadSelectionModePreference();  // Load from localStorage or default to 'overview'
-let activeMainTab = 'calculator';  // 'calculator' | 'compliance' | 'visualizations' | 'sensitivity' | 'projections'
+let activeMainTab = 'calculator';  // 'calculator' | 'compliance' | 'visualizations' | 'sensitivity' | 'projections' | 'testing'
 let sensitivityData = null;  // Cached sensitivity analysis results
 let lastInputRanges = null;  // Cached input ranges for sensitivity analysis
 let projectionData = null;   // Cached projection data
@@ -121,11 +122,12 @@ export function destroyIntercompanyCalculator() {
     destroyDiffView();
     destroyCostEstimator();
 
-    // Cleanup compliance, visualizations, sensitivity, and projections modules
+    // Cleanup compliance, visualizations, sensitivity, projections, and testing modules
     destroyComplianceAnalyzer();
     destroyAdvancedVisualizations();
     destroySensitivityVisualizations();
     destroyProjectionVisualizations();
+    destroyTesting();
 
     // Reset local state
     sensitivityData = null;
@@ -218,6 +220,15 @@ function renderCalculatorUI(container) {
                     >
                         <span class="mr-1">🚀</span> Projections
                         <span class="help-icon cursor-help" data-tooltip="tab-projections">i</span>
+                    </button>
+                    <button
+                        class="main-tab-btn flex-1 min-w-[120px] px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               ${activeMainTab === 'testing' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}"
+                        data-main-tab="testing"
+                        title="Testing lab for validating calculations"
+                    >
+                        <span class="mr-1">🧪</span> Testing
+                        <span class="help-icon cursor-help" data-tooltip="tab-testing">i</span>
                     </button>
                 </div>
             </div>
@@ -431,6 +442,13 @@ function renderCalculatorUI(container) {
                     <!-- Projection visualizations will be populated here -->
                 </div>
             </div>
+
+            <!-- Testing Tab Content -->
+            <div id="testingTabContent" class="${activeMainTab === 'testing' ? '' : 'hidden'}">
+                <div id="testingSection">
+                    <!-- Testing lab will be populated here -->
+                </div>
+            </div>
         </div>
 
         <!-- Comparison Manager Panel (hidden by default) -->
@@ -467,6 +485,8 @@ function renderCalculatorUI(container) {
         <style>${diffViewStyles}</style>
         <!-- Cost Estimator Styles -->
         <style>${costEstimatorStyles}</style>
+        <!-- Testing Styles -->
+        <style>${testingStyles}</style>
     `;
 
     // Add event listeners
@@ -546,6 +566,14 @@ function renderCalculatorUI(container) {
                 calculationResults: state.intercompany?.results,
                 projectionParams: projectionData?.params
             });
+        }
+    }
+
+    // Initialize testing tab if on that tab
+    if (activeMainTab === 'testing') {
+        const testingSection = container.querySelector('#testingSection');
+        if (testingSection) {
+            initTesting(testingSection, {});
         }
     }
 
@@ -895,6 +923,8 @@ function setupEventListeners(container) {
                     destroySensitivityVisualizations();
                 } else if (activeMainTab === 'projections') {
                     destroyProjectionVisualizations();
+                } else if (activeMainTab === 'testing') {
+                    destroyTesting();
                 }
 
                 activeMainTab = newTab;
