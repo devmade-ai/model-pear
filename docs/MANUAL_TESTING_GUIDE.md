@@ -1,9 +1,10 @@
 # Manual Testing Guide
-# Software Transaction Structuring Tool
+# Software Transaction Tool
 
 > **Purpose**: Step-by-step manual testing guide for QA and development validation
 > **Last Updated**: January 2026
 > **Estimated Time**: 2-3 hours for complete testing
+> **Note**: This guide is aligned with the actual codebase implementation
 
 ## Table of Contents
 
@@ -36,15 +37,24 @@
 ### Test Data Reference
 
 **Standard Test Values (South African Rands)**:
-| Input | Value | Notes |
-|-------|-------|-------|
-| Development Cost | R 800,000 | Typical small project |
-| Margin (Cost-Plus) | 10% | Middle of benchmark (5-15%) |
-| Royalty Rate | 15% | Middle of benchmark (5-25%) |
-| Buyer Revenue | R 2,000,000 | Used for royalty calculations |
-| Discount Rate | 12% | SA typical |
-| Useful Life | 5 years | Software standard |
-| Corporate Tax | 27% | SA current rate |
+| Input | Default Value | Test Value | Notes |
+|-------|---------------|------------|-------|
+| Total Development Cost | R 1,000,000 | R 1,000,000 | Code default |
+| Research Phase Cost | R 200,000 | R 200,000 | Expensed by Buyer |
+| Development Phase Cost | R 800,000 | R 800,000 | Capitalised by Buyer |
+| Cost-Plus Markup | 10% | 10% | Middle of benchmark (5-15%) |
+| Royalty Rate | 15% | 15% | Middle of benchmark (5-25%) |
+| Useful Life | 5 years | 5 years | Software standard |
+| Corporate Tax Rate | 27% | 27% | SA current rate |
+
+**Main Tab Navigation** (Inter-Company Tool):
+| Tab | Icon | Purpose |
+|-----|------|---------|
+| Calculator | 🧮 | Model selection, inputs, results |
+| Compliance | ⚖️ | Transfer pricing analysis |
+| Charts | 📊 | Advanced visualizations |
+| What-If | 📈 | Sensitivity analysis |
+| Projections | 🚀 | Multi-year NPV, IRR, payback |
 
 ---
 
@@ -59,30 +69,31 @@ This quick test verifies the app loads and core features work.
 1. **Load the application**
    - [ ] Open `index.html` in browser
    - [ ] Verify no console errors on load
-   - [ ] Verify header shows "Software Transaction Structuring Tool"
+   - [ ] Verify header shows "Software Transaction Tool"
 
 2. **Check Mode 1 (Pricing Calculator)**
-   - [ ] Click "Pricing Calculator" tab/mode
+   - [ ] Click "Pricing Calculator" mode button (top right)
    - [ ] Select "Subscription (SaaS)" model
-   - [ ] Enter any values and click Calculate
+   - [ ] Enter any values and click "Calculate Equilibrium"
    - [ ] Verify results display without errors
-   - [ ] Verify chart renders
+   - [ ] Verify equilibrium chart renders
 
-3. **Check Mode 2 (Transaction Structuring)**
-   - [ ] Click "Transaction Structuring" tab/mode
+3. **Check Mode 2 (Inter-Company Tool)**
+   - [ ] Click "Inter-Company Tool" mode button (top right, default active)
    - [ ] Verify Options Overview displays with 6 model cards
-   - [ ] Click "Select Model" on any card
-   - [ ] Enter R 800,000 for development cost
-   - [ ] Click Calculate
-   - [ ] Verify results show for both Developer and Buyer perspectives
+   - [ ] Click "Select Model →" on any card
+   - [ ] Select a variant (e.g., 1B)
+   - [ ] Enter R 1,000,000 for Total Development Cost (default)
+   - [ ] Click "Calculate Transaction"
+   - [ ] Verify results show with perspective tabs (Combined view default)
 
 4. **Quick Save/Load Test**
-   - [ ] Click "Save as Option"
+   - [ ] Click "💾 Save as Option" button
    - [ ] Enter name "Test Option 1"
-   - [ ] Click Save
-   - [ ] Verify success message appears
-   - [ ] Click "View Saved"
-   - [ ] Verify option appears in list
+   - [ ] Click "Save Option"
+   - [ ] Verify success toast appears
+   - [ ] Click "📋 View Saved" button
+   - [ ] Verify option appears in the Saved Options panel
 
 **Expected Result**: All checks pass, no console errors.
 
@@ -173,9 +184,14 @@ This quick test verifies the app loads and core features work.
 
 ---
 
-## Mode 2: Transaction Structuring Tool
+## Mode 2: Inter-Company Tool
 
 This is the primary focus of testing - the 6 transaction models with 47 variants.
+
+**Model Selection Modes** (toggle buttons below Entity Config):
+- **Overview**: Visual grid of all 6 models (default on fresh load)
+- **Wizard**: Guided question-based model recommendations
+- **Manual**: Direct model/variant dropdown selection
 
 ---
 
@@ -299,21 +315,31 @@ This is the primary focus of testing - the 6 transaction models with 47 variants
 **Scenario**: Software company develops custom software for client
 
 **Steps**:
-1. Select Model 1
+1. Select Model 1 (Development Services)
 2. Select Variant 1B (Cost-Plus Fixed Margin)
-3. Enter inputs:
-   - Development Cost: R 800,000
-   - Margin: 10%
-4. Click Calculate
+3. Enter inputs (use defaults or modify):
+   - Total Development Cost: R 1,000,000
+   - Research Phase Cost: R 200,000
+   - Development Phase Cost: R 800,000
+   - Cost-Plus Markup: 10%
+   - Useful Life: 5 years
+   - Tax Write-Off Period: Standard Software (2-year)
+   - Corporate Tax Rate: 27%
+4. Click "Calculate Transaction"
 
-**Expected Results**:
-- [ ] **Developer Revenue**: R 880,000 (800,000 × 1.10)
-- [ ] **Developer Profit**: R 80,000
-- [ ] **Developer Tax** (27%): R 21,600
-- [ ] **Buyer Asset Value**: R 880,000 (capitalised)
-- [ ] **Buyer Section 11(e)**: R 440,000/year (2-year write-off)
-- [ ] Accounting treatment shows IFRS 15 for Developer
-- [ ] Accounting treatment shows IAS 38 for Buyer
+**Expected Results** (with R 1,000,000 total cost, 10% markup):
+- [ ] **Developer Total Revenue**: R 1,100,000 (1,000,000 × 1.10)
+- [ ] **Developer Gross Profit**: R 100,000
+- [ ] **Developer Margin**: 10%
+- [ ] **Developer Tax Payable** (27%): R 27,000
+- [ ] **Developer Net Profit**: R 73,000
+- [ ] **Buyer Total Cost**: R 1,100,000
+- [ ] **Buyer Capitalised**: R 880,000 (development phase × 1.10)
+- [ ] **Buyer Expensed**: R 220,000 (research phase × 1.10)
+- [ ] **Buyer Annual Amortisation**: R 176,000 (880,000 / 5 years)
+- [ ] **Buyer Section 11(e) Deduction**: R 440,000/year (2-year write-off)
+- [ ] Accounting treatment shows "IFRS 15 - over time as services rendered"
+- [ ] Asset recognition shows "No Asset Recognised" for Developer
 
 ### Test Case 4.2: Model 1 - Different Variants
 
@@ -434,54 +460,79 @@ This is the primary focus of testing - the 6 transaction models with 47 variants
 
 ## Perspective Toggle Testing
 
-### Test Case 5.1: Developer vs Buyer Perspective
+The results section includes a Perspective Toggle with tabs for different views.
+
+### Test Case 5.1: Combined Perspective (Default)
 
 **Steps**:
-1. Calculate Model 1 with R 800,000 cost, 10% margin
-2. Switch to "Developer" perspective tab
-3. Review results
-4. Switch to "Buyer" perspective tab
-5. Review results
+1. Calculate Model 1 with default values (R 1,000,000 cost, 10% margin)
+2. Verify "Combined" view is shown by default
+3. Review the side-by-side comparison
+
+**Expected Results - Combined View**:
+- [ ] Header shows "⚖️ Combined View" with purple styling
+- [ ] Summary cards: Transaction Value, Your Asset, Client Asset, Combined Tax
+- [ ] Side-by-side: "💻 Your Company" and "🏢 Client" tables
+- [ ] Transaction Summary section with Key Insight
+- [ ] Asset Distribution section
+- [ ] Transfer Pricing Assessment section (if applicable)
+
+### Test Case 5.2: Developer Perspective
+
+**Steps**:
+1. Click the "Developer" or "Your Company" perspective tab
+2. Review Developer-specific results
 
 **Expected Results - Developer View**:
-- [ ] Revenue: R 880,000
-- [ ] Costs: R 800,000
-- [ ] Profit: R 80,000
-- [ ] Tax: R 21,600
-- [ ] Net: R 58,400
+- [ ] Header shows "💻 Your Company (Developer)" with blue styling
+- [ ] Summary cards: Total Revenue, Total Costs, Gross Profit, Margin
+- [ ] Revenue Recognition section with timing ("Over Time")
+- [ ] Asset Recognition section (shows "No Asset Recognised" for Model 1)
+- [ ] Tax Position section: Taxable Income, Tax Rate, Tax Payable
+- [ ] Net Profit After Tax prominently displayed
+- [ ] Transfer Pricing Risk section
+
+### Test Case 5.3: Buyer Perspective
+
+**Steps**:
+1. Click the "Buyer" or "Client" perspective tab
+2. Review Buyer-specific results
 
 **Expected Results - Buyer View**:
-- [ ] Cost Paid: R 880,000
-- [ ] Asset Capitalised: R 880,000
-- [ ] Annual Amortisation: Based on useful life
-- [ ] Section 11(e) Deduction: R 440,000/year
-- [ ] Deferred Tax calculation shown
+- [ ] Header shows "🏢 Client (Buyer)" with green styling
+- [ ] Summary cards: Total Cost, Capitalised, Expensed, Useful Life
+- [ ] Intangible Asset (IAS 38) section with detailed table
+- [ ] Carrying Value Over Time mini chart
+- [ ] Tax Position (Section 11(e)) section
+- [ ] Tax Write-Off Period displayed
+- [ ] Amortisation Schedule table with year-by-year breakdown
 
-### Test Case 5.2: Shareholder Perspective (Related Parties)
-
-**Steps**:
-1. Enable "Mutual Ownership" / "Related Parties" checkbox
-2. Calculate Model 1 with same inputs
-3. Switch to "Shareholder" or "Combined" perspective tab
-
-**Expected Results**:
-- [ ] Shareholder/Combined perspective tab now visible
-- [ ] Combined profit shown
-- [ ] Net cash flow to shareholder calculated
-- [ ] Transfer pricing risk indicator appears
-- [ ] Message about owning both entities displayed
-
-### Test Case 5.3: Perspective Consistency
+### Test Case 5.4: Related Parties Toggle
 
 **Steps**:
-1. Save an option from Developer perspective
-2. Save another option from Buyer perspective
-3. Compare them
+1. In the Party Relationship Selector (top of Calculator tab)
+2. Check "Related Parties" / "Mutual Ownership" option
+3. Recalculate
+4. Review Combined view
 
 **Expected Results**:
-- [ ] Each saved option retains its perspective
-- [ ] Comparison shows which perspective each option uses
-- [ ] Warning if comparing different perspectives
+- [ ] Transfer Pricing Assessment shows risk level
+- [ ] Benchmark comparison displayed
+- [ ] Required Documentation list appears
+- [ ] Risk Score indicates Low/Medium/High based on margin
+
+### Test Case 5.5: Perspective Persistence in Saved Options
+
+**Steps**:
+1. Switch to Developer perspective
+2. Save as Option "Dev View Test"
+3. Switch to Buyer perspective
+4. Save as Option "Buyer View Test"
+5. Load each option
+
+**Expected Results**:
+- [ ] Each option loads with correct perspective
+- [ ] Perspective is preserved in saved data
 
 ---
 
@@ -490,151 +541,174 @@ This is the primary focus of testing - the 6 transaction models with 47 variants
 ### Test Case 6.1: Save Single Option
 
 **Steps**:
-1. Calculate Model 1 with R 800,000, 10% margin
-2. Click "Save as Option"
-3. Enter name: "Model 1 - 10% margin"
-4. Add note: "Standard scenario"
-5. Click Save
+1. Calculate Model 1 with default values (R 1,000,000, 10% margin)
+2. Click "💾 Save as Option"
+3. In the modal:
+   - Option Name: "Model 1 - 10% margin"
+   - Notes: "Standard scenario with defaults"
+4. Verify modal shows Model and Variant info
+5. Click "Save Option"
 
 **Expected Results**:
-- [ ] Success message appears
-- [ ] Option appears in saved list
-- [ ] Name and note are saved correctly
-- [ ] Timestamp recorded
+- [ ] Save modal opens with pre-filled name suggestion
+- [ ] Model and Variant displayed in modal
+- [ ] Success toast appears on save
+- [ ] "📋 View Saved" button becomes visible
+- [ ] Saved count shows "(1)"
 
 ### Test Case 6.2: Save Multiple Options
 
 **Steps**:
 1. Save 3-4 different calculations:
-   - Option A: Model 1, 10% margin
-   - Option B: Model 1, 15% margin
+   - Option A: Model 1, 10% margin (default)
+   - Option B: Model 1, 15% margin (modify markup)
    - Option C: Model 2, 15% royalty
-   - Option D: Model 5, R 1M sale
-2. Click "View Saved"
+   - Option D: Model 5, sale scenario
+2. Click "📋 View Saved" button
 
 **Expected Results**:
-- [ ] All options listed
-- [ ] Each shows key metrics (Developer Revenue, Profit, Buyer Cost)
-- [ ] Timestamps are correct
-- [ ] Can scroll if many options
+- [ ] Saved Options panel opens as modal overlay
+- [ ] All 4 options listed with cards
+- [ ] Each card shows:
+  - Name and model/variant badges
+  - Timestamp (e.g., "just now", "2h ago")
+  - Key metrics: Dev Revenue, Dev Profit, Buyer Cost, Combined Net
+- [ ] Toolbar shows "4 / 20 options saved"
+- [ ] Checkboxes for selection visible
 
 ### Test Case 6.3: Load Saved Option
 
 **Steps**:
-1. Open View Saved panel
-2. Click "Load" on Option A
+1. Open "📋 View Saved" panel
+2. Click "📂 Load" button on Option A card
 
 **Expected Results**:
-- [ ] Calculator inputs are populated
-- [ ] Model and variant are selected
-- [ ] Results display immediately
-- [ ] Entity settings match saved values
+- [ ] Panel closes automatically
+- [ ] Calculator inputs are populated with saved values
+- [ ] Model and variant are pre-selected
+- [ ] Toast shows "Loaded [Option Name]"
+- [ ] Results display immediately if inputs are valid
 
-### Test Case 6.4: Compare 2 Options
+### Test Case 6.4: Compare 2 Options Side-by-Side
 
 **Steps**:
-1. Check checkbox for Option A
+1. In Saved Options panel, check checkbox for Option A
 2. Check checkbox for Option B
-3. Click "Compare Selected"
+3. Footer shows "2 options selected for comparison"
+4. Click "⚖️ Compare Selected (2)" button
 
 **Expected Results**:
 - [ ] Side-by-side comparison view opens
-- [ ] Two columns show Option A and Option B
-- [ ] Difference column shows +/- with arrows
+- [ ] Two columns show Option A and Option B metrics
+- [ ] Difference column shows directional arrows (▲ ▼)
 - [ ] Best values highlighted in green
 - [ ] Worst values highlighted in red
+- [ ] Can close comparison view to return
 
-### Test Case 6.5: Compare 4 Options
+### Test Case 6.5: "What Changed?" Feature
+
+**Steps**:
+1. Select exactly 2 options (e.g., Option A and Option B)
+2. Click "🔄 What Changed?" button (only enabled with 2 selected)
+
+**Expected Results**:
+- [ ] Button enabled only when exactly 2 options selected
+- [ ] Diff view opens showing before (Option A) → after (Option B)
+- [ ] Changes highlighted between the two options
+- [ ] Tooltip explains feature when hovering disabled button
+
+### Test Case 6.6: Compare 4 Options (Maximum)
 
 **Steps**:
 1. Select 4 different options
-2. Click "Compare Selected"
+2. Click "⚖️ Compare Selected (4)"
 
 **Expected Results**:
 - [ ] All 4 options shown in columns
-- [ ] Difference column compares to first option
+- [ ] Metrics compared across all 4
 - [ ] Table scrolls horizontally if needed
-- [ ] All metrics visible for each option
+- [ ] Selecting more than 4 triggers "Select All" to select only first 4
 
-### Test Case 6.6: Delete Option
+### Test Case 6.7: Delete Option
 
 **Steps**:
 1. Open View Saved panel
-2. Click "Delete" on one option
-3. Confirm deletion
+2. Click "🗑️" delete button on one option card
+3. Confirm deletion in dialog
 
 **Expected Results**:
-- [ ] Confirmation dialog appears
-- [ ] Option is removed from list
-- [ ] Other options remain intact
-- [ ] Count updates correctly
+- [ ] Confirmation dialog: "Delete Option - Are you sure you want to delete [name]?"
+- [ ] Click "Delete" confirms, "Cancel" aborts
+- [ ] Option removed from list on confirm
+- [ ] Toast: "Option deleted"
+- [ ] Count updates (e.g., "3 / 20 options saved")
 
-### Test Case 6.7: Rename Option
+### Test Case 6.8: Edit Option Name and Notes
 
 **Steps**:
-1. Click "Rename" on an option
-2. Enter new name: "Updated Name"
-3. Save
+1. Click "✏️" edit button on an option card
+2. Inline editing mode activates:
+   - Name input field appears
+   - Notes textarea appears
+3. Modify name and/or notes
+4. Click "✓ Save" or press Enter
 
 **Expected Results**:
-- [ ] Name is updated
-- [ ] Timestamp unchanged
-- [ ] Note preserved
-- [ ] Appears in list with new name
+- [ ] Inline editing replaces static text
+- [ ] Focus on name input
+- [ ] Click "✗" to cancel changes
+- [ ] Save updates both name and notes
+- [ ] Toast: "Changes saved"
+- [ ] Timestamp remains unchanged
 
-### Test Case 6.8: Edit Notes
+### Test Case 6.9: Select All / Deselect All
 
 **Steps**:
-1. Click "Edit Notes" on an option
-2. Add/modify note text
-3. Save
+1. With multiple options saved, click "Select All"
+2. Observe selection state
+3. Click again (now shows "Deselect All")
 
 **Expected Results**:
-- [ ] Note is updated
-- [ ] Other fields unchanged
-- [ ] Note visible when viewing option
-
-### Test Case 6.9: Comparison Limit
-
-**Steps**:
-1. Try to compare more than 4 options
-
-**Expected Results**:
-- [ ] Warning or limit enforced
-- [ ] Maximum 4 options can be compared
-- [ ] Clear message to user
+- [ ] "Select All" selects up to 4 options (max for comparison)
+- [ ] Button toggles to "Deselect All" when all selected
+- [ ] Selection count updates in footer
 
 ### Test Case 6.10: Storage Limit
 
 **Steps**:
-1. Try to save more than 20 options
+1. Save 20 options (the maximum)
+2. Try to save a 21st option
 
 **Expected Results**:
-- [ ] Warning message appears
-- [ ] Oldest option can be deleted to make room
-- [ ] Clear guidance to user
+- [ ] Info shows "20 / 20 options saved"
+- [ ] Warning appears when at limit
+- [ ] Must delete options to save more
+- [ ] Storage size shown in KB
 
 ---
 
 ## Sensitivity Analysis Testing
 
+Sensitivity analysis is accessed via the **What-If (📈)** tab in the main navigation.
+
 ### Test Case 7.1: Range Input Mode
 
 **Steps**:
-1. Calculate a base scenario
-2. Click "Sensitivity" or "What-If" tab
-3. Enable range inputs
-4. Enter for Development Cost:
-   - Low: R 600,000
-   - Base: R 800,000
-   - High: R 1,000,000
-5. Run sensitivity analysis
+1. Calculate a base scenario in the Calculator tab
+2. Click "📈 What-If" tab in the main navigation
+3. Enable range inputs (toggle or expand range section)
+4. Enter for Total Development Cost:
+   - Low: R 800,000
+   - Base: R 1,000,000
+   - High: R 1,200,000
+5. Click "Run Sensitivity Analysis" or equivalent button
 
 **Expected Results**:
-- [ ] Three scenarios calculated (Best/Base/Worst)
+- [ ] Three scenarios calculated (Best Case/Base Case/Worst Case)
 - [ ] Results table shows range of outcomes
-- [ ] Best case shows highest profit
-- [ ] Worst case shows lowest profit
+- [ ] Best case (low cost) shows highest profit
+- [ ] Worst case (high cost) shows lowest profit
+- [ ] Percentage changes from base case shown
 
 ### Test Case 7.2: Tornado Chart
 
@@ -679,11 +753,13 @@ This is the primary focus of testing - the 6 transaction models with 47 variants
 
 ## Growth Projections Testing
 
+Growth projections are accessed via the **Projections (🚀)** tab in the main navigation.
+
 ### Test Case 8.1: Multi-Year NPV Calculation
 
 **Steps**:
-1. Calculate base scenario
-2. Click "Projections" or "Growth" tab
+1. Calculate base scenario in the Calculator tab
+2. Click "🚀 Projections" tab in the main navigation
 3. Enter projection inputs:
    - Buyer Expected Revenue (Year 1): R 2,000,000
    - Revenue Growth Rate: 10%
@@ -741,12 +817,14 @@ This is the primary focus of testing - the 6 transaction models with 47 variants
 
 ## Compliance Analyzer Testing
 
+Compliance analysis is accessed via the **Compliance (⚖️)** tab in the main navigation.
+
 ### Test Case 9.1: Transfer Pricing Risk Score
 
 **Steps**:
-1. Enable "Related Parties"
+1. Enable "Related Parties" in Party Relationship Selector
 2. Calculate Model 1 with 10% margin
-3. Click "Compliance" tab
+3. Click "⚖️ Compliance" tab in the main navigation
 
 **Expected Results**:
 - [ ] TP Risk Score displayed (0-100)
@@ -806,66 +884,69 @@ This is the primary focus of testing - the 6 transaction models with 47 variants
 
 ## Export/Import Testing
 
+Export/Import buttons are in the Saved Options panel toolbar.
+
 ### Test Case 10.1: Export to JSON
 
 **Steps**:
 1. Save 2-3 options
-2. Click "Export JSON" in comparison manager
+2. Open "📋 View Saved" panel
+3. Click "📥 Export JSON" button in toolbar
 
 **Expected Results**:
-- [ ] JSON file downloads
-- [ ] File contains all saved options
-- [ ] File includes version information
-- [ ] Data is valid JSON (verify in text editor)
+- [ ] JSON file downloads (e.g., "transaction-options-2026-01-09.json")
+- [ ] File contains all saved options array
+- [ ] Each option includes: id, name, notes, timestamp, modelId, variantId, inputs, results
+- [ ] Data is valid JSON (verify in text editor or JSON validator)
 
 ### Test Case 10.2: Export to CSV
 
 **Steps**:
-1. Open comparison view with 2+ options
-2. Click "Export CSV"
+1. Open Saved Options panel with 2+ options
+2. Click "📊 Export CSV" button in toolbar
 
 **Expected Results**:
 - [ ] CSV file downloads
-- [ ] Opens correctly in Excel/Sheets
-- [ ] Columns match comparison metrics
-- [ ] Each option is a column
+- [ ] Opens correctly in Excel/Google Sheets
+- [ ] Columns: Name, Model, Variant, Dev Revenue, Dev Profit, Buyer Cost, Combined Net, Timestamp
+- [ ] Each row is one option
 
 ### Test Case 10.3: Print/PDF Export
 
 **Steps**:
-1. Open comparison view
-2. Click "Print / PDF"
+1. Open comparison view (select 2+ options and Compare)
+2. Use browser Print function (Ctrl+P / Cmd+P)
 3. Select "Save as PDF" in print dialog
 
 **Expected Results**:
-- [ ] Print dialog opens
-- [ ] Page is formatted for printing
-- [ ] Headers and footers appropriate
-- [ ] Tables fit on page
+- [ ] Print preview shows comparison layout
+- [ ] Page is formatted for printing (readable)
+- [ ] All comparison data visible
+- [ ] Headers appropriately styled
 
 ### Test Case 10.4: Import JSON
 
 **Steps**:
-1. Clear all saved options
-2. Click "Import"
+1. Clear all saved options (optional, to test merge)
+2. Click "📤 Import" button in toolbar
 3. Select previously exported JSON file
 
 **Expected Results**:
-- [ ] Import dialog appears
-- [ ] Options to merge or replace
-- [ ] Options imported successfully
-- [ ] All data intact
+- [ ] File browser opens for JSON selection
+- [ ] Options imported and merged with existing
+- [ ] Toast shows "Imported X options (Y total now)"
+- [ ] All data intact including results
 
 ### Test Case 10.5: Import Invalid File
 
 **Steps**:
-1. Try to import non-JSON file
-2. Try to import JSON with wrong structure
+1. Try to import a non-JSON file (e.g., .txt, .csv)
+2. Try to import JSON with wrong structure (e.g., `{"invalid": true}`)
 
 **Expected Results**:
-- [ ] Error message displayed
-- [ ] Existing options not affected
-- [ ] Clear guidance on correct format
+- [ ] Error toast: "Import failed: [reason]"
+- [ ] Existing saved options not affected
+- [ ] File input resets for retry
 
 ---
 
@@ -910,12 +991,26 @@ This is the primary focus of testing - the 6 transaction models with 47 variants
 
 **Steps**:
 1. Select Model 1
-2. Enter 100% margin
+2. Enter 100% for Cost-Plus Markup
 
 **Expected Results**:
+- [ ] Calculation completes (revenue = 2× cost)
 - [ ] No division by zero error
-- [ ] Calculation handles edge case
-- [ ] Warning about extreme margin
+- [ ] May trigger TP warning (far above 5-15% benchmark)
+
+### Test Case 11.4b: Clear All Options
+
+**Steps**:
+1. Save 3+ options
+2. Open Saved Options panel
+3. Click "🗑️ Clear All" button in toolbar
+4. Confirm in dialog
+
+**Expected Results**:
+- [ ] Confirmation dialog: "Clear All Options - Are you sure..."
+- [ ] All options removed on confirm
+- [ ] Panel shows empty state
+- [ ] Toast: "All options cleared"
 
 ### Test Case 11.5: Empty Required Fields
 
