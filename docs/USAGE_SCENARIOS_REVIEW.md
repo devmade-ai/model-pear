@@ -89,9 +89,9 @@ Both converge on the same core needs: options, costs, what each party gets, and 
 
 | Aspect | Rating | Current State | Gap |
 |--------|--------|---------------|-----|
-| Entry point | ⚠️ | Tool starts with "pick a model" | Should start with "I need software" |
-| Cost estimation | ❌ | Tool assumes you know cost | No help getting from need → cost |
-| Quick overview | ❌ | Must complete wizard for one model | No "show me all options at a glance" |
+| Entry point | ✅ | Options Overview as default landing | Shows all 6 models at a glance |
+| Cost estimation | ✅ | Cost Estimator helper available | Hours × rate calculator with phases |
+| Quick overview | ✅ | Options Overview shows all models | Cards with features, "best for" tags |
 
 ---
 
@@ -101,7 +101,7 @@ Both converge on the same core needs: options, costs, what each party gets, and 
 
 | Aspect | Rating | Current State | Gap |
 |--------|--------|---------------|-----|
-| List all options | ⚠️ | Wizard recommends models | No overview of ALL options with key metrics |
+| List all options | ✅ | Options Overview with comparison table | All 6 models with key metrics visible |
 | Cost breakdown | ✅ | Calculator shows this well | - |
 | Payment structure | ✅ | Different models have different structures | - |
 | Capitalize vs expense | ✅ | Accounting treatment shown | - |
@@ -115,10 +115,10 @@ Both converge on the same core needs: options, costs, what each party gets, and 
 
 | Aspect | Rating | Current State | Gap |
 |--------|--------|---------------|-----|
-| Save a scenario | ❌ | Results not saved | Can't bookmark for comparison |
-| Side-by-side view | ❌ | Must re-run and remember | No comparison mode |
-| Key metrics comparison | ❌ | No summary view | Need: total cost, cash flow, tax impact per option |
-| Share with stakeholders | ❌ | No export | Can't send comparison to decision-makers |
+| Save a scenario | ✅ | Save as Option button | Can save up to 20 options |
+| Side-by-side view | ✅ | Compare Mode available | 2-4 options side-by-side |
+| Key metrics comparison | ✅ | Comparison table with highlighting | Best/worst highlighting, difference column |
+| Share with stakeholders | ✅ | Export JSON/CSV/Print | Can share comparison results |
 
 ---
 
@@ -130,8 +130,8 @@ Both converge on the same core needs: options, costs, what each party gets, and 
 |--------|--------|---------------|-----|
 | Change inputs | ✅ | Can modify and recalculate | - |
 | See impact | ✅ | Results update | - |
-| Compare before/after | ❌ | Previous results lost | No "what changed?" view |
-| Track versions | ❌ | No history | Can't see evolution of thinking |
+| Compare before/after | ✅ | "What Changed?" diff view | Shows input/setting changes and result impact |
+| Track versions | ✅ | Save multiple options | Each saved option acts as a version snapshot |
 
 ---
 
@@ -166,84 +166,93 @@ Both converge on the same core needs: options, costs, what each party gets, and 
 
 | Aspect | Rating | Current State | Gap |
 |--------|--------|---------------|-----|
-| Toggle between perspectives | ⚠️ | "Mutual Ownership" checkbox exists | Buried in entity config, not prominent |
+| Toggle between perspectives | ✅ | Party Selector at top of calculator | Prominent Independent/Related toggle |
 | Impact on calculations | ✅ | Transfer pricing benchmarks apply | - |
 | Compliance requirements | ✅ | Compliance tab shows requirements | - |
-| Clear explanation | ⚠️ | Help content exists | Could be clearer what changes |
+| Clear explanation | ✅ | Help tooltips and UI labels | Party relationship clearly shown |
 
 ---
 
 ## Current Tool vs User's Mental Model
 
-| Current Tool | User's Mental Model |
-|--------------|---------------------|
-| Pick a model first | Start with the need |
-| Deep-dive one option at a time | See all options at once |
-| Re-run wizard to try another | Easy comparison and iteration |
-| Sensitivity is a separate tab | "What if" is natural flow |
-| Related party is buried in config | Simple toggle that's always visible |
-| Results disappear on recalculate | Save and compare versions |
+| Current Tool | User's Mental Model | Status |
+|--------------|---------------------|--------|
+| Options Overview shows all models | Start with the need | ✅ Aligned |
+| Compare multiple saved options | See all options at once | ✅ Aligned |
+| Save options and compare | Easy comparison and iteration | ✅ Aligned |
+| What-If tab with sensitivity | "What if" is natural flow | ✅ Aligned |
+| Party Selector at top | Simple toggle that's always visible | ✅ Aligned |
+| Save as Option + What Changed? | Save and compare versions | ✅ Aligned |
 
 ---
 
-## Prioritized Gaps
+## Prioritized Gaps (Updated)
 
-Based on the workflow analysis:
+Based on the workflow analysis, all high-priority gaps have been addressed:
 
-| Priority | Gap | Why |
-|----------|-----|-----|
-| **1** | **Compare Mode** | Core of the workflow - can't make decisions without comparing |
-| **2** | **"All options" overview** | Users want to see landscape before diving deep |
-| **3** | **Prominent related/unrelated toggle** | Fundamental to every calculation |
-| **4** | **Save & iterate** | Support the natural back-and-forth of decision making |
-| **5** | **Export/share** | Get results to stakeholders |
-| **6** | **Cost estimation helper** | Nice to have, but users can work around it |
-
----
-
-## Recommended Improvements
-
-### High Priority
-
-1. **Compare Mode**
-   - Save current calculation as "Option A"
-   - Run another, save as "Option B"
-   - Side-by-side view with key metrics
-   - Highlight differences
-
-2. **Options Overview**
-   - New starting view: "Here are 6 ways to structure this"
-   - High-level comparison: payment type, IP ownership, risk profile
-   - Click to explore any option in detail
-
-3. **Perspective Toggle**
-   - Move related/unrelated toggle to top-level
-   - Make it visible throughout the workflow
-   - Clear indicator of which mode you're in
-
-### Medium Priority
-
-4. **Save & Iterate**
-   - Save calculation state
-   - Track versions/history
-   - "What changed?" diff view
-
-5. **Export/Share**
-   - PDF summary of comparison
-   - Client-friendly view
-   - Internal decision document
-
-### Lower Priority
-
-6. **Cost Estimation Helper**
-   - Simple: hours × rate calculator
-   - Optional - users can skip if they know their cost
+| Priority | Feature | Status | Implementation |
+|----------|---------|--------|----------------|
+| **1** | **Compare Mode** | ✅ Implemented | Save up to 20 options, side-by-side comparison, export |
+| **2** | **"All options" overview** | ✅ Implemented | Options Overview as default landing page |
+| **3** | **Prominent related/unrelated toggle** | ✅ Implemented | Party Selector at top of calculator |
+| **4** | **Save & iterate** | ✅ Implemented | "What Changed?" diff view shows input changes and impact |
+| **5** | **Export/share** | ✅ Implemented | JSON, CSV, Print/PDF export |
+| **6** | **Cost estimation helper** | ✅ Implemented | Hours × rate calculator with phase breakdown |
 
 ---
 
-## Next Steps
+## Implementation Summary
 
-- [ ] Design Compare Mode UX
-- [ ] Prototype "All Options" overview
-- [ ] Move perspective toggle to prominent position
-- [ ] Update roadmap with new priorities
+All prioritized features have been implemented:
+
+### ✅ High Priority (Complete)
+
+1. **Compare Mode** - `ui/intercompany/comparison-manager.js`, `ui/intercompany/comparison-view.js`
+   - Save calculations as named options (up to 20)
+   - Side-by-side comparison of 2-4 options
+   - Best/worst value highlighting with difference column
+   - Export: JSON, CSV, Print/PDF
+
+2. **Options Overview** - `ui/intercompany/options-overview.js`
+   - Default landing view with all 6 models
+   - Model cards with icons, key features, "best for" tags
+   - Quick comparison table (IP ownership, payment type, risk)
+   - Toggle between Overview/Wizard/Direct selection modes
+
+3. **Perspective Toggle** - `ui/intercompany/party-selector.js`
+   - Party Selector at top of calculator
+   - Clear Independent/Related party toggle
+   - Visible indicator of relationship status
+
+### ✅ Medium Priority (Complete)
+
+4. **Save & Iterate** - `ui/intercompany/diff-view.js`
+   - "What Changed?" button in comparison manager
+   - Shows input changes, setting changes, and result impact
+   - Visual diff with added/removed/changed badges
+
+5. **Export/Share** - `utils/storage.js`
+   - JSON export for data portability
+   - CSV export for spreadsheet analysis
+   - Print/PDF via browser print dialog
+
+### ✅ Lower Priority (Complete)
+
+6. **Cost Estimation Helper** - `ui/intercompany/cost-estimator.js`
+   - Hours × rate calculator
+   - Phase breakdown (Discovery, Design, Development, Testing, Deployment)
+   - Contingency percentage
+   - "Use Estimate" populates calculator inputs
+
+---
+
+## Completion Status
+
+All usage scenarios from the original analysis are now covered:
+
+- [x] Compare Mode designed and implemented
+- [x] Options Overview prototyped and deployed
+- [x] Perspective toggle moved to prominent position
+- [x] Save & iterate with diff view
+- [x] Export/share functionality
+- [x] Cost estimation helper
