@@ -1,8 +1,12 @@
 // ========== THREE-PERSPECTIVE TOGGLE COMPONENT ==========
-// UI component for switching between Your Company, Client, and Net Effect perspectives.
+// UI component for switching between Your Company, Client, and Net Effect/Shareholder perspectives.
 // Each perspective shows different aspects of the software transaction.
+//
+// Perspective availability depends on party relationship:
+// - Independent Parties: Developer, Buyer (2 perspectives)
+// - Related Parties: Developer, Buyer, Shareholder (3 perspectives)
 
-import { getState, setPerspective, subscribe } from '../../state/app-state.js';
+import { getState, setPerspective, subscribe, arePartiesRelated } from '../../state/app-state.js';
 
 // ========== PERSPECTIVE DEFINITIONS ==========
 
@@ -12,23 +16,61 @@ export const PERSPECTIVES = {
         name: 'Your Company',
         icon: '💻',
         description: 'Revenue, costs, profit, and tax position for your software company',
-        color: 'blue'
+        color: 'blue',
+        shortcut: 'D',
+        alwaysAvailable: true
     },
     buyer: {
         id: 'buyer',
         name: 'Client',
         icon: '🏢',
         description: 'Asset capitalisation, amortisation, and tax benefits for the client',
-        color: 'green'
+        color: 'green',
+        shortcut: 'B',
+        alwaysAvailable: true
     },
     combined: {
         id: 'combined',
         name: 'Net Effect',
+        nameRelated: 'Shareholder',
         icon: '⚖️',
+        iconRelated: '👤',
         description: 'Combined financial impact for both parties to inform your decision',
-        color: 'purple'
+        descriptionRelated: 'Your combined position as shareholder in both entities. Shows the net effect on your ownership.',
+        color: 'purple',
+        shortcut: 'S',
+        alwaysAvailable: true  // Always available but label changes based on relationship
     }
 };
+
+/**
+ * Get available perspectives based on relationship type
+ */
+export function getAvailablePerspectives() {
+    return Object.values(PERSPECTIVES);
+}
+
+/**
+ * Get perspective display info adjusted for relationship type
+ */
+export function getPerspectiveDisplayInfo(perspectiveId) {
+    const perspective = PERSPECTIVES[perspectiveId];
+    if (!perspective) return null;
+
+    const isRelated = arePartiesRelated();
+
+    // For the combined perspective, adjust name/icon/description based on relationship
+    if (perspectiveId === 'combined') {
+        return {
+            ...perspective,
+            name: isRelated ? perspective.nameRelated : perspective.name,
+            icon: isRelated ? perspective.iconRelated : perspective.icon,
+            description: isRelated ? perspective.descriptionRelated : perspective.description
+        };
+    }
+
+    return perspective;
+}
 
 // ========== RENDER FUNCTION ==========
 
@@ -41,11 +83,29 @@ export function renderPerspectiveToggle(container) {
 
     const state = getState();
     const currentPerspective = state.intercompany.currentPerspective || 'combined';
+    const isRelated = arePartiesRelated();
+    const currentDisplayInfo = getPerspectiveDisplayInfo(currentPerspective);
 
     container.innerHTML = `
-        <div class="perspective-toggle flex flex-col sm:flex-row gap-2 mb-6">
-            <div class="text-sm text-gray-400 self-center mr-4 hidden sm:block">View:</div>
-            ${Object.values(PERSPECTIVES).map(p => `
+        <div class="perspective-toggle-header flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <span class="text-xl">👁️</span>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-200">Viewing as</h3>
+                    <p class="text-xs text-gray-400">${isRelated ? 'Related Parties (3 perspectives)' : 'Independent Parties (2 perspectives)'}</p>
+                </div>
+            </div>
+            <div class="text-xs text-gray-500 hidden md:block">
+                Keyboard: <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400">D</kbd>
+                <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400 ml-1">B</kbd>
+                <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400 ml-1">S</kbd>
+            </div>
+        </div>
+
+        <div class="perspective-toggle flex flex-col sm:flex-row gap-2 mb-4">
+            ${Object.values(PERSPECTIVES).map(basePerspective => {
+                const p = getPerspectiveDisplayInfo(basePerspective.id);
+                return `
                 <button
                     id="perspective-${p.id}"
                     class="perspective-btn flex-1 px-4 py-3 rounded-lg border-2 transition-all duration-200
@@ -55,16 +115,34 @@ export function renderPerspectiveToggle(container) {
                            }"
                     data-perspective="${p.id}"
                     aria-pressed="${currentPerspective === p.id}"
-                    aria-label="Switch to ${p.name} perspective"
+                    aria-label="Switch to ${p.name} perspective (${p.shortcut})"
+                    title="Press '${p.shortcut}' to switch"
                 >
                     <span class="text-lg mr-2">${p.icon}</span>
                     <span class="font-medium">${p.name}</span>
+                    <span class="text-xs opacity-50 ml-2 hidden sm:inline">(${p.shortcut})</span>
                 </button>
-            `).join('')}
+            `;
+            }).join('')}
         </div>
-        <p id="perspectiveDescription" class="text-sm text-gray-400 mb-4">
-            ${PERSPECTIVES[currentPerspective]?.description || ''}
-        </p>
+
+        <div id="perspectiveDescription" class="flex items-start gap-2 p-3 rounded-lg bg-${currentDisplayInfo?.color || 'purple'}-900/20 border border-${currentDisplayInfo?.color || 'purple'}-700/30">
+            <span class="text-${currentDisplayInfo?.color || 'purple'}-400">ℹ️</span>
+            <p class="text-sm text-${currentDisplayInfo?.color || 'purple'}-200/80">
+                ${currentDisplayInfo?.description || ''}
+            </p>
+        </div>
+
+        ${isRelated ? `
+        <div class="mt-3 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
+            <div class="flex items-start gap-2">
+                <span class="text-yellow-400">⚠️</span>
+                <p class="text-xs text-yellow-200/80">
+                    <strong>Transfer Pricing:</strong> Related party transactions must comply with arm's length principles.
+                </p>
+            </div>
+        </div>
+        ` : ''}
     `;
 
     // Add click handlers
@@ -86,9 +164,9 @@ export function updatePerspectiveToggle(container) {
     const currentPerspective = state.intercompany.currentPerspective || 'combined';
 
     container.querySelectorAll('.perspective-btn').forEach(btn => {
-        const perspective = btn.dataset.perspective;
-        const p = PERSPECTIVES[perspective];
-        const isActive = perspective === currentPerspective;
+        const perspectiveId = btn.dataset.perspective;
+        const p = getPerspectiveDisplayInfo(perspectiveId);
+        const isActive = perspectiveId === currentPerspective;
 
         btn.setAttribute('aria-pressed', isActive);
 
@@ -100,12 +178,27 @@ export function updatePerspectiveToggle(container) {
             btn.classList.add('bg-gray-800', 'border-gray-600', 'text-gray-400');
             btn.classList.remove(`bg-${p.color}-600/20`, `border-${p.color}-500`, `text-${p.color}-300`);
         }
+
+        // Update button text/icon for combined perspective based on relationship
+        if (perspectiveId === 'combined') {
+            const iconSpan = btn.querySelector('span:first-child');
+            const nameSpan = btn.querySelector('span.font-medium');
+            if (iconSpan) iconSpan.textContent = p.icon;
+            if (nameSpan) nameSpan.textContent = p.name;
+        }
     });
 
-    // Update description
+    // Update description with full re-render for color changes
+    const currentDisplayInfo = getPerspectiveDisplayInfo(currentPerspective);
     const descEl = container.querySelector('#perspectiveDescription');
-    if (descEl) {
-        descEl.textContent = PERSPECTIVES[currentPerspective]?.description || '';
+    if (descEl && currentDisplayInfo) {
+        descEl.className = `flex items-start gap-2 p-3 rounded-lg bg-${currentDisplayInfo.color}-900/20 border border-${currentDisplayInfo.color}-700/30`;
+        descEl.innerHTML = `
+            <span class="text-${currentDisplayInfo.color}-400">ℹ️</span>
+            <p class="text-sm text-${currentDisplayInfo.color}-200/80">
+                ${currentDisplayInfo.description}
+            </p>
+        `;
     }
 }
 
@@ -139,6 +232,71 @@ export const perspectiveStyles = `
     .text-purple-300 { color: rgb(216, 180, 254); }
 `;
 
+// ========== KEYBOARD SHORTCUTS ==========
+
+let keyboardHandler = null;
+
+/**
+ * Setup keyboard shortcuts for perspective switching
+ */
+function setupKeyboardShortcuts(container) {
+    // Remove existing handler
+    if (keyboardHandler) {
+        document.removeEventListener('keydown', keyboardHandler);
+    }
+
+    keyboardHandler = (e) => {
+        // Don't trigger if user is typing in an input
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+            return;
+        }
+
+        // Don't trigger if modifier keys are pressed (except shift for capitals)
+        if (e.ctrlKey || e.altKey || e.metaKey) {
+            return;
+        }
+
+        const key = e.key.toUpperCase();
+
+        switch (key) {
+            case 'D':
+                setPerspective('developer');
+                e.preventDefault();
+                break;
+            case 'B':
+                setPerspective('buyer');
+                e.preventDefault();
+                break;
+            case 'S':
+                setPerspective('combined');
+                e.preventDefault();
+                break;
+            case 'M':
+                // Toggle mutual ownership (related parties)
+                const state = getState();
+                const isCurrentlyRelated = state.entities?.relationship?.relatedParties === true;
+                // Import not available here, so use updateState directly
+                import('../../state/app-state.js').then(({ setRelationshipType }) => {
+                    setRelationshipType(!isCurrentlyRelated);
+                });
+                e.preventDefault();
+                break;
+        }
+    };
+
+    document.addEventListener('keydown', keyboardHandler);
+}
+
+/**
+ * Remove keyboard shortcuts
+ */
+function removeKeyboardShortcuts() {
+    if (keyboardHandler) {
+        document.removeEventListener('keydown', keyboardHandler);
+        keyboardHandler = null;
+    }
+}
+
 // ========== INITIALIZATION ==========
 
 /**
@@ -148,13 +306,32 @@ export function initPerspectiveToggle(container) {
     // Initial render
     renderPerspectiveToggle(container);
 
-    // Subscribe to perspective changes
-    return subscribe((newState, oldState) => {
+    // Setup keyboard shortcuts
+    setupKeyboardShortcuts(container);
+
+    // Subscribe to perspective changes AND relationship changes
+    const unsubscribe = subscribe((newState, oldState) => {
         const newPerspective = newState.intercompany?.currentPerspective;
         const oldPerspective = oldState?.intercompany?.currentPerspective;
+        const newRelated = newState.entities?.relationship?.relatedParties;
+        const oldRelated = oldState?.entities?.relationship?.relatedParties;
 
-        if (newPerspective !== oldPerspective) {
-            updatePerspectiveToggle(container);
+        // Re-render if perspective or relationship changes
+        if (newPerspective !== oldPerspective || newRelated !== oldRelated) {
+            renderPerspectiveToggle(container);
         }
     });
+
+    // Return cleanup function
+    return () => {
+        unsubscribe();
+        removeKeyboardShortcuts();
+    };
+}
+
+/**
+ * Destroy the perspective toggle (cleanup)
+ */
+export function destroyPerspectiveToggle() {
+    removeKeyboardShortcuts();
 }

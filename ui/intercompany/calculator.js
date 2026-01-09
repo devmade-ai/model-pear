@@ -11,6 +11,7 @@ import { initPerspectiveToggle } from './perspective-toggle.js';
 import { renderIntercompanyResults } from './results-display.js';
 import { initEntityConfig } from './entity-config.js';
 import { initStructureSelector } from './structure-selector.js';
+import { initPartySelector, partySelectorStyles } from './party-selector.js';
 import { initComplianceAnalyzer, destroyComplianceAnalyzer } from './compliance-analyzer.js';
 import { initAdvancedVisualizations, destroyAdvancedVisualizations } from './advanced-visualizations.js';
 import { initRangeInputControls, renderRangeInputField, setupRangeSliders, gatherRangeValues, isRangeModeActive, getRangeInputState, getRangeInputStyles } from './range-input.js';
@@ -169,6 +170,11 @@ function renderCalculatorUI(container) {
 
             <!-- Calculator Tab Content -->
             <div id="calculatorTabContent" class="${activeMainTab === 'calculator' ? '' : 'hidden'}">
+                <!-- Party Relationship Selector (Prominent) -->
+                <div id="partySelectorSection" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
+                    <!-- Party selector will be populated here -->
+                </div>
+
                 <!-- Entity Configuration (Collapsible) -->
                 <div id="entityConfigSection" class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 mb-6">
                     <!-- Entity config will be populated here -->
@@ -305,10 +311,18 @@ function renderCalculatorUI(container) {
 
         <!-- Range Input Styles -->
         <style>${getRangeInputStyles()}</style>
+        <!-- Party Selector Styles -->
+        <style>${partySelectorStyles}</style>
     `;
 
     // Add event listeners
     setupEventListeners(container);
+
+    // Initialize party relationship selector
+    const partySelectorSection = container.querySelector('#partySelectorSection');
+    if (partySelectorSection) {
+        initPartySelector(partySelectorSection);
+    }
 
     // Initialize entity configuration panel
     const entityConfigSection = container.querySelector('#entityConfigSection');

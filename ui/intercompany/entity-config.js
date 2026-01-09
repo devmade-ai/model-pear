@@ -188,28 +188,6 @@ function renderEntityConfigPanel(container) {
                     </div>
                 </div>
 
-                <!-- Relationship Settings -->
-                <div class="bg-purple-900/20 border border-purple-700/50 rounded-lg p-4">
-                    <h4 class="text-md font-semibold text-purple-300 mb-4 flex items-center gap-2">
-                        <span>🔗</span> Relationship
-                    </h4>
-
-                    <div class="flex items-center gap-3">
-                        <input
-                            type="checkbox"
-                            id="relationship-relatedParties"
-                            name="relationship.relatedParties"
-                            ${entities.relationship?.relatedParties === true ? 'checked' : ''}
-                            class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500"
-                        >
-                        <label class="text-sm text-gray-400" for="relationship-relatedParties">Mutual Ownership (Related Parties)</label>
-                    </div>
-
-                    <p class="mt-3 text-xs text-gray-500">
-                        Enable this if both entities share common ownership. This affects transfer pricing considerations and disclosure requirements.
-                    </p>
-                </div>
-
                 <!-- Tax Parameters -->
                 <div class="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-4">
                     <h4 class="text-md font-semibold text-yellow-300 mb-4 flex items-center gap-2">
