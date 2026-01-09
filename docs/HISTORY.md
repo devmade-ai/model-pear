@@ -9,6 +9,29 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Configuration File Naming Convention Fix
+
+**Date**: January 9, 2026
+**Impact**: Claude Code now properly detects the project configuration file
+
+**Changes Made**:
+
+**File Rename**:
+- Renamed `claude.md` → `CLAUDE.md` (uppercase) to match Claude Code's expected naming convention
+
+**Reference Updates**:
+- Updated file tree reference in `CLAUDE.md`
+- Updated documentation maintenance table in `CLAUDE.md`
+- Fixed link in `docs/README.md`
+- Fixed link in `docs/BUSINESS_GUIDE.md`
+
+**Files Modified**:
+- `CLAUDE.md` (renamed from `claude.md`)
+- `docs/README.md`
+- `docs/BUSINESS_GUIDE.md`
+
+---
+
 ### UI/UX Terminology Standardization
 
 **Date**: January 9, 2026
