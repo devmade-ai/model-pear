@@ -141,11 +141,11 @@ Add to comparison view:
 
 ### Tasks for Compare Mode
 
-- [ ] Extend `app-state.js` with `savedComparisons` array
-- [ ] Add state functions: save, load, delete, get comparisons
-- [ ] Create `utils/storage.js` for localStorage persistence
-- [ ] Add "Save as Option" button after calculation
-- [ ] Create save modal with name/notes input
+- [x] Extend `app-state.js` with `savedComparisons` array
+- [x] Add state functions: save, load, delete, get comparisons
+- [x] Create `utils/storage.js` for localStorage persistence
+- [x] Add "Save as Option" button after calculation
+- [x] Create save modal with name/notes input
 - [ ] Create `comparison-manager.js` - saved options panel
 - [ ] Create `comparison-view.js` - side-by-side comparison
 - [ ] Implement difference highlighting (green up, red down)
@@ -531,7 +531,11 @@ app.js                       # Priority 2 - Default landing view
 2. [x] Begin Phase 1: Perspective Toggle Enhancement - **COMPLETED (Session 2026-01-09)**
 3. [ ] User testing after Phase 1
 4. [x] Begin Phase 2: Options Overview - **COMPLETED (Session 2026-01-09)**
-5. [ ] Begin Phase 3: Compare Mode
+5. [x] Begin Phase 3: Compare Mode - **IN PROGRESS (Session 2026-01-09)**
+   - [x] Sub-phase 3.1: State & Storage Foundation
+   - [x] Sub-phase 3.2: Save Functionality UI
+   - [ ] Sub-phase 3.3: Comparison Manager & View
+   - [ ] Sub-phase 3.4: Export/Import Integration
 6. [ ] Iterate based on feedback
 
 ---
@@ -679,3 +683,107 @@ All tasks for Priority 2 (Options Overview) are now complete:
 **Ready to proceed with:**
 - Phase 3: Compare Mode (Priority 1 - most complex)
 - User testing of Phase 1 & Phase 2 changes
+
+---
+
+### Session: 2026-01-09 (Phase 3 - Compare Mode Started)
+
+**What was implemented:**
+
+#### Sub-phase 3.1: State & Storage Foundation
+
+1. **New File: `utils/storage.js`**
+   - `saveToStorage(comparisons)` - Save comparisons to localStorage with version tracking
+   - `loadFromStorage()` - Load and validate comparisons from localStorage
+   - `clearStorage()` - Clear all saved comparisons
+   - `getStorageInfo()` - Get storage usage statistics
+   - `exportAsJSON(comparisons)` - Export comparisons as JSON string
+   - `exportAsCSV(comparisons)` - Export comparisons as CSV format
+   - `generateComparisonSummary(comparisons)` - Generate structured comparison data
+   - `importFromJSON(jsonString)` - Import comparisons from JSON
+   - `mergeComparisons(existing, imported, mode)` - Merge imported with existing
+   - `downloadAsJSON()`, `downloadAsCSV()` - Trigger file downloads
+   - Constants: `MAX_COMPARISONS = 20`, `STORAGE_VERSION = 1`
+
+2. **Updated: `state/app-state.js`**
+   - Added `savedComparisons: []` to initial state
+   - Added UI state: `comparisonViewOpen`, `activeComparisonIds`, `saveModalOpen`
+   - Added comparison action creators:
+     - `initializeComparisons()` - Load from localStorage on startup
+     - `saveComparison(name, notes, inputs)` - Save current calculation
+     - `loadComparison(id)` - Restore a saved comparison to state
+     - `deleteComparison(id)` - Remove a saved comparison
+     - `updateComparisonNotes(id, notes)` - Update notes
+     - `renameComparison(id, name)` - Rename a comparison
+     - `getComparisons()` - Get all saved comparisons
+     - `getComparisonById(id)` - Get specific comparison
+     - `clearAllComparisons()` - Clear all and reset UI state
+     - `importComparisons(comparisons, mode)` - Import external comparisons
+   - Added comparison UI state functions:
+     - `toggleComparisonView()`, `setComparisonViewOpen()`
+     - `setSaveModalOpen()`
+     - `setActiveComparisons(ids)`, `toggleComparisonSelection(id)`
+     - `clearComparisonSelections()`
+
+#### Sub-phase 3.2: Save Functionality UI
+
+3. **Updated: `ui/intercompany/calculator.js`**
+   - Added imports for comparison state functions
+   - Added Save Actions Bar in results section:
+     - "💾 Save as Option" button (always visible when results shown)
+     - Saved options count display
+     - "📋 View Saved" button (shown when 1+ options saved)
+     - "⚖️ Compare" button (shown when 2+ options saved)
+   - Added Save Modal:
+     - Option name input (with auto-generated default)
+     - Notes textarea (optional)
+     - Model/Variant info display
+     - Cancel and Save buttons
+   - Added event handlers:
+     - `handleOpenSaveModal()` - Opens modal, populates defaults
+     - `handleCloseSaveModal()` - Closes modal
+     - `handleConfirmSave()` - Validates and saves comparison
+     - `handleViewSavedOptions()` - Placeholder for comparison manager
+     - `handleCompareOptions()` - Placeholder for comparison view
+     - `updateSavedOptionsUI()` - Updates count and button visibility
+     - `initSavedOptionsUI()` - Initializes comparisons on load
+   - Updated state change handler to react to comparison changes
+
+**Comparison Object Structure:**
+```javascript
+{
+  id: crypto.randomUUID(),
+  name: 'Option A - License Model',
+  timestamp: Date.now(),
+  modelId: 'model-2',
+  variantId: '2A',
+  inputs: { ... },  // All inputs used
+  entityConfig: { ... },  // Entity settings at save time
+  taxParams: { ... },  // Tax parameters
+  results: { ... },  // Full calculation results
+  perspective: 'combined',
+  notes: ''
+}
+```
+
+**What remains for Phase 3:**
+- `comparison-manager.js` - Saved options panel (list, load, delete, rename)
+- `comparison-view.js` - Side-by-side comparison table
+- Difference highlighting (green up arrows, red down arrows)
+- Export functionality integration (PDF/CSV/JSON buttons)
+- Import functionality integration (file upload)
+- Clear all with confirmation dialog
+- Tab/modal integration for comparison view
+- Testing and edge case handling
+
+**Recommended next session priorities:**
+1. Create `comparison-manager.js` for viewing/managing saved options
+2. Create `comparison-view.js` for side-by-side comparison
+3. Wire up export/import to UI buttons
+
+**Notes:**
+- Storage uses localStorage with 20 comparison limit to prevent overflow
+- Versioned storage format allows for future migrations
+- UI updates reactively when comparisons change
+- Modal is inline in calculator HTML for simplicity
+- "View Saved" and "Compare" are placeholders until manager/view components built
