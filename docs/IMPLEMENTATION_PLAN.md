@@ -146,13 +146,13 @@ Add to comparison view:
 - [x] Create `utils/storage.js` for localStorage persistence
 - [x] Add "Save as Option" button after calculation
 - [x] Create save modal with name/notes input
-- [ ] Create `comparison-manager.js` - saved options panel
-- [ ] Create `comparison-view.js` - side-by-side comparison
-- [ ] Implement difference highlighting (green up, red down)
-- [ ] Add export functionality (PDF/CSV/JSON)
-- [ ] Add import functionality (load from JSON)
-- [ ] Add clear all option with confirmation
-- [ ] Update tab navigation to include Comparison tab (or use modal)
+- [x] Create `comparison-manager.js` - saved options panel
+- [x] Create `comparison-view.js` - side-by-side comparison
+- [x] Implement difference highlighting (green up, red down)
+- [x] Add export functionality (PDF/CSV/JSON) - CSV and JSON implemented
+- [x] Add import functionality (load from JSON)
+- [x] Add clear all option with confirmation
+- [x] Update tab navigation to include Comparison tab (or use modal) - using modal approach
 - [ ] Test with various models/variants
 - [ ] Handle edge cases (missing data, incompatible comparisons)
 
@@ -531,12 +531,13 @@ app.js                       # Priority 2 - Default landing view
 2. [x] Begin Phase 1: Perspective Toggle Enhancement - **COMPLETED (Session 2026-01-09)**
 3. [ ] User testing after Phase 1
 4. [x] Begin Phase 2: Options Overview - **COMPLETED (Session 2026-01-09)**
-5. [x] Begin Phase 3: Compare Mode - **IN PROGRESS (Session 2026-01-09)**
+5. [x] Begin Phase 3: Compare Mode - **SUBSTANTIALLY COMPLETE (Session 2026-01-09)**
    - [x] Sub-phase 3.1: State & Storage Foundation
    - [x] Sub-phase 3.2: Save Functionality UI
-   - [ ] Sub-phase 3.3: Comparison Manager & View
-   - [ ] Sub-phase 3.4: Export/Import Integration
-6. [ ] Iterate based on feedback
+   - [x] Sub-phase 3.3: Comparison Manager & View
+   - [x] Sub-phase 3.4: Export/Import Integration
+6. [ ] User testing of all phases
+7. [ ] Iterate based on feedback
 
 ---
 
@@ -777,13 +778,104 @@ All tasks for Priority 2 (Options Overview) are now complete:
 - Testing and edge case handling
 
 **Recommended next session priorities:**
-1. Create `comparison-manager.js` for viewing/managing saved options
-2. Create `comparison-view.js` for side-by-side comparison
-3. Wire up export/import to UI buttons
+1. ~~Create `comparison-manager.js` for viewing/managing saved options~~ ✅
+2. ~~Create `comparison-view.js` for side-by-side comparison~~ ✅
+3. ~~Wire up export/import to UI buttons~~ ✅
 
 **Notes:**
 - Storage uses localStorage with 20 comparison limit to prevent overflow
 - Versioned storage format allows for future migrations
 - UI updates reactively when comparisons change
 - Modal is inline in calculator HTML for simplicity
-- "View Saved" and "Compare" are placeholders until manager/view components built
+- ~~"View Saved" and "Compare" are placeholders until manager/view components built~~ ✅ Now fully implemented
+
+---
+
+### Session: 2026-01-09 (Phase 3 - Compare Mode Continued)
+
+**What was implemented:**
+
+#### Sub-phase 3.3: Comparison Manager & View
+
+1. **New File: `ui/intercompany/comparison-manager.js`**
+   - Full-featured panel for managing saved comparison options
+   - View list of all saved comparisons with key metrics
+   - Load a comparison (restores state to calculator)
+   - Delete comparisons with confirmation dialog
+   - Edit/rename comparisons inline
+   - Edit notes for comparisons
+   - Select multiple comparisons for side-by-side view (checkboxes)
+   - Export to JSON and CSV
+   - Import from JSON file
+   - Clear all with confirmation
+   - Storage info display (count, size, max limit)
+   - Relative timestamps (e.g., "2h ago", "3d ago")
+   - Key metrics summary on each card (Dev Revenue, Dev Profit, Buyer Cost, Combined Net)
+
+2. **New File: `ui/intercompany/comparison-view.js`**
+   - Side-by-side comparison table for 2-4 options
+   - Metric categories: Developer, Buyer, Combined/Net Effect, Transfer Pricing Risk
+   - Difference column (vs first option) with directional arrows
+   - Best/worst value highlighting (green/red backgrounds)
+   - Option header with model badges
+   - Export comparison as JSON or CSV
+   - Legend for highlight colors
+   - Responsive design for mobile
+
+3. **Updated: `ui/intercompany/calculator.js`**
+   - Imported comparison-manager and comparison-view components
+   - Added container elements for manager and view panels
+   - Added styles for both components
+   - Updated `handleViewSavedOptions()` to open comparison manager
+   - Updated `handleCompareOptions()` to open comparison view with all options
+   - Added initialization calls for both components
+   - Added cleanup calls in `destroyIntercompanyCalculator()`
+
+**Comparison Manager Features:**
+| Feature | Status |
+|---------|--------|
+| List saved options | ✅ |
+| Show key metrics | ✅ |
+| Load option | ✅ |
+| Delete with confirm | ✅ |
+| Rename inline | ✅ |
+| Edit notes | ✅ |
+| Select for comparison | ✅ |
+| Export JSON | ✅ |
+| Export CSV | ✅ |
+| Import JSON | ✅ |
+| Clear all | ✅ |
+| Storage info | ✅ |
+
+**Comparison View Features:**
+| Feature | Status |
+|---------|--------|
+| Side-by-side table | ✅ |
+| Developer metrics | ✅ |
+| Buyer metrics | ✅ |
+| Combined metrics | ✅ |
+| Transfer pricing | ✅ |
+| Difference column | ✅ |
+| Best/worst highlighting | ✅ |
+| Export JSON/CSV | ✅ |
+
+**What remains for Phase 3:**
+- [ ] Add "Clear All" option with confirmation in results area (optional)
+- [ ] Additional testing with various models/variants
+- [ ] Handle edge cases (incompatible comparisons, missing data)
+- [ ] Consider adding comparison tab to main navigation (optional enhancement)
+
+**Phase 3 is now substantially complete!**
+
+The core Compare Mode functionality is now fully implemented:
+- ✅ Save calculations as named options
+- ✅ View and manage saved options
+- ✅ Side-by-side comparison view
+- ✅ Export/Import functionality
+- ✅ Difference highlighting
+- ✅ Key metrics display
+
+**Ready to proceed with:**
+- User testing of the complete Compare Mode
+- Minor enhancements and edge case handling
+- Or move to other features/improvements
