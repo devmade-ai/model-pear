@@ -956,7 +956,7 @@ This section consolidates all remaining optional work for easy reference in futu
 |------|----------|--------|-------|
 | ~~"Clear All" button in results area~~ | ~~Low~~ | ~~Low~~ | ✅ Added to save actions bar with confirmation dialog |
 | Comparison tab in main navigation | Low | Medium | Alternative to modal-based comparison view |
-| PDF export | Medium | High | Formal report generation for stakeholders |
+| ~~PDF export~~ | ~~Medium~~ | ~~High~~ | ✅ Print/PDF button with print-friendly CSS (browser native approach) |
 
 ### Robustness
 
@@ -980,7 +980,7 @@ This section consolidates all remaining optional work for easy reference in futu
 3. Add new items as they're discovered
 4. Move completed items to session notes
 
-**Last Updated:** 2026-01-09
+**Last Updated:** 2026-01-09 (PDF export added)
 
 ---
 
@@ -1048,3 +1048,47 @@ This section consolidates all remaining optional work for easy reference in futu
 - Uses native confirm dialog for simplicity (matches browser UX patterns)
 - Button styled with red background to indicate destructive action
 - Quick, low-effort enhancement that improves workflow efficiency
+
+---
+
+### Session: 2026-01-09 (Feature - Print/PDF Export)
+
+**What was implemented:**
+
+#### Print-Friendly Export for Comparison View
+
+1. **Updated: `ui/intercompany/comparison-view.js`**
+   - Added comprehensive `@media print` CSS styles for PDF-ready output
+   - Added "Print / PDF" button to the comparison view toolbar
+   - Added `handlePrint()` function that triggers `window.print()`
+
+**Print Styles Include:**
+- White background for all elements (printer-friendly)
+- Proper borders and contrast for table readability
+- Hidden UI elements (close button, toolbar buttons) in print output
+- Preserved highlight colors for best/worst values (green/red)
+- Warning banners styled for print (amber/blue/red backgrounds)
+- A4 landscape page setup with 1cm margins
+- Visible only comparison view content (hides rest of page)
+
+**User Experience:**
+- Click "Print / PDF" button in comparison view toolbar
+- Browser print dialog opens
+- User can select "Save as PDF" destination in their browser
+- Or print directly to a physical printer
+- Output is formatted for professional presentation
+
+**Why This Approach:**
+- No external PDF library dependencies required
+- Leverages browser's native print-to-PDF capability
+- Works across all modern browsers
+- Lower maintenance burden than library-based approach
+- Consistent with browser UX patterns users already know
+
+**Files Changed:**
+- `ui/intercompany/comparison-view.js` - Added print CSS (~100 lines) and print button/handler
+
+**Ready to proceed with:**
+- User testing of print functionality across browsers
+- Further visual refinements if needed
+- Remaining items from Future Work list
