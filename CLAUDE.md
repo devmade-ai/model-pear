@@ -83,7 +83,7 @@ model-pear/
 │
 ├── models/
 │   ├── index.js                # 5 pricing models with calculation logic
-│   └── intercompany/           # Inter-company transaction models
+│   └── intercompany/           # Transaction models (legacy folder name)
 │       ├── registry.js         # Model registry with helper functions
 │       ├── model-1-cost-plus.js        # Model 1: Development Services (6 variants)
 │       ├── model-2-licence-royalties.js # Model 2: Software Licence (8 variants)
@@ -106,8 +106,8 @@ model-pear/
 │   ├── forms.js                # Dynamic form generation
 │   ├── results-display.js      # Render result panels (pricing)
 │   ├── modals.js               # Tooltips and modals
-│   └── intercompany/           # Inter-company UI components
-│       ├── calculator.js               # Main inter-company calculator
+│   └── intercompany/           # Transaction structuring UI (legacy folder name)
+│       ├── calculator.js               # Main transaction calculator
 │       ├── entity-config.js            # Developer/Buyer entity configuration
 │       ├── perspective-toggle.js       # Perspective switcher (Developer/Buyer)
 │       ├── party-selector.js           # Party relationship selector (Independent/Related)
@@ -264,7 +264,7 @@ Save and compare calculation results side-by-side:
 
 ## Perspective Framework
 
-Transactions are analysed from two core perspectives, with a third available for related parties:
+Transactions are analysed from two perspectives:
 
 ### Your Company (Developer)
 - Revenue recognition (service revenue, licence revenue, sale proceeds)
