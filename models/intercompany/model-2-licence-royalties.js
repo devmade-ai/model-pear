@@ -1136,7 +1136,6 @@ export const MODEL_2_LICENCE_ROYALTIES = {
     // Accounting summary
     accountingSummary: {
         developer: 'Capitalise development costs (IAS 38). Recognise licence revenue per IFRS 15.',
-        buyer: 'Capitalise licence fees (IAS 38). Expense royalties as incurred.',
-        consolidation: 'Eliminate intercompany licence. Retain Developer\'s development asset.'
+        buyer: 'Capitalise licence fees (IAS 38). Expense royalties as incurred.'
     }
 };

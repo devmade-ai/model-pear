@@ -314,8 +314,7 @@ const TOOLTIP_CONTENT = {
         explanation: 'The Transaction Structuring Tool helps you compare different models for software projects to maximize value for both your company and your client. Analyze expenses, capitalization, and tax effects to decide which model works best.',
         keyMetrics: [
             'Your Company: Revenue recognition, costs, profit, tax position',
-            'Client: Asset capitalisation, amortisation, Section 11(e) tax benefits',
-            'Net Effect: Combined financial impact for both parties'
+            'Client: Asset capitalisation, amortisation, Section 11(e) tax benefits'
         ],
         useCases: 'Use this when starting new projects or products to determine the optimal transaction structure. Compare models like cost-plus, licensing, joint development, or SaaS to find the best fit.'
     },

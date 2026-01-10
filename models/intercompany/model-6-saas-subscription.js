@@ -6,7 +6,7 @@
 // - Developer: Retains IP, capitalises development costs, earns recurring subscription revenue
 // - Buyer: No asset recognition, expenses subscription fees as incurred
 // - Transfer pricing: Arm's length subscription pricing (comparable SaaS benchmarks)
-// - Note: Least favourable for combined asset maximisation
+// - Note: Only your company holds the asset; client has no asset to capitalise
 
 // ========== INPUT CATEGORIES ==========
 
@@ -1279,11 +1279,10 @@ export const MODEL_6_SAAS_SUBSCRIPTION = {
     // Accounting summary
     accountingSummary: {
         developer: 'Capitalise development costs (IAS 38). Recognise subscription revenue over access period (IFRS 15).',
-        buyer: 'No asset recognition for SaaS. Expense subscription fees as incurred.',
-        consolidation: 'Eliminate intercompany subscription. Asset remains with Developer only.'
+        buyer: 'No asset recognition for SaaS. Expense subscription fees as incurred.'
     },
 
     // Special note for this model
-    assetWarning: 'Note: SaaS model results in asset concentration with Developer. ' +
-        'Buyer has no asset recognition. Consider other models if combined asset maximisation is a priority.'
+    assetWarning: 'Note: SaaS model results in the asset remaining with your company. ' +
+        'Client has no asset recognition. Consider other models if the client needs to capitalise the software.'
 };

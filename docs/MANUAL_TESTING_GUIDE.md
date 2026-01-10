@@ -1112,9 +1112,8 @@ For each browser, verify:
 
 ### Perspectives & Relationships
 
-- [ ] Developer perspective displays correctly
-- [ ] Buyer perspective displays correctly
-- [ ] Shareholder perspective (when enabled)
+- [ ] Your Company perspective displays correctly
+- [ ] Client perspective displays correctly
 - [ ] Independent parties mode
 - [ ] Related parties mode
 

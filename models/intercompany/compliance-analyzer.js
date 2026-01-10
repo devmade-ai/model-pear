@@ -505,13 +505,7 @@ export function generateAccountingTreatment(calculationResults, entityConfig = {
 
     return {
         developer: developerSummary,
-        buyer: buyerSummary,
-        consolidated: calculationResults.combined ? {
-            eliminationRequired: calculationResults.combined.elimination?.required || false,
-            profitEliminated: calculationResults.combined.elimination?.profitEliminated || 0,
-            adjustedAsset: calculationResults.combined.assetEfficiency?.groupAsset || 0,
-            journalEntry: calculationResults.combined.elimination?.journalEntry || null
-        } : null
+        buyer: buyerSummary
     };
 }
 
@@ -602,7 +596,7 @@ function identifyComplexIssues(perspective, data, metadata) {
  * @returns {Object} Tax impact analysis
  */
 export function generateTaxImpact(calculationResults, taxParams = {}) {
-    const { developer, buyer, combined, metadata } = calculationResults;
+    const { developer, buyer, metadata } = calculationResults;
     const corporateTaxRate = taxParams.corporateTaxRate || 0.27;
 
     // Section 11(e) schedule generation
@@ -614,8 +608,8 @@ export function generateTaxImpact(calculationResults, taxParams = {}) {
     // Timing differences analysis
     const timingAnalysis = analyseTimingDifferences(developer, buyer, corporateTaxRate);
 
-    // Net tax position
-    const netTaxPosition = calculateNetTaxPosition(developer, buyer, combined, corporateTaxRate);
+    // Net tax position across both parties
+    const netTaxPosition = calculateNetTaxPosition(developer, buyer, corporateTaxRate);
 
     return {
         summary: {
@@ -765,9 +759,9 @@ function analyseTimingDifferences(developer, buyer, taxRate) {
 }
 
 /**
- * Calculate net tax position
+ * Calculate net tax position across both parties
  */
-function calculateNetTaxPosition(developer, buyer, combined, taxRate) {
+function calculateNetTaxPosition(developer, buyer, taxRate) {
     const developerTax = developer?.tax?.taxPayable || 0;
     const buyerBenefit = buyer?.tax?.taxBenefit || 0;
     const groupNetTaxCost = developerTax - buyerBenefit;
