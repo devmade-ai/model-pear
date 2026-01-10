@@ -12,7 +12,7 @@
 4. **Keep docs updated** - HISTORY.md, CALCULATIONS.md, BUSINESS_GUIDE.md, CLAUDE.md as relevant
 5. **Testability** - Ensure correctness and alignment with usage goals can be verified
 6. **Know the purpose** - Always be aware of what the tool is for
-7. **Logical checkpoints** - Stop at sensible points, document progress, leave notes for future sessions
+7. **Logical checkpoints** - Stop at sensible points, document progress in docs/SESSION_NOTES.md
 8. **Follow conventions** - Best practices and consistent patterns
 9. **Repeatable process** - Follow consistent steps to ensure all the above
 10. **Capture ideas** - Add lower priority items and improvements to docs/TODO.md so they persist between sessions

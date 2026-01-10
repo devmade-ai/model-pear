@@ -9,7 +9,3 @@
 ## Ideas
 
 <!-- Potential improvements or features to consider -->
-
-## Notes for Next Session
-
-<!-- Context or considerations for continuing work -->
