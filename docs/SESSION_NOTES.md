@@ -7,20 +7,23 @@
 **Date:** 2026-01-10
 
 **What was done:**
-- Created "My Preferences" section at top of CLAUDE.md with Process and Principles
-- Created docs/TODO.md for capturing lower priority items (AI-managed)
-- Created docs/SESSION_NOTES.md for preserving context between sessions
-- Added AI Notes section for AI-specific reminders and learnings
+- Reviewed preferences alignment across all documentation
+- Updated HISTORY.md with missing January 10 preferences framework entry
+- Populated TODO.md with refactor plan (was empty)
+- Kept REFACTOR_PLAN_REMOVE_COMBINED.md as detailed reference (linked from TODO.md)
 
 **Decisions:**
-- Preferences come first in CLAUDE.md for emphasis
-- TODO.md is AI-managed, user can review
-- SESSION_NOTES.md separate from TODO.md (different concerns)
-- "Repeatable process" is last principle since it "ensures all the above"
-- Keep session notes lean - remove when no longer relevant
+- Keep detailed refactor plan file, reference it from TODO.md summary
+- TODO.md tracks the "what" and "why", detailed plan tracks the "how"
 
-**Status:** Complete - preferences framework established
+**Status:** Complete - preferences alignment verified and gaps fixed
 
 ## Previous Sessions
 
 <!-- Move notes here when starting a new session, keep if still relevant -->
+
+**2026-01-10 (earlier):** Created preferences framework
+- Added "My Preferences" section to CLAUDE.md
+- Created SESSION_NOTES.md and TODO.md
+- Added AI Notes section
+- Status: Complete
