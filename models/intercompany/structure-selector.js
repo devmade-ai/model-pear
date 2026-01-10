@@ -150,15 +150,15 @@ export const DECISION_FACTORS = {
         ]
     },
 
-    consolidation: {
-        id: 'consolidation',
-        question: 'Are the entities consolidated for group reporting?',
-        description: 'Whether Developer and Buyer are in the same reporting group',
+    partyRelationship: {
+        id: 'partyRelationship',
+        question: 'What is the relationship between the parties?',
+        description: 'Whether Developer and Buyer are related or independent',
         options: [
             {
                 value: 'yes-consolidated',
-                label: 'Yes, entities are consolidated',
-                description: 'Inter-company profits eliminated; combined view important',
+                label: 'Related parties (common ownership)',
+                description: 'Transfer pricing documentation required; related party disclosures',
                 modelScores: { 'model-1': 8, 'model-3': 10, 'model-6': 5, 'model-2': 5, 'model-4': 5, 'model-5': 5 }
             },
             {
