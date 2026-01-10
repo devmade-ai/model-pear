@@ -25,6 +25,7 @@
 - Check for existing patterns in the codebase before creating new ones
 - Commit and push changes before ending a session
 - Keep SESSION_NOTES.md lean - remove previous session notes once no longer relevant
+- Clean up completed or obsolete docs/files and remove references to them
 
 ---
 
