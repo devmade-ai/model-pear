@@ -7,23 +7,18 @@
 **Date:** 2026-01-10
 
 **What was done:**
-- Reviewed preferences alignment across all documentation
-- Updated HISTORY.md with missing January 10 preferences framework entry
-- Populated TODO.md with refactor plan (was empty)
-- Kept REFACTOR_PLAN_REMOVE_COMBINED.md as detailed reference (linked from TODO.md)
+- Completed full refactor to remove Combined/Group perspective (10 phases)
+- Removed ~600+ lines of combined/consolidation code
+- Updated default perspective to Developer
+- Updated terminology from "Inter-Company" to "Transaction Tool"
+- Updated all documentation (CLAUDE.md, HISTORY.md, TODO.md)
 
-**Decisions:**
-- Keep detailed refactor plan file, reference it from TODO.md summary
-- TODO.md tracks the "what" and "why", detailed plan tracks the "how"
+**Files Modified:**
+- 25+ files across models, UI, state, and docs
+- See HISTORY.md for full change list
 
-**Status:** Complete - preferences alignment verified and gaps fixed
+**Status:** Complete - refactor finished and ready for push
 
 ## Previous Sessions
 
 <!-- Move notes here when starting a new session, keep if still relevant -->
-
-**2026-01-10 (earlier):** Created preferences framework
-- Added "My Preferences" section to CLAUDE.md
-- Created SESSION_NOTES.md and TODO.md
-- Added AI Notes section
-- Status: Complete

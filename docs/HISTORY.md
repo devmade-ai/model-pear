@@ -9,6 +9,40 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Remove Combined/Group Perspective Refactor
+
+**Date**: January 10, 2026
+**Impact**: Simplified tool by removing consolidated/group accounting features that were out of scope
+
+**Changes Made**:
+
+**UI Changes**:
+- Removed Combined View tab from perspective toggle
+- Updated default perspective to Developer (was Combined)
+- Removed Combined section from comparison view
+- Removed Combined metrics from projections and sensitivity analysis
+- Updated terminology from "Inter-Company" to "Transaction Tool"
+
+**Backend Changes**:
+- Removed `calculateCombinedPerspective` function from all 6 models
+- Removed `combined` from calculation results
+- Removed `consolidationRequired` and `sameGroup` config flags
+- Removed `isShareholderPerspectiveAvailable()` function
+
+**Documentation Updates**:
+- Updated CLAUDE.md to remove Shareholder perspective references
+- Updated perspective framework to show only Developer and Buyer
+
+**Lines Removed**: ~600+ lines of code
+**Commits**: 10 commits across 10 phases
+
+**Benefits**:
+- Tool now focuses on its core purpose: comparing models for Developer and Buyer
+- Reduced complexity and maintenance burden
+- Clearer separation from consolidated accounting (which was never in scope)
+
+---
+
 ### Preferences Framework & AI Session Management
 
 **Date**: January 10, 2026

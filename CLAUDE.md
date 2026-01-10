@@ -109,7 +109,7 @@ model-pear/
 │   └── intercompany/           # Inter-company UI components
 │       ├── calculator.js               # Main inter-company calculator
 │       ├── entity-config.js            # Developer/Buyer entity configuration
-│       ├── perspective-toggle.js       # Perspective switcher (Developer/Buyer/Shareholder)
+│       ├── perspective-toggle.js       # Perspective switcher (Developer/Buyer)
 │       ├── party-selector.js           # Party relationship selector (Independent/Related)
 │       ├── results-display.js          # Perspective-based results rendering
 │       ├── structure-selector.js       # Module 1: Wizard UI
@@ -187,7 +187,7 @@ Decision tree wizard that helps users choose the optimal model by asking about:
 
 Dynamic calculator that:
 - Generates input forms per model/variant
-- Calculates results for both parties (plus shareholder view when mutual ownership)
+- Calculates results for both parties (Developer and Buyer)
 - Renders accounting treatment summaries
 - Shows tax calculations and journal entries
 - Displays visualisations
@@ -280,16 +280,6 @@ Transactions are analysed from two core perspectives, with a third available for
 - Deferred tax position
 - Total cost of ownership
 
-### Shareholder Perspective (When Mutual Ownership)
-Only shown when user owns both entities. This is NOT group accounting consolidation.
-
-**Focus**: What's best for the shareholder who owns both companies
-- Total profit across both entities
-- Where should profit sit for optimal tax treatment?
-- Overall cash flow to the shareholder
-- Transfer pricing risk assessment
-- Which structure benefits the shareholder most
-
 ## South African Tax Features
 
 | Feature | Implementation |
@@ -354,9 +344,7 @@ riskScore =
 The tool is pre-configured for **South African companies** doing software transactions. These defaults:
 - Reduce setup time for typical users
 - Assume independent parties by default (NOT related)
-- Show Developer and Buyer perspectives only (no Shareholder perspective by default)
-
-**Note**: When "Mutual Ownership" is checked, the Shareholder Perspective is shown. This is NOT group accounting consolidation - it shows what's best for the person who owns both entities.
+- Show Developer and Buyer perspectives
 
 ```javascript
 DEFAULT_ENTITY_CONFIG = {
@@ -376,7 +364,7 @@ DEFAULT_ENTITY_CONFIG = {
     section11eType: 'pc-2yr'             // Accelerated depreciation (2yr for PC software)
   },
   relationship: {
-    mutualOwnership: false               // Default: independent parties (no shareholder view)
+    mutualOwnership: false               // Default: independent parties
   }
 }
 ```
@@ -483,15 +471,14 @@ const profit = revenue - cost;
 **Key scope clarification**:
 - This tool is for a **software company** (the developer) working with **any client**
 - The goal is to compare models to maximize value for both parties
-- "Mutual ownership" (related parties) is just one scenario, NOT the default
-- When mutual ownership is enabled, a Shareholder Perspective shows what's best for the owner of both entities
+- "Mutual ownership" (related parties) activates transfer pricing compliance features
 - This is NOT about group accounting consolidation
 - Focus is on: expenses, capitalization, and tax effects
 
 The tool includes:
 - Options Overview (visual model selection grid)
 - Structure Selector (decision tree wizard)
-- Perspective analysis (Developer, Buyer, plus Shareholder when mutual ownership)
+- Perspective analysis (Developer and Buyer)
 - Compare Mode (save, compare, export options side-by-side)
 - Sensitivity Analysis (ranges, scenarios, Monte Carlo)
 - Growth Projections (NPV, IRR, payback)
