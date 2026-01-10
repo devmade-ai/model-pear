@@ -191,6 +191,16 @@ function switchMode(mode) {
     const intercompanySection = document.getElementById('intercompanyCalculatorSection');
     const modePricingBtn = document.getElementById('mode-pricing');
     const modeIntercompanyBtn = document.getElementById('mode-intercompany');
+    const headerTagline = document.getElementById('headerTagline');
+
+    // Update header tagline based on mode (aligns with tool goals)
+    if (headerTagline) {
+        if (mode === 'pricing') {
+            headerTagline.textContent = 'Find the price where you hit your margin AND your client sees ROI';
+        } else {
+            headerTagline.textContent = 'Compare transaction models to find the best deal for both parties';
+        }
+    }
 
     if (mode === 'pricing') {
         pricingSection?.classList.remove('hidden');

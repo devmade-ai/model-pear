@@ -6,42 +6,45 @@
 
 **Date:** 2026-01-10
 
-**Task:** Tool Goals Investigation & Refinement
+**Task:** UI Alignment with Tool Goals
 
 **What was done:**
-1. Investigated tool goals by reviewing all documentation
-2. Assessed goal clarity (user-focused, measurable, actionable)
-3. Mapped existing functionality against stated goals
-4. Identified gaps and misalignments:
-   - Goals used technical jargon ("equilibrium pricing")
-   - "Value" not clearly defined for users
-   - Two modes were disconnected
-   - Legacy "inter-company/common ownership" framing persisted
-5. Proposed refined goal language focusing on user outcomes
-6. Updated documentation with clearer goals:
-   - CLAUDE.md: New "System Purpose" section with goal table
-   - BUSINESS_GUIDE.md: "What It Helps You Answer" section
-   - financial_models_intercompany_software.md: Removed legacy framing
-7. Added "Recommendation Summary" feature idea to TODO.md
+1. Analyzed UI alignment with documented tool goals
+2. Identified gaps in Mode 2:
+   - Long-term Value dimension missing from comparison view
+   - Growth projections not surfaced in results display
+   - Messaging emphasized "structuring" over "optimization"
+   - Header tagline was Mode 2 specific (not mode-aware)
+3. Implemented fixes:
+   - Added Long-term Value section to comparison view (NPV, IRR, payback)
+   - Added Long-term Value panel to results display (both perspectives)
+   - Auto-generate projections when saving comparisons
+   - Reframed Options Overview: "Which structure creates the best outcome?"
+   - Made header tagline mode-aware
 
-**Key Changes:**
-- Mode 1 goal: "Find the price range where you hit your margin AND your client sees clear ROI"
-- Mode 2 goal: "Compare structures to find the best deal for both you and your client"
-- Defined "best deal" across 5 dimensions: financial, tax, accounting, compliance, long-term
+**Key Outcome:**
+Mode 2 now delivers all 5 promised dimensions:
+- Financial Impact ✓
+- Tax Efficiency ✓
+- Accounting Treatment ✓
+- Compliance Risk ✓
+- Long-term Value ✓ (NEW)
 
-**Files Modified:** 5 files
-- CLAUDE.md
-- docs/BUSINESS_GUIDE.md
-- docs/financial_models_intercompany_software.md
-- docs/TODO.md
-- docs/SESSION_NOTES.md
+**Files Modified:** 8 files
+- app.js
+- index.html
+- state/app-state.js
+- ui/intercompany/comparison-view.js
+- ui/intercompany/options-overview.js
+- ui/intercompany/results-display.js
+- utils/storage.js
 - docs/HISTORY.md
 
 **Status:** Complete
 
 ## Previous Sessions
 
-<!-- Move notes here when starting a new session, keep if still relevant -->
+**2026-01-10 (earlier):** Tool Goals Investigation & Refinement - Refined goal language, defined "best deal" across 5 dimensions
 
 **2026-01-10 (earlier):** Complete removal of Combined/Shareholder/Net Effect references - 24+ files modified, ~960 lines removed
 

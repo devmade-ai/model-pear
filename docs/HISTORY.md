@@ -9,6 +9,55 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### UI Alignment with Tool Goals
+
+**Date**: January 10, 2026
+**Impact**: UI now fully delivers on the 5 dimensions promised in Mode 2 goals
+
+**Problem Identified:**
+UI analysis revealed Mode 2 was missing 2 of 5 promised dimensions in the comparison view and results display:
+- Long-term Value (NPV, IRR, payback) not surfaced in comparison view
+- Messaging emphasized "structuring" over "finding best deal"
+
+**Changes Made:**
+
+1. **Long-term Value in Comparison View** (`comparison-view.js`)
+   - Added Long-term Value section with Developer/Buyer NPV, IRR, and payback period
+   - Added 'years' format for payback display
+
+2. **Long-term Value in Results Display** (`results-display.js`)
+   - Added Long-term Value panel to both Developer and Buyer perspectives
+   - Shows NPV, IRR, payback period, and investment rating
+   - Includes assessment (Excellent/Good/Marginal/Poor) with color coding
+
+3. **Projections Auto-generated on Save** (`app-state.js`)
+   - When saving a comparison, projections are now automatically generated
+   - Projections stored with comparison data for accurate comparison metrics
+
+4. **Storage Utility Update** (`utils/storage.js`)
+   - `generateComparisonSummary()` now includes projections data for comparison
+
+5. **Options Overview Reframing** (`options-overview.js`)
+   - Changed "How would you like to structure this transaction?" to
+   - "Which structure creates the best outcome?"
+   - Subtitle now emphasizes value maximization for both parties
+
+6. **Mode-Aware Header Tagline** (`app.js`, `index.html`)
+   - Header tagline now changes based on active mode
+   - Mode 1: "Find the price where you hit your margin AND your client sees ROI"
+   - Mode 2: "Compare transaction models to find the best deal for both parties"
+
+**Files Modified**: 6 files
+
+**Result**: Mode 2 now fully delivers on all 5 promised dimensions:
+- Financial Impact ✓
+- Tax Efficiency ✓
+- Accounting Treatment ✓
+- Compliance Risk ✓
+- Long-term Value ✓ (NEW)
+
+---
+
 ### Tool Goals Refinement & Documentation Update
 
 **Date**: January 10, 2026

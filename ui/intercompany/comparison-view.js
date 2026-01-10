@@ -755,7 +755,16 @@ function renderComparisonTable(comparisons, summary) {
         { section: 'Transfer Pricing Risk', icon: '⚠️' },
         { key: 'transferPricing.riskLevel', label: 'Risk Level', format: 'risk' },
         { key: 'transferPricing.method', label: 'Method', format: 'text' },
-        { key: 'transferPricing.margin', label: 'Margin', format: 'percent' }
+        { key: 'transferPricing.margin', label: 'Margin', format: 'percent' },
+
+        // Long-term Value section (5th dimension for goal alignment)
+        { section: 'Long-term Value', icon: '📈' },
+        { key: 'projections.developer.npv', label: 'Developer NPV', format: 'currency', higherBetter: true },
+        { key: 'projections.developer.irr', label: 'Developer IRR', format: 'percent', higherBetter: true },
+        { key: 'projections.developer.paybackPeriod', label: 'Developer Payback', format: 'years', higherBetter: false },
+        { key: 'projections.buyer.npv', label: 'Buyer NPV', format: 'currency', higherBetter: true },
+        { key: 'projections.buyer.irr', label: 'Buyer IRR', format: 'percent', higherBetter: true },
+        { key: 'projections.buyer.paybackPeriod', label: 'Buyer Payback', format: 'years', higherBetter: false }
     ];
 
     // Build header row with option names
@@ -960,6 +969,10 @@ function formatValue(value, format, isDiff = false) {
         case 'percent':
             const pctPrefix = isDiff && value > 0 ? '+' : '';
             return pctPrefix + formatPercentage(value);
+        case 'years':
+            // Format payback period as years with 1 decimal place
+            const yearsPrefix = isDiff && value > 0 ? '+' : '';
+            return yearsPrefix + value.toFixed(1) + ' yrs';
         case 'risk':
             return formatRiskLevel(value);
         case 'text':
