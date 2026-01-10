@@ -26,12 +26,22 @@
 
 ## What Is This Tool?
 
-The Software Transaction Structuring Tool is a web-based application that helps software companies compare different transaction models to maximize value for both your company and your client when starting new projects or products.
+The Software Transaction Structuring Tool helps software companies find the best deal when working with clients on new projects or products.
+
+### What It Helps You Answer
+
+| Question | How the Tool Helps |
+|----------|-------------------|
+| "What price works for both of us?" | Mode 1 finds the price range where you hit your margin AND the client sees ROI |
+| "Which structure is best for this deal?" | Mode 2 compares 6 models across financial, tax, accounting, and risk dimensions |
+| "What does this look like for the client?" | Perspective analysis shows each party's outcomes side-by-side |
+| "How does this look over 5 years?" | Growth projections with NPV, IRR, and payback calculations |
+| "What are the compliance risks?" | Transfer pricing risk assessment (for related parties) |
 
 ### Key Capabilities
 
 **What This Tool DOES**:
-- ✅ Compare 6 different transaction structures
+- ✅ Compare 6 different transaction structures (47 variants)
 - ✅ Analyse from both perspectives (Your Company and Client)
 - ✅ Calculate accounting treatment under IFRS
 - ✅ Assess South African tax implications (Section 11(e), CGT)
@@ -88,26 +98,30 @@ The Software Transaction Structuring Tool is a web-based application that helps 
 
 ## The Two Modes
 
-The tool operates in two distinct modes:
+The tool operates in two distinct modes, each answering a different question:
 
 ### Mode 1: Pricing Calculator
-**Purpose**: Find equilibrium pricing for B2B software products
 
-**Features**:
-- 5 pricing models (Subscription, Usage-Based, Per-Seat, One-Time, Marketplace)
-- Seller floor / Buyer ceiling analysis
-- Calculate missing inputs (reverse calculations)
+**Goal**: Find the price range where you hit your margin AND your client sees clear ROI.
+
+| Feature | What It Does |
+|---------|--------------|
+| 5 pricing models | Subscription, Usage-Based, Per-Seat, One-Time, Marketplace |
+| Equilibrium analysis | Shows seller floor vs buyer ceiling, highlights overlap zone |
+| Reverse calculations | Auto-calculate missing inputs from what you know |
 
 **Best For**: Product pricing decisions, market entry pricing, competitive analysis
 
 ### Mode 2: Transaction Structuring Tool
-**Purpose**: Compare transaction models to find the best structure for your project
 
-**Features**:
-- 6 comprehensive transaction models with 47 variants
-- Two-perspective analysis (Your Company, Client)
-- Sensitivity analysis and growth projections
-- Advanced visualisations
+**Goal**: Compare structures to find the best deal for both you and your client.
+
+| Feature | What It Does |
+|---------|--------------|
+| 6 transaction models | 47 variants covering every common structure |
+| Two-perspective analysis | See outcomes for Your Company AND Client side-by-side |
+| Comparison mode | Save options and compare 2-4 structures side-by-side |
+| Sensitivity & projections | What-if analysis, NPV, IRR, payback period |
 
 **Best For**: New project structuring, client negotiations, comparing options
 

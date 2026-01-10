@@ -9,6 +9,41 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Tool Goals Refinement & Documentation Update
+
+**Date**: January 10, 2026
+**Impact**: Clearer, user-focused goal statements across all documentation
+
+**What was done:**
+
+Investigated tool goals and found they were using technical jargon ("equilibrium pricing", "maximise value") that wasn't immediately clear to business users. Refined goal language to focus on user outcomes.
+
+**New Goal Statements:**
+
+| Mode | Old Goal | New Goal |
+|------|----------|----------|
+| Mode 1 | "Find equilibrium pricing for B2B software products" | "Find the price range where you hit your margin AND your client sees clear ROI" |
+| Mode 2 | "Compare transaction models to optimize expenses, capitalization, and tax outcomes" | "Compare structures to find the best deal for both you and your client" |
+
+**Defined "Best Deal" (Mode 2):**
+1. Financial Impact: What does each option cost, and what profit/tax benefit does each party get?
+2. Tax Efficiency: Which structure minimises combined tax burden?
+3. Accounting Treatment: How will this appear on financial statements?
+4. Compliance Risk: Transfer pricing risks (related parties only)
+5. Long-term Value: NPV, IRR, payback over 3-10 years
+
+**Documentation Updates:**
+- CLAUDE.md: New "System Purpose" section with goal table and "What Best Deal Means"
+- BUSINESS_GUIDE.md: Added "What It Helps You Answer" section, clearer mode descriptions
+- financial_models_intercompany_software.md: Removed legacy "common ownership" framing, updated to work for any client
+
+**Future Enhancement Identified:**
+- Added "Recommendation Summary for Compare Mode" to TODO.md (user-weighted scoring to recommend best option)
+
+**Files Modified**: 6 files
+
+---
+
 ### Complete Terminology Cleanup - Phase 2
 
 **Date**: January 10, 2026
