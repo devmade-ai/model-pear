@@ -37,16 +37,26 @@
 
 ## System Purpose
 
-This tool helps **software companies** analyse and compare different transaction models to maximize value for both parties (your company and your client) when starting new projects or products.
+This tool helps **software companies** structure transactions with clients to find the best deal for both parties.
 
-1. **Pricing Calculator (Mode 1)**: Find equilibrium pricing for B2B software products
-2. **Transaction Structuring Tool (Mode 2)**: Compare transaction models to optimize expenses, capitalization, and tax outcomes for both parties
+### The Two Modes
 
-**The core questions**:
-- Pricing Mode: What price lets the seller make their target margin while giving the buyer compelling ROI?
-- Transaction Mode: Which model maximizes value for both your company and the client? How do expenses, capitalization, and tax effects compare across different structures?
+| Mode | Goal | Core Question |
+|------|------|---------------|
+| **Mode 1: Pricing Calculator** | Find the price where you hit your margin AND your client sees clear ROI | "What's the price range that works for both of us?" |
+| **Mode 2: Transaction Structuring** | Compare structures to find the best deal for both you and your client | "Which model gives us the best combined outcome?" |
 
-**Why this matters**: Software transactions involve IP ownership, different accounting treatments per party, and tax implications. This tool analyses all dimensions simultaneously to inform your structuring decision.
+### What "Best Deal" Means (Mode 2)
+
+The tool helps you optimise across multiple dimensions:
+
+1. **Financial Impact**: What does each option cost, and what profit/tax benefit does each party get?
+2. **Tax Efficiency**: Which structure minimises your combined tax burden?
+3. **Accounting Treatment**: How will this appear on each party's financial statements?
+4. **Compliance Risk**: What are the transfer pricing risks? (related parties only)
+5. **Long-term Value**: How does this look over 3-10 years? (NPV, IRR, payback)
+
+**Why this matters**: Software transactions involve IP ownership, different accounting treatments per party, and tax implications. This tool analyses all dimensions simultaneously so you can make an informed structuring decision.
 
 **Important scope clarification**:
 - This is NOT specifically for inter-company/related party transactions
@@ -146,7 +156,7 @@ model-pear/
 
 ### Mode 1: Pricing Calculator (5 Models)
 
-For B2B software product pricing decisions.
+**Goal**: Find the price range where you hit your margin AND your client sees clear ROI.
 
 | Model | Use Case |
 |-------|----------|
@@ -158,7 +168,7 @@ For B2B software product pricing decisions.
 
 ### Mode 2: Transaction Structuring Tool (6 Models, 47 Variants)
 
-For comparing software transaction structures to optimize outcomes for both parties.
+**Goal**: Compare structures to find the best deal for both you and your client.
 
 | Model | Description | Variants |
 |-------|-------------|----------|
@@ -463,19 +473,25 @@ const profit = revenue - cost;
 
 ---
 
-**For AI Assistants**: This file is your source of truth. The system is a Software Transaction Structuring Tool:
+**For AI Assistants**: This file is your source of truth. The system is a Software Transaction Structuring Tool.
 
-- **Mode 1**: 5 pricing models for equilibrium pricing (original functionality)
-- **Mode 2**: 6 transaction models (47 variants total) for comparing structures
+### Tool Goals (use these to guide development)
 
-**Key scope clarification**:
+| Mode | Goal | User gets... |
+|------|------|--------------|
+| **Mode 1** | Find price where seller hits margin AND buyer sees ROI | Price recommendation with equilibrium zone visualisation |
+| **Mode 2** | Compare structures to find best deal for both parties | Side-by-side comparison across 5 dimensions (financial, tax, accounting, compliance, long-term) |
+
+### Key Scope
+
 - This tool is for a **software company** (the developer) working with **any client**
-- The goal is to compare models to maximize value for both parties
+- Works for independent OR related parties
 - "Mutual ownership" (related parties) activates transfer pricing compliance features
-- This is NOT about group accounting consolidation
-- Focus is on: expenses, capitalization, and tax effects
+- Focus: financial impact, tax efficiency, accounting treatment, compliance risk, long-term value
+- NOT about group accounting consolidation
 
-The tool includes:
+### Features
+
 - Options Overview (visual model selection grid)
 - Structure Selector (decision tree wizard)
 - Perspective analysis (Developer and Buyer)

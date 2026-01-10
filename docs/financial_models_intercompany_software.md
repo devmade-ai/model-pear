@@ -1,12 +1,20 @@
-# Financial Models for Inter-Company Software Transactions
+# Financial Models for Software Transactions
 
-*Optimising accounting efficiency when related companies develop and transact software products*
+*Structuring software transactions to find the best deal for both your company and your client*
 
 ---
 
 ## Context
 
-This guide addresses scenarios where common ownership exists across two companies—one being a software development company that creates products for the other company (the first/primary user). The goal is to structure transactions to maximise asset recognition and minimise expense recognition across both entities when viewed together.
+This guide helps **software companies** structure transactions with clients (related or unrelated) to optimise outcomes for both parties. Each model offers different trade-offs across:
+
+- **Financial impact**: Revenue, costs, profit for each party
+- **Tax efficiency**: Deductions, timing, combined tax position
+- **Accounting treatment**: Asset recognition, expense treatment, IFRS requirements
+- **Risk allocation**: Who bears development, market, and operational risk
+- **IP ownership**: Where intellectual property resides
+
+The goal is to compare structures and choose the one that gives the best combined outcome for your specific situation.
 
 ---
 
@@ -40,10 +48,10 @@ The software company provides development services to the buyer company under a 
 
 ### Best Fit For
 
-- Large custom development projects where buyer wants full IP control
-- Situations where buyer has stronger balance sheet or asset capitalisation needs
-- Projects where buyer will commercially exploit the software broadly
-- When buyer qualifies for R&D tax incentives (South Africa Section 11D: 150% deduction)
+- Large custom development projects where client wants full IP control
+- Projects where client needs the asset on their balance sheet
+- Situations where client will commercially exploit the software
+- When client qualifies for R&D tax incentives (South Africa Section 11D: 150% deduction)
 
 ### Compliance Watch Points
 
@@ -219,10 +227,10 @@ Both companies contribute resources (cash, personnel, facilities) to jointly dev
 
 ### Best Fit For
 
-- Projects where both companies will use/exploit the resulting software
-- Balancing asset recognition across both balance sheets
+- Projects where both parties will use/exploit the resulting software
+- When both parties want an asset on their respective balance sheets
 - When both parties bring complementary capabilities (e.g., one has developers, other has domain expertise)
-- Avoiding intercompany profit that gets eliminated on consolidation
+- Sharing risk and reward proportionally based on contribution
 
 ### Compliance Watch Points
 
@@ -504,9 +512,9 @@ Developer hosts and maintains software, providing access to buyer via subscripti
 ### Best Fit For
 
 - When developer wants recurring revenue and asset on balance sheet
-- Buyer prefers operational expenditure (OPEX) for budgeting
+- Client prefers operational expenditure (OPEX) over capital investment
 - Developer wants to serve multiple customers with same platform
-- Not optimal for combined asset maximisation across related entities
+- Ongoing relationship with predictable cash flows for both parties
 
 ### Compliance Watch Points
 
@@ -577,26 +585,27 @@ Developer hosts and maintains software, providing access to buyer via subscripti
 
 ## Comparative Summary
 
-| Model | Developer Asset | Buyer Asset | Combined Asset Position | Arm's Length Risk |
-|-------|----------------|-------------|------------------------|-------------------|
-| Development Services (Cost-Plus) | None | High (capitalises costs) | Buyer-weighted | Margin benchmarking |
+| Model | Developer Asset | Client Asset | Asset Distribution | Key Risk Factor |
+|-------|----------------|--------------|-------------------|-----------------|
+| Development Services (Cost-Plus) | None | High (capitalises costs) | Client-weighted | Margin benchmarking |
 | Licence with Royalties | High | Medium (licence cost) | Developer-weighted | Royalty rate benchmarking |
 | Joint Development | Proportional | Proportional | Balanced | Contribution allocation |
-| Build-Operate-Transfer | High initially, then none | None initially, then high | Shifts over time | Transfer price |
-| Software Sale + Support | None after sale | High | Buyer-weighted | Sale price valuation |
+| Build-Operate-Transfer | High initially → None | None → High | Shifts over time | Transfer price |
+| Software Sale + Support | None after sale | High | Client-weighted | Sale price valuation |
 | SaaS/Subscription | High | None | Developer-weighted | Subscription pricing |
 
-### Model Selection by Capitalisation Priority
+### Model Selection Guide
 
-When selecting a model based on where the asset should appear on balance sheets:
+Use this table to choose a model based on your primary goal:
 
-| Capitalisation Priority | Recommended Models | Rationale |
-|------------------------|-------------------|-----------|
-| **Buyer balance sheet** | Model 1 (Cost-Plus), Model 5 (Sale) | Buyer capitalises development costs or purchase price; Developer has no ongoing asset |
-| **Developer balance sheet** | Model 2 (Licence), Model 6 (SaaS) | Developer retains IP and capitalises development; Buyer expenses fees or capitalises licence only |
-| **Both balance sheets** | Model 2 (Licence), Model 3 (Joint Development), Model 4 (BOT) | Model 2: Developer capitalises IP, Buyer capitalises licence; Model 3: Both parties capitalise proportional shares; Model 4: Developer capitalises initially, then transfers to Buyer |
-| **Minimise assets** | Model 6 (SaaS) | Buyer expenses subscription fees; Developer's asset is the only one recognised |
-| **Tax efficiency** | Model 1 or Model 5 | Buyer can claim Section 11(e) accelerated depreciation on capitalised software |
+| Your Goal | Recommended Models | Why |
+|-----------|-------------------|-----|
+| **Client needs asset on balance sheet** | Model 1 (Cost-Plus), Model 5 (Sale) | Client capitalises the full amount; Developer has service/sale revenue only |
+| **Developer wants to retain IP** | Model 2 (Licence), Model 6 (SaaS) | Developer keeps IP on balance sheet; Client expenses or capitalises licence |
+| **Both parties want assets** | Model 2 (Licence), Model 3 (Joint Dev), Model 4 (BOT) | Model 2: Developer has IP, Client has licence; Model 3: Both capitalise shares; Model 4: Asset transfers over time |
+| **Client wants OPEX not CAPEX** | Model 6 (SaaS), Model 2C (Usage Royalties) | Client expenses payments as incurred; no asset recognition |
+| **Maximise tax efficiency** | Model 1 or Model 5 | Client can claim Section 11(e) accelerated depreciation on capitalised software |
+| **Spread risk over time** | Model 4 (BOT), Model 6 (SaaS) | Phased payments reduce upfront risk for client |
 
 ---
 
@@ -618,9 +627,10 @@ When selecting a model based on where the asset should appear on balance sheets:
 - Structure to maximise allocation to tangible assets where possible
 - Acquired patents: Section 11(gC) allows 5% per annum deduction
 
-### Transfer Pricing
+### Transfer Pricing (Related Parties Only)
+- Applies when parties have common ownership or control
 - Related party transactions must be at arm's length prices
-- SARS actively scrutinises intercompany software arrangements
+- SARS actively scrutinises software arrangements between related parties
 - Maintain contemporaneous documentation including:
   - Functional analysis
   - Comparability analysis
@@ -632,15 +642,16 @@ When selecting a model based on where the asset should appear on balance sheets:
 ## Key Compliance Checklist (All Models)
 
 - [ ] Written agreement in place before transaction commences
-- [ ] Transfer pricing analysis and documentation prepared
 - [ ] Development phase vs research phase clearly documented with dates
 - [ ] Cost tracking systems adequate to support capitalisation
 - [ ] Control assessment documented (who controls the asset?)
 - [ ] Useful life determination documented with supporting rationale
-- [ ] Related party disclosures prepared for both entities
 - [ ] Impairment indicators assessed at each reporting date
 - [ ] Deferred tax implications calculated (accounting vs tax treatment differences)
-- [ ] Consolidation elimination entries identified if consolidated financial statements prepared
+
+**Additional items for related parties:**
+- [ ] Transfer pricing analysis and documentation prepared
+- [ ] Related party disclosures prepared for both entities
 
 ---
 
