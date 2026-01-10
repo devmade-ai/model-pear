@@ -1,3 +1,34 @@
+# My Preferences
+
+## Process
+1. **Read these preferences first**
+2. **Gather context from documentation** (CLAUDE.md, relevant docs/)
+3. **Then proceed with the task**
+
+## Principles
+1. **User-first design** - Align with how real people will use the tool (top priority)
+2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
+3. **Document WHY** - Explain decisions and how they align with tool goals
+4. **Keep docs updated** - HISTORY.md, CALCULATIONS.md, BUSINESS_GUIDE.md, CLAUDE.md as relevant
+5. **Testability** - Ensure correctness and alignment with usage goals can be verified
+6. **Know the purpose** - Always be aware of what the tool is for
+7. **Logical checkpoints** - Stop at sensible points, document progress in docs/SESSION_NOTES.md
+8. **Follow conventions** - Best practices and consistent patterns
+9. **Capture ideas** - Add lower priority items and improvements I notice to docs/TODO.md so they persist between sessions (AI-managed, user can review)
+10. **Repeatable process** - Follow consistent steps to ensure all the above
+
+## AI Notes
+
+<!-- Reminders and learnings for AI assistants - add to this as needed -->
+
+- Always read a file before attempting to edit it
+- Check for existing patterns in the codebase before creating new ones
+- Commit and push changes before ending a session
+- Keep SESSION_NOTES.md lean - remove previous session notes once no longer relevant
+- Clean up completed or obsolete docs/files and remove references to them
+
+---
+
 # Software Transaction Structuring Tool
 
 > **Purpose**: AI assistant context file for the Software Transaction Structuring Tool
