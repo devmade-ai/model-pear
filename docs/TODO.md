@@ -75,3 +75,21 @@ Simplified to two perspectives (Developer + Buyer). Removed ~600+ lines of combi
 
 ---
 
+### Feature: Accounting Treatment Comparison in Compare Mode
+**Priority**: Low
+**Effort**: Small
+
+**Problem**: Individual results show accounting treatment details (recognition timing, journal entries), but Compare Mode doesn't extract these for side-by-side comparison.
+
+**Current state**: Comparison view shows financial metrics, tax, compliance, and now long-term value - but accounting treatment is only visible by loading each option individually.
+
+**Proposed solution**: Add an "Accounting Treatment" section to the comparison table showing:
+- Developer: Revenue recognition timing (point-in-time vs over-time)
+- Developer: Asset recognition (yes/no)
+- Buyer: Amount capitalised vs expensed
+- Buyer: Amortisation period
+
+**Why low priority**: Users can already see accounting treatment in individual results. Compare Mode covers the most impactful metrics. This would be a nice-to-have for detailed accounting analysis.
+
+---
+
