@@ -1,3 +1,23 @@
+# My Preferences
+
+## Process
+1. **Read these preferences first**
+2. **Gather context from documentation** (CLAUDE.md, relevant docs/)
+3. **Then proceed with the task**
+
+## Principles
+1. **User-first design** - Align with how real people will use the tool (top priority)
+2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
+3. **Document WHY** - Explain decisions and how they align with tool goals
+4. **Keep docs updated** - HISTORY.md, CALCULATIONS.md, BUSINESS_GUIDE.md, CLAUDE.md as relevant
+5. **Testability** - Ensure correctness and alignment with usage goals can be verified
+6. **Know the purpose** - Always be aware of what the tool is for
+7. **Logical checkpoints** - Stop at sensible points, document progress, leave notes for future sessions
+8. **Follow conventions** - Best practices and consistent patterns
+9. **Repeatable process** - Follow consistent steps to ensure all the above
+
+---
+
 # Software Transaction Structuring Tool
 
 > **Purpose**: AI assistant context file for the Software Transaction Structuring Tool
