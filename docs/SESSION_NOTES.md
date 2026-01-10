@@ -6,80 +6,84 @@
 
 **Date:** 2026-01-10
 
-**Task:** Architecture Redesign - Phase 1 (Foundation)
+**Task:** Architecture Redesign - Phase 2 (Complete Calculator Package)
 
-**Goal:** Migrate from vanilla JS to TypeScript + SvelteKit for improved maintainability, type safety, and testability.
+**Goal:** Extract all 6 transaction models to TypeScript with full type safety.
 
 **What was done:**
 
-1. **Created Architecture Documentation** (`docs/ARCHITECTURE.md`)
-   - Documented pain points with current architecture
-   - Defined new tech stack (TypeScript, SvelteKit, Vitest)
-   - Created directory structure for monorepo
-   - Outlined migration strategy (4 phases)
-   - Documented core principles (separation of concerns, type-first design, testability)
+1. **Extracted Model 2 (Licence/Royalties) to TypeScript**
+   - All 8 variants (2A-2H)
+   - Perpetual, term, usage-based, revenue share, white-label variants
+   - Transfer pricing assessment for royalty rates
 
-2. **Set Up Monorepo Structure**
-   - Initialized pnpm workspace
-   - Created `packages/calculator` for pure TypeScript calculation engine
-   - Created `apps/web` for SvelteKit frontend
-   - Moved legacy vanilla JS code to `legacy/` folder
+2. **Extracted Model 3 (Joint Development) to TypeScript**
+   - All 8 variants (3A-3H)
+   - Contribution-based and benefit-based ownership splits
+   - Cost-sharing arrangement compliance
 
-3. **Created Calculator Package** (`packages/calculator`)
-   - Full TypeScript configuration
-   - Type definitions for:
-     - Common types (Currency, Percentage, Section11eType, etc.)
-     - Entity configuration types
-     - Result types (DeveloperPerspective, BuyerPerspective, etc.)
-   - Vitest configuration for testing
+3. **Extracted Model 4 (BOT) to TypeScript**
+   - All 8 variants (4A-4H)
+   - Fixed, formula-based, and fair value transfer pricing
+   - Operating period and transfer calculations
 
-4. **Extracted Model 1 (Cost-Plus) to TypeScript**
-   - All 6 variants (1A-1F) with proper type unions
-   - Complete calculation logic
-   - Transfer pricing assessment
-   - Amortisation schedule generation
-   - Input field configuration for UI generation
+4. **Extracted Model 5 (Software Sale) to TypeScript**
+   - All 8 variants (5A-5H)
+   - Upfront, instalment, deferred payment options
+   - Earnout and warranty provisions
 
-5. **Added Comprehensive Tests** (44 tests, all passing)
-   - Tests for each variant
-   - Transfer pricing risk assessment tests
-   - Section 11(e) tax treatment tests
-   - Edge case tests
+5. **Extracted Model 6 (SaaS/Subscription) to TypeScript**
+   - All 9 variants (6A-6I)
+   - Flat-rate, per-user, usage-based, tiered pricing
+   - SLA-based maintenance and white-label options
 
-6. **Created SvelteKit App Shell**
-   - Basic layout with header/footer
-   - Landing page with mode selector
-   - Proof-of-concept UI for Model 1 (Cost-Plus)
-   - Tailwind CSS configuration
-   - Static adapter for GitHub Pages deployment
+6. **Updated Models Index**
+   - All 6 models exported from unified index
+   - Model registry for dynamic access
+   - Type exports for all variants
 
 **Files Created:**
-- `docs/ARCHITECTURE.md` - Architecture documentation
-- `pnpm-workspace.yaml` - Monorepo configuration
-- `package.json` - Root package.json
-- `tsconfig.base.json` - Shared TypeScript config
-- `packages/calculator/` - Complete TypeScript calculation package
-- `apps/web/` - SvelteKit application shell
+- `packages/calculator/src/models/model-2-licence.ts`
+- `packages/calculator/src/models/model-3-joint-development.ts`
+- `packages/calculator/src/models/model-4-bot.ts`
+- `packages/calculator/src/models/model-5-software-sale.ts`
+- `packages/calculator/src/models/model-6-saas.ts`
+- Updated `packages/calculator/src/models/index.ts`
 
-**Status:** Phase 1 Complete
+**Status:** Phase 2 Complete (Models)
 
-**Next Steps (Phase 2):**
-- Extract Models 2-6 to TypeScript
-- Extract projection calculations (NPV, IRR, sensitivity)
-- Extract compliance module
-- Add more comprehensive tests
+**Total Variants:** 47 across 6 models
+- Model 1: 6 variants (Cost-Plus)
+- Model 2: 8 variants (Licence/Royalties)
+- Model 3: 8 variants (Joint Development)
+- Model 4: 8 variants (BOT)
+- Model 5: 8 variants (Software Sale)
+- Model 6: 9 variants (SaaS/Subscription)
 
 **Build Commands:**
 ```bash
 pnpm install          # Install dependencies
-pnpm test             # Run calculator tests
+pnpm test             # Run calculator tests (44 tests passing)
 pnpm build            # Build all packages
-pnpm dev              # Start dev server (when ready)
 ```
+
+**Next Steps:**
+- Add tests for Models 2-6
+- Extract NPV/IRR projection calculations
+- Extract sensitivity analysis module
+- Build out SvelteKit UI for all models
 
 ---
 
 ## Previous Sessions
+
+### 2026-01-10 (Phase 1)
+**Task:** Architecture Redesign - Foundation
+- Created ARCHITECTURE.md documentation
+- Set up monorepo with pnpm workspaces
+- Created calculator package with TypeScript
+- Extracted Model 1 with 44 passing tests
+- Created SvelteKit app shell
 
 ### 2026-01-10 (Earlier)
 **Task:** Create UI Component Hierarchy Document
