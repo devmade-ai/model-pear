@@ -29,15 +29,6 @@ export const PERSPECTIVES = {
         shortcut: 'B',
         alwaysAvailable: true
     },
-    combined: {
-        id: 'combined',
-        name: 'Combined View',
-        icon: '⚖️',
-        description: 'Combined financial impact across both entities to inform your decision',
-        color: 'purple',
-        shortcut: 'C',
-        alwaysAvailable: true
-    }
 };
 
 /**
@@ -249,10 +240,6 @@ function setupKeyboardShortcuts(container) {
                 break;
             case 'B':
                 setPerspective('buyer');
-                e.preventDefault();
-                break;
-            case 'C':
-                setPerspective('combined');
                 e.preventDefault();
                 break;
         }
