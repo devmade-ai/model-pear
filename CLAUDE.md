@@ -24,6 +24,7 @@
 - Always read a file before attempting to edit it
 - Check for existing patterns in the codebase before creating new ones
 - Commit and push changes before ending a session
+- Keep SESSION_NOTES.md lean - remove previous session notes once no longer relevant
 
 ---
 
