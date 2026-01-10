@@ -17,7 +17,7 @@ export function renderIntercompanyResults(container, results) {
     if (!container || !results) return;
 
     const state = getState();
-    const perspective = state.intercompany.currentPerspective || 'combined';
+    const perspective = state.intercompany.currentPerspective || 'developer';
 
     container.innerHTML = '';
 
@@ -29,8 +29,10 @@ export function renderIntercompanyResults(container, results) {
             renderBuyerPerspective(container, results);
             break;
         case 'combined':
-        default:
             renderCombinedPerspective(container, results);
+            break;
+        default:
+            renderDeveloperPerspective(container, results);
             break;
     }
 
