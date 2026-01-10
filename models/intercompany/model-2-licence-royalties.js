@@ -602,16 +602,12 @@ function calculate(inputs, variantId, entityConfig = {}, taxParams = {}) {
         variantId
     );
 
-    // Combined perspective calculations
-    const combined = calculateCombinedPerspective(developer, buyer, entityConfig);
-
     // Transfer pricing assessment
     const transferPricing = assessTransferPricing(inputs, variantId, developerRevenue, buyerCosts);
 
     return {
         developer,
         buyer,
-        combined,
         transferPricing,
         metadata: {
             modelId: 'model-2',
@@ -956,64 +952,6 @@ function calculateBuyerPerspective(totalCost, costBreakdown, inputs, taxParams, 
         },
         totalCost,
         npv: calculateNPV(totalCost, licenceTerm, 0.10) // 10% discount rate
-    };
-}
-
-/**
- * Combined/Consolidation perspective
- */
-function calculateCombinedPerspective(developer, buyer, entityConfig) {
-    const isConsolidated = entityConfig?.relationship?.consolidationRequired ?? true;
-
-    // Both parties have assets in this model
-    const developerAsset = developer.asset.carryingValue;
-    const buyerAsset = buyer.asset.capitalised;
-
-    // On consolidation, Buyer's asset eliminates against Developer's revenue
-    // Developer's asset represents actual development cost to group
-    const groupAssetValue = isConsolidated ? developerAsset : (developerAsset + buyerAsset);
-
-    // Intercompany profit is Developer's margin on licence sales
-    const profitToEliminate = isConsolidated ?
-        (developer.revenue.total - developer.costs.developmentCapitalised) : 0;
-
-    // Asset efficiency - ratio of group asset to original development cost
-    const originalDevCost = developer.costs.developmentCapitalised + developer.costs.researchExpensed;
-    const assetEfficiency = originalDevCost > 0 ? groupAssetValue / originalDevCost : 0;
-
-    return {
-        elimination: {
-            required: isConsolidated,
-            profitEliminated: profitToEliminate,
-            assetAdjustment: -buyerAsset,
-            journalEntry: isConsolidated ? {
-                debit: { account: 'Licence Revenue (Developer)', amount: developer.revenue.total },
-                credit: { account: 'Intangible Asset - Licence (Buyer)', amount: buyerAsset },
-                credit2: { account: 'Retained Earnings', amount: profitToEliminate }
-            } : null
-        },
-        assetEfficiency: {
-            developerAsset,
-            buyerAsset,
-            groupAsset: groupAssetValue,
-            duplication: isConsolidated ? 0 : buyerAsset,
-            efficiencyRatio: assetEfficiency
-        },
-        cashFlow: {
-            developerNetCash: developer.revenue.total - developer.tax.taxPayable,
-            buyerNetCash: -buyer.totalCost + buyer.tax.totalTaxBenefit,
-            groupNetCash: isConsolidated ?
-                (developer.profit.totalOverTerm - (buyer.tax.totalTaxBenefit || 0)) :
-                (developer.revenue.total - buyer.totalCost)
-        },
-        metrics: {
-            totalTransactionValue: developer.revenue.total,
-            groupTaxCost: developer.tax.taxPayable - buyer.tax.annualTaxBenefit,
-            effectiveGroupTaxRate: developer.revenue.total > 0 ?
-                ((developer.tax.taxPayable - buyer.tax.annualTaxBenefit) / developer.profit.gross) * 100 : 0,
-            developerReturnOnIP: originalDevCost > 0 ?
-                (developer.revenue.total / originalDevCost) * 100 : 0
-        }
     };
 }
 

@@ -300,16 +300,12 @@ function calculate(inputs, variantId, entityConfig = {}, taxParams = {}) {
     // Buyer perspective calculations
     const buyer = calculateBuyerPerspective(revenue, inputs, taxParams);
 
-    // Combined perspective calculations
-    const combined = calculateCombinedPerspective(developer, buyer, entityConfig);
-
     // Transfer pricing assessment
     const transferPricing = assessTransferPricing(margin, inputs);
 
     return {
         developer,
         buyer,
-        combined,
         transferPricing,
         metadata: {
             modelId: 'model-1',
@@ -471,50 +467,6 @@ function calculateBuyerPerspective(transactionValue, inputs, taxParams) {
             taxBenefit: taxDepreciation * taxRate
         },
         totalCost: transactionValue
-    };
-}
-
-/**
- * Combined/Consolidation perspective
- */
-function calculateCombinedPerspective(developer, buyer, entityConfig) {
-    const isConsolidated = entityConfig?.relationship?.consolidationRequired ?? true;
-
-    // Intercompany profit elimination
-    const profitToEliminate = isConsolidated ? developer.profit.gross : 0;
-
-    // Adjusted group asset value
-    const groupAssetValue = buyer.asset.capitalised - profitToEliminate;
-
-    return {
-        elimination: {
-            required: isConsolidated,
-            profitEliminated: profitToEliminate,
-            assetAdjustment: -profitToEliminate,
-            journalEntry: isConsolidated ? {
-                debit: { account: 'Revenue (Developer)', amount: developer.revenue.total },
-                credit: { account: 'Intangible Asset (Buyer)', amount: profitToEliminate },
-                credit2: { account: 'Cost of Sales (Buyer)', amount: developer.costs.total }
-            } : null
-        },
-        assetEfficiency: {
-            developerAsset: 0,
-            buyerAsset: buyer.asset.capitalised,
-            groupAsset: groupAssetValue,
-            duplication: 0,  // No duplication in cost-plus model
-            efficiencyRatio: 1.0  // 100% efficient - asset only on Buyer's books
-        },
-        cashFlow: {
-            developerNetCash: developer.revenue.total - developer.tax.taxPayable,
-            buyerNetCash: -buyer.totalCost + buyer.tax.taxBenefit,
-            groupNetCash: developer.profit.net  // Tax leakage at group level
-        },
-        metrics: {
-            totalTransactionValue: developer.revenue.total,
-            groupTaxCost: developer.tax.taxPayable - buyer.tax.taxBenefit,
-            effectiveGroupTaxRate: developer.revenue.total > 0 ?
-                ((developer.tax.taxPayable - buyer.tax.taxBenefit) / developer.profit.gross) * 100 : 0
-        }
     };
 }
 

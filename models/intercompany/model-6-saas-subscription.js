@@ -703,9 +703,6 @@ function calculate(inputs, variantId, entityConfig = {}, taxParams = {}) {
         variantId
     );
 
-    // Combined perspective calculations
-    const combined = calculateCombinedPerspective(developer, buyer, entityConfig, inputs);
-
     // Transfer pricing assessment
     const transferPricing = assessTransferPricing(inputs, variantId, developerRevenue, buyerCosts);
 
@@ -715,7 +712,6 @@ function calculate(inputs, variantId, entityConfig = {}, taxParams = {}) {
     return {
         developer,
         buyer,
-        combined,
         transferPricing,
         alternatives,
         metadata: {
@@ -1095,70 +1091,6 @@ function calculateBuyerPerspective(totalCost, costBreakdown, inputs, taxParams, 
         totalCost,
         annualCost: annualExpense + annualAssetAmortisation,
         npv: calculateNPV(totalCost, contractTerm, 0.10)
-    };
-}
-
-/**
- * Combined/Consolidation perspective
- */
-function calculateCombinedPerspective(developer, buyer, entityConfig, inputs) {
-    const isConsolidated = entityConfig?.relationship?.consolidationRequired ?? true;
-    const contractTerm = inputs.contractTerm || 3;
-
-    // In SaaS model: Developer has asset, Buyer has none (or minimal)
-    const developerAsset = developer.asset.carryingValue;
-    const buyerAsset = buyer.asset.capitalised;
-
-    // On consolidation, subscription revenue/expense eliminates
-    // Developer's asset represents the only group asset
-    const groupAssetValue = developerAsset + (isConsolidated ? 0 : buyerAsset);
-
-    // Intercompany profit elimination
-    const profitToEliminate = isConsolidated ? developer.profit.gross : 0;
-
-    // Asset efficiency - lower for SaaS since Buyer pays but gets no asset
-    const totalCashExchanged = developer.revenue.total;
-    const assetEfficiency = totalCashExchanged > 0 ? groupAssetValue / totalCashExchanged : 0;
-
-    return {
-        elimination: {
-            required: isConsolidated,
-            profitEliminated: profitToEliminate * contractTerm,
-            revenueEliminated: developer.revenue.total,
-            expenseEliminated: buyer.expenses.totalOverTerm,
-            journalEntry: isConsolidated ? {
-                debit: { account: 'Subscription Revenue (Developer)', amount: developer.revenue.total },
-                credit: { account: 'Subscription Expense (Buyer)', amount: buyer.expenses.totalOverTerm }
-            } : null
-        },
-        assetEfficiency: {
-            developerAsset,
-            buyerAsset,
-            groupAsset: groupAssetValue,
-            duplication: 0,  // No duplication - asset only with Developer
-            efficiencyRatio: assetEfficiency,
-            note: 'SaaS model - asset concentrated with Developer; Buyer expenses payments'
-        },
-        cashFlow: {
-            developerNetCash: developer.revenue.total - (developer.tax.taxPayable * contractTerm),
-            buyerNetCash: -buyer.totalCost + buyer.tax.totalTaxBenefit,
-            groupNetCash: isConsolidated ?
-                developer.profit.totalOverTerm :
-                (developer.revenue.total - buyer.totalCost)
-        },
-        metrics: {
-            totalTransactionValue: developer.revenue.total,
-            groupTaxCost: (developer.tax.taxPayable - buyer.tax.annualTaxBenefit) * contractTerm,
-            effectiveGroupTaxRate: developer.profit.gross > 0 ?
-                ((developer.tax.taxPayable - buyer.tax.annualTaxBenefit) / developer.profit.gross) * 100 : 0,
-            developerReturnOnAsset: developerAsset > 0 ?
-                (developer.revenue.total / developerAsset) * 100 : 0
-        },
-        warning: {
-            assetConcentration: true,
-            message: 'SaaS model results in asset concentration with Developer. ' +
-                'Consider Model 1, 2, or 3 if combined asset maximisation is priority.'
-        }
     };
 }
 
