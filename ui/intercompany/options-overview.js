@@ -357,8 +357,8 @@ function renderOptionsOverview() {
 function renderHeader() {
     return `
         <div class="options-overview-header">
-            <h2>How would you like to structure this transaction?</h2>
-            <p>Choose a model that best fits your situation, or use the guided wizard for recommendations.</p>
+            <h2>Which structure creates the best outcome?</h2>
+            <p>Compare models to find the deal that maximizes value for both you and your client.</p>
         </div>
     `;
 }

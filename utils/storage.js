@@ -194,6 +194,7 @@ export function generateComparisonSummary(comparisons) {
         const dev = comp.results?.developer || {};
         const buyer = comp.results?.buyer || {};
         const tp = comp.results?.transferPricing || {};
+        const proj = comp.results?.projections || comp.projections || {};
 
         return {
             name: comp.name,
@@ -220,6 +221,19 @@ export function generateComparisonSummary(comparisons) {
                 method: tp.method || 'N/A',
                 margin: tp.margin || 0,
                 withinRange: tp.withinRange
+            },
+            // Long-term value metrics (5th dimension for goal alignment)
+            projections: {
+                developer: {
+                    npv: proj.developer?.npv ?? proj.summary?.developer?.npv ?? null,
+                    irr: proj.developer?.irr ?? proj.summary?.developer?.irr ?? null,
+                    paybackPeriod: proj.developer?.paybackPeriod ?? proj.summary?.developer?.paybackPeriod ?? null
+                },
+                buyer: {
+                    npv: proj.buyer?.npv ?? proj.summary?.buyer?.npv ?? null,
+                    irr: proj.buyer?.irr ?? proj.summary?.buyer?.irr ?? null,
+                    paybackPeriod: proj.buyer?.paybackPeriod ?? proj.summary?.buyer?.paybackPeriod ?? null
+                }
             }
         };
     });

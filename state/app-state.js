@@ -5,6 +5,7 @@
 
 import { DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from '../models/intercompany/registry.js';
 import { saveToStorage, loadFromStorage, clearStorage } from '../utils/storage.js';
+import { generateProjections, DEFAULT_PROJECTION_PARAMS } from '../models/intercompany/growth-projections.js';
 
 // ========== INITIAL STATE ==========
 
@@ -307,6 +308,14 @@ export function saveComparison(name, notes = '', inputs = {}) {
         return null;
     }
 
+    // Generate projections for long-term value metrics (5th dimension)
+    let projections = null;
+    try {
+        projections = generateProjections(intercompany.results, DEFAULT_PROJECTION_PARAMS);
+    } catch (e) {
+        console.warn('Could not generate projections for comparison:', e);
+    }
+
     const comparison = {
         id: crypto.randomUUID(),
         name: name.trim() || `Option ${currentState.savedComparisons.length + 1}`,
@@ -317,6 +326,7 @@ export function saveComparison(name, notes = '', inputs = {}) {
         entityConfig: JSON.parse(JSON.stringify(entities)),
         taxParams: JSON.parse(JSON.stringify(taxParams)),
         results: JSON.parse(JSON.stringify(intercompany.results)),
+        projections: projections ? JSON.parse(JSON.stringify(projections.summary)) : null,
         perspective: intercompany.currentPerspective,
         notes: notes.trim()
     };

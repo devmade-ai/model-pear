@@ -6,6 +6,7 @@
 
 import { getState, subscribe } from '../../state/app-state.js';
 import { formatCurrency, formatPercentage, formatNumber } from '../../utils/index.js';
+import { generateProjections, DEFAULT_PROJECTION_PARAMS } from '../../models/intercompany/growth-projections.js';
 
 // ========== MAIN RENDER FUNCTION ==========
 
@@ -41,6 +42,14 @@ export function renderIntercompanyResults(container, results) {
 function renderDeveloperPerspective(container, results) {
     const dev = results.developer;
     const tp = results.transferPricing;
+
+    // Generate projections for long-term value display
+    let projections = null;
+    try {
+        projections = generateProjections(results, DEFAULT_PROJECTION_PARAMS);
+    } catch (e) {
+        console.warn('Could not generate projections:', e);
+    }
 
     container.innerHTML = `
         <!-- Your Company Summary Header -->
@@ -117,6 +126,9 @@ function renderDeveloperPerspective(container, results) {
             </div>
         </div>
 
+        <!-- Long-term Value -->
+        ${renderLongTermValue(projections, 'developer')}
+
         <!-- Transfer Pricing Risk -->
         ${renderTransferPricingRisk(tp)}
     `;
@@ -126,6 +138,14 @@ function renderDeveloperPerspective(container, results) {
 
 function renderBuyerPerspective(container, results) {
     const buyer = results.buyer;
+
+    // Generate projections for long-term value display
+    let projections = null;
+    try {
+        projections = generateProjections(results, DEFAULT_PROJECTION_PARAMS);
+    } catch (e) {
+        console.warn('Could not generate projections:', e);
+    }
 
     container.innerHTML = `
         <!-- Client Summary Header -->
@@ -241,6 +261,9 @@ function renderBuyerPerspective(container, results) {
             </h4>
             ${renderAmortisationTable(buyer.expenses.schedule)}
         </div>
+
+        <!-- Long-term Value -->
+        ${renderLongTermValue(projections, 'buyer')}
     `;
 }
 
@@ -427,6 +450,67 @@ function renderAmortisationTable(schedule) {
                     `).join('')}
                 </tbody>
             </table>
+        </div>
+    `;
+}
+
+/**
+ * Render Long-term Value section (5th dimension)
+ * Shows NPV, IRR, and payback period for the selected perspective
+ */
+function renderLongTermValue(projections, perspective) {
+    if (!projections) {
+        return `
+            <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
+                <h4 class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                    <span>📈</span> Long-term Value
+                </h4>
+                <p class="text-gray-500 text-sm">Projections will be available after calculation. Check the Projections tab for detailed analysis.</p>
+            </div>
+        `;
+    }
+
+    const data = perspective === 'developer' ? projections.developer : projections.buyer;
+    const summary = projections.summary?.[perspective] || {};
+    const metrics = data?.metrics || {};
+
+    const npv = metrics.npv ?? summary.npv ?? null;
+    const irr = metrics.irr ?? summary.irr ?? null;
+    const payback = metrics.paybackPeriod ?? summary.paybackPeriod ?? null;
+    const assessment = summary.assessment || {};
+
+    // Determine assessment colors
+    const assessmentColors = {
+        'Excellent': { bg: 'bg-green-900/20', border: 'border-green-700', text: 'text-green-400' },
+        'Good': { bg: 'bg-blue-900/20', border: 'border-blue-700', text: 'text-blue-400' },
+        'Marginal': { bg: 'bg-yellow-900/20', border: 'border-yellow-700', text: 'text-yellow-400' },
+        'Poor': { bg: 'bg-red-900/20', border: 'border-red-700', text: 'text-red-400' }
+    };
+    const colors = assessmentColors[assessment.rating] || assessmentColors['Good'];
+
+    return `
+        <div class="${colors.bg} border ${colors.border} rounded-lg p-6 mb-6">
+            <h4 class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                <span>📈</span> Long-term Value (${projections.years || 5}-Year Outlook)
+            </h4>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                ${renderMetricCard('NPV', npv !== null ? formatCurrency(npv) : '-', npv > 0 ? 'text-green-400' : 'text-red-400')}
+                ${renderMetricCard('IRR', irr !== null ? formatPercentage(irr * 100) : '-', irr > 0.12 ? 'text-green-400' : 'text-yellow-400')}
+                ${renderMetricCard('Payback', payback !== null ? `${payback.toFixed(1)} yrs` : '-', payback < 3 ? 'text-green-400' : 'text-yellow-400')}
+                ${renderMetricCard('Rating', assessment.rating || 'N/A', colors.text)}
+            </div>
+
+            ${assessment.description ? `
+                <div class="p-3 bg-gray-700/30 rounded-lg">
+                    <p class="text-sm ${colors.text}">${assessment.description}</p>
+                </div>
+            ` : ''}
+
+            <p class="text-xs text-gray-500 mt-3">
+                Based on ${projections.params?.projectionPeriod || 5}-year projections with ${formatPercentage((projections.params?.discountRate || 0.12) * 100)} discount rate.
+                See the <strong>Projections</strong> tab for detailed cash flow analysis.
+            </p>
         </div>
     `;
 }
