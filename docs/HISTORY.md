@@ -9,6 +9,26 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### UI Component Hierarchy Documentation
+
+**Date**: January 10, 2026
+**Impact**: New reference document for understanding UI component organization
+
+**Purpose:**
+Created a comprehensive document outlining the UI component hierarchy to serve as a reference for future development and maintenance.
+
+**Document Contents:**
+- Component tree for both Pricing and Intercompany modes
+- Logic-to-UI mapping between `models/intercompany/` and `ui/intercompany/`
+- State management architecture with pub/sub pattern diagram
+- Initialization and calculation flow diagrams
+- Component lifecycle pattern
+- File reference with line counts and purposes
+
+**Files Added**: `docs/UI_COMPONENT_HIERARCHY.md`
+
+---
+
 ### Comprehensive Testing Coverage Expansion
 
 **Date**: January 10, 2026
