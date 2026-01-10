@@ -245,7 +245,7 @@ function renderScenarioComparisonTable(scenarios) {
         { key: 'developer.profit.net', label: 'Developer Net Profit' },
         { key: 'buyer.totalCost', label: 'Buyer Total Cost' },
         { key: 'developer.revenue.total', label: 'Developer Revenue' },
-        { key: 'combined.totalValue', label: 'Combined Value' }
+        { key: 'buyer.asset.capitalised', label: 'Buyer Asset' }
     ];
 
     const getValue = (scenario, path) => {

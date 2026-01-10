@@ -183,15 +183,14 @@ function renderTabContent(tab) {
 // ========== OVERVIEW TAB ==========
 
 function renderOverviewTab() {
-    const { developer, buyer, combined, summary, years } = currentProjectionData;
+    const { developer, buyer, summary, years } = currentProjectionData;
 
     return `
         <div class="overview-view">
             <!-- Key Metrics Cards -->
-            <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-2 gap-4 mb-6">
                 ${renderPartyMetricCard('Developer', developer, 'blue', '💻')}
                 ${renderPartyMetricCard('Buyer', buyer, 'green', '🏢')}
-                ${renderCombinedMetricCard(combined, summary)}
             </div>
 
             <!-- Summary Assessment -->
@@ -292,31 +291,6 @@ function renderPartyMetricCard(title, partyData, color, icon) {
     `;
 }
 
-function renderCombinedMetricCard(combined, summary) {
-    return `
-        <div class="p-4 rounded-lg border bg-purple-900/30 border-purple-700/50 text-purple-300">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="text-xl">🤝</span>
-                <span class="font-medium">Combined</span>
-            </div>
-            <div class="text-2xl font-bold mb-1">
-                ${formatCurrency(combined.metrics.npv)}
-            </div>
-            <div class="text-xs opacity-75">Group NPV</div>
-            <div class="mt-3 pt-3 border-t border-gray-700/50 grid grid-cols-2 gap-2 text-xs">
-                <div>
-                    <span class="text-gray-400 block">Group IRR</span>
-                    <span class="font-medium">${(combined.metrics.irr * 100).toFixed(1)}%</span>
-                </div>
-                <div>
-                    <span class="text-gray-400 block">Total Profit</span>
-                    <span class="font-medium">${formatCurrency(combined.metrics.totalGroupProfit)}</span>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
 function renderAssessmentGauge(assessment) {
     const colorMap = {
         green: 'bg-green-600',
@@ -351,7 +325,7 @@ function renderAssessmentGauge(assessment) {
 
 function renderCashFlowTab() {
     const chartData = generateCashFlowChartData(currentProjectionData);
-    const { developer, buyer, combined, years } = currentProjectionData;
+    const { developer, buyer, years } = currentProjectionData;
 
     return `
         <div class="cashflow-view">
@@ -370,7 +344,7 @@ function renderCashFlowTab() {
             <!-- Cash Flow Table -->
             <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
                 <h4 class="text-sm font-medium text-gray-300 mb-4">Year-by-Year Cash Flows</h4>
-                ${renderCashFlowTable(developer, buyer, combined, years)}
+                ${renderCashFlowTable(developer, buyer, years)}
             </div>
         </div>
     `;
@@ -457,7 +431,7 @@ function renderCumulativeChart(chartData) {
     `;
 }
 
-function renderCashFlowTable(developer, buyer, combined, years) {
+function renderCashFlowTable(developer, buyer, years) {
     return `
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -466,7 +440,6 @@ function renderCashFlowTable(developer, buyer, combined, years) {
                         <th class="text-left py-2 text-gray-400">Year</th>
                         <th class="text-right py-2 text-blue-400">Developer</th>
                         <th class="text-right py-2 text-green-400">Buyer</th>
-                        <th class="text-right py-2 text-purple-400">Combined</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -474,21 +447,18 @@ function renderCashFlowTable(developer, buyer, combined, years) {
                         <td class="py-2 text-gray-300">Initial</td>
                         <td class="py-2 text-right text-blue-300">${formatCurrency(developer.cashFlows[0])}</td>
                         <td class="py-2 text-right text-green-300">${formatCurrency(buyer.cashFlows[0])}</td>
-                        <td class="py-2 text-right text-purple-300">${formatCurrency(combined.cashFlows[0])}</td>
                     </tr>
                     ${developer.yearlyData.map((_, idx) => `
                         <tr class="border-b border-gray-800">
                             <td class="py-2 text-gray-300">Year ${idx + 1}</td>
                             <td class="py-2 text-right ${developer.yearlyData[idx].cashFlow >= 0 ? 'text-blue-300' : 'text-red-300'}">${formatCurrency(developer.yearlyData[idx].cashFlow)}</td>
                             <td class="py-2 text-right ${buyer.yearlyData[idx].cashFlow >= 0 ? 'text-green-300' : 'text-red-300'}">${formatCurrency(buyer.yearlyData[idx].cashFlow)}</td>
-                            <td class="py-2 text-right ${combined.yearlyData[idx].combinedCashFlow >= 0 ? 'text-purple-300' : 'text-red-300'}">${formatCurrency(combined.yearlyData[idx].combinedCashFlow)}</td>
                         </tr>
                     `).join('')}
                     <tr class="border-t-2 border-gray-600 font-medium">
                         <td class="py-2 text-gray-200">Total</td>
                         <td class="py-2 text-right text-blue-400">${formatCurrency(developer.cashFlows.reduce((a, b) => a + b, 0))}</td>
                         <td class="py-2 text-right text-green-400">${formatCurrency(buyer.cashFlows.reduce((a, b) => a + b, 0))}</td>
-                        <td class="py-2 text-right text-purple-400">${formatCurrency(combined.cashFlows.reduce((a, b) => a + b, 0))}</td>
                     </tr>
                 </tbody>
             </table>
@@ -817,7 +787,7 @@ function updateProjections(container, options) {
 function exportProjections() {
     if (!currentProjectionData) return;
 
-    const { developer, buyer, combined, summary, years } = currentProjectionData;
+    const { developer, buyer, summary, years } = currentProjectionData;
 
     // Create CSV content
     let csv = 'Growth Projections Export\n\n';
@@ -826,14 +796,13 @@ function exportProjections() {
     csv += 'Party,NPV,IRR,Payback Period,Assessment\n';
     csv += `Developer,${developer.metrics.npv.toFixed(0)},${(developer.metrics.irr * 100).toFixed(1)}%,${developer.metrics.paybackPeriod.toFixed(1)} years,${summary.developer.assessment.rating}\n`;
     csv += `Buyer,${buyer.metrics.npv.toFixed(0)},${(buyer.metrics.irr * 100).toFixed(1)}%,${buyer.metrics.paybackPeriod.toFixed(1)} years,${summary.buyer.assessment.rating}\n`;
-    csv += `Combined,${combined.metrics.npv.toFixed(0)},${(combined.metrics.irr * 100).toFixed(1)}%,-,-\n`;
 
     csv += '\nYearly Cash Flows\n';
-    csv += 'Year,Developer,Buyer,Combined\n';
-    csv += `Initial,${developer.cashFlows[0].toFixed(0)},${buyer.cashFlows[0].toFixed(0)},${combined.cashFlows[0].toFixed(0)}\n`;
+    csv += 'Year,Developer,Buyer\n';
+    csv += `Initial,${developer.cashFlows[0].toFixed(0)},${buyer.cashFlows[0].toFixed(0)}\n`;
 
     for (let i = 0; i < years; i++) {
-        csv += `Year ${i + 1},${developer.yearlyData[i].cashFlow.toFixed(0)},${buyer.yearlyData[i].cashFlow.toFixed(0)},${combined.yearlyData[i].combinedCashFlow.toFixed(0)}\n`;
+        csv += `Year ${i + 1},${developer.yearlyData[i].cashFlow.toFixed(0)},${buyer.yearlyData[i].cashFlow.toFixed(0)}\n`;
     }
 
     // Download
