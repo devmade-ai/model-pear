@@ -17,6 +17,14 @@
 9. **Capture ideas** - Add lower priority items and improvements to docs/TODO.md so they persist between sessions
 10. **Repeatable process** - Follow consistent steps to ensure all the above
 
+## AI Notes
+
+<!-- Reminders and learnings for AI assistants - add to this as needed -->
+
+- Always read a file before attempting to edit it
+- Check for existing patterns in the codebase before creating new ones
+- Commit and push changes before ending a session
+
 ---
 
 # Software Transaction Structuring Tool
