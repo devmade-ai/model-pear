@@ -679,7 +679,7 @@ function renderResultImpact(before, after, diff) {
         { label: 'Developer Revenue', path: 'developer.revenue.total', higherBetter: true },
         { label: 'Developer Profit', path: 'developer.profit.net', higherBetter: true },
         { label: 'Buyer Total Cost', path: 'buyer.totalCost', higherBetter: false },
-        { label: 'Combined Net Cash', path: 'combined.cashFlow.netCashFlow', higherBetter: true }
+        { label: 'Buyer Asset', path: 'buyer.asset.capitalised', higherBetter: true }
     ];
 
     const impacts = metrics.map(m => {

@@ -751,14 +751,6 @@ function renderComparisonTable(comparisons, summary) {
         { key: 'buyer.expensed', label: 'Amount Expensed', format: 'currency', higherBetter: false },
         { key: 'buyer.taxBenefit', label: 'Tax Benefit', format: 'currency', higherBetter: true },
 
-        // Combined section
-        { section: 'Combined / Net Effect', icon: '⚖️' },
-        { key: 'combined.transactionValue', label: 'Transaction Value', format: 'currency' },
-        { key: 'combined.groupTaxCost', label: 'Group Tax Cost', format: 'currency', higherBetter: false },
-        { key: 'combined.developerNetCash', label: 'Developer Net Cash', format: 'currency', higherBetter: true },
-        { key: 'combined.buyerNetCash', label: 'Buyer Net Cash', format: 'currency', higherBetter: false },
-        { key: 'combined.netCashFlow', label: 'Combined Net Cash', format: 'currency', higherBetter: true },
-
         // Transfer Pricing section
         { section: 'Transfer Pricing Risk', icon: '⚠️' },
         { key: 'transferPricing.riskLevel', label: 'Risk Level', format: 'risk' },
