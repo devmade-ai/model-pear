@@ -9,6 +9,52 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Comprehensive Testing Coverage Expansion
+
+**Date**: January 10, 2026
+**Impact**: Testing Lab now covers all 6 transaction models + Long-term Value calculations
+
+**Problem Identified:**
+Testing Lab (built Jan 9) only had test scenarios for Model 1 (Cost-Plus). Models 2-6 had no test coverage. Long-term Value calculations (NPV, IRR, payback) were untested.
+
+**Changes Made:**
+
+1. **Expanded Workflow Test Scenarios** (`testing-utilities.js`)
+   - Added 8 new workflow scenarios for Models 2-6:
+     - Model 2: Perpetual Licence, Usage-Based Royalties
+     - Model 3: Contribution-Based Joint Development
+     - Model 4: BOT Fixed Transfer Price
+     - Model 5: Outright Software Sale
+     - Model 6: SaaS Subscription (2 scenarios)
+   - Total workflow scenarios: 10 → 18
+
+2. **New Assertion Library Entries** (`testing-utilities.js`)
+   - Model 2: Developer Licence Revenue, Buyer Capitalised Licence, Usage-Based Royalty
+   - Model 3: Developer Ownership Contribution, Developer Joint Asset
+   - Model 4: Developer BOT Service Revenue, Developer BOT Total Revenue
+   - Model 5: Developer Sale Proceeds, Developer Capital Gain, Buyer Capitalised Purchase
+   - Model 6: Developer Subscription Revenue, Buyer No Asset (SaaS), Buyer Subscription Expense
+
+3. **Long-term Value Test Suite** (`testing-utilities.js`)
+   - 5 NPV test cases (simple, break-even, negative, high discount, zero discount)
+   - 4 IRR test cases (standard, 100% return, low return, even cash flows)
+   - 5 Payback test cases (simple, fractional, discounted, immediate, not achieved)
+   - Helper functions: `runNPVTests()`, `runIRRTests()`, `runPaybackTests()`, `runLongTermValueTests()`
+
+4. **Testing UI Tabs** (`ui/intercompany/testing.js`)
+   - Added tab navigation: "Workflow Tests" | "Long-term Value Tests"
+   - Long-term Value tab shows NPV, IRR, Payback test cases with results
+   - Run All button executes all tests in active tab
+
+**Files Modified**: 2 files (~600 lines added)
+
+**Result**: Testing Lab now provides comprehensive coverage:
+- 18 workflow scenarios covering all 6 models
+- 14 Long-term Value calculation tests
+- 32 total test cases
+
+---
+
 ### UI Alignment with Tool Goals
 
 **Date**: January 10, 2026

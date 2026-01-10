@@ -12,9 +12,17 @@ import {
     runModelTests,
     getTestsByModel,
     getTestById,
-    createTestCase
+    createTestCase,
+    NPV_TEST_CASES,
+    IRR_TEST_CASES,
+    PAYBACK_TEST_CASES,
+    runNPVTests,
+    runIRRTests,
+    runPaybackTests,
+    runLongTermValueTests
 } from '../../models/intercompany/testing-utilities.js';
 import { getModelMetadata, getModelVariants, DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from '../../models/intercompany/registry.js';
+import { calculateNPV, calculateIRR, calculatePaybackPeriod } from '../../models/intercompany/growth-projections.js';
 import { formatCurrency, formatPercentage, showToast } from '../../utils/index.js';
 
 // ========== STATE ==========
@@ -28,7 +36,9 @@ let testingState = {
     selectedTest: null,
     isRunning: false,
     showDetails: {},
-    customTestInputs: null
+    customTestInputs: null,
+    activeTab: 'workflows',  // 'workflows' | 'longterm'
+    longTermResults: null
 };
 
 // ========== STYLES ==========
@@ -140,7 +150,9 @@ export function destroyTesting() {
         selectedTest: null,
         isRunning: false,
         showDetails: {},
-        customTestInputs: null
+        customTestInputs: null,
+        activeTab: 'workflows',
+        longTermResults: null
     };
 
     if (containerRef) {
@@ -171,52 +183,232 @@ function renderTesting() {
                             <p class="text-sm text-gray-400">Verify that displayed values are logically correct</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <select id="modelFilter" class="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 text-sm">
-                            <option value="all" ${testingState.selectedModel === 'all' ? 'selected' : ''}>All Scenarios</option>
-                            ${modelOptions.map(modelId => `
-                                <option value="${modelId}" ${testingState.selectedModel === modelId ? 'selected' : ''}>
-                                    ${getModelMetadata(modelId)?.shortName || modelId}
-                                </option>
-                            `).join('')}
-                        </select>
-                        <button id="runAllTestsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 ${testingState.isRunning ? 'opacity-50 cursor-not-allowed' : ''}">
-                            ${testingState.isRunning ? `
-                                <span class="rotating-icon">⚙️</span> Running...
-                            ` : `
-                                <span>▶️</span> Run All
-                            `}
-                        </button>
-                    </div>
                 </div>
 
-                <!-- Explanation -->
-                <div class="mt-4 p-3 bg-gray-700/50 rounded-lg text-sm text-gray-300">
-                    <p><strong>What these tests verify:</strong> Given a workflow (model + variant + inputs),
-                    is each displayed value calculated using the correct logic?</p>
-                    <p class="mt-1 text-gray-400">We're not testing math — we're testing that
-                    "Developer Revenue" equals "Cost × (1 + Markup)" as expected.</p>
+                <!-- Tab Navigation -->
+                <div class="mt-4 flex gap-2 border-b border-gray-600 pb-2">
+                    <button class="tab-btn px-4 py-2 rounded-t-md text-sm font-medium transition-colors ${testingState.activeTab === 'workflows' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" data-tab="workflows">
+                        📋 Workflow Tests (${ALL_TEST_CASES.length})
+                    </button>
+                    <button class="tab-btn px-4 py-2 rounded-t-md text-sm font-medium transition-colors ${testingState.activeTab === 'longterm' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" data-tab="longterm">
+                        📊 Long-term Value Tests (${NPV_TEST_CASES.length + IRR_TEST_CASES.length + PAYBACK_TEST_CASES.length})
+                    </button>
                 </div>
             </div>
 
-            <!-- Summary Panel -->
-            ${testingState.results ? renderSummaryPanel() : ''}
-
-            <!-- Test Scenarios -->
-            <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-100">Workflow Scenarios</h3>
-                    <span class="text-sm text-gray-400">${getFilteredTests().length} scenarios</span>
-                </div>
-
-                <div class="space-y-4">
-                    ${renderTestCases()}
-                </div>
-            </div>
+            ${testingState.activeTab === 'workflows' ? renderWorkflowsTab(testsByModel, modelOptions) : renderLongTermTab()}
         </div>
     `;
 
     setupEventListeners();
+}
+
+function renderWorkflowsTab(testsByModel, modelOptions) {
+    return `
+        <!-- Workflow Controls -->
+        <div class="bg-gray-800 shadow-sm rounded-lg p-4 border border-gray-700">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <select id="modelFilter" class="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 text-sm">
+                        <option value="all" ${testingState.selectedModel === 'all' ? 'selected' : ''}>All Scenarios</option>
+                        ${modelOptions.map(modelId => `
+                            <option value="${modelId}" ${testingState.selectedModel === modelId ? 'selected' : ''}>
+                                ${getModelMetadata(modelId)?.shortName || modelId}
+                            </option>
+                        `).join('')}
+                    </select>
+                    <button id="runAllTestsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 ${testingState.isRunning ? 'opacity-50 cursor-not-allowed' : ''}">
+                        ${testingState.isRunning ? `
+                            <span class="rotating-icon">⚙️</span> Running...
+                        ` : `
+                            <span>▶️</span> Run All
+                        `}
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400">
+                    Tests verify: Given a workflow (model + variant + inputs), is each displayed value calculated correctly?
+                </p>
+            </div>
+        </div>
+
+        <!-- Summary Panel -->
+        ${testingState.results ? renderSummaryPanel() : ''}
+
+        <!-- Test Scenarios -->
+        <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-100">Workflow Scenarios</h3>
+                <span class="text-sm text-gray-400">${getFilteredTests().length} scenarios</span>
+            </div>
+
+            <div class="space-y-4">
+                ${renderTestCases()}
+            </div>
+        </div>
+    `;
+}
+
+function renderLongTermTab() {
+    const totalTests = NPV_TEST_CASES.length + IRR_TEST_CASES.length + PAYBACK_TEST_CASES.length;
+
+    return `
+        <!-- Long-term Value Controls -->
+        <div class="bg-gray-800 shadow-sm rounded-lg p-4 border border-gray-700">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-100">Long-term Value Calculations</h3>
+                    <p class="text-sm text-gray-400">Tests for NPV, IRR, and Payback Period functions</p>
+                </div>
+                <button id="runLongTermTestsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 ${testingState.isRunning ? 'opacity-50 cursor-not-allowed' : ''}">
+                    ${testingState.isRunning ? `
+                        <span class="rotating-icon">⚙️</span> Running...
+                    ` : `
+                        <span>▶️</span> Run All (${totalTests})
+                    `}
+                </button>
+            </div>
+        </div>
+
+        <!-- Long-term Summary Panel -->
+        ${testingState.longTermResults ? renderLongTermSummaryPanel() : ''}
+
+        <!-- NPV Tests -->
+        <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-100">📈 NPV Calculations</h3>
+                <span class="text-sm text-gray-400">${NPV_TEST_CASES.length} tests</span>
+            </div>
+            <div class="space-y-3">
+                ${renderLongTermTestCases('npv', NPV_TEST_CASES)}
+            </div>
+        </div>
+
+        <!-- IRR Tests -->
+        <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-100">📊 IRR Calculations</h3>
+                <span class="text-sm text-gray-400">${IRR_TEST_CASES.length} tests</span>
+            </div>
+            <div class="space-y-3">
+                ${renderLongTermTestCases('irr', IRR_TEST_CASES)}
+            </div>
+        </div>
+
+        <!-- Payback Tests -->
+        <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-100">⏱️ Payback Period Calculations</h3>
+                <span class="text-sm text-gray-400">${PAYBACK_TEST_CASES.length} tests</span>
+            </div>
+            <div class="space-y-3">
+                ${renderLongTermTestCases('payback', PAYBACK_TEST_CASES)}
+            </div>
+        </div>
+    `;
+}
+
+function renderLongTermSummaryPanel() {
+    const { summary } = testingState.longTermResults;
+    const passRate = summary.passRate.toFixed(1);
+    const isAllPassed = summary.passed === summary.total;
+
+    return `
+        <div class="bg-gray-800 shadow-sm rounded-lg p-6 border border-gray-700 ${isAllPassed ? 'border-green-500/30' : 'border-red-500/30'}">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="text-4xl">${isAllPassed ? '✅' : '❌'}</div>
+                    <div>
+                        <h3 class="text-lg font-semibold ${isAllPassed ? 'text-green-400' : 'text-red-400'}">
+                            ${isAllPassed ? 'All Long-term Value Tests Passed!' : 'Some Tests Failed'}
+                        </h3>
+                        <p class="text-sm text-gray-400">
+                            ${summary.passed} of ${summary.total} passed (${passRate}%)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex gap-6">
+                    ${testingState.longTermResults.sections.map(section => `
+                        <div class="text-center">
+                            <div class="text-lg font-bold ${section.summary.failed === 0 ? 'text-green-400' : 'text-red-400'}">
+                                ${section.summary.passed}/${section.summary.total}
+                            </div>
+                            <div class="text-xs text-gray-400">${section.name}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <div class="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
+                    <div class="h-full flex">
+                        <div class="progress-bar bg-green-500" style="width: ${(summary.passed / summary.total) * 100}%"></div>
+                        <div class="progress-bar bg-red-500" style="width: ${(summary.failed / summary.total) * 100}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderLongTermTestCases(type, testCases) {
+    const getResult = (testId) => {
+        if (!testingState.longTermResults) return null;
+        for (const section of testingState.longTermResults.sections) {
+            const result = section.results.find(r => r.id === testId);
+            if (result) return result;
+        }
+        return null;
+    };
+
+    return testCases.map(testCase => {
+        const result = getResult(testCase.id);
+        const statusIcon = result ? (result.passed ? '✅' : '❌') : '⏳';
+        const statusClass = result ? (result.passed ? 'border-l-green-500' : 'border-l-red-500') : 'border-l-gray-500';
+
+        return `
+            <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600 border-l-4 ${statusClass}">
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span>${statusIcon}</span>
+                            <h4 class="font-medium text-gray-200">${testCase.name}</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">${testCase.description}</p>
+                        <div class="mt-2 text-xs">
+                            <span class="text-gray-500">Cash flows:</span>
+                            <span class="text-gray-300 font-mono">[${testCase.cashFlows.join(', ')}]</span>
+                            ${type === 'npv' ? `
+                                <span class="ml-2 text-gray-500">@</span>
+                                <span class="text-gray-300">${(testCase.discountRate * 100).toFixed(0)}%</span>
+                            ` : ''}
+                            ${type === 'payback' && testCase.discounted ? `
+                                <span class="ml-2 text-gray-500">(discounted @${(testCase.discountRate * 100).toFixed(0)}%)</span>
+                            ` : ''}
+                        </div>
+                        ${result ? `
+                            <div class="mt-2 flex flex-wrap gap-4 text-xs">
+                                <span class="text-gray-400">
+                                    Expected: <span class="text-green-400 font-medium">${formatLongTermValue(type, testCase.expectedNPV ?? testCase.expectedIRR ?? testCase.expectedPayback)}</span>
+                                </span>
+                                <span class="text-gray-400">
+                                    Actual: <span class="${result.passed ? 'text-green-400' : 'text-red-400'} font-medium">${formatLongTermValue(type, result.actual)}</span>
+                                </span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function formatLongTermValue(type, value) {
+    if (value === undefined || value === null) return 'N/A';
+    if (type === 'npv') return `R${value.toFixed(2)}`;
+    if (type === 'irr') return `${(value * 100).toFixed(2)}%`;
+    if (type === 'payback') return `${value.toFixed(2)} years`;
+    return String(value);
 }
 
 function renderSummaryPanel() {
@@ -485,6 +677,14 @@ function formatValue(value) {
 function setupEventListeners() {
     if (!containerRef) return;
 
+    // Tab navigation
+    containerRef.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            testingState.activeTab = e.currentTarget.dataset.tab;
+            renderTesting();
+        });
+    });
+
     const modelFilter = containerRef.querySelector('#modelFilter');
     if (modelFilter) {
         modelFilter.addEventListener('change', (e) => {
@@ -496,6 +696,12 @@ function setupEventListeners() {
     const runAllBtn = containerRef.querySelector('#runAllTestsBtn');
     if (runAllBtn) {
         runAllBtn.addEventListener('click', handleRunAllTests);
+    }
+
+    // Long-term Value tests
+    const runLongTermBtn = containerRef.querySelector('#runLongTermTestsBtn');
+    if (runLongTermBtn) {
+        runLongTermBtn.addEventListener('click', handleRunLongTermTests);
     }
 
     containerRef.querySelectorAll('.run-single-test-btn').forEach(btn => {
@@ -595,6 +801,36 @@ async function handleRunSingleTest(testId) {
     } catch (error) {
         console.error('Error running test:', error);
         showToast('Error running test: ' + error.message, 'error');
+    }
+}
+
+async function handleRunLongTermTests() {
+    if (testingState.isRunning) return;
+
+    testingState.isRunning = true;
+    renderTesting();
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    try {
+        testingState.longTermResults = runLongTermValueTests({
+            calculateNPV,
+            calculateIRR,
+            calculatePaybackPeriod
+        });
+
+        const { summary } = testingState.longTermResults;
+        if (summary.passed === summary.total) {
+            showToast(`All ${summary.total} long-term value tests passed!`, 'success');
+        } else {
+            showToast(`${summary.failed} of ${summary.total} long-term value tests failed`, 'warning');
+        }
+    } catch (error) {
+        console.error('Error running long-term value tests:', error);
+        showToast('Error running tests: ' + error.message, 'error');
+    } finally {
+        testingState.isRunning = false;
+        renderTesting();
     }
 }
 

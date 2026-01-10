@@ -93,3 +93,19 @@ Simplified to two perspectives (Developer + Buyer). Removed ~600+ lines of combi
 
 ---
 
+### Testing: Validate result paths in workflow tests
+**Priority**: Low
+**Effort**: Small
+
+**Problem**: The new workflow test scenarios for Models 2-6 use assertion result paths (e.g., `developer.ownership.percentage`, `buyer.asset.recognised`) that may not exactly match the actual model calculation result structure.
+
+**Current state**: Tests are written based on expected formulas, but result paths need validation by running tests in browser and checking which assertions fail due to path mismatches vs calculation errors.
+
+**Next step**: Run all workflow tests in Testing Lab, identify any path mismatches, and either:
+1. Update assertion result paths to match actual model output structure, OR
+2. Update model calculations to output expected paths
+
+**Why low priority**: The test framework is in place. Path fixes are quick once identified by running tests.
+
+---
+
