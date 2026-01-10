@@ -9,6 +9,37 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
+### Preferences Framework & AI Session Management
+
+**Date**: January 10, 2026
+**Impact**: Improved AI assistant consistency and session continuity
+
+**Changes Made**:
+
+**New "My Preferences" Section in CLAUDE.md**:
+- Added Process section (read preferences → gather context → proceed)
+- Added 10 Principles for consistent decision-making
+- Added AI Notes section for learnings and reminders
+
+**New Documentation Files**:
+- `docs/SESSION_NOTES.md` - Context preservation between sessions
+- `docs/TODO.md` - AI-managed backlog for lower priority items
+
+**Benefits**:
+- AI assistants now have clear guidance on how to approach tasks
+- Session context preserved via SESSION_NOTES.md
+- Ideas and improvements captured in TODO.md
+- Consistent, repeatable process across sessions
+
+**Files Created**:
+- `docs/SESSION_NOTES.md`
+- `docs/TODO.md`
+
+**Files Modified**:
+- `CLAUDE.md` (added My Preferences section at top)
+
+---
+
 ### Testing Lab Tab
 
 **Date**: January 9, 2026
