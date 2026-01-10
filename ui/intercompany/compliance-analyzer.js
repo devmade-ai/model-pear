@@ -604,7 +604,7 @@ function renderTaxTab() {
             <!-- Tax Summary -->
             <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
                 <h4 class="text-sm font-medium text-gray-200 mb-4">Tax Summary</h4>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <div class="bg-gray-700/50 rounded p-3 text-center">
                         <div class="text-xs text-gray-500 mb-1">Developer Tax</div>
                         <div class="text-lg font-medium text-red-400">R${(tax.summary.developerTaxPayable || 0).toLocaleString()}</div>
@@ -612,14 +612,6 @@ function renderTaxTab() {
                     <div class="bg-gray-700/50 rounded p-3 text-center">
                         <div class="text-xs text-gray-500 mb-1">Buyer Tax Benefit</div>
                         <div class="text-lg font-medium text-green-400">R${(tax.summary.buyerTaxBenefit || 0).toLocaleString()}</div>
-                    </div>
-                    <div class="bg-gray-700/50 rounded p-3 text-center">
-                        <div class="text-xs text-gray-500 mb-1">Group Net Tax</div>
-                        <div class="text-lg font-medium text-gray-200">R${(tax.summary.groupNetTaxCost || 0).toLocaleString()}</div>
-                    </div>
-                    <div class="bg-gray-700/50 rounded p-3 text-center">
-                        <div class="text-xs text-gray-500 mb-1">Effective Rate</div>
-                        <div class="text-lg font-medium text-gray-200">${(tax.summary.effectiveGroupRate || 0).toFixed(1)}%</div>
                     </div>
                 </div>
             </div>
@@ -1065,8 +1057,6 @@ function generatePrintableReport(report) {
                 <table>
                     <tr><th>Developer Tax Payable</th><td>R${report.taxImpact.summary.developerTaxPayable.toLocaleString()}</td></tr>
                     <tr><th>Buyer Tax Benefit</th><td>R${report.taxImpact.summary.buyerTaxBenefit.toLocaleString()}</td></tr>
-                    <tr><th>Group Net Tax Cost</th><td>R${report.taxImpact.summary.groupNetTaxCost.toLocaleString()}</td></tr>
-                    <tr><th>Effective Group Rate</th><td>${report.taxImpact.summary.effectiveGroupRate.toFixed(1)}%</td></tr>
                 </table>
             </div>
 

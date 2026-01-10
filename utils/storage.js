@@ -151,7 +151,6 @@ export function exportAsCSV(comparisons) {
         'Buyer Cost',
         'Buyer Asset',
         'Buyer Tax Benefit',
-        'Combined Net Cash',
         'Transfer Pricing Risk',
         'Notes'
     ];
@@ -159,7 +158,6 @@ export function exportAsCSV(comparisons) {
     const rows = comparisons.map(comp => {
         const dev = comp.results?.developer || {};
         const buyer = comp.results?.buyer || {};
-        const combined = comp.results?.combined || {};
         const tp = comp.results?.transferPricing || {};
 
         return [
@@ -173,7 +171,6 @@ export function exportAsCSV(comparisons) {
             buyer.totalCost || 0,
             buyer.asset?.capitalised || 0,
             buyer.tax?.taxBenefit || 0,
-            combined.cashFlow?.netCashFlow || 0,
             tp.riskLevel || 'N/A',
             escapeCSV(comp.notes || '')
         ].join(',');
@@ -196,7 +193,6 @@ export function generateComparisonSummary(comparisons) {
     const metrics = comparisons.map(comp => {
         const dev = comp.results?.developer || {};
         const buyer = comp.results?.buyer || {};
-        const combined = comp.results?.combined || {};
         const tp = comp.results?.transferPricing || {};
 
         return {
@@ -218,13 +214,6 @@ export function generateComparisonSummary(comparisons) {
                 expensed: buyer.asset?.expensed || 0,
                 taxBenefit: buyer.tax?.taxBenefit || 0,
                 usefulLife: buyer.asset?.usefulLife || 0
-            },
-            combined: {
-                transactionValue: combined.metrics?.totalTransactionValue || 0,
-                groupTaxCost: combined.metrics?.groupTaxCost || 0,
-                developerNetCash: combined.cashFlow?.developerNetCash || 0,
-                buyerNetCash: combined.cashFlow?.buyerNetCash || 0,
-                netCashFlow: combined.cashFlow?.netCashFlow || 0
             },
             transferPricing: {
                 riskLevel: tp.riskLevel || 'N/A',
@@ -352,7 +341,7 @@ function validateComparisons(comparisons) {
             entityConfig: comp.entityConfig || {},
             taxParams: comp.taxParams || {},
             results: comp.results,
-            perspective: comp.perspective || 'combined',
+            perspective: comp.perspective || 'developer',
             notes: String(comp.notes || '').slice(0, 500)  // Limit notes length
         }));
 }
@@ -395,9 +384,6 @@ function calculateDifferences(metrics) {
             totalCost: comp.buyer.totalCost - base.buyer.totalCost,
             capitalised: comp.buyer.capitalised - base.buyer.capitalised,
             taxBenefit: comp.buyer.taxBenefit - base.buyer.taxBenefit
-        },
-        combined: {
-            netCashFlow: comp.combined.netCashFlow - base.combined.netCashFlow
         }
     }));
 

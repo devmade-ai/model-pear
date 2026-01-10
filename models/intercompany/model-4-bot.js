@@ -643,16 +643,12 @@ function calculate(inputs, variantId, entityConfig = {}, taxParams = {}) {
     // Buyer perspective calculations
     const buyer = calculateBuyerPerspective(inputs, variant, transferDetails, taxParams);
 
-    // Combined perspective calculations
-    const combined = calculateCombinedPerspective(developer, buyer, entityConfig, inputs, transferDetails);
-
     // Transfer pricing assessment
     const transferPricing = assessTransferPricing(inputs, variant, transferDetails, developer);
 
     return {
         developer,
         buyer,
-        combined,
         transferPricing,
         metadata: {
             modelId: 'model-4',
@@ -1142,91 +1138,6 @@ function calculateBuyerPerspective(inputs, variant, transferDetails, taxParams) 
             optionPremium: -(inputs.optionPremium || 0),
             totalOutflow: -totalCashPaid,
             taxBenefitPV: taxDepreciation * taxRate * usefulLife * 0.8  // Rough PV
-        }
-    };
-}
-
-/**
- * Combined/Consolidation perspective
- */
-function calculateCombinedPerspective(developer, buyer, entityConfig, inputs, transferDetails) {
-    const isConsolidated = entityConfig?.relationship?.consolidationRequired ?? true;
-
-    // Intercompany profit elimination
-    const serviceProfit = developer.operation.grossOperatingProfit;
-    const transferGain = developer.transfer.gainOnTransfer;
-    const totalProfitToEliminate = serviceProfit + transferGain;
-
-    // Asset efficiency - use totalCost directly (now a number) or totalCostDetails
-    const totalCashExchanged = buyer.totalCost;
-    const finalAssetValue = buyer.asset.amount;
-    const assetEfficiency = totalCashExchanged > 0 ?
-        (finalAssetValue / totalCashExchanged) * 100 : 0;
-
-    // Asset position over time
-    const assetTimeline = generateAssetTimeline(inputs, developer, buyer, transferDetails);
-
-    // Group tax cost calculation
-    const groupTaxCost = developer.tax.totalTax - (buyer.tax.annualTaxBenefit * 5);
-
-    return {
-        elimination: {
-            required: isConsolidated && totalProfitToEliminate > 0,
-            profitEliminated: totalProfitToEliminate, // For results-display.js compatibility
-            serviceProfit: serviceProfit,
-            transferGain: transferGain,
-            totalProfitEliminated: totalProfitToEliminate,
-            assetWriteDown: transferGain,  // Buyer's asset reduced by Developer's gain
-            assetAdjustment: transferGain, // For results-display.js compatibility
-            journalEntry: isConsolidated && totalProfitToEliminate > 0 ? {
-                debit: { account: 'Retained Earnings / Revenue', amount: totalProfitToEliminate },
-                credit: { account: 'Intangible Asset / Deferred Income', amount: totalProfitToEliminate },
-                credit2: { account: 'Cost of Sales', amount: 0 }
-            } : null
-        },
-        assetEfficiency: {
-            developerAsset: developer.asset.carryingValueAtTransfer, // For results-display.js compatibility
-            developerAssetAtTransfer: developer.asset.carryingValueAtTransfer,
-            buyerAsset: finalAssetValue,
-            groupAsset: isConsolidated ?
-                finalAssetValue - transferGain : finalAssetValue,
-            duplication: 0, // For results-display.js compatibility
-            totalCashExchanged: totalCashExchanged,
-            efficiencyRatio: assetEfficiency / 100, // For results-display.js compatibility (as decimal)
-            efficiencyAssessment: assetEfficiency >= 50 ?
-                'Acceptable - significant portion capitalised' :
-                'Low efficiency - majority expensed during operation'
-        },
-        assetTimeline: assetTimeline,
-        cashFlow: {
-            developerNetCash: developer.cashFlow.operatingInflows + developer.cashFlow.transferInflow - developer.tax.totalTax, // For results-display.js compatibility
-            buyerNetCash: buyer.cashFlow.totalOutflow + (buyer.tax.annualTaxBenefit * 5), // For results-display.js compatibility
-            developerTotalInflow: developer.cashFlow.operatingInflows +
-                developer.cashFlow.transferInflow,
-            buyerTotalOutflow: buyer.cashFlow.totalOutflow,
-            netIntercompany: 0,  // Nets to zero on consolidation
-            groupNetCash: developer.profit.net, // For results-display.js compatibility
-            externalImpact: developer.cashFlow.developmentOutflow +
-                developer.cashFlow.operatingOutflows
-        },
-        valueCreation: {
-            totalDeveloperRevenue: developer.revenue.totalRevenue,
-            totalBuyerCost: buyer.totalCost,
-            developerProfit: developer.profit.totalProfit,
-            consolidatedAsset: isConsolidated ?
-                finalAssetValue - transferGain : finalAssetValue,
-            valueShift: {
-                whenBuyerGetsAsset: buyer.transfer.month ?
-                    `Month ${buyer.transfer.month}` : 'No transfer',
-                deferralCostEstimate: buyer.totalCostDetails.serviceFees * 0.1  // Rough estimate
-            }
-        },
-        metrics: {
-            totalTransactionValue: totalCashExchanged,
-            groupTaxCost: groupTaxCost, // For results-display.js compatibility
-            developerMargin: developer.operation.operatingMargin,
-            buyerCapitalisationRatio: buyer.totalCostDetails.capitalisationRatio,
-            groupTaxImpact: groupTaxCost
         }
     };
 }

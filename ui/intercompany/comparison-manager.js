@@ -584,7 +584,6 @@ function renderComparisonItem(comp, isSelected) {
     // Extract key metrics
     const dev = comp.results?.developer || {};
     const buyer = comp.results?.buyer || {};
-    const combined = comp.results?.combined || {};
 
     const isEditing = editingId === comp.id;
 
@@ -641,9 +640,9 @@ function renderComparisonItem(comp, isSelected) {
                         <span class="comparison-item-metric-value">${formatCurrency(buyer.totalCost || 0)}</span>
                     </div>
                     <div class="comparison-item-metric">
-                        <span class="comparison-item-metric-label">Combined Net</span>
-                        <span class="comparison-item-metric-value ${(combined.cashFlow?.netCashFlow || 0) >= 0 ? 'positive' : 'negative'}">
-                            ${formatCurrency(combined.cashFlow?.netCashFlow || 0)}
+                        <span class="comparison-item-metric-label">Buyer Asset</span>
+                        <span class="comparison-item-metric-value">
+                            ${formatCurrency(buyer.asset?.capitalised || buyer.asset?.amount || 0)}
                         </span>
                     </div>
                 </div>

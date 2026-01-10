@@ -677,16 +677,12 @@ function calculate(inputs, variantId, entityConfig = {}, taxParams = {}) {
     // Buyer perspective calculations
     const buyer = calculateBuyerPerspective(inputs, variant, contributions, ownership, taxParams);
 
-    // Combined perspective calculations
-    const combined = calculateCombinedPerspective(developer, buyer, entityConfig, contributions, ownership);
-
     // Transfer pricing assessment
     const transferPricing = assessTransferPricing(contributions, ownership, inputs, variant);
 
     return {
         developer,
         buyer,
-        combined,
         transferPricing,
         metadata: {
             modelId: 'model-3',
@@ -1129,77 +1125,6 @@ function calculateBuyerPerspective(inputs, variant, contributions, ownership, ta
             annualTaxBenefit: taxDepreciation * taxRate
         },
         totalCost: contributions.buyer.total
-    };
-}
-
-/**
- * Combined/Consolidation perspective
- */
-function calculateCombinedPerspective(developer, buyer, entityConfig, contributions, ownership) {
-    const isConsolidated = entityConfig?.relationship?.consolidationRequired ?? true;
-
-    // Key benefit of joint development: NO intercompany profit to eliminate
-    const profitToEliminate = 0;  // Both parties at cost basis
-
-    // Combined asset position
-    const developerAsset = developer.asset.capitalised;
-    const buyerAsset = buyer.asset.capitalised;
-    const groupAsset = developerAsset + buyerAsset;
-
-    // Total project cost
-    const totalCost = contributions.total;
-
-    // Asset efficiency ratio (should be high for joint development)
-    const developmentPhaseCost = developerAsset + buyerAsset;  // Only capitalised amounts
-    const efficiencyRatio = totalCost > 0 ? (developmentPhaseCost / totalCost) : 0;
-
-    return {
-        elimination: {
-            required: false,
-            profitEliminated: 0,
-            assetAdjustment: 0,
-            reason: 'Joint development - no intercompany profit (key benefit)',
-            journalEntry: null
-        },
-        assetEfficiency: {
-            developerAsset: developerAsset,
-            buyerAsset: buyerAsset,
-            groupAsset: groupAsset,
-            totalProjectCost: totalCost,
-            duplication: 0,  // No duplication in joint development
-            efficiencyRatio: efficiencyRatio,
-            efficiencyAssessment: efficiencyRatio >= 0.7 ?
-                'High efficiency - majority of costs capitalised' :
-                'Lower efficiency - significant research phase costs expensed'
-        },
-        ownership: {
-            developerPercentage: ownership.developer,
-            buyerPercentage: ownership.buyer,
-            otherPartiesPercentage: ownership.otherParties || 0,
-            balanceAssessment: Math.abs(ownership.developer - ownership.buyer) <= 10 ?
-                'Balanced ownership' : 'Significant ownership imbalance'
-        },
-        contributions: {
-            developerTotal: contributions.developer.total,
-            buyerTotal: contributions.buyer.total,
-            otherPartiesTotal: contributions.otherParties || 0,
-            totalProject: contributions.total,
-            fairnessRatio: contributions.buyer.total > 0 ?
-                contributions.developer.total / contributions.buyer.total : 0
-        },
-        cashFlow: {
-            developerOutflow: contributions.developer.total,
-            buyerOutflow: contributions.buyer.total,
-            developerTaxBenefit: developer.tax.annualTaxBenefit,
-            buyerTaxBenefit: buyer.tax.annualTaxBenefit,
-            netGroupOutflow: contributions.total
-        },
-        metrics: {
-            totalTransactionValue: contributions.total,
-            groupTaxBenefit: developer.tax.annualTaxBenefit + buyer.tax.annualTaxBenefit,
-            noIntercompanyProfit: true,
-            cleanConsolidation: true
-        }
     };
 }
 

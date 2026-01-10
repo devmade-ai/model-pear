@@ -332,10 +332,8 @@ export const DEFAULT_ENTITY_CONFIG = {
         // Default: independent parties (not related)
         // Set to true only when entities share common ownership
         relatedParties: false,
-        // Consolidated accounting is NOT in scope - these flags exist for
-        // edge cases but should rarely be used
-        sameGroup: false,
-        consolidationRequired: false
+        // When true, enables transfer pricing compliance features
+        mutualOwnership: false
     }
 };
 

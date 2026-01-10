@@ -22,8 +22,7 @@ export const VIZ_COLORS = {
     },
     perspectives: {
         developer: '#3B82F6',
-        buyer: '#10B981',
-        combined: '#8B5CF6'
+        buyer: '#10B981'
     },
     risk: {
         low: '#10B981',
@@ -299,8 +298,8 @@ function generateRiskComparisonChartData(modelResults) {
                 m.results.transferPricing?.riskScore || 50,
                 100 - (m.results.transferPricing?.documentationScore || 50),
                 m.results.transferPricing?.marginDeviation || 0,
-                m.results.combined?.complexityScore || 50,
-                100 - (m.results.combined?.taxEfficiency || 50)
+                50, // Default complexity score
+                50  // Default tax efficiency gap
             ]
         })),
         categories: ['TP Risk', 'Documentation Gap', 'Margin Deviation', 'Complexity', 'Tax Inefficiency']
@@ -371,8 +370,7 @@ export function generateCashFlowWaterfall(results) {
         { x: 'Developer Tax', y: -(dev.tax?.taxPayable || 0), type: 'negative' },
         { x: 'Developer Net', y: dev.profit?.net || 0, type: 'subtotal' },
         { x: 'Buyer Payment', y: -(buyer.totalCost || 0), type: 'negative' },
-        { x: 'Buyer Tax Benefit', y: buyer.tax?.taxBenefit || 0, type: 'positive' },
-        { x: 'Group Net Position', y: results.combined?.groupNetPosition || 0, type: 'total' }
+        { x: 'Buyer Tax Benefit', y: buyer.tax?.taxBenefit || 0, type: 'positive' }
     ];
 
     return {
@@ -387,8 +385,7 @@ export function generateCashFlowWaterfall(results) {
                 y: d.y,
                 fillColor: d.type === 'positive' ? VIZ_COLORS.risk.low :
                            d.type === 'negative' ? VIZ_COLORS.risk.high :
-                           d.type === 'subtotal' ? VIZ_COLORS.perspectives.developer :
-                           VIZ_COLORS.perspectives.combined
+                           VIZ_COLORS.perspectives.developer
             }))
         }]
     };
@@ -833,7 +830,7 @@ export function formatForApexCharts(chartData) {
                 radialBar: chartData.options || {}
             };
             baseOptions.labels = chartData.labels || [];
-            baseOptions.colors = chartData.colors || [VIZ_COLORS.perspectives.combined];
+            baseOptions.colors = chartData.colors || [VIZ_COLORS.perspectives.developer];
             break;
 
         case 'heatmap':

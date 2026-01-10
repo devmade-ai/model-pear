@@ -196,7 +196,7 @@ function generateScenarioSummary(baseResults, bestResults, worstResults) {
     const metrics = [
         { key: 'developerProfit', path: 'developer.profit.net', label: 'Developer Net Profit', format: 'currency' },
         { key: 'buyerTotalCost', path: 'buyer.totalCost', label: 'Buyer Total Cost', format: 'currency' },
-        { key: 'combinedValue', path: 'combined.totalValue', label: 'Combined Transaction Value', format: 'currency' }
+        { key: 'buyerAsset', path: 'buyer.asset.capitalised', label: 'Buyer Asset Value', format: 'currency' }
     ];
 
     const summary = {};

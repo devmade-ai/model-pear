@@ -24,7 +24,7 @@ const initialState = {
     intercompany: {
         selectedModel: null,      // e.g., 'model-1'
         selectedVariant: null,    // e.g., '1B'
-        currentPerspective: 'combined',  // 'developer' | 'buyer' | 'combined'
+        currentPerspective: 'developer',  // 'developer' | 'buyer' | 'combined'
         results: null,
         complianceScore: null
     },

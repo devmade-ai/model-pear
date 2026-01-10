@@ -17,7 +17,7 @@ export function renderIntercompanyResults(container, results) {
     if (!container || !results) return;
 
     const state = getState();
-    const perspective = state.intercompany.currentPerspective || 'combined';
+    const perspective = state.intercompany.currentPerspective || 'developer';
 
     container.innerHTML = '';
 
@@ -28,9 +28,8 @@ export function renderIntercompanyResults(container, results) {
         case 'buyer':
             renderBuyerPerspective(container, results);
             break;
-        case 'combined':
         default:
-            renderCombinedPerspective(container, results);
+            renderDeveloperPerspective(container, results);
             break;
     }
 
@@ -243,156 +242,6 @@ function renderBuyerPerspective(container, results) {
             </h4>
             ${renderAmortisationTable(buyer.expenses.schedule)}
         </div>
-    `;
-}
-
-// ========== COMBINED PERSPECTIVE ==========
-
-function renderCombinedPerspective(container, results) {
-    const dev = results.developer;
-    const buyer = results.buyer;
-    const combined = results.combined;
-    const tp = results.transferPricing;
-
-    container.innerHTML = `
-        <!-- Combined View Summary Header -->
-        <div class="bg-purple-900/30 border border-purple-700 rounded-lg p-6 mb-6">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="text-2xl">⚖️</span>
-                <h3 class="text-xl font-bold text-purple-300">Combined View</h3>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                ${renderMetricCard('Transaction Value', formatCurrency(combined.metrics.totalTransactionValue), 'text-gray-300')}
-                ${renderMetricCard('Your Asset', formatCurrency(combined.assetEfficiency.developerAsset), 'text-blue-400')}
-                ${renderMetricCard('Client Asset', formatCurrency(combined.assetEfficiency.buyerAsset), 'text-green-400')}
-                ${renderMetricCard('Combined Tax', formatCurrency(combined.metrics.groupTaxCost), 'text-red-400')}
-            </div>
-        </div>
-
-        <!-- Side-by-Side Comparison -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Your Company Summary -->
-            <div class="bg-blue-900/20 border border-blue-700/50 rounded-lg p-5">
-                <h4 class="text-lg font-semibold text-blue-300 mb-4 flex items-center gap-2">
-                    <span>💻</span> Your Company
-                </h4>
-                <table class="w-full text-sm">
-                    <tbody>
-                        <tr class="border-b border-gray-700/50">
-                            <td class="py-2 text-gray-400">Revenue</td>
-                            <td class="py-2 text-right text-green-400">${formatCurrency(dev.revenue.total)}</td>
-                        </tr>
-                        <tr class="border-b border-gray-700/50">
-                            <td class="py-2 text-gray-400">Costs</td>
-                            <td class="py-2 text-right text-gray-300">${formatCurrency(dev.costs.total)}</td>
-                        </tr>
-                        <tr class="border-b border-gray-700/50">
-                            <td class="py-2 text-gray-400">Profit</td>
-                            <td class="py-2 text-right text-blue-400">${formatCurrency(dev.profit.gross)}</td>
-                        </tr>
-                        <tr class="border-b border-gray-700/50">
-                            <td class="py-2 text-gray-400">Tax</td>
-                            <td class="py-2 text-right text-red-400">(${formatCurrency(dev.tax.taxPayable)})</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-gray-400 font-medium">Net Cash</td>
-                            <td class="py-2 text-right font-bold text-green-400">${formatCurrency(combined.cashFlow.developerNetCash)}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Client Summary -->
-            <div class="bg-green-900/20 border border-green-700/50 rounded-lg p-5">
-                <h4 class="text-lg font-semibold text-green-300 mb-4 flex items-center gap-2">
-                    <span>🏢</span> Client
-                </h4>
-                <table class="w-full text-sm">
-                    <tbody>
-                        <tr class="border-b border-gray-700/50">
-                            <td class="py-2 text-gray-400">Cost Paid</td>
-                            <td class="py-2 text-right text-red-400">(${formatCurrency(buyer.totalCost)})</td>
-                        </tr>
-                        <tr class="border-b border-gray-700/50">
-                            <td class="py-2 text-gray-400">Asset Capitalised</td>
-                            <td class="py-2 text-right text-blue-400">${formatCurrency(buyer.asset.capitalised)}</td>
-                        </tr>
-                        <tr class="border-b border-gray-700/50">
-                            <td class="py-2 text-gray-400">Amount Expensed</td>
-                            <td class="py-2 text-right text-yellow-400">${formatCurrency(buyer.asset.expensed)}</td>
-                        </tr>
-                        <tr class="border-b border-gray-700/50">
-                            <td class="py-2 text-gray-400">Tax Benefit (Year 1)</td>
-                            <td class="py-2 text-right text-green-400">${formatCurrency(buyer.tax.taxBenefit)}</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-gray-400 font-medium">Net Cash</td>
-                            <td class="py-2 text-right font-bold text-red-400">${formatCurrency(combined.cashFlow.buyerNetCash)}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Net Effect Summary -->
-        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
-            <h4 class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2">
-                <span>📋</span> Transaction Summary
-            </h4>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div class="text-center p-4 bg-gray-700/30 rounded-lg">
-                    <p class="text-sm text-gray-400 mb-1">Your Company Profit</p>
-                    <p class="text-xl font-bold text-blue-400">${formatCurrency(dev.profit.gross)}</p>
-                </div>
-                <div class="text-center p-4 bg-gray-700/30 rounded-lg">
-                    <p class="text-sm text-gray-400 mb-1">Client Asset Value</p>
-                    <p class="text-xl font-bold text-green-400">${formatCurrency(buyer.asset.capitalised)}</p>
-                </div>
-                <div class="text-center p-4 bg-gray-700/30 rounded-lg">
-                    <p class="text-sm text-gray-400 mb-1">Combined Net Cash</p>
-                    <p class="text-xl font-bold ${combined.cashFlow.netCashFlow >= 0 ? 'text-green-400' : 'text-red-400'}">${formatCurrency(combined.cashFlow.netCashFlow || 0)}</p>
-                </div>
-            </div>
-
-            <div class="p-4 bg-purple-900/20 border border-purple-700/50 rounded-lg">
-                <p class="text-sm text-gray-400 mb-2">Key Insight</p>
-                <p class="text-gray-300">
-                    This model generates ${formatCurrency(dev.profit.gross)} profit for your company while creating a ${formatCurrency(buyer.asset.capitalised)} asset for the client
-                    ${buyer.tax.taxBenefit > 0 ? `, who benefits from ${formatCurrency(buyer.tax.taxBenefit)} annual tax savings (Section 11(e))` : ''}.
-                </p>
-            </div>
-        </div>
-
-        <!-- Asset Distribution -->
-        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
-            <h4 class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2">
-                <span>📊</span> Asset Distribution
-            </h4>
-
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div class="text-center p-4 bg-blue-900/20 rounded-lg">
-                    <p class="text-sm text-gray-400 mb-1">Your Company Asset</p>
-                    <p class="text-xl font-bold text-blue-400">${formatCurrency(combined.assetEfficiency.developerAsset)}</p>
-                    <p class="text-xs text-gray-500 mt-1">${combined.assetEfficiency.developerAsset > 0 ? 'IP retained on your balance sheet' : 'No asset retained'}</p>
-                </div>
-                <div class="text-center p-4 bg-green-900/20 rounded-lg">
-                    <p class="text-sm text-gray-400 mb-1">Client Asset</p>
-                    <p class="text-xl font-bold text-green-400">${formatCurrency(combined.assetEfficiency.buyerAsset)}</p>
-                    <p class="text-xs text-gray-500 mt-1">${combined.assetEfficiency.buyerAsset > 0 ? 'Asset on client balance sheet' : 'No asset recognised'}</p>
-                </div>
-            </div>
-
-            <div class="p-3 bg-gray-700/30 rounded text-center">
-                <span class="text-gray-400 text-sm">
-                    Total assets created: ${formatCurrency((combined.assetEfficiency.developerAsset || 0) + (combined.assetEfficiency.buyerAsset || 0))}
-                </span>
-            </div>
-        </div>
-
-        <!-- Transfer Pricing Risk -->
-        ${renderTransferPricingRisk(tp)}
     `;
 }
 

@@ -664,16 +664,12 @@ function calculate(inputs, variantId, entityConfig = {}, taxParams = {}) {
     // Buyer perspective calculations
     const buyer = calculateBuyerPerspective(inputs, variant, taxParams);
 
-    // Combined perspective calculations
-    const combined = calculateCombinedPerspective(developer, buyer, entityConfig, inputs, variant);
-
     // Transfer pricing assessment
     const transferPricing = assessTransferPricing(inputs, variant, developer);
 
     return {
         developer,
         buyer,
-        combined,
         transferPricing,
         metadata: {
             modelId: 'model-5',
@@ -1213,107 +1209,6 @@ function generateAmortisationSchedule(assetValue, usefulLife, section11eYears, t
         });
     }
     return schedule;
-}
-
-/**
- * Combined/Consolidation perspective
- */
-function calculateCombinedPerspective(developer, buyer, entityConfig, inputs, variant) {
-    const isConsolidated = entityConfig?.relationship?.consolidationRequired ?? true;
-
-    // Intercompany profit elimination
-    const saleGain = developer.sale.gainOnSale;
-    const supportMargin = developer.profit.supportMargin || 0;
-    const totalProfitToEliminate = saleGain + supportMargin;
-
-    // Asset efficiency - use buyer.totalCost directly (now a number)
-    const totalCashExchanged = buyer.totalCost;
-    const finalAssetValue = buyer.asset.amount;
-    const assetEfficiency = totalCashExchanged > 0 ?
-        (finalAssetValue / totalCashExchanged) * 100 : 0;
-
-    // Consolidated asset position
-    const consolidatedAsset = isConsolidated ?
-        Math.max(0, finalAssetValue - saleGain) : finalAssetValue;
-
-    // Group tax cost calculation
-    const groupTaxCost = developer.tax.totalTax - (buyer.tax.annualTaxBenefit * buyer.tax.section11eYears);
-
-    return {
-        elimination: {
-            required: isConsolidated && totalProfitToEliminate > 0,
-            profitEliminated: totalProfitToEliminate, // For results-display.js compatibility
-            saleGain: saleGain,
-            supportMargin: supportMargin,
-            totalProfitEliminated: totalProfitToEliminate,
-            assetWriteDown: saleGain > 0 ? saleGain : 0,
-            assetAdjustment: saleGain > 0 ? saleGain : 0, // For results-display.js compatibility
-            journalEntry: isConsolidated && totalProfitToEliminate > 0 ? {
-                debit: { account: 'Retained Earnings / Gain on Sale', amount: totalProfitToEliminate },
-                credit: { account: 'Intangible Asset', amount: totalProfitToEliminate },
-                credit2: { account: 'Cost of Sales', amount: 0 }
-            } : null
-        },
-        assetEfficiency: {
-            developerAsset: developer.development.carryingValueAtSale, // For results-display.js compatibility
-            developerCarryingValue: developer.development.carryingValueAtSale,
-            buyerAsset: finalAssetValue,
-            groupAsset: consolidatedAsset,
-            duplication: 0, // For results-display.js compatibility
-            totalCashExchanged: totalCashExchanged,
-            efficiencyRatio: assetEfficiency / 100, // For results-display.js compatibility (as decimal)
-            efficiencyAssessment: assetEfficiency >= 80 ?
-                'High efficiency - majority capitalised' :
-                assetEfficiency >= 50 ?
-                    'Moderate efficiency - significant portion capitalised' :
-                    'Low efficiency - majority expensed (bundled pricing)'
-        },
-        assetPosition: {
-            beforeSale: {
-                developer: developer.development.carryingValueAtSale,
-                buyer: 0,
-                total: developer.development.carryingValueAtSale
-            },
-            afterSale: {
-                developer: 0,
-                buyer: finalAssetValue,
-                total: finalAssetValue
-            },
-            consolidated: consolidatedAsset,
-            cleanTransfer: true
-        },
-        cashFlow: {
-            developerNetCash: developer.cashFlow.saleProceeds + developer.cashFlow.ongoingInflows - developer.tax.totalTax, // For results-display.js compatibility
-            buyerNetCash: buyer.cashFlow.totalOutflow + (buyer.tax.annualTaxBenefit * buyer.tax.section11eYears), // For results-display.js compatibility
-            developerTotalInflow: developer.cashFlow.saleProceeds + developer.cashFlow.ongoingInflows,
-            buyerTotalOutflow: buyer.cashFlow.totalOutflow,
-            netIntercompany: 0,
-            groupNetCash: developer.profit.net, // For results-display.js compatibility
-            externalImpact: developer.cashFlow.licenceBackOutflows || 0
-        },
-        valueCreation: {
-            totalDeveloperRevenue: developer.revenue.totalRevenue,
-            totalBuyerCost: buyer.totalCost,
-            developerProfit: developer.profit.totalProfit,
-            buyerAssetAcquired: finalAssetValue,
-            consolidatedAsset: consolidatedAsset
-        },
-        taxPosition: {
-            developerTax: developer.tax.totalTax,
-            buyerTaxBenefit: buyer.tax.annualTaxBenefit * buyer.tax.section11eYears,
-            netTaxCost: groupTaxCost,
-            timing: 'Developer tax immediate; Buyer benefit over Section 11(e) period'
-        },
-        metrics: {
-            totalTransactionValue: totalCashExchanged,
-            groupTaxCost: groupTaxCost, // For results-display.js compatibility
-            developerMargin: developer.profit.totalProfit > 0 ?
-                (developer.profit.totalProfit / developer.revenue.totalRevenue) * 100 : 0,
-            buyerCapitalisationRatio: buyer.totalCostDetails.capitalisationRatio,
-            combinedTaxRate: developer.revenue.totalRevenue > 0 ?
-                (developer.tax.totalTax / developer.revenue.totalRevenue) * 100 : 0
-        }
-    };
 }
 
 /**
