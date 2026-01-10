@@ -171,21 +171,12 @@ export function generateProjections(transactionResults, projectionParams = {}) {
         taxRate: params.taxRate
     });
 
-    // Calculate combined group perspective
-    const combinedProjection = generateCombinedProjection(
-        developerProjection,
-        buyerProjection,
-        transactionResults.combined,
-        params
-    );
-
     return {
         params,
         years,
         developer: developerProjection,
         buyer: buyerProjection,
-        combined: combinedProjection,
-        summary: generateProjectionSummary(developerProjection, buyerProjection, combinedProjection, params)
+        summary: generateProjectionSummary(developerProjection, buyerProjection, params)
     };
 }
 
@@ -328,61 +319,9 @@ function generateBuyerProjection({ initialInvestment, assetValue, usefulLife, ex
 }
 
 /**
- * Generate combined/group projection
- */
-function generateCombinedProjection(developerProjection, buyerProjection, combinedResults, params) {
-    const years = params.projectionPeriod;
-    const yearlyData = [];
-    const cashFlows = [];
-
-    // Initial combined position
-    const initialCashFlow = -Math.abs(developerProjection.cashFlows[0] || 0);
-    cashFlows.push(initialCashFlow);
-
-    for (let i = 0; i < years; i++) {
-        const devYear = developerProjection.yearlyData[i] || {};
-        const buyerYear = buyerProjection.yearlyData[i] || {};
-
-        // In consolidated view, intercompany transactions eliminate
-        const externalRevenue = buyerYear.revenue || 0; // Only buyer's external revenue counts
-        const externalCosts = (devYear.costs || 0) + (buyerYear.operatingCosts || 0);
-        const combinedProfit = externalRevenue - externalCosts;
-        const combinedCashFlow = (devYear.cashFlow || 0) + (buyerYear.cashFlow || 0);
-
-        cashFlows.push(combinedCashFlow);
-
-        yearlyData.push({
-            year: i + 1,
-            developerCashFlow: devYear.cashFlow || 0,
-            buyerCashFlow: buyerYear.cashFlow || 0,
-            combinedCashFlow,
-            externalRevenue,
-            externalCosts,
-            combinedProfit,
-            cumulativeCashFlow: cashFlows.reduce((sum, cf) => sum + cf, 0)
-        });
-    }
-
-    const npv = calculateNPV(cashFlows, params.discountRate);
-    const irr = calculateIRR(cashFlows);
-
-    return {
-        partyType: 'combined',
-        yearlyData,
-        cashFlows,
-        metrics: {
-            npv,
-            irr,
-            totalGroupProfit: yearlyData.reduce((sum, y) => sum + y.combinedProfit, 0),
-            synergies: combinedResults?.synergies || 0
-        }
-    };
-}
-
-/**
  * Generate summary of projection metrics
  */
-function generateProjectionSummary(developerProjection, buyerProjection, combinedProjection, params) {
+function generateProjectionSummary(developerProjection, buyerProjection, params) {
     return {
         developer: {
             npv: developerProjection.metrics.npv,
@@ -397,11 +336,6 @@ function generateProjectionSummary(developerProjection, buyerProjection, combine
             paybackPeriod: buyerProjection.metrics.paybackPeriod,
             roi: buyerProjection.metrics.roi,
             assessment: assessInvestment(buyerProjection.metrics.npv, buyerProjection.metrics.irr, params.discountRate)
-        },
-        combined: {
-            npv: combinedProjection.metrics.npv,
-            irr: combinedProjection.metrics.irr,
-            totalGroupProfit: combinedProjection.metrics.totalGroupProfit
         },
         recommendation: generateRecommendation(developerProjection, buyerProjection, params)
     };
@@ -671,13 +605,9 @@ export function compareModelNPV(modelResults, projectionParams = {}) {
                 npv: projections.buyer.metrics.npv,
                 irr: projections.buyer.metrics.irr,
                 payback: projections.buyer.metrics.paybackPeriod
-            },
-            combined: {
-                npv: projections.combined.metrics.npv,
-                irr: projections.combined.metrics.irr
             }
         };
-    }).sort((a, b) => b.combined.npv - a.combined.npv);
+    }).sort((a, b) => b.developer.npv - a.developer.npv);
 }
 
 // ========== VISUALIZATION DATA GENERATORS ==========
@@ -688,7 +618,7 @@ export function compareModelNPV(modelResults, projectionParams = {}) {
  * @returns {Object} Chart-ready data
  */
 export function generateCashFlowChartData(projections) {
-    const { developer, buyer, combined, years } = projections;
+    const { developer, buyer, years } = projections;
 
     const labels = ['Initial'];
     for (let i = 1; i <= years; i++) {
@@ -702,22 +632,16 @@ export function generateCashFlowChartData(projections) {
         labels,
         datasets: [
             {
-                label: 'Developer',
+                label: 'Your Company',
                 data: developer.cashFlows,
                 color: '#3B82F6',
                 cumulative: developer.yearlyData.map(y => y.cumulativeCashFlow)
             },
             {
-                label: 'Buyer',
+                label: 'Client',
                 data: buyer.cashFlows,
                 color: '#10B981',
                 cumulative: buyer.yearlyData.map(y => y.cumulativeCashFlow)
-            },
-            {
-                label: 'Combined',
-                data: combined.cashFlows,
-                color: '#8B5CF6',
-                cumulative: combined.yearlyData.map(y => y.cumulativeCashFlow)
             }
         ],
         annotations: {

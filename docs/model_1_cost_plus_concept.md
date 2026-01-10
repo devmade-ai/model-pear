@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This tool enables comparison of six sub-variants within the Development Services Agreement model to determine optimal fit for a software development project. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer. When mutual ownership applies (you own both entities), a Shareholder Perspective shows your overall position.
+This tool enables comparison of six sub-variants within the Development Services Agreement model to determine optimal fit for a software development project. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer.
 
 ---
 
@@ -162,33 +162,6 @@ The Developer provides development services to the Buyer under a services agreem
 **Balance Sheet Impact**
 - Intangible asset carrying value at completion
 - Intangible asset carrying value over time (amortisation schedule)
-
-### Shareholder Perspective (When Mutual Ownership)
-
-Only relevant when the same person/entity owns both Developer and Buyer. This is NOT about group accounting consolidation.
-
-**Your Total Asset Position**
-- Total intangible assets across both your entities
-- Asset efficiency ratio: Combined Assets / Total Cash Exchanged
-
-**Cash Flow to You**
-- Cash moves between your entities (internal)
-- Your net cash position unchanged
-- External cash impact only relevant if third parties involved
-
-**Where Does Profit Sit?**
-- Developer profit from the margin
-- Which entity should hold the profit for tax efficiency?
-- What's your total after-tax position?
-
-**Transfer Pricing Risk**
-- Qualitative rating based on margin vs benchmark range
-- Documentation completeness (in case SARS queries)
-
-**Your Total Tax Position**
-- Total tax payable across both entities
-- Effective combined tax rate on project
-- Which structure minimises your overall tax?
 
 ---
 

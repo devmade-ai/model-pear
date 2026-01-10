@@ -1,10 +1,6 @@
-// ========== THREE-PERSPECTIVE TOGGLE COMPONENT ==========
-// UI component for switching between Your Company, Client, and Net Effect/Shareholder perspectives.
+// ========== PERSPECTIVE TOGGLE COMPONENT ==========
+// UI component for switching between Your Company and Client perspectives.
 // Each perspective shows different aspects of the software transaction.
-//
-// Perspective availability depends on party relationship:
-// - Independent Parties: Developer, Buyer (2 perspectives)
-// - Related Parties: Developer, Buyer, Shareholder (3 perspectives)
 
 import { getState, setPerspective, subscribe, arePartiesRelated } from '../../state/app-state.js';
 
@@ -57,7 +53,7 @@ export function renderPerspectiveToggle(container) {
     if (!container) return;
 
     const state = getState();
-    const currentPerspective = state.intercompany.currentPerspective || 'combined';
+    const currentPerspective = state.intercompany.currentPerspective || 'developer';
     const isRelated = arePartiesRelated();
     const currentDisplayInfo = getPerspectiveDisplayInfo(currentPerspective);
 
@@ -73,7 +69,6 @@ export function renderPerspectiveToggle(container) {
             <div class="text-xs text-gray-500 hidden md:block">
                 Keyboard: <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400">D</kbd>
                 <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400 ml-1">B</kbd>
-                <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-gray-400 ml-1">C</kbd>
             </div>
         </div>
 
@@ -136,7 +131,7 @@ export function updatePerspectiveToggle(container) {
     if (!container) return;
 
     const state = getState();
-    const currentPerspective = state.intercompany.currentPerspective || 'combined';
+    const currentPerspective = state.intercompany.currentPerspective || 'developer';
 
     container.querySelectorAll('.perspective-btn').forEach(btn => {
         const perspectiveId = btn.dataset.perspective;
@@ -154,13 +149,6 @@ export function updatePerspectiveToggle(container) {
             btn.classList.remove(`bg-${p.color}-600/20`, `border-${p.color}-500`, `text-${p.color}-300`);
         }
 
-        // Update button text/icon for combined perspective based on relationship
-        if (perspectiveId === 'combined') {
-            const iconSpan = btn.querySelector('span:first-child');
-            const nameSpan = btn.querySelector('span.font-medium');
-            if (iconSpan) iconSpan.textContent = p.icon;
-            if (nameSpan) nameSpan.textContent = p.name;
-        }
     });
 
     // Update description with full re-render for color changes

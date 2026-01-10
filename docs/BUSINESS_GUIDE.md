@@ -32,7 +32,7 @@ The Software Transaction Structuring Tool is a web-based application that helps 
 
 **What This Tool DOES**:
 - ✅ Compare 6 different transaction structures
-- ✅ Analyse from both perspectives (Your Company and Client) with shareholder view when applicable
+- ✅ Analyse from both perspectives (Your Company and Client)
 - ✅ Calculate accounting treatment under IFRS
 - ✅ Assess South African tax implications (Section 11(e), CGT)
 - ✅ Show transfer pricing considerations (when mutual ownership applies)
@@ -105,7 +105,7 @@ The tool operates in two distinct modes:
 
 **Features**:
 - 6 comprehensive transaction models with 47 variants
-- Two-perspective analysis (Your Company, Client) plus shareholder view when applicable
+- Two-perspective analysis (Your Company, Client)
 - Sensitivity analysis and growth projections
 - Advanced visualisations
 
@@ -313,7 +313,7 @@ The tool operates in two distinct modes:
 
 **Features**:
 - Dynamic input forms per model/variant
-- Results for each party (Developer, Buyer) plus shareholder view when related
+- Results for each party (Your Company, Client)
 - Accounting treatment summaries
 - Tax calculations (income tax, CGT, deferred tax)
 - Visualisations (charts, timelines, comparisons)

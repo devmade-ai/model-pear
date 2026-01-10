@@ -9,7 +9,42 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ## Recent Bug Fixes & Improvements (January 2026)
 
-### Remove Combined/Group Perspective Refactor
+### Complete Terminology Cleanup - Phase 2
+
+**Date**: January 10, 2026
+**Impact**: Completed removal of all Combined/Shareholder/Net Effect references
+
+**Changes Made**:
+
+**Code Cleanup**:
+- Removed `combined` perspective fallbacks in perspective-toggle.js
+- Removed combined projection generation in growth-projections.js (~50 lines)
+- Removed consolidation rendering in compliance-analyzer.js (UI)
+- Removed `consolidation` field from accountingSummary in all 6 model files
+- Removed unused `combined` parameter from `calculateNetTaxPosition()`
+- Updated keyboard shortcuts display (removed 'C' key)
+
+**Documentation Cleanup**:
+- Updated README.md: "three perspectives" → "two perspectives", removed Net Effect
+- Updated BUSINESS_GUIDE.md: removed "shareholder view" references
+- Updated MANUAL_TESTING_GUIDE.md: removed shareholder perspective testing
+- Removed "Shareholder Perspective (When Mutual Ownership)" sections from all 6 model concept docs
+- Deleted completed REFACTOR_PLAN_REMOVE_COMBINED.md
+
+**Terminology Updates**:
+- "Net Effect" references removed from tooltips and comments
+- "combined asset maximisation" → clearer client-focused language
+- Updated registry.js and results-display.js header comments
+
+**Technical Debt Identified**:
+- Folder naming (`models/intercompany/`, `ui/intercompany/`) is legacy - added to TODO.md as low priority
+
+**Files Modified**: 24 files
+**Lines Removed**: ~960 lines (cumulative with Phase 1: ~1,500+ lines)
+
+---
+
+### Remove Combined/Group Perspective Refactor - Phase 1
 
 **Date**: January 10, 2026
 **Impact**: Simplified tool by removing consolidated/group accounting features that were out of scope

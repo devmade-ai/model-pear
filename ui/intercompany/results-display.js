@@ -1,8 +1,7 @@
 // ========== TRANSACTION RESULTS DISPLAY ==========
-// Renders calculation results for the three perspectives:
+// Renders calculation results for the two perspectives:
 // - Your Company (Developer): Revenue, costs, profit, tax
 // - Client (Buyer): Asset capitalization, amortization, tax benefits
-// - Net Effect: Combined financial impact for decision-making
 // Formats financial data with South African conventions.
 
 import { getState, subscribe } from '../../state/app-state.js';

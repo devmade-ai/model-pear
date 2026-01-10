@@ -8,7 +8,7 @@
 // Architecture:
 // - Models define the overall transaction type (e.g., Cost-Plus, Licence, BOT)
 // - Variants define specific implementations within each model
-// - All models produce three-perspective outputs (Your Company, Client, Net Effect)
+// - All models produce two-perspective outputs (Your Company, Client)
 
 import { MODEL_1_COST_PLUS } from './model-1-cost-plus.js';
 import { MODEL_2_LICENCE_ROYALTIES } from './model-2-licence-royalties.js';

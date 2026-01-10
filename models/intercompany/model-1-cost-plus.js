@@ -558,7 +558,6 @@ export const MODEL_1_COST_PLUS = {
     // Accounting summary
     accountingSummary: {
         developer: 'Revenue recognition over time (IFRS 15). No intangible asset recognised.',
-        buyer: 'Capitalise development costs as intangible asset (IAS 38). Expense research costs.',
-        consolidation: 'Eliminate intercompany profit. Adjust asset to group cost basis.'
+        buyer: 'Capitalise development costs as intangible asset (IAS 38). Expense research costs.'
     }
 };

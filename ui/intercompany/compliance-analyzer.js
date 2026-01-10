@@ -402,26 +402,6 @@ function renderAccountingTab() {
             <!-- Buyer Accounting -->
             ${renderAccountingSummary('Buyer', accounting.buyer)}
 
-            ${accounting.consolidated ? `
-                <!-- Consolidation -->
-                <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                    <h4 class="text-sm font-medium text-gray-200 mb-4 flex items-center gap-2">
-                        <span>📊</span> Consolidation Adjustments
-                    </h4>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <span class="text-xs text-gray-500">Elimination Required</span>
-                            <div class="text-gray-200">${accounting.consolidated.eliminationRequired ? 'Yes' : 'No'}</div>
-                        </div>
-                        <div>
-                            <span class="text-xs text-gray-500">Profit Eliminated</span>
-                            <div class="text-gray-200">R${(accounting.consolidated.profitEliminated || 0).toLocaleString()}</div>
-                        </div>
-                    </div>
-                    ${accounting.consolidated.journalEntry ? renderJournalEntry(accounting.consolidated.journalEntry) : ''}
-                </div>
-            ` : ''}
-
             <!-- Accounting Standards Reference -->
             ${renderAccountingStandards()}
         </div>

@@ -7,10 +7,9 @@ A dual-mode tool for South African B2B software companies:
 ## What It Does
 
 ### Transaction Structuring Mode (Default)
-Analyse software transactions from **three perspectives**:
+Analyse software transactions from **two perspectives**:
 - **Your Company**: Revenue recognition, costs, profit, tax position
 - **Client**: Asset capitalisation, amortisation, Section 11(e) tax benefits
-- **Net Effect**: Combined financial impact to inform your structuring decision
 
 ### Pricing Calculator Mode
 Find the **sweet spot** in pricing by showing you:
@@ -41,7 +40,7 @@ No growth projections, no complicated forecasting - just clear unit economics an
 
 Each model includes:
 - Multiple variants (e.g., Model 1 has 6 variants: 1A-1F)
-- Three-perspective calculations (Your Company, Client, Net Effect)
+- Two-perspective calculations (Your Company, Client)
 - South African tax treatment (Section 11(e), CGT, deferred tax)
 - Transfer pricing considerations (when mutual ownership applies)
 
@@ -52,7 +51,7 @@ Each model includes:
 - **Equilibrium Analysis**: Find win-win pricing zones
 
 ### Transaction Structuring Tool
-- **Three-Perspective View**: Your Company, Client, Net Effect
+- **Two-Perspective View**: Your Company, Client
 - **Entity Configuration**: Customise your company & client settings
 - **Model Comparison**: Compare structures to find the best fit
 - **Tax Calculations**: Section 11(e), deferred tax, CGT

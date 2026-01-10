@@ -1372,7 +1372,6 @@ export const MODEL_4_BOT = {
     // Accounting summary
     accountingSummary: {
         developer: 'Capitalise development costs (IAS 38). Recognise service revenue over operation period. Recognise gain/loss at transfer.',
-        buyer: 'Expense service fees during operation (SaaS treatment). Recognise intangible asset at transfer price when ownership transfers.',
-        consolidation: 'Eliminate Developer service profit and transfer gain. Buyer asset reduced by unrealised profit on consolidation.'
+        buyer: 'Expense service fees during operation (SaaS treatment). Recognise intangible asset at transfer price when ownership transfers.'
     }
 };

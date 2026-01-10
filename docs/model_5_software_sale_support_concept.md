@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This tool enables comparison of eight sub-variants within the Software Sale with Ongoing Support model to determine optimal fit for a software transaction. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer. When mutual ownership applies (you own both entities), a Shareholder Perspective shows your overall position.
+This tool enables comparison of eight sub-variants within the Software Sale with Ongoing Support model to determine optimal fit for a software transaction. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer.
 
 ---
 
@@ -226,39 +226,6 @@ Developer creates software, sells it outright to Buyer, and provides ongoing mai
 *Balance Sheet*
 - Intangible asset carrying value over time
 - Prepaid expense (if support prepaid)
-
-### Shareholder Perspective (When Mutual Ownership)
-
-Only relevant when the same person/entity owns both Developer and Buyer. This is NOT about group accounting consolidation.
-
-**Your Asset Position**
-- Before sale: Developer holds asset
-- After sale: Buyer holds asset
-- No duplication — clean transfer between your entities
-
-**Cash Flow to You**
-- Cash moves between your entities (internal)
-- Your net cash position unchanged
-- External cash impact only relevant if third parties involved
-
-**Where Does Profit Sit?**
-- Developer gain on sale
-- Developer support margin
-- Which entity should hold the profit for tax efficiency?
-
-**Transfer Pricing Risk**
-- Sale price vs fair value (in case SARS queries)
-- Support fees vs market rates
-- Documentation completeness
-
-**Combined Tax Efficiency**
-- Total tax: Developer's tax on sale + support + Buyer's tax position
-- Effective combined rate
-
-**Value Transfer Analysis**
-- Asset carrying value shift
-- Timing of value recognition
-- Impact of bundled pricing
 
 ---
 

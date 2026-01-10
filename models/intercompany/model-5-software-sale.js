@@ -1347,7 +1347,6 @@ export const MODEL_5_SOFTWARE_SALE = {
     // Accounting summary
     accountingSummary: {
         developer: 'Derecognise intangible asset at carrying value. Recognise gain/loss on sale (CGT or revenue treatment). Support revenue recognised over time.',
-        buyer: 'Capitalise purchase price (allocate if bundled with support - IFRS 15). Amortise over useful life. Section 11(e) accelerated tax deduction.',
-        consolidation: 'Eliminate Developer gain on sale. Buyer asset reduced by unrealised profit on consolidation. Support margin eliminated.'
+        buyer: 'Capitalise purchase price (allocate if bundled with support - IFRS 15). Amortise over useful life. Section 11(e) accelerated tax deduction.'
     }
 };

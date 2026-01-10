@@ -1267,7 +1267,6 @@ export const MODEL_3_JOINT_DEVELOPMENT = {
     // Accounting summary
     accountingSummary: {
         developer: 'Capitalise proportional share of development costs as intangible asset (IAS 38). Expense research phase costs.',
-        buyer: 'Capitalise proportional share of development costs as intangible asset (IAS 38). Expense research phase costs.',
-        consolidation: 'No intercompany profit elimination required. Both parties at cost basis. Clean consolidation.'
+        buyer: 'Capitalise proportional share of development costs as intangible asset (IAS 38). Expense research phase costs.'
     }
 };

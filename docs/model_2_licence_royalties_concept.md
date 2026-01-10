@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This tool enables comparison of eight sub-variants within the Software Licence with Royalties model to determine optimal fit for a software licensing arrangement. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer. When mutual ownership applies (you own both entities), a Shareholder Perspective shows your overall position.
+This tool enables comparison of eight sub-variants within the Software Licence with Royalties model to determine optimal fit for a software licensing arrangement. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer.
 
 ---
 
@@ -191,35 +191,6 @@ The Developer develops and owns the IP, then grants a licence to the Buyer. The 
 **Balance Sheet**
 - Intangible asset (licence) carrying value
 - Prepaid expenses (if annual paid upfront)
-
-### Shareholder Perspective (When Mutual Ownership)
-
-Only relevant when the same person/entity owns both Developer and Buyer. This is NOT about group accounting consolidation.
-
-**Your Overall Position**
-- Developer asset: Software intangible
-- Buyer asset: Licence intangible
-- Total assets across both your entities
-
-**Cash Flow to You**
-- What you receive from Developer (dividends, drawings)
-- What you receive from Buyer (dividends, drawings)
-- Net cash flow to you as shareholder
-
-**Where Should Profit Sit?**
-- Developer's licence revenue = Buyer's licence cost
-- Which entity has better tax treatment?
-- Where do you want the profit to land?
-
-**Transfer Pricing Risk**
-- Royalty rate vs benchmark range
-- Upfront fee vs comparable transactions
-- Documentation completeness (in case SARS queries)
-
-**Your Total Tax Position**
-- Total tax across both entities
-- Timing of deductions vs income recognition
-- Which structure minimises your overall tax?
 
 ---
 

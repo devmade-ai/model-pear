@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This tool enables comparison of nine sub-variants within the Subscription/SaaS model to determine optimal fit for a software arrangement. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer. When mutual ownership applies (you own both entities), a Shareholder Perspective shows your overall position.
+This tool enables comparison of nine sub-variants within the Subscription/SaaS model to determine optimal fit for a software arrangement. The tool evaluates financial, accounting, tax, and risk outcomes from both perspectives: Developer and Buyer.
 
 ---
 
@@ -225,42 +225,6 @@ Developer hosts and maintains software, providing access to Buyer via subscripti
 - Single supplier dependency flag
 - Switching cost estimate
 - Contract lock-in period
-
-### Shareholder Perspective (When Mutual Ownership)
-
-Only relevant when the same person/entity owns both Developer and Buyer. This is NOT about group accounting consolidation.
-
-**Your Asset Position**
-- Total intangible assets = Developer's asset only
-- Buyer contributes no assets
-- Asset concentrated in Developer
-- Note: Significant cash moves between your entities for limited asset shift
-
-**Cash Flow to You**
-- Cash moves between your entities (internal)
-- Your net cash position unchanged
-- Recurring payments vs one-time models
-
-**Where Does Profit Sit?**
-- Developer's gross profit from subscription
-- Cumulative profit over contract term
-- Is this the right entity to hold the profit?
-
-**Transfer Pricing Risk**
-- Subscription fee vs market rate (in case SARS queries)
-- Comparable SaaS pricing analysis
-- Documentation completeness
-
-**Your Total Tax Position**
-- Developer: Tax on subscription profit
-- Buyer: Tax deduction on subscription expense
-- Net tax impact across your entities
-
-**Should You Use a Different Model?**
-- Total cost if Buyer developed internally
-- Total cost if licensed outright (Model 2)
-- Total cost if purchased (Model 5)
-- Which structure is best for your overall position?
 
 ---
 
