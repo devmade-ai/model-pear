@@ -1,9 +1,10 @@
 // ========== PARTY RELATIONSHIP SELECTOR ==========
 // Prominent UI component for selecting party relationship type.
-// Determines whether we show 2 perspectives (Independent) or 3 perspectives (Related).
+// Both types show 2 perspectives (Developer + Buyer), but related parties
+// enables additional transfer pricing compliance features.
 //
 // Independent Parties: Developer + Buyer (no common ownership)
-// Related Parties: Developer + Buyer + Shareholder (mutual ownership)
+// Related Parties: Developer + Buyer (common ownership, TP compliance required)
 
 import { getState, updateEntityConfig, subscribe } from '../../state/app-state.js';
 
@@ -198,13 +199,6 @@ export function getRelationshipType() {
     return state.entities?.relationship?.relatedParties ? 'related' : 'independent';
 }
 
-/**
- * Check if shareholder perspective should be available
- */
-export function isShareholderPerspectiveAvailable() {
-    return getRelationshipType() === 'related';
-}
-
 // ========== STYLES ==========
 
 export const partySelectorStyles = `
@@ -245,7 +239,6 @@ export default {
     initPartySelector,
     renderPartySelector,
     getRelationshipType,
-    isShareholderPerspectiveAvailable,
     RELATIONSHIP_TYPES,
     partySelectorStyles
 };
