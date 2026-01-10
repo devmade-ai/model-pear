@@ -146,6 +146,7 @@ model-pear/
     ├── BUSINESS_GUIDE.md       # Comprehensive user guide with tutorials
     ├── CALCULATIONS.md         # Formula explanations
     ├── UI_UX_GUIDE.md          # Accessibility features
+    ├── UI_COMPONENT_HIERARCHY.md  # UI component organization reference
     ├── HISTORY.md              # Changelog
     ├── USAGE_SCENARIOS_REVIEW.md  # User workflow analysis
     ├── financial_models_intercompany_software.md  # Framework overview
