@@ -4,21 +4,6 @@
 
 ## Backlog
 
-### New Architecture: Complete Input Field Configs
-**Priority**: Low
-**Effort**: Small
-
-The `apps/web/src/lib/config/inputFields.ts` has basic inputs for each model. Some advanced inputs are missing:
-- Model 2: licenceTerm, territory, sourceCodeAccess
-- Model 3: projectDurationMonths, personnel FTEs/costs
-- Model 4: operationPeriodYears, estimatedAnnualRevenue
-- Model 5: maintenanceTerm, paymentTerms
-- Model 6: annualSupportCost
-
-Add these to make the UI fully featured.
-
----
-
 ### Technical Debt: Rename "intercompany" folders
 **Priority**: Low
 **Effort**: Medium (30+ files)
@@ -38,6 +23,20 @@ The folders `models/intercompany/` and `ui/intercompany/` use legacy naming from
 ---
 
 ## Completed
+
+### New Architecture: Complete Input Field Configs
+**Completed**: January 11, 2026
+
+Added all missing input fields to `apps/web/src/lib/config/inputFields.ts`:
+- Model 2: licenceTerm, territory, sourceCodeAccess, developerUsefulLife, buyerUsefulLife, implementationCosts
+- Model 3: projectDurationMonths, developer/buyer personnel FTEs and costs, IP contributions
+- Model 4: annualOperatingCost, estimatedAnnualRevenue, transferYear, inflationAdjustment
+- Model 5: paymentTerms, annualMaintenanceCost
+- Model 6: annualSupportCost
+
+Also added researchPhaseCost and developmentPhaseCost to common fields.
+
+---
 
 ### New Architecture: Structure Selector Wizard
 **Completed**: January 11, 2026
