@@ -21,6 +21,7 @@
     type Variant5AInputs,
     type Variant6AInputs,
   } from '@model-pear/calculator';
+  import { DeveloperResults, BuyerResults, TransferPricingResults, InputField } from '$lib/components';
 
   // Get model ID from URL
   $: modelId = $page.params.model;
@@ -163,34 +164,9 @@
   // Reactive calculation
   $: result = config ? (config.calculate as (inputs: Record<string, unknown>) => CalculationResult)(inputs) : null;
 
-  // Currency formatter
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('en-ZA', {
-      style: 'currency',
-      currency: 'ZAR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
-  // Percentage formatter
-  const formatPercent = (value: number): string => {
-    return `${value.toFixed(1)}%`;
-  };
-
-  // Risk level badge color
-  const getRiskColor = (level: string): string => {
-    switch (level) {
-      case 'low': return 'badge-green';
-      case 'medium': return 'badge-amber';
-      case 'high': return 'badge-red';
-      default: return 'badge-blue';
-    }
-  };
-
-  // Handle input change
-  function handleInput(field: string, value: unknown) {
-    inputs = { ...inputs, [field]: value };
+  // Handle input change from InputField component
+  function handleInputChange(event: CustomEvent<{ field: string; value: unknown }>) {
+    inputs = { ...inputs, [event.detail.field]: event.detail.value };
   }
 </script>
 
@@ -399,172 +375,9 @@
 
       <!-- Results -->
       <div class="lg:col-span-2 space-y-6">
-        <!-- Developer Perspective -->
-        <div class="result-panel">
-          <div class="flex items-center space-x-2 mb-4">
-            <span class="text-xl">💻</span>
-            <h2 class="text-lg font-semibold text-gray-900">Developer Perspective</h2>
-            <span class="badge-blue">Your Company</span>
-          </div>
-
-          <div class="grid sm:grid-cols-2 gap-6">
-            <!-- Revenue -->
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Revenue</h3>
-              <div class="result-row">
-                <span class="result-label">Total Revenue</span>
-                <span class="result-value">{formatCurrency(result.developer.revenue.total)}</span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Recognition</span>
-                <span class="text-sm text-gray-600">{result.developer.revenue.recognitionTiming}</span>
-              </div>
-            </div>
-
-            <!-- Profit -->
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Profit</h3>
-              <div class="result-row">
-                <span class="result-label">Gross Profit</span>
-                <span class="{result.developer.profit.gross >= 0 ? 'result-value-positive' : 'result-value-negative'}">
-                  {formatCurrency(result.developer.profit.gross)}
-                </span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Margin</span>
-                <span class="result-value">{formatPercent(result.developer.profit.margin)}</span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Net Profit</span>
-                <span class="{result.developer.profit.net >= 0 ? 'result-value-positive' : 'result-value-negative'}">
-                  {formatCurrency(result.developer.profit.net)}
-                </span>
-              </div>
-            </div>
-
-            <!-- Tax -->
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Tax</h3>
-              <div class="result-row">
-                <span class="result-label">Taxable Income</span>
-                <span class="result-value">{formatCurrency(result.developer.tax.taxableIncome)}</span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Tax Payable</span>
-                <span class="result-value-negative">{formatCurrency(result.developer.tax.taxPayable)}</span>
-              </div>
-            </div>
-
-            <!-- Asset -->
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Asset Recognition</h3>
-              <div class="result-row">
-                <span class="result-label">Asset Recognised</span>
-                <span class="text-sm">{result.developer.asset.recognised ? 'Yes' : 'No'}</span>
-              </div>
-              <p class="text-xs text-gray-500 mt-1">{result.developer.asset.reason}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Buyer Perspective -->
-        <div class="result-panel">
-          <div class="flex items-center space-x-2 mb-4">
-            <span class="text-xl">🏢</span>
-            <h2 class="text-lg font-semibold text-gray-900">Buyer Perspective</h2>
-            <span class="badge-blue">Client</span>
-          </div>
-
-          <div class="grid sm:grid-cols-2 gap-6">
-            <!-- Asset -->
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Asset Recognition</h3>
-              <div class="result-row">
-                <span class="result-label">Capitalised</span>
-                <span class="result-value">{formatCurrency(result.buyer.asset.capitalised)}</span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Expensed</span>
-                <span class="result-value">{formatCurrency(result.buyer.asset.expensed)}</span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Annual Amortisation</span>
-                <span class="result-value">{formatCurrency(result.buyer.asset.annualAmortisation)}</span>
-              </div>
-            </div>
-
-            <!-- Tax -->
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Tax Treatment</h3>
-              <div class="result-row">
-                <span class="result-label">Section 11(e) Deduction</span>
-                <span class="result-value">{formatCurrency(result.buyer.tax.section11eDeduction)}</span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Tax Benefit (Year 1)</span>
-                <span class="result-value-positive">{formatCurrency(result.buyer.tax.taxBenefit)}</span>
-              </div>
-            </div>
-
-            <!-- Total Cost -->
-            <div class="sm:col-span-2">
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Total Cost of Ownership</h3>
-              <div class="result-row">
-                <span class="result-label">Total Transaction Value</span>
-                <span class="result-value text-lg">{formatCurrency(result.buyer.totalCost)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Transfer Pricing -->
-        <div class="result-panel">
-          <div class="flex items-center space-x-2 mb-4">
-            <span class="text-xl">⚖️</span>
-            <h2 class="text-lg font-semibold text-gray-900">Transfer Pricing Assessment</h2>
-            <span class={getRiskColor(result.transferPricing.riskLevel)}>
-              {result.transferPricing.riskLevel.toUpperCase()} RISK
-            </span>
-          </div>
-
-          <div class="grid sm:grid-cols-2 gap-6">
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Margin Analysis</h3>
-              <div class="result-row">
-                <span class="result-label">Applied Margin</span>
-                <span class="result-value">{formatPercent(result.transferPricing.margin)}</span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Arm's Length Range</span>
-                <span class="text-sm text-gray-600">
-                  {result.transferPricing.benchmarkRange.low}% - {result.transferPricing.benchmarkRange.high}%
-                </span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Within Range</span>
-                <span class="text-sm">
-                  {result.transferPricing.withinRange ? '✓ Yes' : '✗ No'}
-                </span>
-              </div>
-              <div class="result-row">
-                <span class="result-label">Compliance Score</span>
-                <span class="result-value">{result.transferPricing.riskScore}/100</span>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Recommendation</h3>
-              <p class="text-sm text-gray-700 mb-4">{result.transferPricing.recommendation}</p>
-
-              <h3 class="text-sm font-medium text-gray-500 mb-2">Required Documentation</h3>
-              <ul class="text-xs text-gray-600 space-y-1">
-                {#each result.transferPricing.documentation as doc}
-                  <li>• {doc}</li>
-                {/each}
-              </ul>
-            </div>
-          </div>
-        </div>
+        <DeveloperResults developer={result.developer} />
+        <BuyerResults buyer={result.buyer} />
+        <TransferPricingResults transferPricing={result.transferPricing} />
 
         <!-- Metadata -->
         <div class="text-xs text-gray-400 text-right">
