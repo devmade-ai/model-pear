@@ -12,7 +12,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@model-pear/calculator": "workspace:*"
+    "@model-pear/calculator": "workspace:*",
+    "apexcharts": "^3.45.1"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.1",

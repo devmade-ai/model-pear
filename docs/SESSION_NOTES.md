@@ -6,120 +6,60 @@
 
 **Date:** 2026-01-11
 
-**Task:** Architecture Redesign - Phase 4 Complete (SvelteKit UI with Comparison)
+**Task:** Architecture Redesign - Phase 6 Complete (Structure Selector Wizard)
 
-**Goal:** Build complete SvelteKit UI for all 6 transaction models with save/compare functionality.
+**Goal:** Port the decision tree wizard from vanilla JS to SvelteKit.
 
 **What was done:**
 
-1. **Fixed TypeScript Build Errors**
-   - Fixed array access issues in projections/calculations.ts with `?? 0` fallbacks
-   - Fixed array access issues in sensitivity/calculations.ts
-   - Removed unused Currency import from sensitivity/types.ts
+1. **Created Wizard Configuration** (`apps/web/src/lib/config/wizard.ts`)
+   - DECISION_FACTORS: 6 questions with scoring per model
+   - QUESTION_ORDER: Order of questions in wizard
+   - MODEL_METADATA: Model info for display
+   - VARIANT_FACTORS: Sub-questions for variant selection
+   - Scoring functions: calculateModelScores, getModelRecommendations
+   - Rationale generation: generateRationale
 
-2. **Created Reusable Component Library** (`apps/web/src/lib/`)
-   - `components/ResultPanel.svelte` - Container with icon, title, badge
-   - `components/ResultRow.svelte` - Label-value pairs with formatting
-   - `components/ResultSection.svelte` - Sub-sections within panels
-   - `components/InputField.svelte` - Text/number/select inputs with hints
-   - `components/DeveloperResults.svelte` - Developer perspective display
-   - `components/BuyerResults.svelte` - Buyer perspective display
-   - `components/TransferPricingResults.svelte` - TP assessment display
-   - `utils/formatters.ts` - formatCurrency, formatPercent, getRiskBadgeClass
+2. **Built StructureWizard Component** (`apps/web/src/lib/components/StructureWizard.svelte`)
+   - Progressive disclosure (auto-advancing questions)
+   - Answered questions shown compactly with "Change" option
+   - Live preview of top 3 recommendations as user answers
+   - Final results with ranked models and match percentages
+   - Variant preference selector within selected model
+   - Skip wizard / Start over functionality
 
-3. **Created Data-Driven Input Configuration** (`apps/web/src/lib/config/`)
-   - `inputFields.ts` - Field configs for all 6 models
-   - Defines labels, types, validation, hints for each input
-   - Calculator page renders inputs dynamically from config
-
-4. **Created Comparison Feature** (`apps/web/src/lib/stores/`)
-   - `comparison.types.ts` - SavedOption and ComparisonState types
-   - `comparison.ts` - Svelte store with localStorage persistence
-   - `components/ComparisonManager.svelte` - Save, select, manage options
-   - `components/ComparisonView.svelte` - Side-by-side comparison modal
-
-5. **Updated Calculator Page** (`apps/web/src/routes/structuring/[model]/`)
-   - "Save Option" button with name modal
-   - Integrated ComparisonManager below results
-   - ComparisonView modal when comparing 2-4 options
-   - Data-driven input forms from config
+3. **Updated Structuring Page**
+   - Added view mode toggle (Wizard | Browse All Models)
+   - Wizard is default view
+   - Integrated StructureWizard component
+   - Navigation to calculator page on model selection
 
 **Files Created/Modified:**
 ```
 apps/web/src/lib/
-├── components/
-│   ├── index.ts (exports all components)
-│   ├── ResultPanel.svelte
-│   ├── ResultRow.svelte
-│   ├── ResultSection.svelte
-│   ├── InputField.svelte
-│   ├── DeveloperResults.svelte
-│   ├── BuyerResults.svelte
-│   ├── TransferPricingResults.svelte
-│   ├── ComparisonManager.svelte
-│   └── ComparisonView.svelte
 ├── config/
-│   ├── index.ts
-│   └── inputFields.ts
-├── stores/
-│   ├── index.ts
-│   ├── comparison.ts
-│   └── comparison.types.ts
-└── utils/
-    ├── index.ts
-    └── formatters.ts
+│   ├── index.ts (updated exports)
+│   └── wizard.ts (NEW - 500+ lines)
+├── components/
+│   ├── index.ts (updated exports)
+│   └── StructureWizard.svelte (NEW - 280 lines)
 
-apps/web/src/routes/structuring/
-├── +page.svelte (model selector with 6 cards)
-└── [model]/+page.svelte (calculator with comparison)
-
-packages/calculator/src/
-├── projections/calculations.ts (fixed array access)
-└── sensitivity/calculations.ts (fixed array access)
+apps/web/src/routes/structuring/+page.svelte (updated with wizard)
+docs/HISTORY.md (updated)
+docs/TODO.md (updated)
 ```
 
-**Status:** Phase 4 Complete
+**Status:** Phase 6 Complete
 
 **Total Tests:** 301 tests across 8 test files (all passing)
 
-**Build Commands:**
-```bash
-pnpm install          # Install dependencies
-pnpm test             # Run calculator tests (301 tests)
-pnpm build            # Build all packages
-pnpm dev              # Start dev server (apps/web)
-```
+**Build Status:** Successful
 
-**Branch:** `claude/redesign-app-architecture-qdMCA`
-
-**Commits:** 5 commits pushed
-- feat: add model selector UI and fix TypeScript array access issues
-- refactor: create reusable component library for results display
-- feat: add data-driven input field configurations for all 6 models
-- feat: add model comparison view with save/compare functionality
+**Branch:** `claude/continue-work-TaIOJ`
 
 ---
 
-## Potential Next Steps
-
-### High Priority (Core Features)
-1. **Sensitivity Analysis UI** - Add tornado charts, fan charts, break-even using sensitivity module
-2. **Growth Projections UI** - Add NPV/IRR visualization, cash flow charts using projections module
-3. **Charts Integration** - Add ApexCharts for visual representations
-
-### Medium Priority (Enhancements)
-4. **Mode 1: Pricing Calculator** - Add the 5 pricing models (SaaS, Usage-Based, etc.)
-5. **Structure Selector Wizard** - Port the decision tree wizard for model recommendations
-6. **Advanced Input Fields** - Add remaining model-specific inputs to field configs
-
-### Low Priority (Polish)
-7. **Print/Export** - PDF export for comparison results
-8. **Documentation** - Update CLAUDE.md architecture section for new structure
-9. **Tests** - Add Playwright E2E tests for UI workflows
-
----
-
-## Architecture Overview (New TypeScript Monorepo)
+## Architecture Overview (TypeScript Monorepo)
 
 ```
 model-pear/
@@ -134,8 +74,8 @@ model-pear/
 ├── apps/web/                     # SvelteKit 2.x frontend
 │   ├── src/
 │   │   ├── lib/
-│   │   │   ├── components/       # Reusable Svelte components
-│   │   │   ├── config/           # Input field configurations
+│   │   │   ├── components/       # Svelte components + charts
+│   │   │   ├── config/           # Input fields + wizard config
 │   │   │   ├── stores/           # Svelte stores (comparison)
 │   │   │   └── utils/            # Formatting utilities
 │   │   └── routes/
@@ -143,29 +83,28 @@ model-pear/
 │   │       └── structuring/      # Transaction tool routes
 │   └── static/                   # Static assets
 │
-└── (original vanilla JS app remains in root for reference)
+└── (original vanilla JS app in legacy/ folder)
 ```
 
 ---
 
-## Previous Sessions
+## Build Commands
 
-### 2026-01-11 (Phase 3)
-**Task:** Architecture Redesign - Tests, Projections & Sensitivity
-- Added 178 tests for Models 2-6
-- Extracted projections module (NPV, IRR, payback) - 39 tests
-- Extracted sensitivity module (ranges, Monte Carlo) - 40 tests
-- Total: 301 tests passing
+```bash
+pnpm install          # Install dependencies
+pnpm test             # Run calculator tests (301 tests)
+pnpm build            # Build all packages
+pnpm dev              # Start dev server (apps/web)
+```
 
-### 2026-01-10 (Phase 2)
-**Task:** Architecture Redesign - Complete Calculator Package
-- Extracted Models 2-6 to TypeScript (47 variants total)
-- Updated models index with unified exports
+---
 
-### 2026-01-10 (Phase 1)
-**Task:** Architecture Redesign - Foundation
-- Created ARCHITECTURE.md documentation
-- Set up monorepo with pnpm workspaces
-- Created calculator package with TypeScript
-- Extracted Model 1 with 44 passing tests
-- Created SvelteKit app shell
+## Potential Next Steps
+
+### Low Priority
+1. **Complete Input Field Configs** - Add remaining model-specific inputs
+2. **Mode 1: Pricing Calculator** - Add the 5 pricing models (SaaS, Usage-Based, etc.)
+3. **Print/Export** - PDF export for comparison and analysis results
+4. **Documentation** - Update CLAUDE.md architecture section
+5. **E2E Tests** - Add Playwright tests for UI workflows
+6. **Code Splitting** - Lazy load ApexCharts to reduce initial bundle

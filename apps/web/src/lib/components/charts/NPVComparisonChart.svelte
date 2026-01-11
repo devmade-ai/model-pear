@@ -1,0 +1,75 @@
+<script lang="ts">
+  import BaseChart from './BaseChart.svelte';
+  import { formatCurrency } from '$lib/utils';
+
+  export let developerNPV: number;
+  export let buyerNPV: number;
+  export let title = 'NPV Comparison';
+  export let height: number | string = 280;
+
+  $: options = {
+    chart: {
+      type: 'bar' as const,
+      toolbar: {
+        show: false,
+      },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '50%',
+        borderRadius: 8,
+        distributed: true,
+      },
+    },
+    colors: ['#3b82f6', '#10b981'],
+    dataLabels: {
+      enabled: true,
+      formatter: (val: number) => formatCurrency(val, true),
+      style: {
+        fontSize: '12px',
+        fontWeight: 'bold',
+      },
+      offsetY: -20,
+    },
+    stroke: {
+      show: false,
+    },
+    xaxis: {
+      categories: ['Developer', 'Buyer'],
+    },
+    yaxis: {
+      title: {
+        text: 'Net Present Value (ZAR)',
+      },
+      labels: {
+        formatter: (val: number) => formatCurrency(val, true),
+      },
+    },
+    fill: {
+      opacity: 1,
+    },
+    tooltip: {
+      y: {
+        formatter: (val: number) => formatCurrency(val),
+      },
+    },
+    legend: {
+      show: false,
+    },
+    series: [
+      {
+        name: 'NPV',
+        data: [developerNPV, buyerNPV],
+      },
+    ],
+  };
+</script>
+
+<div class="card p-4">
+  <h3 class="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+  <p class="text-sm text-gray-500 mb-4">
+    Net Present Value for each party, discounted at the specified rate.
+  </p>
+  <BaseChart {options} {height} />
+</div>

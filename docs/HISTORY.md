@@ -45,6 +45,40 @@ Redesigned the application from vanilla JavaScript (~28,000 lines) to a TypeScri
 - Built comparison feature with localStorage persistence
 - Integrated save/compare workflow into calculator pages
 
+### Phase 5: Analysis Features (Jan 11)
+- Added ApexCharts integration for data visualization
+- Created chart component library:
+  - BaseChart (ApexCharts wrapper with SSR handling)
+  - TornadoChart (input sensitivity ranking)
+  - ScenarioChart (best/base/worst case comparison)
+  - CashFlowChart (annual cash flows)
+  - CumulativeCashFlowChart (payback visualization)
+  - NPVComparisonChart (NPV comparison)
+- Created analysis panels:
+  - SensitivityPanel (tornado + scenario + key drivers)
+  - ProjectionsPanel (NPV, IRR, payback metrics + charts)
+  - ProjectionMetrics (metrics summary card)
+- Added tabbed interface to calculator page (Results | Sensitivity | Projections)
+- Updated formatters with compact currency notation for charts
+
+### Phase 6: Structure Selector Wizard (Jan 11)
+- Ported decision tree wizard from vanilla JS to SvelteKit
+- Created wizard configuration with 6 questions and scoring logic
+- Built StructureWizard component with:
+  - Progressive disclosure (auto-advancing questions)
+  - Live preview of recommendations as user answers
+  - Final results with ranked model recommendations
+  - Variant preference selector within each model
+  - Change/restart functionality
+- Added view mode toggle on structuring page (Wizard | Browse All Models)
+- Wizard recommends models based on:
+  - Software maturity (new/existing/SaaS)
+  - IP ownership preference
+  - Control preference
+  - Cash flow structure
+  - Risk allocation
+  - Asset recognition priority
+
 ### New File Structure
 ```
 model-pear/
@@ -58,7 +92,8 @@ model-pear/
 │
 ├── apps/web/                     # SvelteKit frontend
 │   └── src/lib/
-│       ├── components/           # 10 Svelte components
+│       ├── components/           # Result & analysis components
+│       │   └── charts/           # ApexCharts visualizations
 │       ├── config/               # Input field configs
 │       ├── stores/               # Comparison store
 │       └── utils/                # Formatters

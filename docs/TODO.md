@@ -4,76 +4,6 @@
 
 ## Backlog
 
-### New Architecture: Sensitivity Analysis UI
-**Priority**: High
-**Effort**: Medium
-
-Add UI for the sensitivity analysis module in the new SvelteKit app:
-- Tornado charts showing input sensitivity ranking
-- Fan charts for projection ranges
-- Break-even analysis visualization
-- Monte Carlo simulation results display
-
-The calculation logic is complete in `packages/calculator/src/sensitivity/`. Need to create Svelte components in `apps/web/src/lib/components/` to visualize the outputs.
-
----
-
-### New Architecture: Growth Projections UI
-**Priority**: High
-**Effort**: Medium
-
-Add UI for the projections module in the new SvelteKit app:
-- NPV/IRR summary cards
-- Cash flow projection charts
-- Payback period visualization
-- ROI trajectory over time
-
-The calculation logic is complete in `packages/calculator/src/projections/`. Need to integrate ApexCharts and create visualization components.
-
----
-
-### New Architecture: Charts Integration
-**Priority**: Medium
-**Effort**: Medium
-
-Add ApexCharts to the SvelteKit app for visual representations:
-- Revenue breakdown pie charts
-- Cash flow waterfall charts
-- Comparison bar charts
-- Risk vs return quadrant
-
-Consider using `svelte-apexcharts` wrapper or direct ApexCharts integration.
-
----
-
-### New Architecture: Structure Selector Wizard
-**Priority**: Medium
-**Effort**: Medium
-
-Port the decision tree wizard from the vanilla JS app to SvelteKit:
-- Question-based flow to recommend a model
-- Auto-advancing questions with "Change" option
-- Model recommendations with match scores
-
-Logic exists in `models/intercompany/structure-selector.js` - needs to be adapted for Svelte.
-
----
-
-### New Architecture: Complete Input Field Configs
-**Priority**: Low
-**Effort**: Small
-
-The `apps/web/src/lib/config/inputFields.ts` has basic inputs for each model. Some advanced inputs are missing:
-- Model 2: licenceTerm, territory, sourceCodeAccess
-- Model 3: projectDurationMonths, personnel FTEs/costs
-- Model 4: operationPeriodYears, estimatedAnnualRevenue
-- Model 5: maintenanceTerm, paymentTerms
-- Model 6: annualSupportCost
-
-Add these to make the UI fully featured.
-
----
-
 ### Technical Debt: Rename "intercompany" folders
 **Priority**: Low
 **Effort**: Medium (30+ files)
@@ -93,6 +23,64 @@ The folders `models/intercompany/` and `ui/intercompany/` use legacy naming from
 ---
 
 ## Completed
+
+### New Architecture: Complete Input Field Configs
+**Completed**: January 11, 2026
+
+Added all missing input fields to `apps/web/src/lib/config/inputFields.ts`:
+- Model 2: licenceTerm, territory, sourceCodeAccess, developerUsefulLife, buyerUsefulLife, implementationCosts
+- Model 3: projectDurationMonths, developer/buyer personnel FTEs and costs, IP contributions
+- Model 4: annualOperatingCost, estimatedAnnualRevenue, transferYear, inflationAdjustment
+- Model 5: paymentTerms, annualMaintenanceCost
+- Model 6: annualSupportCost
+
+Also added researchPhaseCost and developmentPhaseCost to common fields.
+
+---
+
+### New Architecture: Structure Selector Wizard
+**Completed**: January 11, 2026
+
+Ported decision tree wizard from vanilla JS to SvelteKit:
+- StructureWizard component with progressive disclosure
+- 6 questions with model scoring algorithm
+- Live recommendation preview as user answers
+- Variant preference selector within recommended model
+- View mode toggle (Wizard | Browse All Models)
+
+---
+
+### New Architecture: Sensitivity Analysis UI
+**Completed**: January 11, 2026
+
+Added UI for the sensitivity analysis module:
+- TornadoChart for input sensitivity ranking
+- ScenarioChart for best/base/worst case comparison
+- SensitivityPanel combining charts with key drivers list
+
+---
+
+### New Architecture: Growth Projections UI
+**Completed**: January 11, 2026
+
+Added UI for the projections module:
+- NPV/IRR summary cards (ProjectionMetrics)
+- Cash flow projection charts (CashFlowChart)
+- Payback period visualization (CumulativeCashFlowChart)
+- NPV comparison chart (NPVComparisonChart)
+- ProjectionsPanel with configurable parameters
+
+---
+
+### New Architecture: Charts Integration
+**Completed**: January 11, 2026
+
+Added ApexCharts to the SvelteKit app:
+- BaseChart wrapper with SSR-safe dynamic import
+- 6 chart components for various visualizations
+- Compact currency formatting for chart labels
+
+---
 
 ### Refactor: Remove Combined/Group Perspective
 **Completed**: January 10, 2026
