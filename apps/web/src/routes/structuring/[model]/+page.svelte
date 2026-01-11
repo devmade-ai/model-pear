@@ -22,9 +22,13 @@
     type Variant6AInputs,
   } from '@model-pear/calculator';
   import { DeveloperResults, BuyerResults, TransferPricingResults, InputField } from '$lib/components';
+  import { modelFieldConfigs } from '$lib/config';
 
   // Get model ID from URL
   $: modelId = $page.params.model;
+
+  // Get input field configuration for current model
+  $: fieldConfig = modelFieldConfigs[modelId] || [];
 
   // Model configurations
   const modelConfigs = {
@@ -199,176 +203,20 @@
           <h2 class="text-lg font-semibold text-gray-900 mb-4">Inputs</h2>
 
           <div class="space-y-4">
-            <!-- Project Name -->
-            <div>
-              <label for="projectName" class="block text-sm font-medium text-gray-700 mb-1">
-                Project Name
-              </label>
-              <input
-                type="text"
-                id="projectName"
-                value={inputs.projectName}
-                on:input={(e) => handleInput('projectName', e.currentTarget.value)}
-                class="input"
+            {#each fieldConfig as field (field.id)}
+              <InputField
+                id={field.id}
+                label={field.label}
+                type={field.type}
+                value={inputs[field.id] ?? ''}
+                options={field.options}
+                min={field.min}
+                max={field.max}
+                step={field.step}
+                hint={field.hint}
+                on:change={handleInputChange}
               />
-            </div>
-
-            {#if 'developmentCost' in inputs}
-              <div>
-                <label for="developmentCost" class="block text-sm font-medium text-gray-700 mb-1">
-                  Development Cost (R)
-                </label>
-                <input
-                  type="number"
-                  id="developmentCost"
-                  value={inputs.developmentCost}
-                  on:input={(e) => handleInput('developmentCost', Number(e.currentTarget.value))}
-                  min="0"
-                  step="10000"
-                  class="input tabular-nums"
-                />
-              </div>
-            {/if}
-
-            {#if 'markupPercentage' in inputs}
-              <div>
-                <label for="markupPercentage" class="block text-sm font-medium text-gray-700 mb-1">
-                  Markup Percentage (%)
-                </label>
-                <input
-                  type="number"
-                  id="markupPercentage"
-                  value={inputs.markupPercentage}
-                  on:input={(e) => handleInput('markupPercentage', Number(e.currentTarget.value))}
-                  min="0"
-                  max="50"
-                  step="1"
-                  class="input tabular-nums"
-                />
-                <p class="text-xs text-gray-500 mt-1">Arm's length range: 5-15%</p>
-              </div>
-            {/if}
-
-            {#if 'upfrontLicenceFee' in inputs}
-              <div>
-                <label for="upfrontLicenceFee" class="block text-sm font-medium text-gray-700 mb-1">
-                  Upfront Licence Fee (R)
-                </label>
-                <input
-                  type="number"
-                  id="upfrontLicenceFee"
-                  value={inputs.upfrontLicenceFee}
-                  on:input={(e) => handleInput('upfrontLicenceFee', Number(e.currentTarget.value))}
-                  min="0"
-                  step="10000"
-                  class="input tabular-nums"
-                />
-              </div>
-            {/if}
-
-            {#if 'salePrice' in inputs}
-              <div>
-                <label for="salePrice" class="block text-sm font-medium text-gray-700 mb-1">
-                  Sale Price (R)
-                </label>
-                <input
-                  type="number"
-                  id="salePrice"
-                  value={inputs.salePrice}
-                  on:input={(e) => handleInput('salePrice', Number(e.currentTarget.value))}
-                  min="0"
-                  step="10000"
-                  class="input tabular-nums"
-                />
-              </div>
-            {/if}
-
-            {#if 'monthlySubscriptionFee' in inputs}
-              <div>
-                <label for="monthlySubscriptionFee" class="block text-sm font-medium text-gray-700 mb-1">
-                  Monthly Subscription Fee (R)
-                </label>
-                <input
-                  type="number"
-                  id="monthlySubscriptionFee"
-                  value={inputs.monthlySubscriptionFee}
-                  on:input={(e) => handleInput('monthlySubscriptionFee', Number(e.currentTarget.value))}
-                  min="0"
-                  step="1000"
-                  class="input tabular-nums"
-                />
-              </div>
-            {/if}
-
-            {#if 'fixedTransferPrice' in inputs}
-              <div>
-                <label for="fixedTransferPrice" class="block text-sm font-medium text-gray-700 mb-1">
-                  Transfer Price (R)
-                </label>
-                <input
-                  type="number"
-                  id="fixedTransferPrice"
-                  value={inputs.fixedTransferPrice}
-                  on:input={(e) => handleInput('fixedTransferPrice', Number(e.currentTarget.value))}
-                  min="0"
-                  step="10000"
-                  class="input tabular-nums"
-                />
-              </div>
-            {/if}
-
-            {#if 'usefulLife' in inputs}
-              <div>
-                <label for="usefulLife" class="block text-sm font-medium text-gray-700 mb-1">
-                  Useful Life (Years)
-                </label>
-                <input
-                  type="number"
-                  id="usefulLife"
-                  value={inputs.usefulLife}
-                  on:input={(e) => handleInput('usefulLife', Number(e.currentTarget.value))}
-                  min="1"
-                  max="20"
-                  step="1"
-                  class="input tabular-nums"
-                />
-              </div>
-            {/if}
-
-            {#if 'section11eType' in inputs}
-              <div>
-                <label for="section11eType" class="block text-sm font-medium text-gray-700 mb-1">
-                  Tax Write-Off Period
-                </label>
-                <select
-                  id="section11eType"
-                  value={inputs.section11eType}
-                  on:change={(e) => handleInput('section11eType', e.currentTarget.value)}
-                  class="input"
-                >
-                  <option value="pc-2yr">Standard Software (2-year)</option>
-                  <option value="mainframe-5yr">Complex Systems (5-year)</option>
-                </select>
-              </div>
-            {/if}
-
-            {#if 'corporateTaxRate' in inputs}
-              <div>
-                <label for="corporateTaxRate" class="block text-sm font-medium text-gray-700 mb-1">
-                  Corporate Tax Rate (%)
-                </label>
-                <input
-                  type="number"
-                  id="corporateTaxRate"
-                  value={inputs.corporateTaxRate}
-                  on:input={(e) => handleInput('corporateTaxRate', Number(e.currentTarget.value))}
-                  min="0"
-                  max="50"
-                  step="1"
-                  class="input tabular-nums"
-                />
-              </div>
-            {/if}
+            {/each}
           </div>
         </div>
       </div>
