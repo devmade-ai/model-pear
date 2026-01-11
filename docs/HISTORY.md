@@ -7,6 +7,78 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Architecture Redesign: TypeScript Monorepo (January 2026)
+
+**Date**: January 10-11, 2026
+**Impact**: Complete rewrite of calculator logic in TypeScript with modern SvelteKit frontend
+
+### Overview
+
+Redesigned the application from vanilla JavaScript (~28,000 lines) to a TypeScript monorepo with:
+- Pure calculation library (`@model-pear/calculator`)
+- SvelteKit 2.x frontend (`@model-pear/web`)
+- 301 comprehensive unit tests
+- Modern tooling (pnpm, Vite, Vitest)
+
+### Phase 1: Foundation (Jan 10)
+- Created monorepo structure with pnpm workspaces
+- Extracted Model 1 (Cost-Plus) to TypeScript with 44 tests
+- Set up SvelteKit app shell with Tailwind CSS
+
+### Phase 2: Models (Jan 10)
+- Extracted Models 2-6 to TypeScript (47 total variants)
+- Created unified model registry with exports
+- Added TypeScript types for all input/output structures
+
+### Phase 3: Tests & Modules (Jan 11)
+- Added 178 tests for Models 2-6
+- Created projections module (NPV, IRR, payback, MIRR, ROI) - 39 tests
+- Created sensitivity module (ranges, scenarios, Monte Carlo) - 40 tests
+- Fixed TypeScript strict mode array access issues
+
+### Phase 4: SvelteKit UI (Jan 11)
+- Created reusable component library:
+  - ResultPanel, ResultRow, ResultSection, InputField
+  - DeveloperResults, BuyerResults, TransferPricingResults
+  - ComparisonManager, ComparisonView
+- Created data-driven input field configurations for all 6 models
+- Built comparison feature with localStorage persistence
+- Integrated save/compare workflow into calculator pages
+
+### New File Structure
+```
+model-pear/
+├── packages/calculator/          # TypeScript calculation library
+│   ├── src/
+│   │   ├── models/               # 6 transaction models
+│   │   ├── projections/          # NPV, IRR, payback
+│   │   ├── sensitivity/          # Ranges, Monte Carlo
+│   │   └── types/                # Shared types
+│   └── tests/                    # 301 unit tests
+│
+├── apps/web/                     # SvelteKit frontend
+│   └── src/lib/
+│       ├── components/           # 10 Svelte components
+│       ├── config/               # Input field configs
+│       ├── stores/               # Comparison store
+│       └── utils/                # Formatters
+│
+└── (original vanilla JS preserved in root)
+```
+
+### Commands
+```bash
+pnpm install          # Install dependencies
+pnpm test             # Run 301 tests
+pnpm build            # Build all packages
+pnpm dev              # Start dev server
+```
+
+### Branch
+`claude/redesign-app-architecture-qdMCA`
+
+---
+
 ## Recent Bug Fixes & Improvements (January 2026)
 
 ### UI Component Hierarchy Documentation

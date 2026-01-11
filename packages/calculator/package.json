@@ -1,0 +1,58 @@
+{
+  "name": "@model-pear/calculator",
+  "version": "1.0.0",
+  "description": "Pure TypeScript calculation engine for software transaction structuring",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./models": {
+      "types": "./dist/models/index.d.ts",
+      "import": "./dist/models/index.js"
+    },
+    "./projections": {
+      "types": "./dist/projections/index.d.ts",
+      "import": "./dist/projections/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0",
+    "@vitest/coverage-v8": "^1.2.0"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "keywords": [
+    "calculator",
+    "financial",
+    "transaction",
+    "cost-plus",
+    "npv",
+    "irr",
+    "transfer-pricing"
+  ],
+  "license": "MIT"
+}

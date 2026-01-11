@@ -27,11 +27,22 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Build outputs (in case build process is added later)
+# Build outputs
 dist/
 build/
 *.min.js
 *.min.css
+
+# SvelteKit
+.svelte-kit/
+.vercel/
+.netlify/
+
+# TypeScript
+*.tsbuildinfo
+
+# Coverage
+coverage/
 
 # Environment variables
 .env
