@@ -2,7 +2,7 @@
  * Type definitions for sensitivity analysis
  */
 
-import type { Currency, Percentage } from '../types/common.js';
+import type { Percentage } from '../types/common.js';
 
 // ============================================================
 // RANGE INPUT TYPES

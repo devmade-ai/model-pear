@@ -1,46 +1,62 @@
 <script lang="ts">
-  import { calculateCostPlus, MODEL_1_COST_PLUS, type Variant1BInputs, type CalculationResult } from '@model-pear/calculator';
+  import {
+    ALL_MODELS,
+    MODEL_1_COST_PLUS,
+    MODEL_2_LICENCE,
+    MODEL_3_JOINT_DEVELOPMENT,
+    MODEL_4_BOT,
+    MODEL_5_SOFTWARE_SALE,
+    MODEL_6_SAAS,
+  } from '@model-pear/calculator';
 
-  // Default inputs for Model 1B
-  let inputs: Variant1BInputs = {
-    variant: '1B',
-    projectName: 'Software Development Project',
-    developmentCost: 1_000_000,
-    researchPhaseCost: 200_000,
-    developmentPhaseCost: 800_000,
-    markupPercentage: 10,
-    usefulLife: 5,
-    section11eType: 'pc-2yr',
-    corporateTaxRate: 27,
-  };
+  // Model cards data
+  const models = [
+    {
+      id: 'model-1',
+      ...MODEL_1_COST_PLUS,
+      bestFor: ['Development services', 'Custom software', 'Time & materials'],
+      keyFeatures: ['Cost transparency', 'TP-safe margins', 'Immediate recognition'],
+    },
+    {
+      id: 'model-2',
+      ...MODEL_2_LICENCE,
+      bestFor: ['Software products', 'IP licensing', 'Recurring revenue'],
+      keyFeatures: ['Royalty streams', 'Perpetual or term', 'Usage-based options'],
+    },
+    {
+      id: 'model-3',
+      ...MODEL_3_JOINT_DEVELOPMENT,
+      bestFor: ['R&D partnerships', 'Cost sharing', 'Joint ventures'],
+      keyFeatures: ['Shared ownership', 'No intercompany profit', 'TP compliant'],
+    },
+    {
+      id: 'model-4',
+      ...MODEL_4_BOT,
+      bestFor: ['IT outsourcing', 'System migrations', 'Asset transfers'],
+      keyFeatures: ['Operating period', 'Deferred transfer', 'Performance-linked'],
+    },
+    {
+      id: 'model-5',
+      ...MODEL_5_SOFTWARE_SALE,
+      bestFor: ['IP sale', 'Exit strategy', 'One-time deal'],
+      keyFeatures: ['Full IP transfer', 'Upfront or deferred', 'Earnout options'],
+    },
+    {
+      id: 'model-6',
+      ...MODEL_6_SAAS,
+      bestFor: ['Cloud services', 'Subscription model', 'Recurring revenue'],
+      keyFeatures: ['Monthly billing', 'Per-user pricing', 'Usage-based'],
+    },
+  ];
 
-  // Reactive calculation - recalculates when inputs change
-  $: result = calculateCostPlus(inputs);
+  // Selected model for navigation
+  let selectedModel: string | null = null;
 
-  // Currency formatter
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('en-ZA', {
-      style: 'currency',
-      currency: 'ZAR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
-  // Percentage formatter
-  const formatPercent = (value: number): string => {
-    return `${value.toFixed(1)}%`;
-  };
-
-  // Risk level badge color
-  const getRiskColor = (level: string): string => {
-    switch (level) {
-      case 'low': return 'badge-green';
-      case 'medium': return 'badge-amber';
-      case 'high': return 'badge-red';
-      default: return 'badge-blue';
-    }
-  };
+  function selectModel(modelId: string) {
+    selectedModel = modelId;
+    // Navigate to model-specific page
+    window.location.href = `/structuring/${modelId}`;
+  }
 </script>
 
 <svelte:head>
@@ -52,321 +68,135 @@
   <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900">Transaction Structuring</h1>
     <p class="text-gray-600 mt-2">
-      Model 1: {MODEL_1_COST_PLUS.name}
+      Choose a transaction model to analyze financial outcomes for both parties.
     </p>
   </div>
 
-  <div class="grid lg:grid-cols-3 gap-8">
-    <!-- Input Form -->
-    <div class="lg:col-span-1">
-      <div class="card p-6 sticky top-4">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Inputs</h2>
-
-        <div class="space-y-4">
-          <!-- Project Name -->
-          <div>
-            <label for="projectName" class="block text-sm font-medium text-gray-700 mb-1">
-              Project Name
-            </label>
-            <input
-              type="text"
-              id="projectName"
-              bind:value={inputs.projectName}
-              class="input"
-            />
-          </div>
-
-          <!-- Development Cost -->
-          <div>
-            <label for="developmentCost" class="block text-sm font-medium text-gray-700 mb-1">
-              Total Development Cost (R)
-            </label>
-            <input
-              type="number"
-              id="developmentCost"
-              bind:value={inputs.developmentCost}
-              min="0"
-              step="10000"
-              class="input tabular-nums"
-            />
-          </div>
-
-          <!-- Research Phase Cost -->
-          <div>
-            <label for="researchPhaseCost" class="block text-sm font-medium text-gray-700 mb-1">
-              Research Phase Cost (R)
-            </label>
-            <input
-              type="number"
-              id="researchPhaseCost"
-              bind:value={inputs.researchPhaseCost}
-              min="0"
-              step="10000"
-              class="input tabular-nums"
-            />
-            <p class="text-xs text-gray-500 mt-1">Expensed by Buyer (IAS 38)</p>
-          </div>
-
-          <!-- Development Phase Cost -->
-          <div>
-            <label for="developmentPhaseCost" class="block text-sm font-medium text-gray-700 mb-1">
-              Development Phase Cost (R)
-            </label>
-            <input
-              type="number"
-              id="developmentPhaseCost"
-              bind:value={inputs.developmentPhaseCost}
-              min="0"
-              step="10000"
-              class="input tabular-nums"
-            />
-            <p class="text-xs text-gray-500 mt-1">Capitalised by Buyer (IAS 38)</p>
-          </div>
-
-          <!-- Markup Percentage -->
-          <div>
-            <label for="markupPercentage" class="block text-sm font-medium text-gray-700 mb-1">
-              Cost-Plus Markup (%)
-            </label>
-            <input
-              type="number"
-              id="markupPercentage"
-              bind:value={inputs.markupPercentage}
-              min="0"
-              max="50"
-              step="1"
-              class="input tabular-nums"
-            />
-            <p class="text-xs text-gray-500 mt-1">Arm's length range: 5-15%</p>
-          </div>
-
-          <!-- Useful Life -->
-          <div>
-            <label for="usefulLife" class="block text-sm font-medium text-gray-700 mb-1">
-              Useful Life (Years)
-            </label>
-            <input
-              type="number"
-              id="usefulLife"
-              bind:value={inputs.usefulLife}
-              min="1"
-              max="20"
-              step="1"
-              class="input tabular-nums"
-            />
-          </div>
-
-          <!-- Section 11(e) Type -->
-          <div>
-            <label for="section11eType" class="block text-sm font-medium text-gray-700 mb-1">
-              Tax Write-Off Period
-            </label>
-            <select
-              id="section11eType"
-              bind:value={inputs.section11eType}
-              class="input"
-            >
-              <option value="pc-2yr">Standard Software (2-year)</option>
-              <option value="mainframe-5yr">Complex Systems (5-year)</option>
-            </select>
-          </div>
-
-          <!-- Corporate Tax Rate -->
-          <div>
-            <label for="corporateTaxRate" class="block text-sm font-medium text-gray-700 mb-1">
-              Corporate Tax Rate (%)
-            </label>
-            <input
-              type="number"
-              id="corporateTaxRate"
-              bind:value={inputs.corporateTaxRate}
-              min="0"
-              max="50"
-              step="1"
-              class="input tabular-nums"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Results -->
-    <div class="lg:col-span-2 space-y-6">
-      <!-- Developer Perspective -->
-      <div class="result-panel">
-        <div class="flex items-center space-x-2 mb-4">
-          <span class="text-xl">💻</span>
-          <h2 class="text-lg font-semibold text-gray-900">Developer Perspective</h2>
-          <span class="badge-blue">Your Company</span>
-        </div>
-
-        <div class="grid sm:grid-cols-2 gap-6">
-          <!-- Revenue -->
-          <div>
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Revenue</h3>
-            <div class="result-row">
-              <span class="result-label">Total Revenue</span>
-              <span class="result-value">{formatCurrency(result.developer.revenue.total)}</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Recognition</span>
-              <span class="text-sm text-gray-600">{result.developer.revenue.recognitionTiming}</span>
+  <!-- Model selector grid -->
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {#each models as model}
+      <button
+        on:click={() => selectModel(model.id)}
+        class="card p-6 text-left hover:border-blue-500 hover:shadow-lg transition-all duration-200 group"
+      >
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl">{model.icon}</span>
+            <div>
+              <h3 class="font-semibold text-gray-900 group-hover:text-blue-600">
+                {model.shortName}
+              </h3>
+              <p class="text-xs text-gray-500">{model.id.toUpperCase()}</p>
             </div>
           </div>
-
-          <!-- Profit -->
-          <div>
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Profit</h3>
-            <div class="result-row">
-              <span class="result-label">Gross Profit</span>
-              <span class="{result.developer.profit.gross >= 0 ? 'result-value-positive' : 'result-value-negative'}">
-                {formatCurrency(result.developer.profit.gross)}
-              </span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Margin</span>
-              <span class="result-value">{formatPercent(result.developer.profit.margin)}</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Net Profit</span>
-              <span class="{result.developer.profit.net >= 0 ? 'result-value-positive' : 'result-value-negative'}">
-                {formatCurrency(result.developer.profit.net)}
-              </span>
-            </div>
-          </div>
-
-          <!-- Tax -->
-          <div>
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Tax</h3>
-            <div class="result-row">
-              <span class="result-label">Taxable Income</span>
-              <span class="result-value">{formatCurrency(result.developer.tax.taxableIncome)}</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Tax Payable</span>
-              <span class="result-value-negative">{formatCurrency(result.developer.tax.taxPayable)}</span>
-            </div>
-          </div>
-
-          <!-- Asset -->
-          <div>
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Asset Recognition</h3>
-            <div class="result-row">
-              <span class="result-label">Asset Recognised</span>
-              <span class="text-sm">{result.developer.asset.recognised ? 'Yes' : 'No'}</span>
-            </div>
-            <p class="text-xs text-gray-500 mt-1">{result.developer.asset.reason}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Buyer Perspective -->
-      <div class="result-panel">
-        <div class="flex items-center space-x-2 mb-4">
-          <span class="text-xl">🏢</span>
-          <h2 class="text-lg font-semibold text-gray-900">Buyer Perspective</h2>
-          <span class="badge-blue">Client</span>
-        </div>
-
-        <div class="grid sm:grid-cols-2 gap-6">
-          <!-- Asset -->
-          <div>
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Asset Recognition</h3>
-            <div class="result-row">
-              <span class="result-label">Capitalised</span>
-              <span class="result-value">{formatCurrency(result.buyer.asset.capitalised)}</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Expensed (Research)</span>
-              <span class="result-value">{formatCurrency(result.buyer.asset.expensed)}</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Annual Amortisation</span>
-              <span class="result-value">{formatCurrency(result.buyer.asset.annualAmortisation)}</span>
-            </div>
-          </div>
-
-          <!-- Tax -->
-          <div>
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Tax Treatment</h3>
-            <div class="result-row">
-              <span class="result-label">Section 11(e) Deduction</span>
-              <span class="result-value">{formatCurrency(result.buyer.tax.section11eDeduction)}</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Tax Benefit (Year 1)</span>
-              <span class="result-value-positive">{formatCurrency(result.buyer.tax.taxBenefit)}</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Deferred Tax Liability</span>
-              <span class="result-value">{formatCurrency(result.buyer.tax.deferredTaxLiability)}</span>
-            </div>
-          </div>
-
-          <!-- Total Cost -->
-          <div class="sm:col-span-2">
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Total Cost of Ownership</h3>
-            <div class="result-row">
-              <span class="result-label">Total Transaction Value</span>
-              <span class="result-value text-lg">{formatCurrency(result.buyer.totalCost)}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Transfer Pricing -->
-      <div class="result-panel">
-        <div class="flex items-center space-x-2 mb-4">
-          <span class="text-xl">⚖️</span>
-          <h2 class="text-lg font-semibold text-gray-900">Transfer Pricing Assessment</h2>
-          <span class={getRiskColor(result.transferPricing.riskLevel)}>
-            {result.transferPricing.riskLevel.toUpperCase()} RISK
+          <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+            {Object.keys(model.variants).length} variants
           </span>
         </div>
 
-        <div class="grid sm:grid-cols-2 gap-6">
-          <div>
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Margin Analysis</h3>
-            <div class="result-row">
-              <span class="result-label">Applied Margin</span>
-              <span class="result-value">{formatPercent(result.transferPricing.margin)}</span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Arm's Length Range</span>
-              <span class="text-sm text-gray-600">
-                {result.transferPricing.benchmarkRange.low}% - {result.transferPricing.benchmarkRange.high}%
-              </span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Within Range</span>
-              <span class="text-sm">
-                {result.transferPricing.withinRange ? '✓ Yes' : '✗ No'}
-              </span>
-            </div>
-            <div class="result-row">
-              <span class="result-label">Compliance Score</span>
-              <span class="result-value">{result.transferPricing.riskScore}/100</span>
-            </div>
-          </div>
+        <!-- Description -->
+        <p class="text-sm text-gray-600 mb-4">
+          {model.description}
+        </p>
 
-          <div>
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Recommendation</h3>
-            <p class="text-sm text-gray-700 mb-4">{result.transferPricing.recommendation}</p>
-
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Required Documentation</h3>
-            <ul class="text-xs text-gray-600 space-y-1">
-              {#each result.transferPricing.documentation as doc}
-                <li>• {doc}</li>
-              {/each}
-            </ul>
+        <!-- Best for -->
+        <div class="mb-4">
+          <p class="text-xs font-medium text-gray-500 mb-2">Best for:</p>
+          <div class="flex flex-wrap gap-1">
+            {#each model.bestFor as tag}
+              <span class="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700">
+                {tag}
+              </span>
+            {/each}
           </div>
         </div>
-      </div>
 
-      <!-- Metadata -->
-      <div class="text-xs text-gray-400 text-right">
-        Model: {result.metadata.modelName} ({result.metadata.variantId}: {result.metadata.variantName})
-      </div>
+        <!-- Key features -->
+        <div class="mb-4">
+          <p class="text-xs font-medium text-gray-500 mb-2">Key features:</p>
+          <ul class="text-xs text-gray-600 space-y-1">
+            {#each model.keyFeatures as feature}
+              <li class="flex items-center">
+                <span class="text-green-500 mr-2">✓</span>
+                {feature}
+              </li>
+            {/each}
+          </ul>
+        </div>
+
+        <!-- CTA -->
+        <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+          <span class="text-xs text-gray-500">
+            {model.accountingSummary.developer.split('.')[0]}.
+          </span>
+          <span class="text-blue-600 text-sm font-medium group-hover:translate-x-1 transition-transform">
+            Explore →
+          </span>
+        </div>
+      </button>
+    {/each}
+  </div>
+
+  <!-- Quick comparison table -->
+  <div class="mt-12">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Comparison</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">IP Ownership</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment Type</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Risk Profile</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Variants</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr>
+            <td class="px-4 py-3 text-sm font-medium text-gray-900">Cost-Plus</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Buyer</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Project-based</td>
+            <td class="px-4 py-3"><span class="badge-green">Low</span></td>
+            <td class="px-4 py-3 text-sm text-gray-600">6</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-sm font-medium text-gray-900">Licence</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Developer</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Upfront / Royalty</td>
+            <td class="px-4 py-3"><span class="badge-amber">Medium</span></td>
+            <td class="px-4 py-3 text-sm text-gray-600">8</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-sm font-medium text-gray-900">Joint Dev</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Shared</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Cost contribution</td>
+            <td class="px-4 py-3"><span class="badge-green">Low</span></td>
+            <td class="px-4 py-3 text-sm text-gray-600">8</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-sm font-medium text-gray-900">BOT</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Developer → Buyer</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Fees + Transfer</td>
+            <td class="px-4 py-3"><span class="badge-amber">Medium</span></td>
+            <td class="px-4 py-3 text-sm text-gray-600">8</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-sm font-medium text-gray-900">Sale</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Buyer</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Upfront / Earnout</td>
+            <td class="px-4 py-3"><span class="badge-amber">Medium</span></td>
+            <td class="px-4 py-3 text-sm text-gray-600">8</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-sm font-medium text-gray-900">SaaS</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Developer</td>
+            <td class="px-4 py-3 text-sm text-gray-600">Subscription</td>
+            <td class="px-4 py-3"><span class="badge-green">Low</span></td>
+            <td class="px-4 py-3 text-sm text-gray-600">9</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

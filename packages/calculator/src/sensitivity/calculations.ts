@@ -364,9 +364,9 @@ export function calculateStatistics(values: number[]): Statistics {
   const sorted = [...values].sort((a, b) => a - b);
   const sum = values.reduce((a, b) => a + b, 0);
   const mean = sum / values.length;
-  const median = sorted[Math.floor(sorted.length / 2)];
-  const min = sorted[0];
-  const max = sorted[sorted.length - 1];
+  const median = sorted[Math.floor(sorted.length / 2)] ?? 0;
+  const min = sorted[0] ?? 0;
+  const max = sorted[sorted.length - 1] ?? 0;
 
   const squaredDiffs = values.map((v) => Math.pow(v - mean, 2));
   const avgSquaredDiff = squaredDiffs.reduce((a, b) => a + b, 0) / values.length;
@@ -379,9 +379,10 @@ export function calculateStatistics(values: number[]): Statistics {
  * Calculate percentiles for an array of sorted numbers
  */
 export function calculatePercentiles(sortedValues: number[]): Percentiles {
-  const getPercentile = (p: number) => {
+  const getPercentile = (p: number): number => {
+    if (sortedValues.length === 0) return 0;
     const index = Math.floor((p / 100) * sortedValues.length);
-    return sortedValues[Math.min(index, sortedValues.length - 1)];
+    return sortedValues[Math.min(index, sortedValues.length - 1)] ?? 0;
   };
 
   return {
@@ -416,8 +417,9 @@ export function createHistogram(values: number[], bins = 20): HistogramBin[] {
 
   values.forEach((v) => {
     const binIndex = Math.min(Math.floor((v - min) / binWidth), bins - 1);
-    if (binIndex >= 0 && binIndex < bins) {
-      histogram[binIndex].count++;
+    const bin = histogram[binIndex];
+    if (binIndex >= 0 && binIndex < bins && bin) {
+      bin.count++;
     }
   });
 

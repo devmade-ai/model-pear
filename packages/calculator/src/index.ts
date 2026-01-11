@@ -37,9 +37,37 @@ export {
   COST_PLUS_BENCHMARK_RANGE,
   COST_PLUS_INPUT_CATEGORIES,
   COST_PLUS_INPUT_FIELDS,
+  // Model 2: Licence
+  calculateLicence,
+  MODEL_2_LICENCE,
+  LICENCE_VARIANTS,
+  LICENCE_BENCHMARK_RANGE,
+  // Model 3: Joint Development
+  calculateJointDevelopment,
+  MODEL_3_JOINT_DEVELOPMENT,
+  JOINT_DEV_VARIANTS,
+  JOINT_DEV_BENCHMARK_RANGE,
+  // Model 4: BOT
+  calculateBOT,
+  MODEL_4_BOT,
+  BOT_VARIANTS,
+  BOT_BENCHMARK_RANGE,
+  // Model 5: Software Sale
+  calculateSoftwareSale,
+  MODEL_5_SOFTWARE_SALE,
+  SOFTWARE_SALE_VARIANTS,
+  SOFTWARE_SALE_BENCHMARK_RANGE,
+  // Model 6: SaaS
+  calculateSaaS,
+  MODEL_6_SAAS,
+  SAAS_VARIANTS,
+  SAAS_BENCHMARK_RANGE,
+  // Model Registry
+  ALL_MODELS,
 } from './models/index.js';
 
 export type {
+  // Model 1
   CostPlusInputs,
   CostPlusVariantId,
   CostPlusBaseInputs,
@@ -50,6 +78,64 @@ export type {
   Variant1EInputs,
   Variant1FInputs,
   VariantDefinition,
+  // Model 2
+  LicenceInputs,
+  LicenceVariantId,
+  Variant2AInputs,
+  Variant2BInputs,
+  Variant2CInputs,
+  Variant2DInputs,
+  Variant2EInputs,
+  Variant2FInputs,
+  Variant2GInputs,
+  Variant2HInputs,
+  // Model 3
+  JointDevInputs,
+  JointDevVariantId,
+  Variant3AInputs,
+  Variant3BInputs,
+  Variant3CInputs,
+  Variant3DInputs,
+  Variant3EInputs,
+  Variant3FInputs,
+  Variant3GInputs,
+  Variant3HInputs,
+  // Model 4
+  BOTInputs,
+  BOTVariantId,
+  Variant4AInputs,
+  Variant4BInputs,
+  Variant4CInputs,
+  Variant4DInputs,
+  Variant4EInputs,
+  Variant4FInputs,
+  Variant4GInputs,
+  Variant4HInputs,
+  // Model 5
+  SoftwareSaleInputs,
+  SoftwareSaleVariantId,
+  Variant5AInputs,
+  Variant5BInputs,
+  Variant5CInputs,
+  Variant5DInputs,
+  Variant5EInputs,
+  Variant5FInputs,
+  Variant5GInputs,
+  Variant5HInputs,
+  // Model 6
+  SaaSInputs,
+  SaaSVariantId,
+  Variant6AInputs,
+  Variant6BInputs,
+  Variant6CInputs,
+  Variant6DInputs,
+  Variant6EInputs,
+  Variant6FInputs,
+  Variant6GInputs,
+  Variant6HInputs,
+  Variant6IInputs,
+  // Model Registry
+  ModelId,
 } from './models/index.js';
 
 // ============================================================

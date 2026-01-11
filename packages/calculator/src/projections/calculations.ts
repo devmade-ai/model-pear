@@ -140,12 +140,13 @@ export function calculatePaybackPeriod(cashFlows: CashFlows): Years | null {
   let cumulative = 0;
 
   for (let year = 0; year < cashFlows.length; year++) {
-    cumulative += cashFlows[year];
+    const cf = cashFlows[year] ?? 0;
+    cumulative += cf;
 
     if (cumulative >= 0 && year > 0) {
       // Interpolate for fractional year
-      const prevCumulative = cumulative - cashFlows[year];
-      const fraction = -prevCumulative / cashFlows[year];
+      const prevCumulative = cumulative - cf;
+      const fraction = cf !== 0 ? -prevCumulative / cf : 0;
       return year - 1 + fraction;
     }
   }
@@ -168,7 +169,8 @@ export function calculateDiscountedPaybackPeriod(
   let cumulative = 0;
 
   for (let year = 0; year < cashFlows.length; year++) {
-    const discountedCF = cashFlows[year] / Math.pow(1 + rate, year);
+    const cf = cashFlows[year] ?? 0;
+    const discountedCF = cf / Math.pow(1 + rate, year);
     cumulative += discountedCF;
 
     if (cumulative >= 0 && year > 0) {
@@ -202,7 +204,7 @@ export function calculateProfitabilityIndex(
   cashFlows: CashFlows,
   discountRate: Percentage
 ): number {
-  const initialInvestment = Math.abs(cashFlows[0]);
+  const initialInvestment = Math.abs(cashFlows[0] ?? 0);
   if (initialInvestment === 0) return 0;
 
   const npv = calculateNPV(cashFlows, discountRate);
