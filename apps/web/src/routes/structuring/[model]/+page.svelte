@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { base } from '$app/paths';
   import {
     calculateCostPlus,
     calculateLicence,
@@ -225,7 +226,7 @@
     <!-- Page header -->
     <div class="mb-8">
       <div class="flex items-center space-x-2 mb-2">
-        <a href="/structuring" class="text-blue-600 hover:text-blue-800 text-sm">
+        <a href="{base}/structuring" class="text-blue-600 hover:text-blue-800 text-sm">
           ← All Models
         </a>
       </div>
@@ -364,7 +365,7 @@
     <div class="text-center">
       <h1 class="text-2xl font-bold text-gray-900 mb-4">Model Not Found</h1>
       <p class="text-gray-600 mb-4">The requested model "{modelId}" was not found.</p>
-      <a href="/structuring" class="text-blue-600 hover:text-blue-800">
+      <a href="{base}/structuring" class="text-blue-600 hover:text-blue-800">
         ← Back to Model Selection
       </a>
     </div>

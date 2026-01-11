@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { base } from '$app/paths';
   import {
     MODEL_1_COST_PLUS,
     MODEL_2_LICENCE,
@@ -56,12 +57,12 @@
   ];
 
   function selectModel(modelId: string) {
-    goto(`/structuring/${modelId}`);
+    goto(`${base}/structuring/${modelId}`);
   }
 
   function handleWizardSelect(event: CustomEvent<{ modelId: ModelId; variantId?: string }>) {
     const { modelId } = event.detail;
-    goto(`/structuring/${modelId}`);
+    goto(`${base}/structuring/${modelId}`);
   }
 
   function handleWizardSkip() {
