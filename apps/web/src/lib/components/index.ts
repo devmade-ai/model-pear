@@ -16,3 +16,11 @@ export { default as TransferPricingResults } from './TransferPricingResults.svel
 // Comparison components
 export { default as ComparisonManager } from './ComparisonManager.svelte';
 export { default as ComparisonView } from './ComparisonView.svelte';
+
+// Analysis components
+export { default as ProjectionMetrics } from './ProjectionMetrics.svelte';
+export { default as SensitivityPanel } from './SensitivityPanel.svelte';
+export { default as ProjectionsPanel } from './ProjectionsPanel.svelte';
+
+// Chart components (re-export from charts folder)
+export * from './charts';

@@ -4,14 +4,25 @@
 
 /**
  * Format a number as South African Rand currency
+ * @param value - The number to format
+ * @param compact - If true, use compact notation (e.g., R1.2M)
  */
-export function formatCurrency(value: number, options?: { decimals?: number }): string {
-  const decimals = options?.decimals ?? 0;
+export function formatCurrency(value: number, compact?: boolean): string {
+  if (compact) {
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    if (absValue >= 1_000_000) {
+      return `${sign}R${(absValue / 1_000_000).toFixed(1)}M`;
+    } else if (absValue >= 1_000) {
+      return `${sign}R${(absValue / 1_000).toFixed(0)}K`;
+    }
+    return `${sign}R${absValue.toFixed(0)}`;
+  }
   return new Intl.NumberFormat('en-ZA', {
     style: 'currency',
     currency: 'ZAR',
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(value);
 }
 

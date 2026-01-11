@@ -28,9 +28,15 @@
     InputField,
     ComparisonManager,
     ComparisonView,
+    SensitivityPanel,
+    ProjectionsPanel,
   } from '$lib/components';
   import { modelFieldConfigs } from '$lib/config';
   import { comparisonStore, isComparing } from '$lib/stores';
+
+  // Active tab for analysis sections
+  type Tab = 'results' | 'sensitivity' | 'projections';
+  let activeTab: Tab = 'results';
 
   // Get model ID from URL
   $: modelId = $page.params.model;
@@ -257,21 +263,61 @@
         </div>
       </div>
 
-      <!-- Results -->
+      <!-- Results Area -->
       <div class="lg:col-span-2 space-y-6">
-        <!-- Save button -->
-        <div class="flex justify-end">
+        <!-- Header with Save button and Tabs -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <!-- Tabs -->
+          <div class="flex border-b border-gray-200">
+            <button
+              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {activeTab === 'results'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
+              on:click={() => (activeTab = 'results')}
+            >
+              Results
+            </button>
+            <button
+              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {activeTab === 'sensitivity'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
+              on:click={() => (activeTab = 'sensitivity')}
+            >
+              Sensitivity
+            </button>
+            <button
+              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {activeTab === 'projections'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
+              on:click={() => (activeTab = 'projections')}
+            >
+              Projections
+            </button>
+          </div>
+
+          <!-- Save button -->
           <button class="btn-primary" on:click={openSaveModal}>
             Save Option
           </button>
         </div>
 
-        <DeveloperResults developer={result.developer} />
-        <BuyerResults buyer={result.buyer} />
-        <TransferPricingResults transferPricing={result.transferPricing} />
+        <!-- Tab Content -->
+        {#if activeTab === 'results'}
+          <DeveloperResults developer={result.developer} />
+          <BuyerResults buyer={result.buyer} />
+          <TransferPricingResults transferPricing={result.transferPricing} />
 
-        <!-- Comparison Manager -->
-        <ComparisonManager />
+          <!-- Comparison Manager -->
+          <ComparisonManager />
+        {:else if activeTab === 'sensitivity'}
+          <SensitivityPanel
+            {inputs}
+            {result}
+            calculateFn={config.calculate}
+          />
+        {:else if activeTab === 'projections'}
+          <ProjectionsPanel {result} />
+        {/if}
 
         <!-- Metadata -->
         <div class="text-xs text-gray-400 text-right">
