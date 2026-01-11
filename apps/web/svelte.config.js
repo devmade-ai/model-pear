@@ -16,8 +16,8 @@ const config = {
       strict: true
     }),
     paths: {
-      // Set base path for GitHub Pages if needed
-      // base: process.env.NODE_ENV === 'production' ? '/model-pear' : ''
+      // Set base path for GitHub Pages deployment
+      base: process.env.NODE_ENV === 'production' ? '/model-pear' : ''
     }
   }
 };
