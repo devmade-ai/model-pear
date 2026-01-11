@@ -22,5 +22,8 @@ export { default as ProjectionMetrics } from './ProjectionMetrics.svelte';
 export { default as SensitivityPanel } from './SensitivityPanel.svelte';
 export { default as ProjectionsPanel } from './ProjectionsPanel.svelte';
 
+// Wizard components
+export { default as StructureWizard } from './StructureWizard.svelte';
+
 // Chart components (re-export from charts folder)
 export * from './charts';

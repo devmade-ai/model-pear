@@ -4,19 +4,6 @@
 
 ## Backlog
 
-### New Architecture: Structure Selector Wizard
-**Priority**: Medium
-**Effort**: Medium
-
-Port the decision tree wizard from the vanilla JS app to SvelteKit:
-- Question-based flow to recommend a model
-- Auto-advancing questions with "Change" option
-- Model recommendations with match scores
-
-Logic exists in `models/intercompany/structure-selector.js` - needs to be adapted for Svelte.
-
----
-
 ### New Architecture: Complete Input Field Configs
 **Priority**: Low
 **Effort**: Small
@@ -51,6 +38,18 @@ The folders `models/intercompany/` and `ui/intercompany/` use legacy naming from
 ---
 
 ## Completed
+
+### New Architecture: Structure Selector Wizard
+**Completed**: January 11, 2026
+
+Ported decision tree wizard from vanilla JS to SvelteKit:
+- StructureWizard component with progressive disclosure
+- 6 questions with model scoring algorithm
+- Live recommendation preview as user answers
+- Variant preference selector within recommended model
+- View mode toggle (Wizard | Browse All Models)
+
+---
 
 ### New Architecture: Sensitivity Analysis UI
 **Completed**: January 11, 2026

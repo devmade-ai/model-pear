@@ -61,6 +61,24 @@ Redesigned the application from vanilla JavaScript (~28,000 lines) to a TypeScri
 - Added tabbed interface to calculator page (Results | Sensitivity | Projections)
 - Updated formatters with compact currency notation for charts
 
+### Phase 6: Structure Selector Wizard (Jan 11)
+- Ported decision tree wizard from vanilla JS to SvelteKit
+- Created wizard configuration with 6 questions and scoring logic
+- Built StructureWizard component with:
+  - Progressive disclosure (auto-advancing questions)
+  - Live preview of recommendations as user answers
+  - Final results with ranked model recommendations
+  - Variant preference selector within each model
+  - Change/restart functionality
+- Added view mode toggle on structuring page (Wizard | Browse All Models)
+- Wizard recommends models based on:
+  - Software maturity (new/existing/SaaS)
+  - IP ownership preference
+  - Control preference
+  - Cash flow structure
+  - Risk allocation
+  - Asset recognition priority
+
 ### New File Structure
 ```
 model-pear/

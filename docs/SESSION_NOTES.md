@@ -6,66 +6,54 @@
 
 **Date:** 2026-01-11
 
-**Task:** Architecture Redesign - Phase 5 Complete (Analysis Features)
+**Task:** Architecture Redesign - Phase 6 Complete (Structure Selector Wizard)
 
-**Goal:** Add sensitivity analysis and growth projections visualizations to the SvelteKit app.
+**Goal:** Port the decision tree wizard from vanilla JS to SvelteKit.
 
 **What was done:**
 
-1. **Added ApexCharts Integration**
-   - Installed `apexcharts` dependency
-   - Created BaseChart component with SSR-safe dynamic import
+1. **Created Wizard Configuration** (`apps/web/src/lib/config/wizard.ts`)
+   - DECISION_FACTORS: 6 questions with scoring per model
+   - QUESTION_ORDER: Order of questions in wizard
+   - MODEL_METADATA: Model info for display
+   - VARIANT_FACTORS: Sub-questions for variant selection
+   - Scoring functions: calculateModelScores, getModelRecommendations
+   - Rationale generation: generateRationale
 
-2. **Created Chart Components** (`apps/web/src/lib/components/charts/`)
-   - `BaseChart.svelte` - ApexCharts wrapper with lifecycle management
-   - `TornadoChart.svelte` - Input sensitivity ranking visualization
-   - `ScenarioChart.svelte` - Best/base/worst case comparison
-   - `CashFlowChart.svelte` - Annual cash flow bar chart
-   - `CumulativeCashFlowChart.svelte` - Payback visualization with break-even line
-   - `NPVComparisonChart.svelte` - Developer vs Buyer NPV comparison
+2. **Built StructureWizard Component** (`apps/web/src/lib/components/StructureWizard.svelte`)
+   - Progressive disclosure (auto-advancing questions)
+   - Answered questions shown compactly with "Change" option
+   - Live preview of top 3 recommendations as user answers
+   - Final results with ranked models and match percentages
+   - Variant preference selector within selected model
+   - Skip wizard / Start over functionality
 
-3. **Created Analysis Components**
-   - `SensitivityPanel.svelte` - Combines tornado chart, scenario chart, and key drivers list
-   - `ProjectionsPanel.svelte` - NPV/IRR metrics, cash flow charts, configurable parameters
-   - `ProjectionMetrics.svelte` - Metrics summary card with assessment badge
-
-4. **Updated Calculator Page**
-   - Added tabbed interface (Results | Sensitivity | Projections)
-   - Integrated SensitivityPanel and ProjectionsPanel
-   - Tabs switch between calculation results and analysis views
-
-5. **Updated Formatters**
-   - Added compact currency notation for charts (R1.2M, R500K)
+3. **Updated Structuring Page**
+   - Added view mode toggle (Wizard | Browse All Models)
+   - Wizard is default view
+   - Integrated StructureWizard component
+   - Navigation to calculator page on model selection
 
 **Files Created/Modified:**
 ```
 apps/web/src/lib/
+├── config/
+│   ├── index.ts (updated exports)
+│   └── wizard.ts (NEW - 500+ lines)
 ├── components/
 │   ├── index.ts (updated exports)
-│   ├── ProjectionMetrics.svelte (NEW)
-│   ├── SensitivityPanel.svelte (NEW)
-│   ├── ProjectionsPanel.svelte (NEW)
-│   └── charts/
-│       ├── index.ts (NEW)
-│       ├── BaseChart.svelte (NEW)
-│       ├── TornadoChart.svelte (NEW)
-│       ├── ScenarioChart.svelte (NEW)
-│       ├── CashFlowChart.svelte (NEW)
-│       ├── CumulativeCashFlowChart.svelte (NEW)
-│       └── NPVComparisonChart.svelte (NEW)
-└── utils/
-    └── formatters.ts (updated)
+│   └── StructureWizard.svelte (NEW - 280 lines)
 
-apps/web/src/routes/structuring/[model]/+page.svelte (updated with tabs)
-apps/web/package.json (added apexcharts dependency)
+apps/web/src/routes/structuring/+page.svelte (updated with wizard)
 docs/HISTORY.md (updated)
+docs/TODO.md (updated)
 ```
 
-**Status:** Phase 5 Complete
+**Status:** Phase 6 Complete
 
 **Total Tests:** 301 tests across 8 test files (all passing)
 
-**Build Status:** Successful (warning about ApexCharts bundle size - expected)
+**Build Status:** Successful
 
 **Branch:** `claude/continue-work-TaIOJ`
 
@@ -86,9 +74,8 @@ model-pear/
 ├── apps/web/                     # SvelteKit 2.x frontend
 │   ├── src/
 │   │   ├── lib/
-│   │   │   ├── components/       # Svelte components
-│   │   │   │   └── charts/       # ApexCharts visualizations
-│   │   │   ├── config/           # Input field configurations
+│   │   │   ├── components/       # Svelte components + charts
+│   │   │   ├── config/           # Input fields + wizard config
 │   │   │   ├── stores/           # Svelte stores (comparison)
 │   │   │   └── utils/            # Formatting utilities
 │   │   └── routes/
@@ -96,7 +83,7 @@ model-pear/
 │   │       └── structuring/      # Transaction tool routes
 │   └── static/                   # Static assets
 │
-└── (original vanilla JS app remains in root for reference)
+└── (original vanilla JS app in legacy/ folder)
 ```
 
 ---
@@ -114,13 +101,10 @@ pnpm dev              # Start dev server (apps/web)
 
 ## Potential Next Steps
 
-### Medium Priority
-1. **Structure Selector Wizard** - Port decision tree wizard from vanilla JS
-2. **Mode 1: Pricing Calculator** - Add the 5 pricing models (SaaS, Usage-Based, etc.)
-3. **Complete Input Field Configs** - Add remaining model-specific inputs
-
 ### Low Priority
-4. **Print/Export** - PDF export for comparison and analysis results
-5. **Documentation** - Update CLAUDE.md architecture section
-6. **E2E Tests** - Add Playwright tests for UI workflows
-7. **Code Splitting** - Lazy load ApexCharts to reduce initial bundle
+1. **Complete Input Field Configs** - Add remaining model-specific inputs
+2. **Mode 1: Pricing Calculator** - Add the 5 pricing models (SaaS, Usage-Based, etc.)
+3. **Print/Export** - PDF export for comparison and analysis results
+4. **Documentation** - Update CLAUDE.md architecture section
+5. **E2E Tests** - Add Playwright tests for UI workflows
+6. **Code Splitting** - Lazy load ApexCharts to reduce initial bundle
