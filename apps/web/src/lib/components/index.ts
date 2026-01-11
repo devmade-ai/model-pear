@@ -12,3 +12,7 @@ export { default as InputField } from './InputField.svelte';
 export { default as DeveloperResults } from './DeveloperResults.svelte';
 export { default as BuyerResults } from './BuyerResults.svelte';
 export { default as TransferPricingResults } from './TransferPricingResults.svelte';
+
+// Comparison components
+export { default as ComparisonManager } from './ComparisonManager.svelte';
+export { default as ComparisonView } from './ComparisonView.svelte';

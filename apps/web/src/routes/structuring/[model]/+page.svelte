@@ -21,8 +21,16 @@
     type Variant5AInputs,
     type Variant6AInputs,
   } from '@model-pear/calculator';
-  import { DeveloperResults, BuyerResults, TransferPricingResults, InputField } from '$lib/components';
+  import {
+    DeveloperResults,
+    BuyerResults,
+    TransferPricingResults,
+    InputField,
+    ComparisonManager,
+    ComparisonView,
+  } from '$lib/components';
   import { modelFieldConfigs } from '$lib/config';
+  import { comparisonStore, isComparing } from '$lib/stores';
 
   // Get model ID from URL
   $: modelId = $page.params.model;
@@ -172,6 +180,34 @@
   function handleInputChange(event: CustomEvent<{ field: string; value: unknown }>) {
     inputs = { ...inputs, [event.detail.field]: event.detail.value };
   }
+
+  // Save current calculation as an option
+  let showSaveModal = false;
+  let saveName = '';
+
+  function openSaveModal() {
+    saveName = inputs.projectName as string || `${config?.model.name} Option`;
+    showSaveModal = true;
+  }
+
+  function saveOption() {
+    if (result && saveName.trim()) {
+      comparisonStore.save(
+        saveName.trim(),
+        modelId,
+        result.metadata.variantId,
+        inputs,
+        result
+      );
+      showSaveModal = false;
+      saveName = '';
+    }
+  }
+
+  function cancelSave() {
+    showSaveModal = false;
+    saveName = '';
+  }
 </script>
 
 <svelte:head>
@@ -223,9 +259,19 @@
 
       <!-- Results -->
       <div class="lg:col-span-2 space-y-6">
+        <!-- Save button -->
+        <div class="flex justify-end">
+          <button class="btn-primary" on:click={openSaveModal}>
+            Save Option
+          </button>
+        </div>
+
         <DeveloperResults developer={result.developer} />
         <BuyerResults buyer={result.buyer} />
         <TransferPricingResults transferPricing={result.transferPricing} />
+
+        <!-- Comparison Manager -->
+        <ComparisonManager />
 
         <!-- Metadata -->
         <div class="text-xs text-gray-400 text-right">
@@ -234,6 +280,39 @@
       </div>
     </div>
   </div>
+
+  <!-- Save Modal -->
+  {#if showSaveModal}
+    <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Save Option</h3>
+        <div class="mb-4">
+          <label for="saveName" class="block text-sm font-medium text-gray-700 mb-1">
+            Option Name
+          </label>
+          <input
+            type="text"
+            id="saveName"
+            bind:value={saveName}
+            class="input"
+            placeholder="Enter a name for this option"
+            on:keydown={(e) => e.key === 'Enter' && saveOption()}
+          />
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button class="btn-secondary" on:click={cancelSave}>Cancel</button>
+          <button class="btn-primary" on:click={saveOption} disabled={!saveName.trim()}>
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  {/if}
+
+  <!-- Comparison View -->
+  {#if $isComparing}
+    <ComparisonView />
+  {/if}
 {:else}
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center">
