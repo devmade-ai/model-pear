@@ -6,55 +6,58 @@
 
 **Date:** 2026-01-11
 
-**Task:** Architecture Redesign - Phase 3 (Tests & Projections)
+**Task:** Architecture Redesign - Phase 3 Complete (Tests, Projections & Sensitivity)
 
-**Goal:** Add comprehensive tests for all models and extract projection calculations.
+**Goal:** Add comprehensive tests for all models, extract projection and sensitivity calculations.
 
 **What was done:**
 
-1. **Added Tests for Models 2-6**
+1. **Added Tests for Models 2-6** (178 new tests)
    - Model 2 (Licence): 46 tests covering all 8 variants
    - Model 3 (Joint Dev): 28 tests covering all 8 variants
    - Model 4 (BOT): 32 tests covering all 8 variants
    - Model 5 (Software Sale): 35 tests covering all 8 variants
    - Model 6 (SaaS): 37 tests covering all 9 variants
 
-2. **Extracted Projections Module to TypeScript**
+2. **Extracted Projections Module** (39 tests)
    - NPV calculation with proper discounting
    - IRR using Newton-Raphson method
    - Simple and discounted payback period
    - MIRR, profitability index, ROI calculations
    - Investment assessment utility
    - Cash flow utilities (growing, cumulative, discount)
-   - 39 tests for projection calculations
+
+3. **Extracted Sensitivity Analysis Module** (40 tests)
+   - Range creation with configurable variance
+   - Scenario generation (best/base/worst case)
+   - Input sensitivity analysis with ranking
+   - Break-even analysis using binary search
+   - Monte Carlo simulation with triangular distribution
+   - Statistical utilities (mean, median, percentiles, histogram)
+   - Formatting utilities (currency, percentage)
 
 **Files Created:**
-- `packages/calculator/tests/models/model-2-licence.test.ts`
-- `packages/calculator/tests/models/model-3-joint-development.test.ts`
-- `packages/calculator/tests/models/model-4-bot.test.ts`
-- `packages/calculator/tests/models/model-5-software-sale.test.ts`
-- `packages/calculator/tests/models/model-6-saas.test.ts`
-- `packages/calculator/src/projections/types.ts`
-- `packages/calculator/src/projections/calculations.ts`
-- `packages/calculator/src/projections/index.ts`
+- `packages/calculator/tests/models/model-{2-6}-*.test.ts`
+- `packages/calculator/src/projections/{types,calculations,index}.ts`
 - `packages/calculator/tests/projections/calculations.test.ts`
-- Updated `packages/calculator/src/index.ts`
+- `packages/calculator/src/sensitivity/{types,calculations,index}.ts`
+- `packages/calculator/tests/sensitivity/calculations.test.ts`
 
 **Status:** Phase 3 Complete
 
-**Total Tests:** 261 tests across 7 test files (all passing)
+**Total Tests:** 301 tests across 8 test files (all passing)
 
 **Build Commands:**
 ```bash
 pnpm install          # Install dependencies
-pnpm test             # Run calculator tests (261 tests passing)
+pnpm test             # Run calculator tests (301 tests passing)
 pnpm build            # Build all packages
 ```
 
 **Next Steps:**
-- Extract sensitivity analysis module
-- Build out SvelteKit UI for all models
+- Build out SvelteKit UI for all 6 models
 - Add model comparison functionality
+- Add chart generation helpers
 
 ---
 
