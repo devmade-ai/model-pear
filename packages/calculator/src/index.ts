@@ -141,6 +141,62 @@ export type {
 } from './projections/index.js';
 
 // ============================================================
+// SENSITIVITY ANALYSIS
+// ============================================================
+
+export {
+  // Range handling
+  RANGE_CONFIGS,
+  createRange,
+  createInputRanges,
+  // Scenario generation
+  generateBestCaseInputs,
+  generateWorstCaseInputs,
+  generateBaseCaseInputs,
+  // Sensitivity analysis
+  calculateInputSensitivity,
+  // Break-even analysis
+  findBreakEvenValue,
+  // Monte Carlo simulation
+  triangularRandom,
+  generateRandomInputs,
+  calculateStatistics,
+  calculatePercentiles,
+  createHistogram,
+  runMonteCarloSimulation,
+  // Utilities
+  formatCurrency,
+  formatPercentage,
+} from './sensitivity/index.js';
+
+export type {
+  InputCategory as SensitivityInputCategory,
+  RangeConfig,
+  InputRange,
+  ScenarioInputs,
+  ScenarioResult,
+  ScenarioSummaryMetric,
+  ScenarioSummary,
+  ScenarioAnalysis,
+  InputSensitivity,
+  SensitivityAnalysis,
+  BreakEvenPoint,
+  BreakEvenAnalysis,
+  Statistics,
+  HistogramBin,
+  Percentiles,
+  ConfidenceInterval,
+  MonteCarloResult,
+  MonteCarloSimulation,
+  TornadoChartSeries,
+  TornadoChartData,
+  FanChartPoint,
+  FanChartData,
+  BreakEvenChartPoint,
+  BreakEvenChartData,
+} from './sensitivity/index.js';
+
+// ============================================================
 // COMPLIANCE (to be implemented)
 // ============================================================
 
