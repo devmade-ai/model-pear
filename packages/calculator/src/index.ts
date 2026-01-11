@@ -101,13 +101,44 @@ export type {
 export { DEFAULT_ENTITY_CONFIG, DEFAULT_TAX_PARAMS } from './types/index.js';
 
 // ============================================================
-// PROJECTIONS (to be implemented)
+// PROJECTIONS
 // ============================================================
 
-// export { calculateNPV } from './projections/npv.js';
-// export { calculateIRR } from './projections/irr.js';
-// export { calculatePayback } from './projections/payback.js';
-// export { runSensitivityAnalysis } from './projections/sensitivity.js';
+export {
+  // Core calculations
+  calculateNPV,
+  calculatePresentValue,
+  calculateFutureValue,
+  calculateIRR,
+  calculateMIRR,
+  calculatePaybackPeriod,
+  calculateDiscountedPaybackPeriod,
+  calculateProfitabilityIndex,
+  calculateROI,
+  calculateAnnualizedROI,
+  assessInvestment,
+  // Cash flow utilities
+  generateGrowingCashFlows,
+  calculateCumulativeCashFlows,
+  discountCashFlows,
+  // Constants
+  DEFAULT_PROJECTION_PARAMS,
+} from './projections/index.js';
+
+export type {
+  ProjectionParams,
+  CashFlows,
+  YearlyProjection,
+  BuyerYearlyProjection,
+  ProjectionMetrics,
+  InvestmentAssessment,
+  PartyProjection,
+  ProjectionResult,
+  ProjectionSummary,
+  BreakEvenResult,
+  AssetTrajectoryPoint,
+  AssetTrajectory,
+} from './projections/index.js';
 
 // ============================================================
 // COMPLIANCE (to be implemented)
