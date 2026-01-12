@@ -3,10 +3,44 @@
    * ComparisonView - Side-by-side comparison of saved options
    *
    * Shows 2-4 options in columns with difference highlighting.
+   * Supports print and CSV export.
    */
   import { selectedOptions, comparisonStore } from '$lib/stores';
   import type { SavedOption } from '$lib/stores';
   import { formatCurrency, formatPercent } from '$lib/utils/formatters';
+
+  // Export to CSV
+  function exportToCSV() {
+    const headers = ['Metric', ...$selectedOptions.map((o) => o.name)];
+    const rows: string[][] = [];
+
+    // Add each section and its rows
+    Object.entries(sections).forEach(([sectionName, sectionRows]) => {
+      rows.push([sectionName, ...Array($selectedOptions.length).fill('')]);
+      sectionRows.forEach((row) => {
+        rows.push([row.label, ...$selectedOptions.map((o) => row.format(row.getValue(o)))]);
+      });
+    });
+
+    // Add risk assessment
+    rows.push(['Risk Assessment', ...Array($selectedOptions.length).fill('')]);
+    rows.push(['Risk Level', ...$selectedOptions.map((o) => o.result.transferPricing.riskLevel.toUpperCase())]);
+    rows.push(['Within Range', ...$selectedOptions.map((o) => (o.result.transferPricing.withinRange ? 'Yes' : 'No'))]);
+
+    // Build CSV content
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    // Download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `comparison-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
 
   // Close comparison view
   function close() {
@@ -248,9 +282,16 @@
     </div>
 
     <!-- Footer -->
-    <div class="p-4 border-t bg-gray-50 flex justify-end space-x-3">
-      <button class="btn-secondary" on:click={() => window.print()}> Print </button>
-      <button class="btn-primary" on:click={close}> Close </button>
+    <div class="p-4 border-t bg-gray-50 flex justify-between">
+      <div class="flex space-x-2">
+        <button class="btn-outline no-print" on:click={exportToCSV} title="Export as CSV">
+          Export CSV
+        </button>
+        <button class="btn-outline no-print" on:click={() => window.print()} title="Print or save as PDF">
+          Print / PDF
+        </button>
+      </div>
+      <button class="btn-primary no-print" on:click={close}> Close </button>
     </div>
   </div>
 </div>

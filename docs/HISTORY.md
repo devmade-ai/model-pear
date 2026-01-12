@@ -114,6 +114,74 @@ pnpm dev              # Start dev server
 
 ---
 
+## Phase 7: Polish & Testing (January 2026)
+
+**Date**: January 12, 2026
+**Impact**: Enhanced export features, E2E testing, and mobile responsiveness
+
+### Print/Export Enhancements
+- Added print-optimized CSS with proper styling for comparison view
+- Added CSV export functionality to ComparisonView component
+- Buttons for "Export CSV" and "Print / PDF" in comparison modal footer
+
+### E2E Testing with Playwright
+- Added Playwright configuration for E2E tests (`playwright.config.ts`)
+- Created comprehensive test suites:
+  - `navigation.spec.ts` - Page navigation and routing
+  - `pricing-calculator.spec.ts` - Pricing model switching and calculations
+  - `structuring.spec.ts` - Transaction structuring wizard and model calculator
+  - `comparison.spec.ts` - Save and compare functionality
+  - `mobile.spec.ts` - Mobile responsiveness and touch interactions
+- Mobile viewport testing with iPhone and Pixel device emulation
+- Scripts: `pnpm test:e2e` and `pnpm test:e2e:ui`
+
+### Pricing Calculator Charts
+- Created EquilibriumChart component showing price range visualization
+- Shows seller minimum, buyer maximum, current price, and equilibrium zone
+- Integrated into pricing calculator results section
+- Supports both currency and percentage formats (for marketplace model)
+
+### Mobile Optimization
+- Added mobile hamburger menu navigation
+- Sticky header for better mobile UX
+- Horizontal scroll model selector on mobile with swipe hint
+- Touch-friendly tap targets with `touch-manipulation` CSS
+- Hidden scrollbars for horizontal scroll containers
+- Responsive footer layout
+
+### CSS Utilities Added
+- `scrollbar-hide` - Hide scrollbars for horizontal scroll
+- `touch-manipulation` - Touch-friendly interaction
+- `safe-area-inset` - Support for notched devices
+- Print media queries for proper PDF/print output
+
+### Files Created
+```
+apps/web/
+├── playwright.config.ts
+├── tests/e2e/
+│   ├── navigation.spec.ts
+│   ├── pricing-calculator.spec.ts
+│   ├── structuring.spec.ts
+│   ├── comparison.spec.ts
+│   └── mobile.spec.ts
+└── src/lib/components/charts/
+    └── EquilibriumChart.svelte
+```
+
+### Files Modified
+- `apps/web/package.json` - Added Playwright dependency and scripts
+- `apps/web/src/app.css` - Print styles and mobile utilities
+- `apps/web/src/routes/+layout.svelte` - Mobile navigation
+- `apps/web/src/routes/pricing/+page.svelte` - Equilibrium chart + mobile model selector
+- `apps/web/src/lib/components/ComparisonView.svelte` - CSV export
+- `apps/web/src/lib/components/charts/index.ts` - Export EquilibriumChart
+
+### Branch
+`claude/review-remaining-tasks-02suz`
+
+---
+
 ## Recent Bug Fixes & Improvements (January 2026)
 
 ### UI Component Hierarchy Documentation
