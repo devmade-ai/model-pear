@@ -71,19 +71,18 @@ model-pear/
 │   │   └── types/                # Shared TypeScript types
 │   └── tests/                    # 301 unit tests
 │
-├── apps/web/                     # SvelteKit 2.x frontend
-│   ├── src/
-│   │   ├── lib/
-│   │   │   ├── components/       # Svelte components + charts
-│   │   │   ├── config/           # Input fields + wizard config
-│   │   │   ├── stores/           # Svelte stores (comparison)
-│   │   │   └── utils/            # Formatting utilities
-│   │   └── routes/
-│   │       ├── +page.svelte      # Home page
-│   │       └── structuring/      # Transaction tool routes
-│   └── static/                   # Static assets
-│
-└── (original vanilla JS app in legacy/ folder)
+└── apps/web/                     # SvelteKit 2.x frontend
+    ├── src/
+    │   ├── lib/
+    │   │   ├── components/       # Svelte components + charts
+    │   │   ├── config/           # Input fields + wizard config
+    │   │   ├── stores/           # Svelte stores (comparison)
+    │   │   └── utils/            # Formatting utilities
+    │   └── routes/
+    │       ├── +page.svelte      # Home page
+    │       ├── pricing/          # Pricing calculator (5 models)
+    │       └── structuring/      # Transaction tool routes
+    └── static/                   # Static assets
 ```
 
 ---
@@ -102,9 +101,8 @@ pnpm dev              # Start dev server (apps/web)
 ## Potential Next Steps
 
 ### Low Priority
-1. **Complete Input Field Configs** - Add remaining model-specific inputs
-2. **Mode 1: Pricing Calculator** - Add the 5 pricing models (SaaS, Usage-Based, etc.)
-3. **Print/Export** - PDF export for comparison and analysis results
-4. **Documentation** - Update CLAUDE.md architecture section
-5. **E2E Tests** - Add Playwright tests for UI workflows
-6. **Code Splitting** - Lazy load ApexCharts to reduce initial bundle
+1. **Print/Export** - PDF export for comparison and analysis results
+2. **E2E Tests** - Add Playwright tests for UI workflows
+3. **Code Splitting** - Lazy load ApexCharts to reduce initial bundle
+4. **Pricing Charts** - Add equilibrium visualization charts to pricing calculator
+5. **Mobile Optimization** - Improve responsive design for smaller screens

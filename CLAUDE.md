@@ -34,7 +34,7 @@
 
 > **Purpose**: AI assistant context file for the Software Transaction Structuring Tool
 > **Last Updated**: January 2026
-> **Status**: Active - Comprehensive tool with 6 transaction models, 3 modules, sensitivity analysis, and growth projections
+> **Status**: Active - TypeScript + SvelteKit application with 5 pricing models and 6 transaction models (47 variants)
 
 ## System Purpose
 
@@ -71,74 +71,50 @@ The tool helps you optimise across multiple dimensions:
 
 | Technology | Purpose |
 |------------|---------|
-| HTML5 | Structure |
-| ES6 JavaScript | ~40 modules (~28,000 lines) |
-| Tailwind CSS (CDN) | Styling |
-| ApexCharts (CDN) | Visualisations |
-| GitHub Pages | Free hosting, no backend |
+| TypeScript | Type-safe calculation logic |
+| SvelteKit | Web framework |
+| Tailwind CSS | Styling |
+| ApexCharts | Visualisations |
+| pnpm | Package manager |
+| GitHub Pages | Static hosting |
 
 ### File Structure
 
 ```
 model-pear/
-├── index.html                  # Entry point (dual-mode: pricing + intercompany)
-├── styles.css                  # Custom styles
-├── app.js                      # Orchestrator (mode switching, dependencies)
+├── apps/
+│   └── web/                    # SvelteKit web application
+│       ├── src/
+│       │   ├── routes/
+│       │   │   ├── +page.svelte                # Home page
+│       │   │   ├── +layout.svelte              # Global layout with header/footer
+│       │   │   ├── pricing/                    # Mode 1: Pricing Calculator
+│       │   │   │   └── +page.svelte            # 5 pricing models (subscription, usage, seat, one-time, marketplace)
+│       │   │   └── structuring/                # Mode 2: Transaction Structuring
+│       │   │       ├── +page.svelte            # Model browser (Options Overview)
+│       │   │       └── [model]/                # Dynamic route for models 1-6
+│       │   │           └── +page.svelte        # Model calculator with variants
+│       │   └── lib/
+│       │       ├── components/                 # Reusable UI components
+│       │       ├── stores/                     # Svelte stores
+│       │       ├── config/                     # Configuration
+│       │       └── utils/                      # Utilities
+│       ├── svelte.config.js                    # SvelteKit config (GitHub Pages adapter)
+│       └── package.json
 │
-├── config/
-│   ├── constants.js            # Chart colors, global config
-│   └── sa-pricing-defaults.js  # South African market defaults (ZAR)
-│
-├── state/
-│   └── app-state.js            # Pub/sub state management for both modes
-│
-├── models/
-│   ├── index.js                # 5 pricing models with calculation logic
-│   └── intercompany/           # Transaction models (legacy folder name)
-│       ├── registry.js         # Model registry with helper functions
-│       ├── model-1-cost-plus.js        # Model 1: Development Services (6 variants)
-│       ├── model-2-licence-royalties.js # Model 2: Software Licence (8 variants)
-│       ├── model-3-joint-development.js # Model 3: Joint Development (8 variants)
-│       ├── model-4-bot.js              # Model 4: Build-Operate-Transfer (8 variants)
-│       ├── model-5-software-sale.js    # Model 5: Software Sale (8 variants)
-│       ├── model-6-saas-subscription.js # Model 6: SaaS/Subscription (9 variants)
-│       ├── structure-selector.js       # Module 1: Decision tree wizard
-│       ├── compliance-analyzer.js      # Module 3: TP risk, checklists, analysis
-│       ├── sensitivity-analysis.js     # Stage 2: Range inputs, scenarios, Monte Carlo
-│       ├── growth-projections.js       # Stage 3: NPV, IRR, payback calculations
-│       └── advanced-visualizations.js  # Cross-model comparison, timelines, risk charts
-│
-├── calculators/
-│   ├── engine.js               # Main calculation engine (pricing mode)
-│   └── reverse-calculations.js # Auto-calculate missing inputs
-│
-├── ui/
-│   ├── initialization.js       # App startup
-│   ├── forms.js                # Dynamic form generation
-│   ├── results-display.js      # Render result panels (pricing)
-│   ├── modals.js               # Tooltips and modals
-│   └── intercompany/           # Transaction structuring UI (legacy folder name)
-│       ├── calculator.js               # Main transaction calculator
-│       ├── entity-config.js            # Developer/Buyer entity configuration
-│       ├── perspective-toggle.js       # Perspective switcher (Developer/Buyer)
-│       ├── party-selector.js           # Party relationship selector (Independent/Related)
-│       ├── results-display.js          # Perspective-based results rendering
-│       ├── structure-selector.js       # Module 1: Wizard UI
-│       ├── options-overview.js         # Options Overview: Model selection grid
-│       ├── comparison-manager.js       # Compare Mode: Saved options panel
-│       ├── comparison-view.js          # Compare Mode: Side-by-side comparison
-│       ├── compliance-analyzer.js      # Module 3: Compliance UI
-│       ├── range-input.js              # Stage 2: Range input components
-│       ├── sensitivity-visualizations.js # Stage 2: Tornado, fan, break-even charts
-│       ├── projection-visualizations.js  # Stage 3: NPV, ROI, cash flow charts
-│       └── advanced-visualizations.js    # Cross-model comparison, timeline charts
-│
-├── charts/
-│   └── index.js                # Equilibrium chart rendering (pricing mode)
-│
-├── utils/
-│   ├── index.js                # Formatting, validation, helpers
-│   └── storage.js              # Compare Mode: localStorage persistence
+├── packages/
+│   └── calculator/             # Pure TypeScript calculation engine
+│       ├── src/
+│       │   ├── models/                         # 6 transaction models with variants
+│       │   │   ├── costPlus.ts                 # Model 1: Development Services (6 variants)
+│       │   │   ├── licenceRoyalties.ts         # Model 2: Software Licence (8 variants)
+│       │   │   ├── jointDevelopment.ts         # Model 3: Joint Development (8 variants)
+│       │   │   ├── buildOperateTransfer.ts     # Model 4: BOT (8 variants)
+│       │   │   ├── softwareSale.ts             # Model 5: Software Sale (8 variants)
+│       │   │   └── saasSubscription.ts         # Model 6: SaaS/Subscription (9 variants)
+│       │   └── types/                          # TypeScript interfaces
+│       ├── tsconfig.json
+│       └── package.json
 │
 ├── CLAUDE.md                   # This file (AI assistant context)
 │
@@ -146,11 +122,8 @@ model-pear/
     ├── README.md               # Quick start
     ├── BUSINESS_GUIDE.md       # Comprehensive user guide with tutorials
     ├── CALCULATIONS.md         # Formula explanations
-    ├── UI_UX_GUIDE.md          # Accessibility features
-    ├── UI_COMPONENT_HIERARCHY.md  # UI component organization reference
+    ├── ARCHITECTURE.md         # Technical architecture
     ├── HISTORY.md              # Changelog
-    ├── USAGE_SCENARIOS_REVIEW.md  # User workflow analysis
-    ├── financial_models_intercompany_software.md  # Framework overview
     └── model_*_concept.md      # Concept docs for Models 1-6
 ```
 
