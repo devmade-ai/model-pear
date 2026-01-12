@@ -112,4 +112,100 @@
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
+
+  /* Hide scrollbar for horizontal scroll on mobile */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Touch-friendly tap targets */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Safe area padding for notched devices */
+  .safe-area-inset {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Print styles for comparison view and reports */
+@media print {
+  /* Hide navigation and interactive elements */
+  nav,
+  header,
+  footer,
+  .no-print,
+  button:not(.print-include),
+  .btn,
+  .btn-primary,
+  .btn-secondary {
+    display: none !important;
+  }
+
+  /* Reset background and shadows for printing */
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Full width for print content */
+  .print-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure comparison modal prints properly */
+  .fixed.inset-0 {
+    position: relative !important;
+    background: white !important;
+  }
+
+  .fixed.inset-0 > div {
+    max-width: 100% !important;
+    max-height: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Keep colors for badges and highlights */
+  .bg-green-100,
+  .bg-amber-100,
+  .bg-red-100,
+  .bg-green-50,
+  .bg-blue-50 {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Table styling for print */
+  table {
+    width: 100% !important;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid #e5e7eb !important;
+    padding: 8px !important;
+  }
+
+  /* Page break control */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+  }
 }

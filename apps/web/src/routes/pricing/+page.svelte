@@ -1,5 +1,6 @@
 <script lang="ts">
   import { formatCurrency, formatPercent } from '$lib/utils/formatters';
+  import { EquilibriumChart } from '$lib/components/charts';
 
   const models = [
     { id: 'subscription', name: 'Subscription (SaaS)', icon: '🔄', description: 'Monthly recurring revenue' },
@@ -252,20 +253,22 @@
   <!-- Model Selector -->
   <div class="mb-8">
     <label class="block text-sm font-medium text-gray-700 mb-3">Pricing Model</label>
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+    <!-- Mobile: horizontal scroll, Tablet+: grid -->
+    <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-3 md:grid-cols-5 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
       {#each models as model}
         <button
-          class="p-4 border-2 rounded-lg transition-all text-left {selectedModel === model.id
+          class="flex-shrink-0 w-28 sm:w-auto p-3 sm:p-4 border-2 rounded-lg transition-all text-left touch-manipulation {selectedModel === model.id
             ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-200 hover:border-gray-300'}"
+            : 'border-gray-200 hover:border-gray-300 active:bg-gray-50'}"
           on:click={() => selectedModel = model.id}
         >
-          <div class="text-2xl mb-2">{model.icon}</div>
-          <div class="font-medium text-sm text-gray-900">{model.name}</div>
-          <div class="text-xs text-gray-500 mt-1">{model.description}</div>
+          <div class="text-xl sm:text-2xl mb-1 sm:mb-2">{model.icon}</div>
+          <div class="font-medium text-xs sm:text-sm text-gray-900 leading-tight">{model.name}</div>
+          <div class="text-xs text-gray-500 mt-1 hidden sm:block">{model.description}</div>
         </button>
       {/each}
     </div>
+    <p class="text-xs text-gray-400 mt-2 sm:hidden text-center">Swipe to see all models</p>
   </div>
 
   <div class="grid lg:grid-cols-2 gap-8">
@@ -569,6 +572,26 @@
                 Your minimum price ({selectedModel === 'marketplace' ? formatPercent(results.minimumPrice) : formatCurrency(results.minimumPrice)}) exceeds the client's maximum ({selectedModel === 'marketplace' ? formatPercent(results.maximumPrice) : formatCurrency(results.maximumPrice)})
               </p>
             {/if}
+          </div>
+
+          <!-- Equilibrium Visualization -->
+          <div class="mb-6">
+            <h3 class="text-sm font-medium text-gray-700 mb-3">Price Range Visualization</h3>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <EquilibriumChart
+                minimumPrice={results.minimumPrice}
+                maximumPrice={results.maximumPrice}
+                currentPrice={selectedModel === 'subscription' ? sub_monthlyPrice :
+                              selectedModel === 'usage-based' ? usage_pricePerUnit :
+                              selectedModel === 'per-seat' ? seat_pricePerSeat :
+                              selectedModel === 'one-time' ? onetime_licensePrice :
+                              market_commissionRate}
+                suggestedPrice={results.suggestedPrice}
+                equilibriumExists={results.equilibriumExists}
+                isPercentage={selectedModel === 'marketplace'}
+                height={180}
+              />
+            </div>
           </div>
 
           <!-- Financial Metrics -->

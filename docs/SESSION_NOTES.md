@@ -4,58 +4,67 @@
 
 ## Current Session
 
-**Date:** 2026-01-11
+**Date:** 2026-01-12
 
-**Task:** Architecture Redesign - Phase 6 Complete (Structure Selector Wizard)
+**Task:** Phase 7 Complete - Polish & Testing
 
-**Goal:** Port the decision tree wizard from vanilla JS to SvelteKit.
+**Goal:** Complete remaining nice-to-have features from the session notes backlog.
 
 **What was done:**
 
-1. **Created Wizard Configuration** (`apps/web/src/lib/config/wizard.ts`)
-   - DECISION_FACTORS: 6 questions with scoring per model
-   - QUESTION_ORDER: Order of questions in wizard
-   - MODEL_METADATA: Model info for display
-   - VARIANT_FACTORS: Sub-questions for variant selection
-   - Scoring functions: calculateModelScores, getModelRecommendations
-   - Rationale generation: generateRationale
+1. **Print/Export Enhancements**
+   - Added print-optimized CSS (`@media print` styles in app.css)
+   - Added CSV export to ComparisonView component
+   - Export buttons: "Export CSV" and "Print / PDF"
 
-2. **Built StructureWizard Component** (`apps/web/src/lib/components/StructureWizard.svelte`)
-   - Progressive disclosure (auto-advancing questions)
-   - Answered questions shown compactly with "Change" option
-   - Live preview of top 3 recommendations as user answers
-   - Final results with ranked models and match percentages
-   - Variant preference selector within selected model
-   - Skip wizard / Start over functionality
+2. **E2E Testing with Playwright**
+   - Created Playwright config (`playwright.config.ts`)
+   - 5 test files covering: navigation, pricing calculator, structuring, comparison, mobile
+   - Mobile viewport testing with device emulation
+   - Commands: `pnpm test:e2e` and `pnpm test:e2e:ui`
 
-3. **Updated Structuring Page**
-   - Added view mode toggle (Wizard | Browse All Models)
-   - Wizard is default view
-   - Integrated StructureWizard component
-   - Navigation to calculator page on model selection
+3. **Pricing Calculator Charts**
+   - New `EquilibriumChart.svelte` component
+   - Visualizes seller minimum, buyer maximum, current price, equilibrium zone
+   - Integrated into pricing calculator results
 
-**Files Created/Modified:**
+4. **Mobile Optimization**
+   - Mobile hamburger menu navigation with open/close toggle
+   - Sticky header for better mobile UX
+   - Horizontal scrollable model selector on mobile
+   - Touch-friendly CSS utilities
+   - Responsive footer layout
+
+5. **Code Splitting** (already implemented)
+   - ApexCharts already uses dynamic imports in BaseChart.svelte
+
+**Files Created:**
 ```
-apps/web/src/lib/
-├── config/
-│   ├── index.ts (updated exports)
-│   └── wizard.ts (NEW - 500+ lines)
-├── components/
-│   ├── index.ts (updated exports)
-│   └── StructureWizard.svelte (NEW - 280 lines)
+apps/web/playwright.config.ts
+apps/web/tests/e2e/navigation.spec.ts
+apps/web/tests/e2e/pricing-calculator.spec.ts
+apps/web/tests/e2e/structuring.spec.ts
+apps/web/tests/e2e/comparison.spec.ts
+apps/web/tests/e2e/mobile.spec.ts
+apps/web/src/lib/components/charts/EquilibriumChart.svelte
+```
 
-apps/web/src/routes/structuring/+page.svelte (updated with wizard)
+**Files Modified:**
+```
+apps/web/package.json (Playwright + scripts)
+apps/web/src/app.css (print styles + mobile utilities)
+apps/web/src/routes/+layout.svelte (mobile nav)
+apps/web/src/routes/pricing/+page.svelte (chart + mobile selector)
+apps/web/src/lib/components/ComparisonView.svelte (CSV export)
+apps/web/src/lib/components/charts/index.ts (export)
 docs/HISTORY.md (updated)
-docs/TODO.md (updated)
 ```
 
-**Status:** Phase 6 Complete
+**Status:** All 5 items from SESSION_NOTES backlog completed
 
-**Total Tests:** 301 tests across 8 test files (all passing)
+**Total Tests:** 301 unit tests (all passing) + E2E test suite ready
 
 **Build Status:** Successful
-
-**Branch:** `claude/continue-work-TaIOJ`
 
 ---
 
@@ -82,6 +91,7 @@ model-pear/
     │       ├── +page.svelte      # Home page
     │       ├── pricing/          # Pricing calculator (5 models)
     │       └── structuring/      # Transaction tool routes
+    ├── tests/e2e/                # Playwright E2E tests
     └── static/                   # Static assets
 ```
 
@@ -94,15 +104,22 @@ pnpm install          # Install dependencies
 pnpm test             # Run calculator tests (301 tests)
 pnpm build            # Build all packages
 pnpm dev              # Start dev server (apps/web)
+pnpm test:e2e         # Run Playwright E2E tests
+pnpm test:e2e:ui      # Run Playwright with UI
 ```
 
 ---
 
-## Potential Next Steps
+## Completed Items (from previous backlog)
 
-### Low Priority
-1. **Print/Export** - PDF export for comparison and analysis results
-2. **E2E Tests** - Add Playwright tests for UI workflows
-3. **Code Splitting** - Lazy load ApexCharts to reduce initial bundle
-4. **Pricing Charts** - Add equilibrium visualization charts to pricing calculator
-5. **Mobile Optimization** - Improve responsive design for smaller screens
+- [x] Print/Export - PDF export for comparison and analysis results
+- [x] E2E Tests - Playwright tests for UI workflows
+- [x] Code Splitting - ApexCharts lazy loading (already done)
+- [x] Pricing Charts - Equilibrium visualization
+- [x] Mobile Optimization - Responsive design improvements
+
+## Remaining Ideas (Future Features)
+
+- **Recommendation Summary** - Add weighted scoring to Compare Mode
+- **Accounting Treatment Comparison** - Journal entries side-by-side in Compare Mode
+- **Rename "intercompany" folders** - Rename to `transactions/` (low priority)
