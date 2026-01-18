@@ -7,6 +7,48 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Transfer Pricing Documentation Review (January 18, 2026)
+
+**Impact**: Corrected technical inaccuracies across all model use cases and CALCULATIONS.md
+
+### Model Use Case Corrections
+
+- **Model 1**: Fixed OECD citation (5-15% is market practice, not OECD guidance), margin vs markup terminology, IAS 38 caveats
+- **Model 2**: Added IFRS 15 caveats, softened reseller margin claims, expanded TP complexity notes, added withholding tax considerations
+- **Model 3**: Major restructure - fixed fundamental CCA errors (contributions must align with benefits), added buy-in/buy-out/balancing payment mechanics, converted 3G to Required Provisions section
+- **Model 4**: Fixed BOT structure - added operation phase economics and transition considerations, converted 4G to Standard Provisions section, fixed UK withholding tax error
+- **Model 5**: Fixed arithmetic error in 5B (R1.5M → R1.75M), added Sale Mechanics section, restructured variant selection guide
+- **Model 6**: Added SaaS characterisation note, fixed regulatory reference (SARB → POPIA), added Standard SaaS Contract Elements section
+
+### CALCULATIONS.md Corrections
+
+- Clarified payback period formula context (recurring vs one-time)
+- Reconciled Model 4 variant numbering with use cases
+- Added CCA payment calculations (buy-in, buy-out, balancing payments)
+- Defined margin compliance ranges in TP risk section
+- Fixed BOT TP assessment language
+- Added IFRS 15 variable consideration constraint for earnouts
+- Added Mode 1/Mode 2 calculator model mapping table
+- Added economies of scale limitation acknowledgement
+
+### Documentation Cleanup
+
+Deleted 10 stale files (~6,200 lines):
+- `MANUAL_TESTING_GUIDE.md`, `UI_COMPONENT_HIERARCHY.md` (old vanilla JS references)
+- `USAGE_SCENARIOS_REVIEW.md` (completed review)
+- `financial_models_intercompany_software.md` (superseded)
+- 6 `model_*_concept.md` files (superseded by model-use-cases/)
+
+Updated:
+- `README.md` (docs/) - Updated for TypeScript/SvelteKit architecture
+- `ARCHITECTURE.md` - Status changed to "Complete"
+- `SESSION_NOTES.md` - Trimmed to reference info only
+- `TODO.md` - Trimmed completed items
+- `CLAUDE.md` - Added full documentation reference, clarified doc update timing
+- Created root `README.md` linking to docs/
+
+---
+
 ## Architecture Redesign: TypeScript Monorepo (January 2026)
 
 **Date**: January 10-11, 2026

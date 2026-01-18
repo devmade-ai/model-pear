@@ -9,14 +9,47 @@
 1. **User-first design** - Align with how real people will use the tool (top priority)
 2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
 3. **Document WHY** - Explain decisions and how they align with tool goals
-4. **Keep docs updated** - HISTORY.md, CALCULATIONS.md, BUSINESS_GUIDE.md, CLAUDE.md as relevant
+4. **Keep docs updated immediately** - Update relevant docs right after each change, before moving to the next task (sessions can end abruptly)
 5. **Testability** - Ensure correctness and alignment with usage goals can be verified
 6. **Know the purpose** - Always be aware of what the tool is for
-7. **Logical checkpoints** - Stop at sensible points, document progress in docs/SESSION_NOTES.md
+7. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
 8. **Follow conventions** - Best practices and consistent patterns
-9. **Capture ideas** - Add lower priority items and improvements I notice to docs/TODO.md so they persist between sessions (AI-managed, user can review)
+9. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
 10. **Repeatable process** - Follow consistent steps to ensure all the above
 11. **Document user actions** - When manual user action is required (external dashboards, credentials, etc.), add detailed instructions to docs/USER_ACTIONS.md
+
+## AI Checklists
+
+### At Session Start
+- [ ] Read CLAUDE.md (this file)
+- [ ] Read SESSION_NOTES.md for current state and context
+- [ ] Check TODO.md for pending items
+- [ ] Understand what was last done before starting new work
+
+### After Each Significant Task
+- [ ] Update SESSION_NOTES.md with current state
+- [ ] Update relevant docs (CALCULATIONS.md, BUSINESS_GUIDE.md, etc.)
+- [ ] Add entry to HISTORY.md if code/docs changed
+- [ ] Commit changes (code + docs together)
+
+### Before Each Commit
+- [ ] Relevant docs updated for changes in this commit
+- [ ] HISTORY.md entry added (if significant change)
+- [ ] SESSION_NOTES.md reflects current state
+- [ ] Commit message is clear and descriptive
+
+### Before Each Push
+- [ ] All commits include their related doc updates
+- [ ] SESSION_NOTES.md is current (in case session ends)
+- [ ] No work-in-progress that would be lost
+
+### Before Compact
+- [ ] SESSION_NOTES.md updated with full context needed to continue after summary:
+  - What's being worked on?
+  - Current state of the work?
+  - What's left to do?
+  - Any decisions or blockers?
+  - Key details that shouldn't be lost in the summary
 
 ## AI Notes
 
@@ -24,8 +57,6 @@
 
 - Always read a file before attempting to edit it
 - Check for existing patterns in the codebase before creating new ones
-- Commit and push changes before ending a session
-- Keep SESSION_NOTES.md lean - remove previous session notes once no longer relevant
 - Clean up completed or obsolete docs/files and remove references to them
 
 ---
@@ -119,12 +150,22 @@ model-pear/
 ├── CLAUDE.md                   # This file (AI assistant context)
 │
 └── docs/
-    ├── README.md               # Quick start
+    ├── README.md               # Quick start and project overview
     ├── BUSINESS_GUIDE.md       # Comprehensive user guide with tutorials
-    ├── CALCULATIONS.md         # Formula explanations
-    ├── ARCHITECTURE.md         # Technical architecture
-    ├── HISTORY.md              # Changelog
-    └── model_*_concept.md      # Concept docs for Models 1-6
+    ├── CALCULATIONS.md         # Formula explanations and economic theory
+    ├── ARCHITECTURE.md         # Technical architecture (TypeScript monorepo)
+    ├── HISTORY.md              # Changelog and bug fixes
+    ├── SESSION_NOTES.md        # Build commands and architecture reference
+    ├── TODO.md                 # Feature ideas and backlog
+    ├── USER_ACTIONS.md         # Manual user action instructions (when needed)
+    └── model-use-cases/        # When to use each model variant
+        ├── README.md           # Model selection guide
+        ├── model-1-development-services.md
+        ├── model-2-software-licence.md
+        ├── model-3-joint-development.md
+        ├── model-4-build-operate-transfer.md
+        ├── model-5-software-sale.md
+        └── model-6-saas-subscription.md
 ```
 
 ## The Two Modes
@@ -415,14 +456,20 @@ const profit = revenue - cost;
 const profit = revenue - cost;
 ```
 
-## Documentation Maintenance
+## Documentation Reference
 
-| File | Update When |
-|------|-------------|
-| **CLAUDE.md** (root) | Architecture, models, or major features change |
-| **BUSINESS_GUIDE.md** | User workflows, features, or terminology change |
-| **CALCULATIONS.md** | Formulas or calculation logic change |
-| **HISTORY.md** | Any change to the application |
+| Document | Purpose | Update When |
+|----------|---------|-------------|
+| **CLAUDE.md** (root) | AI assistant context, architecture overview, development guide | Architecture, models, or major features change |
+| **docs/README.md** | Quick start guide, project overview | Tech stack or setup process changes |
+| **docs/BUSINESS_GUIDE.md** | Comprehensive user guide with tutorials | User workflows, features, or terminology change |
+| **docs/CALCULATIONS.md** | All formulas, rationale, economic theory | Formulas or calculation logic change |
+| **docs/ARCHITECTURE.md** | Technical architecture (TypeScript monorepo) | Build process, package structure, or tech decisions change |
+| **docs/HISTORY.md** | Changelog and bug fixes | Any change to the application |
+| **docs/SESSION_NOTES.md** | Session continuity - context for next AI to continue work | After each significant task (sessions end abruptly); remove stale notes |
+| **docs/TODO.md** | Feature ideas and backlog | Add ideas to persist between sessions |
+| **docs/USER_ACTIONS.md** | Manual user action instructions | When user needs to do something outside the tool |
+| **docs/model-use-cases/** | When to use each model variant, TP considerations | Model logic or variant definitions change |
 
 ## Troubleshooting
 

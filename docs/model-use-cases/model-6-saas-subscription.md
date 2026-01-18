@@ -8,13 +8,15 @@
 
 ## Overview
 
-Model 6 is best when **Buyer wants access without ownership** and Developer wants recurring revenue. Developer retains the asset and hosts it; Buyer pays subscription fees for access. No IP transfer — pure services model.
+Model 6 is best when **Buyer wants access without ownership** and Developer wants recurring revenue. Developer retains the asset and hosts it; Buyer pays subscription fees for access.
 
 **Choose Model 6 over other models when:**
-- Buyer prefers OPEX over CAPEX (no asset on balance sheet)
+- Buyer prefers OPEX over CAPEX (subscription fees typically expensed; however, significant implementation or configuration costs may still require capitalisation under ASC 350-40/IFRS)
 - Developer wants predictable recurring revenue
 - Rapid deployment needed (no implementation overhead)
 - Buyer wants flexibility to exit (no long-term lock-in)
+
+**Characterisation note:** While SaaS is typically treated as a services model, tax characterisation varies by jurisdiction. Some authorities (notably India historically) characterise SaaS payments as royalties rather than service fees, affecting withholding tax treatment. Cross-border arrangements require characterisation analysis based on specific terms and applicable treaties.
 
 ---
 
@@ -123,8 +125,16 @@ Base subscription plus custom development for Buyer-specific requirements.
 - Buyer gets tailored solution without building from scratch
 - Platform + custom layers clearly separated
 
+### IP Ownership for Customisations
+
+Address explicitly in contract:
+- **Ownership**: Does Buyer own custom code, or does Developer retain rights?
+- **Reuse**: Can Developer incorporate customisations into standard product for other customers?
+- **Termination**: What happens to customisations if Buyer terminates subscription?
+- **Accounting**: If Buyer owns custom code, the R80k may be capitalisable; if Developer owns, it's typically expensed
+
 ### Transfer Pricing Consideration
-Subscription and customisation separately benchmarked. Custom development at arm's length rates.
+Subscription and customisation separately benchmarked. Custom development at arm's length rates. If Buyer owns resulting IP, characterise as development services; if Developer owns, characterise as SaaS enhancement.
 
 ---
 
@@ -159,7 +169,7 @@ Data stored in specific geographic location for regulatory compliance.
 **Regulatory or policy requirement** — data must remain in specific jurisdiction.
 
 ### Real-World Example
-> A South African bank subscribes to customer analytics SaaS. SARB regulations require customer data to remain in South Africa. Standard SaaS: data in global cloud (R3,000/month). SA data residency option: dedicated SA-based infrastructure (R4,500/month). Bank pays premium for compliance certainty.
+> A South African bank subscribes to customer analytics SaaS. Regulatory requirements (POPIA for data protection, sector-specific banking regulations) require customer data to remain in South Africa. Standard SaaS: data in global cloud (R3,000/month). SA data residency option: dedicated SA-based infrastructure (R4,500/month). Bank pays premium for compliance certainty.
 
 ### Why 6G Over Other Variants
 - Meets regulatory requirements
@@ -168,7 +178,7 @@ Data stored in specific geographic location for regulatory compliance.
 - Enables SaaS for regulated industries
 
 ### Transfer Pricing Consideration
-Data residency premium should reflect actual infrastructure cost differential.
+Data residency premium should reflect actual infrastructure cost differential. **PE risk:** Local infrastructure may create permanent establishment issues — if Developer hosts servers in Buyer's jurisdiction, tax nexus questions arise. If Developer has local entity, intercompany pricing for infrastructure services applies. Consider PE implications when structuring data residency arrangements.
 
 ---
 
@@ -199,6 +209,8 @@ Commitment discount should reflect market practice. Document comparable enterpri
 ### Description
 Buyer rebrands platform and resells to their end customers. Reseller/partner model.
 
+**Cross-reference:** Compare with [Model 2F (White-Label/Reseller Licence)](./model-2-software-licence.md#variant-2f-white-label--reseller-licence). Key difference: 6I = Developer hosts (SaaS delivery); 2F = Buyer or end-customer hosts (licence delivery). Choose based on who operates infrastructure.
+
 ### Best Scenario
 **Buyer has distribution capability** — can reach end customers that Developer cannot access directly.
 
@@ -216,7 +228,40 @@ Platform fee and per-seat royalty separately benchmarked. Reseller margin should
 
 ---
 
+## Standard SaaS Contract Elements
+
+The following apply to **all SaaS variants** and affect economics:
+
+### Service Credits
+Standard SaaS includes credits for downtime below SLA threshold:
+- Typical structure: Credits equal to percentage of monthly fee for downtime hours
+- Credits reduce effective pricing and should be factored into deal economics
+- Example: 1% credit per hour below 99.9% uptime = up to 7% monthly fee reduction
+
+### Data Portability and Exit Rights
+Address before signing:
+- **Data export**: Buyer's right to extract their data on termination
+- **Format**: Structured export (CSV, JSON) vs raw database dump
+- **Timeline**: How long Developer retains data post-termination
+- **Cost**: Export assistance fees if any
+
+### Auto-Renewal and Termination
+Lock-in mechanics affect pricing negotiation:
+- **Auto-renewal**: Most SaaS auto-renews; understand notice periods
+- **Termination for convenience**: Can Buyer exit early? Penalties?
+- **Termination for cause**: SLA breach, security incident, material breach
+
+### Data Ownership and Usage Rights
+Buyer's data resides in Developer's systems:
+- **Ownership**: Buyer owns their data; Developer has licence to host
+- **Usage**: Can Developer use anonymised/aggregated data for analytics, benchmarking?
+- **Security**: Data protection obligations, breach notification requirements
+
+---
+
 ## Variant Selection Guide
+
+**Pricing structure variants** (choose one as base):
 
 | Scenario | Best Variant |
 |----------|--------------|
@@ -224,11 +269,23 @@ Platform fee and per-seat royalty separately benchmarked. Reseller margin should
 | Value scales with user count | **6B** — per-user |
 | Variable/unpredictable usage | **6C** — usage-based |
 | Different customer segments | **6D** — tiered pricing |
-| Standard platform + custom needs | **6E** — customisation |
-| Mission-critical deployment | **6F** — premium support |
-| Regulatory data residency | **6G** — data residency |
-| Large enterprise, multi-year commit | **6H** — committed discount |
+
+**Service/compliance options** (can combine with pricing variant):
+
+| Scenario | Add Variant |
+|----------|-------------|
+| Standard platform + custom needs | **+ 6E** — customisation |
+| Mission-critical deployment | **+ 6F** — premium support |
+| Regulatory data residency | **+ 6G** — data residency |
+| Multi-year commitment desired | **+ 6H** — committed discount |
+
+**Channel variant** (alternative go-to-market):
+
+| Scenario | Best Variant |
+|----------|--------------|
 | Reseller/partner channel | **6I** — white-label |
+
+**Example combinations:** "6B + 6F + 6G + 6H" = per-user pricing with premium support, data residency, and committed discount — common enterprise SaaS structure.
 
 ---
 
@@ -238,6 +295,9 @@ Platform fee and per-seat royalty separately benchmarked. Reseller margin should
 2. **Using 6C (usage-based) without robust metering** — billing disputes
 3. **Skipping 6F (premium support) for critical workloads** — inadequate SLA
 4. **6I (white-label) without clear end-customer terms** — channel conflict
+5. **Ignoring data portability** — Buyer locked in without exit path
+6. **Not addressing customisation IP ownership (6E)** — disputes on termination
+7. **Cross-border SaaS without characterisation analysis** — unexpected withholding tax
 
 ---
 

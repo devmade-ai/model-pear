@@ -1,7 +1,7 @@
 # Model 4: Build-Operate-Transfer (BOT) — Use Cases
 
 > **Purpose**: When to use each variant of the Build-Operate-Transfer model
-> **Variants**: 8 (4A–4H)
+> **Variants**: 7 (4A–4F, 4H) + Standard Provisions applicable to all
 > **Core Concept**: Developer builds and operates software, then transfers ownership to Buyer at predetermined terms
 
 ---
@@ -36,7 +36,7 @@ Transfer price agreed upfront at contract signing. Both parties have certainty f
 - Buyer can budget acquisition cost upfront
 
 ### Transfer Pricing Consideration
-Fixed price must be arm's length at contract date. Document comparable transactions or valuation methodology.
+Fixed price must be arm's length at contract date. Document comparable transactions or valuation methodology. **Long-duration risk:** If significant time passes between contract and transfer (e.g., 3+ years), market conditions may change materially. Tax authorities may argue arm's length price at transfer differs from contract price. Consider including adjustment mechanisms for extended periods, or documenting why fixed price remains appropriate.
 
 ---
 
@@ -49,7 +49,9 @@ Price determined by formula at transfer date (e.g., 10x annual revenue, cost plu
 **Uncertain fair value** where both parties prefer price to reflect actual performance during operation period.
 
 ### Real-World Example
-> A Developer builds and operates an e-commerce platform for a retailer. Contract: Transfer price = 5x trailing 12-month gross merchandise value (GMV) facilitated. If platform facilitates R20M GMV, transfer price = R100M. If platform facilitates R5M GMV, transfer price = R25M. Price reflects actual value proven during operation.
+> A Developer builds and operates an e-commerce platform for a retailer. Contract: Transfer price = 3x trailing 12-month platform revenue (the retailer's take rate on GMV, typically 5–15%). If platform generates R3M revenue on R30M GMV, transfer price = R9M. If platform generates R1.5M revenue, transfer price = R4.5M. Price reflects actual value proven during operation.
+>
+> **Note on multiples:** Platform valuations typically use revenue multiples (1–5x) rather than GMV multiples. GMV multiples are usually 0.2–1.0x at most. Always validate formula benchmarks against comparable transactions.
 
 ### Why 4B Over Other Variants
 - Price reflects actual performance (not estimates)
@@ -74,35 +76,37 @@ Independent valuation at transfer date. Most defensible approach for transfer pr
 > A multinational's SA subsidiary contracts its Irish affiliate to build and operate a customer data platform. Given related party nature and R50M expected value, they agree: Transfer at fair market value determined by independent valuer (Big 4 firm) at transfer date using income approach. SARS and Irish Revenue both see arm's length pricing.
 
 ### Why 4C Over Other Variants
-- Highest TP defensibility (independent expert)
-- Closest to true arm's length value
+- Strong TP defensibility (independent expert supports arm's length position)
+- Closest to true arm's length value at transfer date
 - Appropriate for material related party transactions
 - Reduces transfer pricing risk significantly
 
 ### Transfer Pricing Consideration
-Engage reputable independent valuer. Document valuation methodology and assumptions.
+Engage reputable independent valuer. Note: independent valuation improves defensibility but does not guarantee arm's length status — tax authorities can still challenge methodology, assumptions, and comparables. Document valuation approach thoroughly and ensure assumptions are supportable.
 
 ---
 
-## Variant 4D: Cost Recovery Plus
+## Variant 4D: Cost Recovery with Gain Sharing
 
 ### Description
-Developer recovers all costs plus agreed profit share. Guarantees Developer's baseline; shares upside with Buyer.
+Developer recovers all documented costs plus a share of Buyer's measured benefits (e.g., cost savings, revenue uplift). Distinct from standard cost-plus markup — here Developer's upside is tied to Buyer's outcomes, not a fixed percentage on costs.
 
 ### Best Scenario
-**Risk-sharing is important** — Developer needs cost recovery guarantee, both parties want shared upside.
+**Risk-sharing is important** — Developer needs cost recovery guarantee, both parties want Developer incentivised for measurable Buyer benefits.
 
 ### Real-World Example
 > A Developer builds and operates a logistics optimisation system. Contract: At transfer, Developer receives all documented development and operation costs (R6M) plus 20% of documented cost savings achieved during operation period (say R4M savings → R800k share). Developer guaranteed cost recovery; both parties benefit if system delivers value.
+>
+> **Distinction from cost-plus:** Standard cost-plus adds fixed markup to costs regardless of outcomes. Gain sharing ties Developer's profit to Buyer's measured benefits — better alignment but requires robust benefit measurement methodology.
 
 ### Why 4D Over Other Variants
 - Developer protected (cost recovery floor)
 - Buyer protected (not overpaying for underperforming system)
-- Incentive alignment (both benefit from performance)
+- Stronger incentive alignment than standard cost-plus (Developer benefits from Buyer's success)
 - Clear, auditable calculation
 
 ### Transfer Pricing Consideration
-Cost documentation must be robust. Profit share element benchmarked against comparable arrangements.
+Cost documentation must be robust — for related parties, cost allocation methodologies, overhead treatment, and FTE costing all require documentation. Gain share element should be benchmarked against comparable arrangements; document benefit measurement methodology.
 
 ---
 
@@ -128,13 +132,15 @@ KPI definitions must be objective and measurable. Document that adjustments refl
 
 ---
 
-## Variant 4F: Retained Stake
+## Variant 4F: Retained Stake (Staged Acquisition)
 
 ### Description
 Developer retains equity stake post-transfer. Ongoing alignment and shared upside.
 
+**Note:** This extends the traditional BOT concept (which typically implies full transfer). More accurately characterised as a staged acquisition or partial exit with earnout potential. Included here as it's commonly used alongside BOT structures.
+
 ### Best Scenario
-**Developer wants long-term participation** — believes in asset's growth potential and wants continued upside.
+**Developer wants long-term participation** — believes in asset's growth potential and wants continued upside, or parties prefer staged transition of ownership.
 
 ### Real-World Example
 > A Developer builds and operates an AI analytics platform. At transfer: Buyer acquires 70% ownership for R14M. Developer retains 30% stake. Post-transfer, Developer continues to benefit from platform growth through dividends and potential future buyout of remaining 30% at higher valuation. Developer's quality incentive extends beyond transfer.
@@ -150,25 +156,40 @@ Initial transfer price and retained stake value must be arm's length. Future buy
 
 ---
 
-## Variant 4G: Transfer with Warranty
+## Standard Provisions for All BOT Variants
 
-### Description
-Transfer includes performance warranties. Escrow portion of price pending warranty period satisfaction.
+The following provisions apply to **any BOT arrangement** (4A–4F, 4H), not as standalone alternatives but as essential terms within whichever pricing model applies.
 
-### Best Scenario
-**Buyer needs asset quality assurance** — protection against latent defects discovered post-transfer.
+### Warranty and Escrow Provisions
 
-### Real-World Example
-> A Developer transfers a healthcare records system. Transfer price: R12M, of which R2M held in escrow for 18 months. Developer warrants: no critical defects, 99.5% uptime capability, compliance with healthcare regulations. If defects found during warranty period, escrow funds remediation or price reduction. After 18 months clear, R2M released to Developer.
+Every BOT transfer should address:
+- **Performance warranties**: System meets specified uptime, functionality, and compliance requirements
+- **Defect remediation**: Developer's obligations if defects discovered post-transfer
+- **Escrow mechanism**: Portion of transfer price held pending warranty period (typically 10–20% for 12–24 months)
+- **Release conditions**: Clear criteria for escrow release or forfeiture
 
-### Why 4G Over Other Variants
-- Buyer protected against hidden defects
-- Developer has financial incentive for quality
-- Escrow mechanism provides security
-- Reduces Buyer's post-transfer risk
+**Example clause:** "R2M of transfer price held in escrow for 18 months. Developer warrants no critical defects, 99.5% uptime capability, regulatory compliance. Escrow funds remediation costs; balance released after clear warranty period."
+
+### Operation Period Economics
+
+BOT has three phases — the Operate phase economics must be addressed:
+- **Operation fees**: What does Developer earn during operation period? (Service fees, hosting fees, SLA-based payments)
+- **Interaction with transfer price**: Does high operation revenue justify lower transfer price (Developer already compensated) or higher transfer price (proven value)?
+- **Cost allocation**: How are operation costs treated — separate from development costs or bundled?
+
+**TP implication:** For related parties, profit must be appropriately allocated across all three phases. Document the rationale for operation-phase pricing and its relationship to transfer price.
+
+### Transition and Knowledge Transfer
+
+Every BOT should include transition provisions:
+- **Knowledge transfer period**: Typically 3–6 months post-transfer for complex systems
+- **Documentation handover**: Technical docs, source code, operational runbooks
+- **Employee considerations**: Key personnel may transfer with the asset; address employment terms
+- **Data ownership**: Clarify ownership of data generated during operation period
+- **Ongoing support**: Post-transfer support obligations and pricing
 
 ### Transfer Pricing Consideration
-Escrow terms should reflect market practice for similar transactions. Warranty scope documented.
+Warranty escrow, operation fees, and transition costs should all reflect market practice. Document each element's arm's length basis.
 
 ---
 
@@ -181,7 +202,9 @@ International BOT arrangement with parties in different tax jurisdictions.
 **Multi-jurisdictional transaction** — Developer and Buyer in different countries with tax treaty implications.
 
 ### Real-World Example
-> A SA Developer builds and operates software for a UK Buyer. During operation: SA Developer earns service fees (potential UK withholding tax, SA-UK treaty may reduce). At transfer: Sale proceeds may trigger different tax treatment (capital gains vs ordinary income). TP documentation must satisfy both SARS and HMRC. Treaty provisions optimise overall tax position.
+> A SA Developer builds and operates software for a UK Buyer. During operation: SA Developer earns service fees (UK generally does not impose withholding tax on standard service fees to non-residents, unlike royalties). At transfer: Sale proceeds may trigger different tax treatment (capital gains vs ordinary income in SA). TP documentation must satisfy both SARS and HMRC. SA-UK treaty relevant if any payments characterised as royalties or interest.
+>
+> **Withholding tax note:** Distinguish payment types — UK withholds on certain interest, royalties, and specific payments, but standard service fees typically exempt. Characterisation of operation-phase payments matters for both parties' tax positions.
 
 ### Why 4H Over Other Variants
 - Addresses international tax complexity
@@ -198,23 +221,26 @@ TP expertise required in both jurisdictions. Document compliance with both count
 
 | Scenario | Best Variant |
 |----------|--------------|
-| Both parties want price certainty | **4A** — fixed price |
+| Both parties want price certainty (short duration) | **4A** — fixed price |
 | Price should reflect actual performance | **4B** — formula-based |
-| TP defensibility paramount | **4C** — fair market value |
-| Risk-sharing, cost recovery needed | **4D** — cost recovery plus |
-| Operational KPIs affect value | **4E** — performance-based |
-| Developer wants long-term upside | **4F** — retained stake |
-| Buyer needs defect protection | **4G** — warranty + escrow |
+| TP defensibility paramount, related parties | **4C** — fair market value |
+| Risk-sharing, Developer needs cost recovery | **4D** — cost recovery with gain sharing |
+| Operational KPIs should affect value | **4E** — performance-based |
+| Developer wants long-term upside, staged transition | **4F** — retained stake |
 | International transaction | **4H** — cross-border |
+
+**Note:** Warranty/escrow provisions, operation period economics, and transition terms (see Standard Provisions section) apply to **all variants**, not as an alternative choice.
 
 ---
 
 ## Common Mistakes to Avoid
 
-1. **Using 4A (fixed price) when value highly uncertain** — one party will overpay/underpay
-2. **Skipping 4G warranty for complex systems** — Buyer absorbs defect risk
+1. **Using 4A (fixed price) for long-duration BOT without adjustment mechanism** — arm's length price at transfer may differ materially from contract price
+2. **Omitting warranty/escrow from any variant** — Buyer absorbs defect risk (see Standard Provisions)
 3. **Not documenting 4B formula rationale** — TP vulnerability
-4. **Ignoring treaty provisions in 4H** — suboptimal tax outcome
+4. **Ignoring operation period economics** — profit attribution across BOT phases unclear
+5. **Ignoring treaty provisions in 4H** — suboptimal tax outcome
+6. **Using unrealistic valuation multiples in 4B** — validate against comparable transactions
 
 ---
 

@@ -359,15 +359,22 @@ Annual Savings = (Value per Period - Price per Period) × 12
 - Monthly price: R500
 - Annual savings: (5,000 - 500) × 12 = **R54,000/year**
 
-**Payback Period (in months)**
+**Payback Period for Recurring Models (in months)**
+
+For **subscription, usage-based, and per-seat models**, payback measures how quickly monthly net value covers monthly cost:
+
 ```
-Payback = Price / (Value - Price)
+Payback = Price / Net Value
+where Net Value = Value - Price (monthly savings)
 ```
 
 **Example**:
-- Price: R500
-- Value: R5,000
-- Payback: 500 / (5,000 - 500) = 500 / 4,500 = **0.11 months** (~3 days)
+- Monthly price: R500
+- Monthly value: R5,000
+- Monthly net value: R4,500
+- Payback: 500 / 4,500 = **0.11 months** (~3 days)
+
+**Note:** This formula assumes recurring payments. For one-time purchases, see the [One-Time Purchase Model](#4-one-time-purchase-perpetual-license) which uses Year 1 cost vs annual value, and [Growth Projections](#growth-projection-calculations) for multi-year payback analysis.
 
 **Rationale**: Payback period tells buyers "how long until this pays for itself?" Shorter is better. For subscription software, payback < 3 months is excellent, < 6 months is good, > 12 months is concerning.
 
@@ -663,8 +670,11 @@ actualMargin = (monthlyProfit / monthlyRevenue) × 100
 minimumLicensePrice = costToDeliver / (1 - desiredMargin / 100)
 
 // Buyer perspective (total cost of ownership)
-buyerFirstYearCost = licensePrice + (annualMaintenanceFee × maintenanceAttach / 100)
-buyerYear2PlusCost = annualMaintenanceFee × (maintenanceAttach / 100)
+// Note: For individual buyer analysis, assume buyer purchases maintenance (binary decision)
+// The maintenanceAttach % is used for seller revenue forecasting across customer base
+buyerFirstYearCost = licensePrice + annualMaintenanceFee  // If buyer purchases maintenance
+buyerFirstYearCostNoMaint = licensePrice                  // If buyer declines maintenance
+buyerYear2PlusCost = annualMaintenanceFee                 // Annual maintenance only
 buyerROIFirstYear = buyerValuePerYear / buyerFirstYearCost
 buyerPaybackMonths = 12 × (buyerFirstYearCost / (buyerValuePerYear - buyerFirstYearCost))
 
@@ -699,10 +709,10 @@ suggestedLicensePrice = (minimumLicensePrice + maximumLicensePrice) / 2
 - Monthly profit: **R18,500**
 - Actual margin: **67%**
 - Minimum license: R1,500 / 0.3 = **R5,000** ✓
-- Buyer 1st year cost: 5,000 + (1,000 × 0.6) = **R5,600**
-- Buyer year 2+ cost: **R600**
-- Buyer ROI (year 1): 15,000 / 5,600 = **2.68x**
-- Buyer payback: 12 × (5,600 / 9,400) = **7.1 months**
+- Buyer 1st year cost (with maintenance): 5,000 + 1,000 = **R6,000**
+- Buyer year 2+ cost: **R1,000** (maintenance only)
+- Buyer ROI (year 1): 15,000 / 6,000 = **2.5x**
+- Buyer payback: 12 × (6,000 / 9,000) = **8 months**
 - Buyer max license: 15,000 × 0.5 = **R7,500**
 - Equilibrium: R5,000 - R7,500 (exists ✓)
 - Suggested: **R6,250** (75% margin, 2.4x ROI year 1)
@@ -1096,6 +1106,26 @@ Defaults based on:
 
 The following calculations apply to the Inter-Company Transaction Tool (Mode 2).
 
+### Mode 1 vs Mode 2 Model Mapping
+
+The pricing calculator (Mode 1) and transaction structuring tool (Mode 2) serve different purposes but relate to similar commercial arrangements:
+
+| Mode 1 Pricing Model | Typical Mode 2 Transaction Model |
+|----------------------|----------------------------------|
+| **Subscription (SaaS)** | Model 6: SaaS/Subscription |
+| **Usage-Based** | Model 2: Licence with Royalties (variant 2C/2D) or Model 6 (variant 6C) |
+| **Per-Seat** | Model 2: Licence with Royalties (variant 2B term) or Model 6 (variant 6B) |
+| **One-Time Purchase** | Model 2: Perpetual Licence (variant 2A) or Model 5: Software Sale |
+| **Marketplace** | Not directly applicable — marketplace is a business model, not a transaction structure |
+
+**Key distinction:**
+- **Mode 1** calculates optimal pricing for a given model (seller margin + buyer ROI equilibrium)
+- **Mode 2** compares different transaction structures (IP ownership, tax treatment, accounting, compliance)
+
+A single product can be priced using Mode 1, then structured using Mode 2 (e.g., "What price for SaaS?" then "Should we licence the IP or sell it?").
+
+---
+
 ### Model 1: Development Services (Cost-Plus)
 
 **Developer Revenue**
@@ -1125,10 +1155,18 @@ Annual Amortisation = Capitalised Asset / Useful Life Years
 ```
 
 **Buyer Section 11(e) Depreciation (Tax)**
+
+Section 11(e) of the South African Income Tax Act allows wear-and-tear deductions for assets used in trade. Software depreciation periods depend on the category:
+
 ```
-PC Software: Annual Deduction = Capitalised Asset / 2 (2 years)
-Mainframe: Annual Deduction = Capitalised Asset / 5 (5 years)
+Personal computer software: 2 years (50% per annum)
+- Includes desktop applications, office software, development tools
+
+Mainframe/large system software: 5 years (20% per annum)
+- Includes enterprise systems, ERP, large-scale platforms
 ```
+
+**Note:** These periods are based on SARS Interpretation Note 47 wear-and-tear rates. The distinction between "PC" and "mainframe" software reflects the software's deployment context rather than strict technical definitions. For software that doesn't clearly fit either category, apply the period that best reflects the asset's expected useful life in the specific business context, supported by documentation.
 
 **Deferred Tax**
 ```
@@ -1189,10 +1227,47 @@ Expected Buyer Benefit = Projected Buyer Revenue × Years
 Developer Share% = Developer Benefit / Total Benefit × 100
 ```
 
-**Buy-In Payment (New Participant)**
+**CCA Payment Mechanics**
+
+Under OECD CCA guidelines, contributions must align with anticipated benefits. Three types of payments adjust for misalignment:
+
+**Buy-In Payment (New Participant Joining)**
 ```
-Buy-In = Current Asset Value × Ownership% Acquired + Share of Future Benefits
+Buy-In = Pre-existing IP Value × Ownership% Acquired
+       + PV of Expected Future Benefits × Ownership%
 ```
+
+**Example**: Party C joins an existing CCA that has developed IP worth R10M. C acquires 20% ownership and expects 20% of future benefits worth R4M NPV.
+```
+Buy-In = (R10M × 0.20) + (R4M) = R6M
+```
+
+**Buy-Out Payment (Participant Exiting)**
+```
+Buy-Out = Exiting Party's Share of Current IP Value
+        + PV of Foregone Future Benefits
+```
+
+**Example**: Party A exits a CCA with 30% ownership. IP is now worth R15M. A's share of projected future benefits (now foregone) has NPV of R3M.
+```
+Buy-Out = (R15M × 0.30) + R3M = R7.5M
+```
+
+**Balancing Payment (Contribution-Benefit Misalignment)**
+```
+Required Contribution = Total CCA Costs × Party's Benefit%
+Actual Contribution = Amount party has contributed
+Balancing Payment = Required Contribution - Actual Contribution
+```
+
+**Example**: Total development costs R8M. Party A expects 70% of benefits but contributed only R4M (50%).
+```
+Required = R8M × 0.70 = R5.6M
+Actual = R4M
+Balancing Payment = R5.6M - R4M = R1.6M (A pays to other participants)
+```
+
+**Note:** Balancing payments should be assessed periodically (typically annually) if benefit projections change materially.
 
 ---
 
@@ -1226,13 +1301,14 @@ Buyer Capitalised Asset = Transfer Price
 Buyer Amortisation = Transfer Price / Remaining Useful Life
 ```
 
-**IFRS 16 Lease (Variant 4G)**
+**Operation Phase Economics**
 ```
-Lease Liability = PV of Lease Payments
-Right-of-Use Asset = Lease Liability + Initial Direct Costs
-Interest Expense = Lease Liability × Interest Rate
-Depreciation = ROU Asset / Lease Term
+Service Revenue = Service Fee × Operation Period
+Developer Profit on Operation = Service Revenue - Service Costs
+Operation Margin = Developer Profit / Service Revenue × 100
 ```
+
+**Note:** Operation phase pricing should be documented separately from transfer price. For related parties, both elements require arm's length documentation.
 
 ---
 
@@ -1253,6 +1329,26 @@ Total Transaction Price = Sale Price + Support Contract Value
 Allocation to Software = Total × (Standalone Software Price / Sum of Standalones)
 Allocation to Support = Total × (Standalone Support Price / Sum of Standalones)
 ```
+
+**IFRS 15 Variable Consideration (Earnouts)**
+
+When the transaction includes contingent payments (earnouts), IFRS 15 requires estimation of variable consideration subject to a constraint:
+
+```
+Transaction Price = Fixed Amount + Estimated Variable Consideration
+
+Variable Consideration Constraint:
+Include variable amounts only to the extent it is "highly probable"
+that a significant reversal will NOT occur when uncertainty resolves.
+```
+
+**Methods for estimating variable consideration:**
+- **Expected value**: Probability-weighted average of possible outcomes (best when multiple similar outcomes are equally likely)
+- **Most likely amount**: Single most probable outcome (best when only two outcomes exist)
+
+**Example**: Software sale with R8M fixed + earnout of 10% of revenue for 3 years (range: R0 to R6M)
+- If R4M earnout is "highly probable" to be achieved: recognise R12M transaction price
+- If significant uncertainty exists: recognise R8M initially, adjust as uncertainty resolves
 
 **Support Revenue Recognition**
 ```
@@ -1322,11 +1418,22 @@ Weights:
 ```
 
 **Margin Compliance Score**
+
+Scores based on whether margins fall within market-observed ranges:
+
+| Transaction Type | Low Risk Range | Medium Risk Range | Outside Ranges |
+|------------------|----------------|-------------------|----------------|
+| Cost-plus development | 5–15% | 0–5% or 15–25% | <0% or >25% |
+| Licence royalty | 5–25% of revenue | 2–5% or 25–35% | <2% or >35% |
+| Service fees | 5–10% | 2–5% or 10–15% | <2% or >15% |
+
 ```
 If margin within low-risk range: Score = 100
 If margin within medium-risk range: Score = 60
 If margin outside ranges: Score = 20
 ```
+
+**Note:** These ranges are indicative market observations, not regulatory safe harbours. Arm's length margins depend on specific facts and circumstances including functions performed, risks assumed, and assets used.
 
 **Risk Classification**
 ```
@@ -1337,9 +1444,11 @@ Score < 50: High Risk (Red)
 
 **Model-Specific Considerations**
 
-- **Model 4 (BOT) - Variant 4E (Build-Operate-Own)**: Full transfer pricing assessment is not applicable since there is no ownership transfer. Only service fee arm's length analysis is performed.
-- **Model 4 (BOT) - Variant 4F (Build-Transfer-Operate)**: Transfer pricing assessment focuses on the immediate transfer price as there is no operation period before transfer.
-- **All models with service fees**: Service fee margin is assessed against the 5-15% arm's length benchmark range.
+- **Model 4 (BOT)**: Transfer pricing applies to all three phases — development, operation, and transfer. Each phase requires separate arm's length analysis for related parties.
+  - **Operation phase**: Service fees assessed against comparable service arrangements
+  - **Transfer phase**: Transfer price (whether fixed, formula-based, or FMV) must be arm's length at the time of transfer
+  - **Variant 4F (Retained Stake)**: Both initial transfer and future buyout terms require arm's length documentation
+- **All models with service fees**: Service fee margin should be benchmarked against comparable service arrangements (margins vary significantly by service type — routine services typically 5–10%; specialised services may justify higher margins).
 
 ---
 
@@ -1445,6 +1554,7 @@ Enhancement Addition = Annual Enhancement Cost (capitalised)
 5. **Single buyer type**: Doesn't segment by customer type
 6. **No seasonality**: Revenue/costs consistent monthly
 7. **No churn**: Customer count stays constant
+8. **Linear cost scaling**: Cost per unit remains constant regardless of volume (no economies of scale modelled)
 
 ### What This Calculator Does NOT Calculate
 
@@ -1458,6 +1568,7 @@ Enhancement Addition = Annual Enhancement Cost (capitalised)
 ❌ Multi-year contract dynamics
 ❌ Tiered pricing optimization
 ❌ Discount or negotiation scenarios
+❌ Economies of scale (unit costs typically decrease with volume due to infrastructure amortisation, negotiated supplier rates, operational efficiency — this calculator assumes constant unit cost)
 
 ### When to Use This Calculator
 
