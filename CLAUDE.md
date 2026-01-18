@@ -43,6 +43,15 @@
 - [ ] SESSION_NOTES.md is current (in case session ends)
 - [ ] No work-in-progress that would be lost
 
+### Before Compact
+- [ ] SESSION_NOTES.md updated with full context needed to continue:
+  - What's being worked on?
+  - Current state of the work?
+  - What's left to do?
+  - Any decisions or blockers?
+- [ ] All changes committed and pushed
+- [ ] HISTORY.md updated if significant work done
+
 ## AI Notes
 
 <!-- Reminders and learnings for AI assistants - add to this as needed -->
