@@ -9,7 +9,7 @@
 1. **User-first design** - Align with how real people will use the tool (top priority)
 2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
 3. **Document WHY** - Explain decisions and how they align with tool goals
-4. **Keep docs updated automatically** - Update relevant docs as part of every task (see Documentation Reference section below)
+4. **Keep docs updated immediately** - Update relevant docs right after each change, before moving to the next task (sessions can end abruptly)
 5. **Testability** - Ensure correctness and alignment with usage goals can be verified
 6. **Know the purpose** - Always be aware of what the tool is for
 7. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
@@ -32,12 +32,13 @@
   - What's next / left to do?
   - Any blockers or decisions pending?
   - Remove old notes once no longer relevant (keep it lean)
-- **Documentation is part of every task** - When you change code, update the relevant docs in the same session:
-  - Changed calculations? → Update CALCULATIONS.md
-  - Changed features/UI? → Update BUSINESS_GUIDE.md
-  - Changed architecture? → Update ARCHITECTURE.md and CLAUDE.md
-  - Any code change? → Add entry to HISTORY.md
-  - Found issues to fix later? → Add to TODO.md
+- **Update docs immediately after each change** - Don't batch doc updates; do them right after the related code change, before moving on:
+  - Changed calculations? → Update CALCULATIONS.md now
+  - Changed features/UI? → Update BUSINESS_GUIDE.md now
+  - Changed architecture? → Update ARCHITECTURE.md and CLAUDE.md now
+  - Any code change? → Add entry to HISTORY.md now
+  - Found issues to fix later? → Add to TODO.md now
+  - Commit code + docs together so they stay in sync
 
 ---
 
