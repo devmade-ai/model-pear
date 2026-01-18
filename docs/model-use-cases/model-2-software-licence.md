@@ -16,6 +16,8 @@ Model 2 is best when the **Developer wants to retain IP and monetise it across m
 - Buyer doesn't need full IP ownership
 - Variable pricing aligned with Buyer's usage/success is desired
 
+**Cross-border note:** Royalty payments between jurisdictions may attract withholding tax (commonly 10–15%). This affects net economics and should be factored into pricing. Check applicable tax treaties.
+
 ---
 
 ## Variant 2A: Perpetual Licence (Upfront Payment)
@@ -34,7 +36,7 @@ One-time payment for indefinite use rights. Developer retains IP; Buyer owns the
 - Developer gets cash immediately
 - Buyer avoids ongoing licence fees
 - Clean transaction with no renewal management
-- All revenue recognised upfront (point in time)
+- Revenue recognised at grant date if licence is standalone (note: under IFRS 15, bundled support or updates may require separate performance obligation treatment and recognition over time)
 
 ### Transfer Pricing Consideration
 Upfront fee benchmarkable against comparable perpetual licence transactions. Document market comparables.
@@ -103,6 +105,7 @@ Floor payment guarantees Developer baseline revenue, plus variable royalties abo
 - Buyer gets variable upside if exceeding threshold
 - Balances certainty with performance alignment
 - Common in content/media licensing
+- Suits unpredictable usage where Developer cannot accept zero-revenue risk (unlike pure 2C)
 
 ### Transfer Pricing Consideration
 Minimum should reflect arm's length floor. Royalty rate above minimum benchmarked separately.
@@ -118,7 +121,7 @@ Developer receives percentage of Buyer's actual earnings generated using the sof
 **Software directly generates Buyer's revenue** and both parties want strong alignment on success.
 
 ### Real-World Example
-> A travel booking platform licenses an AI pricing optimisation engine. Contract: Developer gets 8% of incremental revenue attributable to dynamic pricing (measured via A/B testing). If optimisation generates R50M additional bookings, Developer earns R4M. Complete alignment — Developer succeeds only when Buyer succeeds.
+> A travel booking platform licenses an AI pricing optimisation engine. Contract: Developer gets 8% of incremental revenue attributable to dynamic pricing (measured via controlled testing comparing optimised vs baseline pricing). If optimisation generates R50M additional bookings, Developer earns R4M. Complete alignment — Developer succeeds only when Buyer succeeds.
 
 ### Why 2E Over Other Variants
 - Strongest possible incentive alignment
@@ -127,7 +130,7 @@ Developer receives percentage of Buyer's actual earnings generated using the sof
 - Suits software with measurable revenue impact
 
 ### Transfer Pricing Consideration
-Requires transparent Buyer financials and clear attribution methodology. Higher TP complexity.
+Highest TP complexity of all Model 2 variants. Key challenges: (1) defining the revenue base (gross vs net); (2) attribution of costs in profit share arrangements; (3) verification rights and audit provisions; (4) comparable transactions are rare. Requires transparent Buyer financials, robust attribution methodology, and detailed documentation.
 
 ---
 
@@ -149,7 +152,7 @@ Buyer rebrands Developer's software and sells to end customers. Developer earns 
 - Scales with Buyer's end-customer success
 
 ### Transfer Pricing Consideration
-Reseller margin benchmarkable (typically 20–40%). Developer royalty separate from Buyer's resale economics.
+Reseller margin benchmarkable against comparable distribution arrangements (varies significantly by industry, software type, and channel maturity — SaaS resellers often 15–25%; enterprise software can exceed 40%). Developer royalty separate from Buyer's resale economics.
 
 ---
 
@@ -166,12 +169,12 @@ Exclusive licence grants sole rights in territory/market segment. Commands premi
 
 ### Why 2G Over Other Variants
 - Buyer gets competitive advantage
-- Developer earns exclusivity premium (20–100% typical)
+- Developer earns exclusivity premium (highly fact-specific — depends on market size, competitive landscape, and foregone licensing opportunities)
 - Clear market definition limits scope
 - Strategic value beyond software functionality
 
 ### Transfer Pricing Consideration
-Exclusivity premium benchmarkable. Document comparable exclusive vs non-exclusive transactions.
+Exclusivity premium benchmarkable. Document comparable exclusive vs non-exclusive transactions. Note: exclusivity restricts Developer's ability to license elsewhere, which may affect DEMPE analysis — the premium must reflect foregone licensing value.
 
 ---
 
@@ -184,7 +187,7 @@ Buyer gets access to source code (directly or via escrow) as insurance against D
 **Buyer concerned about Developer business continuity** for mission-critical software dependency.
 
 ### Real-World Example
-> A hospital licenses patient management software. Given criticality, they require source code escrow: code held by third-party escrow agent, released to hospital if Developer goes bankrupt or abandons the product. Hospital pays R2M licence + R50k escrow setup + R10k/year escrow maintenance. Peace of mind for mission-critical system.
+> A hospital licenses patient management software. Given criticality, they require source code escrow: code held by third-party escrow agent, released to hospital upon trigger events (Developer bankruptcy, product abandonment, failure to maintain, material breach, or change of control). Hospital pays R2M licence + R50k escrow setup + R10k/year escrow maintenance. Peace of mind for mission-critical system.
 
 ### Why 2H Over Other Variants
 - Buyer independence from Developer continuity
@@ -214,10 +217,11 @@ Source code premium benchmarkable (typically 10–30% above binary-only licence)
 
 ## Common Mistakes to Avoid
 
-1. **Using 2E (revenue share) without attribution methodology** — leads to disputes
-2. **Granting 2G (exclusivity) without clear market definition** — scope creep
-3. **Using 2C (usage-based) without robust metering** — billing disputes
-4. **Underpricing 2G exclusivity premium** — leaving value on table
+1. **Using 2A (perpetual) when Developer plans ongoing enhancements** — foregoes future monetisation opportunity; consider 2B term licence instead
+2. **Using 2E (revenue share) without attribution methodology** — leads to disputes
+3. **Granting 2G (exclusivity) without clear market definition** — scope creep
+4. **Using 2C (usage-based) without robust metering** — billing disputes
+5. **Underpricing 2G exclusivity premium** — leaving value on table
 
 ---
 
