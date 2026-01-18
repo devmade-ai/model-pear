@@ -17,8 +17,6 @@ Find the **sweet spot** in pricing by showing you:
 - **Buyer Perspective**: Maximum price buyers will pay based on value received
 - **Equilibrium Zone**: The range where both seller and buyer win
 
-No growth projections, no complicated forecasting - just clear unit economics and transaction structuring.
-
 ## The 5 Pricing Models
 
 1. **Subscription (SaaS)** - Monthly recurring revenue per customer
@@ -29,116 +27,89 @@ No growth projections, no complicated forecasting - just clear unit economics an
 
 ## The 6 Transaction Models
 
-| Model | Name | Description | Status |
-|-------|------|-------------|--------|
-| 1 | Development Services | Cost-plus software development | ✅ Implemented |
-| 2 | Software Licence | Perpetual/term licences with royalties | ✅ Implemented |
-| 3 | Joint Development | Cost-sharing arrangements | ✅ Implemented |
-| 4 | Build-Operate-Transfer | BOT/BTO/BOO structures | ✅ Implemented |
-| 5 | Software Sale | Asset sale with ongoing support | ✅ Implemented |
-| 6 | SaaS/Subscription | Enhanced subscription model | ✅ Implemented |
-
-Each model includes:
-- Multiple variants (e.g., Model 1 has 6 variants: 1A-1F)
-- Two-perspective calculations (Your Company, Client)
-- South African tax treatment (Section 11(e), CGT, deferred tax)
-- Transfer pricing considerations (when mutual ownership applies)
+| Model | Name | Variants |
+|-------|------|----------|
+| 1 | Development Services (Cost-Plus) | 6 (1A-1F) |
+| 2 | Software Licence with Royalties | 8 (2A-2H) |
+| 3 | Joint Development / Cost-Sharing | 7 + Required Provisions |
+| 4 | Build-Operate-Transfer (BOT) | 7 + Standard Provisions |
+| 5 | Software Sale with Ongoing Support | 8 (5A-5H) |
+| 6 | SaaS/Subscription Enhancement | 9 (6A-6I) |
 
 ## Key Features
 
-### Pricing Calculator
-- **Reverse Calculations**: Auto-calculate missing inputs (price, costs, margin, buyer value)
-- **Equilibrium Analysis**: Find win-win pricing zones
-
-### Transaction Structuring Tool
 - **Two-Perspective View**: Your Company, Client
-- **Entity Configuration**: Customise your company & client settings
-- **Model Comparison**: Compare structures to find the best fit
-- **Tax Calculations**: Section 11(e), deferred tax, CGT
-- **Options Overview**: Visual grid showing all 6 models at a glance with key features
-- **Compare Mode**: Save calculations and compare up to 4 options side-by-side
-
-### Both Modes
-- **South African Defaults**: Pre-configured for SA companies (IFRS, 27% tax). See [Default Entity Configuration](BUSINESS_GUIDE.md#default-entity-configuration) for full explanation of each setting.
-- **Static Unit Economics**: No month-by-month projections - just simple math
-- **No Installation**: Runs entirely in the browser
-- **Comprehensive Help System**: Click info icons (`ⓘ`) throughout for detailed explanations, formulas, and use cases
-- **Accessibility First**: Full keyboard navigation, ARIA support, screen reader friendly
-- **Mobile Optimized**: Responsive design with touch-friendly controls
-- **Real-time Validation**: Inline feedback as you type with helpful suggestions
+- **Structure Selector Wizard**: Guided model selection
+- **Options Overview**: Visual grid of all 6 models
+- **Compare Mode**: Save and compare up to 4 options side-by-side
+- **Sensitivity Analysis**: Best/base/worst scenarios with tornado charts
+- **Growth Projections**: NPV, IRR, payback period calculations
+- **South African Tax**: Section 11(e), deferred tax, CGT calculations
+- **Transfer Pricing**: Risk scoring for related party transactions
 - **Export**: JSON and CSV export of saved comparisons
 
 ## Quick Start
 
-### Online
-Visit: `https://[your-username].github.io/model-pear`
-
-### Local Development
+### Development
 
 ```bash
-git clone https://github.com/[username]/model-pear.git
-cd model-pear
-open index.html  # macOS
-# or xdg-open index.html (Linux)
-# or start index.html (Windows)
+# Install dependencies
+pnpm install
+
+# Run development server
+pnpm dev
+
+# Run tests (301 unit tests)
+pnpm test
+
+# Build for production
+pnpm build
+
+# Run E2E tests
+pnpm test:e2e
 ```
 
-No build process needed - it's pure HTML/CSS/JS.
+## Technology Stack
+
+| Layer | Technology |
+|-------|------------|
+| Language | TypeScript |
+| Framework | SvelteKit 2.x |
+| Styling | Tailwind CSS |
+| Charts | ApexCharts |
+| Build | Vite |
+| Testing | Vitest + Playwright |
+| Package Manager | pnpm |
+| Hosting | GitHub Pages |
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| **[BUSINESS_GUIDE.md](BUSINESS_GUIDE.md)** | Complete user guide with tutorials |
+| **[CALCULATIONS.md](CALCULATIONS.md)** | All formulas and economic theory |
+| **[ARCHITECTURE.md](ARCHITECTURE.md)** | Technical architecture |
+| **[model-use-cases/](model-use-cases/)** | When to use each model variant |
+| **[CLAUDE.md](../CLAUDE.md)** | AI assistant context and development guide |
+| **[HISTORY.md](HISTORY.md)** | Changelog and bug fixes |
 
 ## Example: Finding Equilibrium
 
 **Your costs:**
 - Cost to serve: R150/customer/month
 - Desired margin: 70%
-→ **Minimum price: R500/month**
+- **Minimum price: R500/month**
 
 **Buyer value:**
 - Value received: R5,000/month (cost savings)
 - Acceptable ROI: 2.5x minimum
-→ **Maximum price: R2,000/month**
+- **Maximum price: R2,000/month**
 
 **Equilibrium:**
 - Floor: R500 (your minimum)
 - Ceiling: R2,000 (buyer's maximum)
 - **Suggested: R1,250** (balanced pricing)
 - Result: 75% margin for you, 4x ROI for buyer = win-win
-
-## Documentation
-
-**For Business Users & Product Teams:**
-- **[BUSINESS_GUIDE.md](BUSINESS_GUIDE.md)** - Complete user guide with tutorials and examples
-- **[UI_UX_GUIDE.md](UI_UX_GUIDE.md)** - Accessibility, keyboard shortcuts, and UX features
-
-**For Understanding the Math:**
-- **[CALCULATIONS.md](CALCULATIONS.md)** - All formulas, rationale, and economic theory explained
-
-**For Transaction Models:**
-- **[financial_models_intercompany_software.md](financial_models_intercompany_software.md)** - Framework overview
-- **[model_1_cost_plus_concept.md](model_1_cost_plus_concept.md)** - Model 1 specifications
-- **[model_2_licence_royalties_concept.md](model_2_licence_royalties_concept.md)** - Model 2 specifications
-- **[model_6_saas_subscription_concept.md](model_6_saas_subscription_concept.md)** - Model 6 specifications
-
-**For Developers:**
-- **[CLAUDE.md](../CLAUDE.md)** - Technical architecture and development guide (AI assistant context)
-- **[HISTORY.md](HISTORY.md)** - Changelog and bug fixes
-
-## Technology Stack
-
-- **HTML5** - Structure
-- **ES6 JavaScript** - Modular architecture (~35 modules, ~12,000 lines)
-- **Tailwind CSS** - Styling (via CDN)
-- **ApexCharts** - Data visualization
-- **GitHub Pages** - Free hosting
-
-## Philosophy
-
-**Pricing should be simple:**
-1. Know your costs
-2. Set a margin target
-3. Understand buyer value
-4. Find the equilibrium
-
-This tool helps you do exactly that - no more, no less.
 
 ## Contributing
 
@@ -147,7 +118,3 @@ This is an open-source project. Contributions welcome!
 ## License
 
 MIT License - see LICENSE file for details
-
-## Support
-
-For issues or questions, please open a GitHub issue.

@@ -2,97 +2,9 @@
 
 > Lower priority items and improvements to capture between sessions
 
-## Backlog
+## Feature Ideas
 
-### Technical Debt: Rename "intercompany" folders
-**Priority**: Low
-**Effort**: Medium (30+ files)
-
-The folders `models/intercompany/` and `ui/intercompany/` use legacy naming from when the tool was focused on inter-company transactions. The tool now works for ANY client (related or unrelated), so the naming is inconsistent with the scope.
-
-**Why it's low priority**: Folder names are internal - users never see them. All user-facing "intercompany" references have been removed.
-
-**If tackled**:
-- Rename `models/intercompany/` → `models/transactions/`
-- Rename `ui/intercompany/` → `ui/transactions/`
-- Update all import paths (~30+ files)
-- Update HTML element IDs (e.g., `intercompanyCalculatorSection`)
-- Update CSS classes (e.g., `.intercompany-input-help`)
-- Update state property name `state.intercompany` → `state.transactions`
-
----
-
-## Completed
-
-### New Architecture: Complete Input Field Configs
-**Completed**: January 11, 2026
-
-Added all missing input fields to `apps/web/src/lib/config/inputFields.ts`:
-- Model 2: licenceTerm, territory, sourceCodeAccess, developerUsefulLife, buyerUsefulLife, implementationCosts
-- Model 3: projectDurationMonths, developer/buyer personnel FTEs and costs, IP contributions
-- Model 4: annualOperatingCost, estimatedAnnualRevenue, transferYear, inflationAdjustment
-- Model 5: paymentTerms, annualMaintenanceCost
-- Model 6: annualSupportCost
-
-Also added researchPhaseCost and developmentPhaseCost to common fields.
-
----
-
-### New Architecture: Structure Selector Wizard
-**Completed**: January 11, 2026
-
-Ported decision tree wizard from vanilla JS to SvelteKit:
-- StructureWizard component with progressive disclosure
-- 6 questions with model scoring algorithm
-- Live recommendation preview as user answers
-- Variant preference selector within recommended model
-- View mode toggle (Wizard | Browse All Models)
-
----
-
-### New Architecture: Sensitivity Analysis UI
-**Completed**: January 11, 2026
-
-Added UI for the sensitivity analysis module:
-- TornadoChart for input sensitivity ranking
-- ScenarioChart for best/base/worst case comparison
-- SensitivityPanel combining charts with key drivers list
-
----
-
-### New Architecture: Growth Projections UI
-**Completed**: January 11, 2026
-
-Added UI for the projections module:
-- NPV/IRR summary cards (ProjectionMetrics)
-- Cash flow projection charts (CashFlowChart)
-- Payback period visualization (CumulativeCashFlowChart)
-- NPV comparison chart (NPVComparisonChart)
-- ProjectionsPanel with configurable parameters
-
----
-
-### New Architecture: Charts Integration
-**Completed**: January 11, 2026
-
-Added ApexCharts to the SvelteKit app:
-- BaseChart wrapper with SSR-safe dynamic import
-- 6 chart components for various visualizations
-- Compact currency formatting for chart labels
-
----
-
-### Refactor: Remove Combined/Group Perspective
-**Completed**: January 10, 2026
-**Effort**: 10 phases
-
-Simplified to two perspectives (Developer + Buyer). Removed ~600+ lines of combined/group accounting code. See HISTORY.md for details.
-
----
-
-## Ideas
-
-### Feature: Recommendation Summary for Compare Mode
+### Recommendation Summary for Compare Mode
 **Priority**: Medium
 **Effort**: Medium
 
@@ -133,13 +45,13 @@ Simplified to two perspectives (Developer + Buyer). Removed ~600+ lines of combi
 
 ---
 
-### Feature: Accounting Treatment Comparison in Compare Mode
+### Accounting Treatment Comparison in Compare Mode
 **Priority**: Low
 **Effort**: Small
 
 **Problem**: Individual results show accounting treatment details (recognition timing, journal entries), but Compare Mode doesn't extract these for side-by-side comparison.
 
-**Current state**: Comparison view shows financial metrics, tax, compliance, and now long-term value - but accounting treatment is only visible by loading each option individually.
+**Current state**: Comparison view shows financial metrics, tax, compliance, and long-term value - but accounting treatment is only visible by loading each option individually.
 
 **Proposed solution**: Add an "Accounting Treatment" section to the comparison table showing:
 - Developer: Revenue recognition timing (point-in-time vs over-time)
@@ -148,22 +60,3 @@ Simplified to two perspectives (Developer + Buyer). Removed ~600+ lines of combi
 - Buyer: Amortisation period
 
 **Why low priority**: Users can already see accounting treatment in individual results. Compare Mode covers the most impactful metrics. This would be a nice-to-have for detailed accounting analysis.
-
----
-
-### Testing: Validate result paths in workflow tests
-**Priority**: Low
-**Effort**: Small
-
-**Problem**: The new workflow test scenarios for Models 2-6 use assertion result paths (e.g., `developer.ownership.percentage`, `buyer.asset.recognised`) that may not exactly match the actual model calculation result structure.
-
-**Current state**: Tests are written based on expected formulas, but result paths need validation by running tests in browser and checking which assertions fail due to path mismatches vs calculation errors.
-
-**Next step**: Run all workflow tests in Testing Lab, identify any path mismatches, and either:
-1. Update assertion result paths to match actual model output structure, OR
-2. Update model calculations to output expected paths
-
-**Why low priority**: The test framework is in place. Path fixes are quick once identified by running tests.
-
----
-

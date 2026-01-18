@@ -22,8 +22,8 @@ This folder documents **when to use each variant** of the 6 transaction models. 
 |------|-------|----------|
 | [model-1-development-services.md](model-1-development-services.md) | Development Services (Cost-Plus) | 1A–1F (6 variants) |
 | [model-2-software-licence.md](model-2-software-licence.md) | Software Licence with Royalties | 2A–2H (8 variants) |
-| [model-3-joint-development.md](model-3-joint-development.md) | Joint Development / Cost-Sharing | 3A–3H (8 variants) |
-| [model-4-build-operate-transfer.md](model-4-build-operate-transfer.md) | Build-Operate-Transfer (BOT) | 4A–4H (8 variants) |
+| [model-3-joint-development.md](model-3-joint-development.md) | Joint Development / Cost-Sharing | 3A–3F, 3H (7 variants) + Required Provisions |
+| [model-4-build-operate-transfer.md](model-4-build-operate-transfer.md) | Build-Operate-Transfer (BOT) | 4A–4F, 4H (7 variants) + Standard Provisions |
 | [model-5-software-sale.md](model-5-software-sale.md) | Software Sale with Ongoing Support | 5A–5H (8 variants) |
 | [model-6-saas-subscription.md](model-6-saas-subscription.md) | SaaS / Subscription | 6A–6I (9 variants) |
 
