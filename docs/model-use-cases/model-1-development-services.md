@@ -24,18 +24,18 @@ Model 1 is best when the **Buyer wants to own the IP outright** from the start. 
 Developer recovers costs only — zero markup margin.
 
 ### Best Scenario
-**Consolidated entities** where intercompany margin would be eliminated at group level anyway.
+**Related entities in a consolidated group** where intercompany margin would be eliminated at group level for accounting purposes. Note: transfer pricing obligations still apply to the separate legal entities regardless of consolidation status.
 
 ### Real-World Example
-> A holding company's IT subsidiary develops an internal ERP system for the parent company. Since both entities consolidate, any markup would be eliminated in group accounts. Pure cost reimbursement simplifies accounting and avoids creating artificial intercompany profit.
+> A holding company's IT subsidiary develops an internal ERP system for the parent company. Since both entities consolidate, any markup would be eliminated in consolidated accounts. Pure cost reimbursement simplifies group accounting — but the entities must still document that the arrangement is arm's length for tax purposes (see Transfer Pricing Consideration below).
 
 ### Why 1A Over Other Variants
-- Avoids redundant profit layers in consolidated groups
+- Simplifies consolidated group accounting (no intercompany profit to eliminate)
 - Useful for cost validation when Developer lacks third-party benchmarks
-- Maximises Buyer's asset base (full spend capitalises without margin leakage)
+- Maximises Buyer's asset base (development phase costs meeting IAS 38 criteria capitalise without margin component; research phase costs are expensed)
 
 ### Transfer Pricing Consideration
-Limited TP risk since no profit element exists. However, must ensure costs are arm's length if entities are related but don't consolidate.
+Zero-margin arrangements between related parties can attract scrutiny — independent parties would typically expect compensation for services rendered. If used between related entities, document the commercial rationale (e.g., cost-sharing arrangement, group policy) and ensure underlying costs are arm's length. Consider whether a nominal markup (e.g., 3–5%) may be more defensible.
 
 ---
 
@@ -48,7 +48,7 @@ Standard cost-plus with fixed percentage markup (typically 5–15%).
 **Standard arm's length arrangement** between independent parties where transfer pricing defensibility matters.
 
 ### Real-World Example
-> A software development agency builds a custom inventory management system for a retail client. The contract specifies development costs plus 12% markup. This margin is within OECD guidelines for development services (5–15%), making it defensible to tax authorities.
+> A software development agency builds a custom inventory management system for a retail client. The contract specifies development costs plus 12% markup. This markup falls within the 5–15% range commonly observed in benchmarking studies for routine development services, making it defensible to tax authorities.
 
 ### Why 1B Over Other Variants
 - Most defensible TP position (well-established benchmark range)
@@ -57,7 +57,7 @@ Standard cost-plus with fixed percentage markup (typically 5–15%).
 - Standard industry practice for development services
 
 ### Transfer Pricing Consideration
-5–15% markup is the safest range. Document comparable margins from similar transactions.
+5–15% markup is commonly observed in benchmarking studies for routine development services. Document comparable margins from similar transactions to support your position.
 
 ---
 
@@ -92,7 +92,7 @@ Lump sum payment regardless of actual costs — Developer bears cost overrun ris
 **Well-defined scope** where Developer is confident in cost estimates and Buyer demands budget certainty.
 
 ### Real-World Example
-> A government department procures a document management system with detailed RFP specifications. Fixed price of R5M agreed. If Developer spends R4M, margin is 25%. If costs reach R5.5M, Developer absorbs the loss. Buyer gets budget certainty; Developer accepts risk for potential upside.
+> A government department procures a document management system with detailed RFP specifications. Fixed price of R5M agreed. If Developer spends R4M, markup is 25% (R1M profit on R4M cost) or 20% margin on revenue. If costs reach R5.5M, Developer absorbs the R500K loss. Buyer gets budget certainty; Developer accepts risk for potential upside.
 
 ### Why 1D Over Other Variants
 - Buyer gets complete budget certainty
@@ -153,7 +153,7 @@ Retainer should reflect market rates for equivalent team composition. Buyer's co
 
 | Scenario | Best Variant |
 |----------|--------------|
-| Consolidated entities | **1A** — no margin needed |
+| Related entities (consolidated group) | **1A** — simplifies group accounting (but document TP rationale) |
 | Independent parties, standard engagement | **1B** — defensible TP |
 | Quality/timing critical | **1C** — performance incentive |
 | Well-defined scope, budget certainty needed | **1D** — fixed price |
@@ -167,7 +167,7 @@ Retainer should reflect market rates for equivalent team composition. Buyer's co
 1. **Using 1D (fixed price) with unclear scope** — leads to disputes or Developer losses
 2. **Using 1A (zero margin) for unrelated parties** — may not be arm's length
 3. **Using 1E (T&M) without rate benchmarking** — TP vulnerability
-4. **Using 1B margin outside 5–15% range** — harder to defend to tax authorities
+4. **Using 1B markup far outside typical benchmark range (5–15%)** — harder to defend without supporting comparables
 
 ---
 
