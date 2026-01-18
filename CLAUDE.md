@@ -44,13 +44,12 @@
 - [ ] No work-in-progress that would be lost
 
 ### Before Compact
-- [ ] SESSION_NOTES.md updated with full context needed to continue:
+- [ ] SESSION_NOTES.md updated with full context needed to continue after summary:
   - What's being worked on?
   - Current state of the work?
   - What's left to do?
   - Any decisions or blockers?
-- [ ] All changes committed and pushed
-- [ ] HISTORY.md updated if significant work done
+  - Key details that shouldn't be lost in the summary
 
 ## AI Notes
 
