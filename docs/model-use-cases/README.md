@@ -55,4 +55,4 @@ This folder documents **when to use each variant** of the 6 transaction models. 
 
 - [Business Guide](../BUSINESS_GUIDE.md) — User workflows and tutorials
 - [Calculations Guide](../CALCULATIONS.md) — Formula explanations
-- Model concept docs (`model_*_concept.md`) — Technical implementation details
+- [Architecture](../ARCHITECTURE.md) — Technical implementation details

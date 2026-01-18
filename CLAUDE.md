@@ -119,12 +119,22 @@ model-pear/
 ├── CLAUDE.md                   # This file (AI assistant context)
 │
 └── docs/
-    ├── README.md               # Quick start
+    ├── README.md               # Quick start and project overview
     ├── BUSINESS_GUIDE.md       # Comprehensive user guide with tutorials
-    ├── CALCULATIONS.md         # Formula explanations
-    ├── ARCHITECTURE.md         # Technical architecture
-    ├── HISTORY.md              # Changelog
-    └── model_*_concept.md      # Concept docs for Models 1-6
+    ├── CALCULATIONS.md         # Formula explanations and economic theory
+    ├── ARCHITECTURE.md         # Technical architecture (TypeScript monorepo)
+    ├── HISTORY.md              # Changelog and bug fixes
+    ├── SESSION_NOTES.md        # Build commands and architecture reference
+    ├── TODO.md                 # Feature ideas and backlog
+    ├── USER_ACTIONS.md         # Manual user action instructions (when needed)
+    └── model-use-cases/        # When to use each model variant
+        ├── README.md           # Model selection guide
+        ├── model-1-development-services.md
+        ├── model-2-software-licence.md
+        ├── model-3-joint-development.md
+        ├── model-4-build-operate-transfer.md
+        ├── model-5-software-sale.md
+        └── model-6-saas-subscription.md
 ```
 
 ## The Two Modes
@@ -415,14 +425,20 @@ const profit = revenue - cost;
 const profit = revenue - cost;
 ```
 
-## Documentation Maintenance
+## Documentation Reference
 
-| File | Update When |
-|------|-------------|
-| **CLAUDE.md** (root) | Architecture, models, or major features change |
-| **BUSINESS_GUIDE.md** | User workflows, features, or terminology change |
-| **CALCULATIONS.md** | Formulas or calculation logic change |
-| **HISTORY.md** | Any change to the application |
+| Document | Purpose | Update When |
+|----------|---------|-------------|
+| **CLAUDE.md** (root) | AI assistant context, architecture overview, development guide | Architecture, models, or major features change |
+| **docs/README.md** | Quick start guide, project overview | Tech stack or setup process changes |
+| **docs/BUSINESS_GUIDE.md** | Comprehensive user guide with tutorials | User workflows, features, or terminology change |
+| **docs/CALCULATIONS.md** | All formulas, rationale, economic theory | Formulas or calculation logic change |
+| **docs/ARCHITECTURE.md** | Technical architecture (TypeScript monorepo) | Build process, package structure, or tech decisions change |
+| **docs/HISTORY.md** | Changelog and bug fixes | Any change to the application |
+| **docs/SESSION_NOTES.md** | Build commands, architecture reference, future ideas | Keep lean - remove stale notes |
+| **docs/TODO.md** | Feature ideas and backlog | Add ideas to persist between sessions |
+| **docs/USER_ACTIONS.md** | Manual user action instructions | When user needs to do something outside the tool |
+| **docs/model-use-cases/** | When to use each model variant, TP considerations | Model logic or variant definitions change |
 
 ## Troubleshooting
 
