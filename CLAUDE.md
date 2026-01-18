@@ -9,7 +9,7 @@
 1. **User-first design** - Align with how real people will use the tool (top priority)
 2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
 3. **Document WHY** - Explain decisions and how they align with tool goals
-4. **Keep docs updated** - HISTORY.md, CALCULATIONS.md, BUSINESS_GUIDE.md, CLAUDE.md as relevant
+4. **Keep docs updated automatically** - Update relevant docs as part of every task (see Documentation Reference section below)
 5. **Testability** - Ensure correctness and alignment with usage goals can be verified
 6. **Know the purpose** - Always be aware of what the tool is for
 7. **Logical checkpoints** - Stop at sensible points, document progress in docs/SESSION_NOTES.md
@@ -27,6 +27,12 @@
 - Commit and push changes before ending a session
 - Keep SESSION_NOTES.md lean - remove previous session notes once no longer relevant
 - Clean up completed or obsolete docs/files and remove references to them
+- **Documentation is part of every task** - When you change code, update the relevant docs in the same session:
+  - Changed calculations? → Update CALCULATIONS.md
+  - Changed features/UI? → Update BUSINESS_GUIDE.md
+  - Changed architecture? → Update ARCHITECTURE.md and CLAUDE.md
+  - Any code change? → Add entry to HISTORY.md
+  - Found issues to fix later? → Add to TODO.md
 
 ---
 
