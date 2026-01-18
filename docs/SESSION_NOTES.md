@@ -1,6 +1,23 @@
 # Session Notes
 
-> Context and progress notes to preserve between sessions. Keep lean - remove notes once no longer relevant.
+> Context for the next session to continue without losing context. Update after each significant task.
+
+---
+
+## Current State (January 18, 2026)
+
+**Last completed**: Transfer pricing documentation review and doc cleanup
+
+**Status**: All work complete, docs up to date
+
+**What was done**:
+- Corrected technical inaccuracies in all 6 model use case docs
+- Updated CALCULATIONS.md with formula clarifications
+- Deleted 10 stale documentation files
+- Updated CLAUDE.md with documentation reference and timing guidance
+- Created root README.md
+
+**Nothing pending** - ready for new work.
 
 ---
 
