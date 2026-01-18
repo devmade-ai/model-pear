@@ -12,7 +12,7 @@
 4. **Keep docs updated automatically** - Update relevant docs as part of every task (see Documentation Reference section below)
 5. **Testability** - Ensure correctness and alignment with usage goals can be verified
 6. **Know the purpose** - Always be aware of what the tool is for
-7. **Preserve session context** - Update SESSION_NOTES.md so the next session can continue without losing context (like a written version of compact)
+7. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
 8. **Follow conventions** - Best practices and consistent patterns
 9. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
 10. **Repeatable process** - Follow consistent steps to ensure all the above
@@ -26,12 +26,12 @@
 - Check for existing patterns in the codebase before creating new ones
 - Commit and push changes before ending a session
 - Clean up completed or obsolete docs/files and remove references to them
-- **SESSION_NOTES.md is for session continuity** - Before ending a session, write what the next AI needs to know to continue:
-  - What was being worked on?
+- **SESSION_NOTES.md is for session continuity** - Update after completing each significant task (sessions can end abruptly, so keep it current):
+  - What was just completed?
   - What's the current state?
-  - What's left to do?
+  - What's next / left to do?
   - Any blockers or decisions pending?
-  - Remove old session notes once they're no longer relevant (keep it lean)
+  - Remove old notes once no longer relevant (keep it lean)
 - **Documentation is part of every task** - When you change code, update the relevant docs in the same session:
   - Changed calculations? → Update CALCULATIONS.md
   - Changed features/UI? → Update BUSINESS_GUIDE.md
@@ -446,7 +446,7 @@ const profit = revenue - cost;
 | **docs/CALCULATIONS.md** | All formulas, rationale, economic theory | Formulas or calculation logic change |
 | **docs/ARCHITECTURE.md** | Technical architecture (TypeScript monorepo) | Build process, package structure, or tech decisions change |
 | **docs/HISTORY.md** | Changelog and bug fixes | Any change to the application |
-| **docs/SESSION_NOTES.md** | Session continuity - context for next AI to continue work | Before ending session, write what's needed to continue; remove stale notes |
+| **docs/SESSION_NOTES.md** | Session continuity - context for next AI to continue work | After each significant task (sessions end abruptly); remove stale notes |
 | **docs/TODO.md** | Feature ideas and backlog | Add ideas to persist between sessions |
 | **docs/USER_ACTIONS.md** | Manual user action instructions | When user needs to do something outside the tool |
 | **docs/model-use-cases/** | When to use each model variant, TP considerations | Model logic or variant definitions change |
