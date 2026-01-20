@@ -2,7 +2,59 @@
 
 > Lower priority items and improvements to capture between sessions
 
-## Feature Ideas
+---
+
+## High Priority: Align Tool with Discovery Findings
+
+*See [DISCOVERY_FINDINGS.md](./DISCOVERY_FINDINGS.md) for full context*
+*See [NEGOTIATION_MODE.md](./NEGOTIATION_MODE.md) for design and audit details*
+
+### 1. Design "Negotiation Mode" Flow
+**Priority**: High
+**Status**: Complete
+
+See [NEGOTIATION_MODE.md](./NEGOTIATION_MODE.md) for:
+- 5-minute walkthrough script
+- Screen-by-screen requirements
+- Feature visibility matrix
+- Implementation recommendation (Option 2: Simplified by Default)
+
+### 2. UI Audit Against Design Principles
+**Priority**: High
+**Status**: Complete
+
+Audit complete. See [NEGOTIATION_MODE.md - UI Audit Results](./NEGOTIATION_MODE.md#ui-audit-results) for full findings.
+
+**Summary by principle:**
+- Client in the room: Partial - tabs may confuse
+- Neutral ground first: Fix needed - no benchmark badges
+- Show both sides: Good - Developer/Buyer panels work well
+- Progressive complexity: Fix needed - all inputs visible
+- Compare to decide: Partial - save requires modal
+
+### 3. Implement Changes
+**Priority**: High
+**Status**: Complete (January 20, 2026)
+
+#### Quick Wins (Priority 1) - DONE
+- [x] Add "Industry Standard" badges to key input fields
+- [x] Hide Sensitivity/Projections tabs by default (collapse into "Advanced Analysis")
+- [x] Collapse Transfer Pricing section by default
+- [x] One-click save with auto-generated name
+
+#### Input Grouping (Priority 2) - DONE
+- [x] Group inputs into Essential / Advanced sections
+- [x] Use `essential` field in config for grouping
+- [x] Show collapsed count: "Advanced Options (N)"
+
+#### Comparison Enhancement (Priority 3) - DONE
+- [x] Show saved options count in action bar
+- [x] Add summary row to comparison view ("Quick Summary" with best-for insights)
+- [x] Add "winner" indicators per metric (★ star icon + green highlighting)
+
+---
+
+## Medium Priority: Feature Ideas
 
 ### Recommendation Summary for Compare Mode
 **Priority**: Medium

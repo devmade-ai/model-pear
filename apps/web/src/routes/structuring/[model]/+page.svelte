@@ -32,18 +32,23 @@
     SensitivityPanel,
     ProjectionsPanel,
   } from '$lib/components';
-  import { modelFieldConfigs } from '$lib/config';
+  import { modelFieldConfigs, type InputFieldConfig } from '$lib/config';
   import { comparisonStore, isComparing } from '$lib/stores';
 
-  // Active tab for analysis sections
-  type Tab = 'results' | 'sensitivity' | 'projections';
-  let activeTab: Tab = 'results';
+  // Collapsible section states
+  let showAdvancedInputs = false;
+  let showAdvancedAnalysis = false;
+  let showTransferPricing = false;
 
   // Get model ID from URL
   $: modelId = $page.params.model;
 
   // Get input field configuration for current model
   $: fieldConfig = modelFieldConfigs[modelId] || [];
+
+  // Split fields into essential and advanced for progressive disclosure
+  $: essentialFields = fieldConfig.filter((f: InputFieldConfig) => f.essential !== false);
+  $: advancedFields = fieldConfig.filter((f: InputFieldConfig) => f.essential === false);
 
   // Model configurations
   const modelConfigs = {
@@ -191,6 +196,24 @@
   // Save current calculation as an option
   let showSaveModal = false;
   let saveName = '';
+  let saveConfirmation = '';
+
+  // Quick save with auto-generated name
+  function quickSave() {
+    if (result) {
+      const savedCount = $comparisonStore.length;
+      const autoName = inputs.projectName as string || `${config?.model.shortName} Option ${savedCount + 1}`;
+      comparisonStore.save(
+        autoName,
+        modelId,
+        result.metadata.variantId,
+        inputs,
+        result
+      );
+      saveConfirmation = `Saved as "${autoName}"`;
+      setTimeout(() => saveConfirmation = '', 2000);
+    }
+  }
 
   function openSaveModal() {
     saveName = inputs.projectName as string || `${config?.model.name} Option`;
@@ -208,6 +231,8 @@
       );
       showSaveModal = false;
       saveName = '';
+      saveConfirmation = `Saved as "${saveName}"`;
+      setTimeout(() => saveConfirmation = '', 2000);
     }
   }
 
@@ -215,6 +240,9 @@
     showSaveModal = false;
     saveName = '';
   }
+
+  // Derived value for saved count
+  $: savedCount = $comparisonStore.options.length;
 </script>
 
 <svelte:head>
@@ -245,8 +273,9 @@
         <div class="card p-6 sticky top-4">
           <h2 class="text-lg font-semibold text-gray-900 mb-4">Inputs</h2>
 
+          <!-- Essential Inputs -->
           <div class="space-y-4">
-            {#each fieldConfig as field (field.id)}
+            {#each essentialFields as field (field.id)}
               <InputField
                 id={field.id}
                 label={field.label}
@@ -257,68 +286,153 @@
                 max={field.max}
                 step={field.step}
                 hint={field.hint}
+                benchmark={field.benchmark}
                 on:change={handleInputChange}
               />
             {/each}
           </div>
+
+          <!-- Advanced Inputs (Collapsed) -->
+          {#if advancedFields.length > 0}
+            <div class="mt-6 pt-4 border-t border-gray-200">
+              <button
+                class="flex items-center justify-between w-full text-sm font-medium text-gray-600 hover:text-gray-900"
+                on:click={() => showAdvancedInputs = !showAdvancedInputs}
+              >
+                <span>Advanced Options ({advancedFields.length})</span>
+                <svg
+                  class="w-5 h-5 transition-transform {showAdvancedInputs ? 'rotate-180' : ''}"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {#if showAdvancedInputs}
+                <div class="space-y-4 mt-4">
+                  {#each advancedFields as field (field.id)}
+                    <InputField
+                      id={field.id}
+                      label={field.label}
+                      type={field.type}
+                      value={inputs[field.id] ?? ''}
+                      options={field.options}
+                      min={field.min}
+                      max={field.max}
+                      step={field.step}
+                      hint={field.hint}
+                      benchmark={field.benchmark}
+                      on:change={handleInputChange}
+                    />
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          {/if}
         </div>
       </div>
 
       <!-- Results Area -->
       <div class="lg:col-span-2 space-y-6">
-        <!-- Header with Save button and Tabs -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <!-- Tabs -->
-          <div class="flex border-b border-gray-200">
-            <button
-              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {activeTab === 'results'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
-              on:click={() => (activeTab = 'results')}
-            >
-              Results
-            </button>
-            <button
-              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {activeTab === 'sensitivity'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
-              on:click={() => (activeTab = 'sensitivity')}
-            >
-              Sensitivity
-            </button>
-            <button
-              class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {activeTab === 'projections'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
-              on:click={() => (activeTab = 'projections')}
-            >
-              Projections
-            </button>
-          </div>
-
-          <!-- Save button -->
-          <button class="btn-primary" on:click={openSaveModal}>
+        <!-- Action Bar: Save & Compare -->
+        <div class="flex flex-wrap items-center gap-3">
+          <button class="btn-primary" on:click={quickSave}>
             Save Option
           </button>
+          <button class="btn-secondary text-sm" on:click={openSaveModal}>
+            Save As...
+          </button>
+          {#if savedCount > 0}
+            <span class="text-sm text-gray-600 border-l border-gray-300 pl-3">
+              {savedCount} option{savedCount !== 1 ? 's' : ''} saved
+            </span>
+          {/if}
+          {#if saveConfirmation}
+            <span class="text-sm text-green-600 animate-pulse">{saveConfirmation}</span>
+          {/if}
         </div>
 
-        <!-- Tab Content -->
-        {#if activeTab === 'results'}
-          <DeveloperResults developer={result.developer} />
-          <BuyerResults buyer={result.buyer} />
-          <TransferPricingResults transferPricing={result.transferPricing} />
+        <!-- Main Results (Always Visible) -->
+        <DeveloperResults developer={result.developer} />
+        <BuyerResults buyer={result.buyer} />
 
-          <!-- Comparison Manager -->
-          <ComparisonManager />
-        {:else if activeTab === 'sensitivity'}
-          <SensitivityPanel
-            {inputs}
-            {result}
-            calculateFn={config.calculate}
-          />
-        {:else if activeTab === 'projections'}
-          <ProjectionsPanel {result} />
-        {/if}
+        <!-- Transfer Pricing (Collapsed by Default) -->
+        <div class="card">
+          <button
+            class="w-full p-4 flex items-center justify-between text-left"
+            on:click={() => showTransferPricing = !showTransferPricing}
+          >
+            <div class="flex items-center space-x-3">
+              <span class="text-xl">⚖️</span>
+              <div>
+                <h3 class="font-semibold text-gray-900">Transfer Pricing Assessment</h3>
+                <p class="text-sm text-gray-500">Related party compliance details</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs px-2 py-1 rounded-full {result.transferPricing.riskLevel === 'low' ? 'bg-green-100 text-green-800' : result.transferPricing.riskLevel === 'medium' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}">
+                {result.transferPricing.riskLevel.toUpperCase()} RISK
+              </span>
+              <svg
+                class="w-5 h-5 text-gray-400 transition-transform {showTransferPricing ? 'rotate-180' : ''}"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+          {#if showTransferPricing}
+            <div class="px-4 pb-4">
+              <TransferPricingResults transferPricing={result.transferPricing} minimal={true} />
+            </div>
+          {/if}
+        </div>
+
+        <!-- Advanced Analysis (Collapsed by Default) -->
+        <div class="card">
+          <button
+            class="w-full p-4 flex items-center justify-between text-left"
+            on:click={() => showAdvancedAnalysis = !showAdvancedAnalysis}
+          >
+            <div class="flex items-center space-x-3">
+              <span class="text-xl">📊</span>
+              <div>
+                <h3 class="font-semibold text-gray-900">Advanced Analysis</h3>
+                <p class="text-sm text-gray-500">Sensitivity, projections, and detailed metrics</p>
+              </div>
+            </div>
+            <svg
+              class="w-5 h-5 text-gray-400 transition-transform {showAdvancedAnalysis ? 'rotate-180' : ''}"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {#if showAdvancedAnalysis}
+            <div class="p-4 pt-0 space-y-6">
+              <div>
+                <h4 class="text-sm font-medium text-gray-700 mb-3">Sensitivity Analysis</h4>
+                <SensitivityPanel
+                  {inputs}
+                  {result}
+                  calculateFn={config.calculate}
+                />
+              </div>
+              <div>
+                <h4 class="text-sm font-medium text-gray-700 mb-3">Growth Projections</h4>
+                <ProjectionsPanel {result} />
+              </div>
+            </div>
+          {/if}
+        </div>
+
+        <!-- Comparison Manager -->
+        <ComparisonManager />
 
         <!-- Metadata -->
         <div class="text-xs text-gray-400 text-right">

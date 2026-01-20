@@ -7,6 +7,77 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Discovery Framework & Tool Discovery Session (January 20, 2026)
+
+**Impact**: Added methodology guide and applied it to understand actual tool usage
+
+### New Documentation
+
+- Created `DISCOVERY_FRAMEWORK.md` - comprehensive guide for conducting discovery sessions
+  - Core principle: user flows as the spine connecting people, data, questions, and contacts
+  - Session 1 structure: People, Flow, Data, Contact Mapping, Why Now
+  - Post-session analysis checklist
+  - Follow-up session templates for different stakeholder types
+  - Language guide for non-technical audiences
+  - Data complexity signals reference
+
+### Discovery Session: This Tool
+
+Applied the Discovery Framework to understand how this tool will actually be used.
+
+**Key finding**: The tool is used *with* clients in live negotiation sessions, not as a back-office calculator.
+
+- Created `DISCOVERY_FINDINGS.md` - full documentation of discovery session
+- Identified actual users: tech-sales + non-technical exec + finance exec
+- Mapped the flow: tool enters after discovery, during "let's structure this together"
+- Defined 5 design principles from findings
+
+### Negotiation Mode Design & UI Audit
+
+Created comprehensive design for client-facing "Negotiation Mode":
+
+- Created `NEGOTIATION_MODE.md` with:
+  - 5-minute walkthrough script (what to say, what they see)
+  - Screen-by-screen requirements
+  - Feature visibility matrix (what to show/hide)
+  - Implementation recommendation: "Simplified by Default"
+- Audited current UI against 5 design principles
+- Documented specific gaps and fixes needed
+- Created prioritised implementation list in `TODO.md`:
+  - Priority 1: Industry badges, hide advanced tabs, one-click save
+  - Priority 2: Input grouping (Essential/Advanced)
+  - Priority 3: Comparison enhancements
+
+### Negotiation Mode Implementation
+
+Implemented UI changes based on discovery findings and design principles:
+
+**Input Field Enhancements** (`inputFields.ts`, `InputField.svelte`):
+- Added `benchmark` property to show industry standard badges (e.g., "Industry: 5-15%")
+- Added `essential` property to control field grouping
+- InputField now displays benchmark badges next to labels
+
+**Calculator Page Refactor** (`structuring/[model]/+page.svelte`):
+- **Progressive Disclosure**: Inputs grouped into Essential (visible) and Advanced (collapsed)
+- **Collapsed Sections**: Sensitivity/Projections moved to collapsible "Advanced Analysis"
+- **Transfer Pricing**: Now collapsed by default with risk level badge visible
+- **One-Click Save**: Quick save button with auto-generated names
+- **Saved Count**: Shows number of saved options in action bar
+
+**Comparison View Enhancements** (`ComparisonView.svelte`):
+- **Quick Summary Section**: Shows best-for insights per option at top of comparison
+- **Winner Indicators**: ★ star icon on metrics where option is best
+- **Enhanced Highlighting**: Green background + text for winning values
+- **Smart Detection**: Only shows winner when there's a clear best (no ties)
+
+**Files Changed**:
+- `apps/web/src/lib/config/inputFields.ts`
+- `apps/web/src/lib/components/InputField.svelte`
+- `apps/web/src/lib/components/ComparisonView.svelte`
+- `apps/web/src/routes/structuring/[model]/+page.svelte`
+
+---
+
 ## Transfer Pricing Documentation Review (January 18, 2026)
 
 **Impact**: Corrected technical inaccuracies across all model use cases and CALCULATIONS.md

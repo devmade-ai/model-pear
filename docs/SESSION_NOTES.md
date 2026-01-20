@@ -4,20 +4,63 @@
 
 ---
 
-## Current State (January 18, 2026)
+## Current State (January 20, 2026)
 
-**Last completed**: Transfer pricing documentation review and doc cleanup
+**Last completed**: All Negotiation Mode UI changes implemented
 
-**Status**: All work complete, docs up to date
+**Status**: P1, P2, and P3 complete
 
-**What was done**:
-- Corrected technical inaccuracies in all 6 model use case docs
-- Updated CALCULATIONS.md with formula clarifications
-- Deleted 10 stale documentation files
-- Updated CLAUDE.md with documentation reference and timing guidance
-- Created root README.md
+### What was done this session
 
-**Nothing pending** - ready for new work.
+1. **Created DISCOVERY_FRAMEWORK.md** - Methodology for conducting discovery sessions
+2. **Applied Discovery Framework to this tool** - Completed Session 1 (Quick Discovery)
+3. **Documented findings** - Created DISCOVERY_FINDINGS.md with all insights
+4. **Designed Negotiation Mode** - Created NEGOTIATION_MODE.md with:
+   - 5-minute walkthrough script
+   - Screen-by-screen requirements
+   - Feature visibility matrix
+5. **Audited current UI** - Compared against 5 design principles, documented gaps
+6. **Implemented UI changes**:
+   - Added `benchmark` and `essential` fields to InputFieldConfig
+   - Added "Industry Standard" badges to key input fields
+   - Grouped inputs into Essential/Advanced sections (collapsible)
+   - Collapsed Sensitivity/Projections into "Advanced Analysis" section
+   - Collapsed Transfer Pricing by default
+   - Added one-click "Save Option" with auto-generated names
+   - Added saved options count in action bar
+7. **Enhanced Comparison View**:
+   - Added "Quick Summary" section showing best-for insights per option
+   - Added ★ winner indicators on best values in comparison table
+   - Enhanced green highlighting for winning metrics
+
+### Key Discovery Insight
+
+> **Actual use case**: Tech-sales person guiding a non-technical exec + finance exec through options in a live session to reach agreement faster
+
+### All Planned Work Complete
+
+All Priority 1, 2, and 3 items from the Negotiation Mode audit have been implemented.
+
+**Completed refinement**: Fixed TransferPricingResults nested card styling by adding `minimal` prop.
+
+**Industry standards as defaults**: Verified that all default values match industry benchmarks:
+- `markupPercentage: 10` (within Industry: 5-15%)
+- `corporateTaxRate: 27` (matches SA: 27%)
+- `usefulLife: 5` (within Typical: 3-10 years)
+- `contractLengthMonths: 36` (within Typical: 12-36 months)
+
+### Key Files Changed
+
+- `apps/web/src/lib/config/inputFields.ts` - Added benchmark/essential props
+- `apps/web/src/lib/components/InputField.svelte` - Display benchmark badges
+- `apps/web/src/lib/components/ComparisonView.svelte` - Summary + winner indicators
+- `apps/web/src/routes/structuring/[model]/+page.svelte` - Major UI refactor
+
+### Key Documentation
+
+- [DISCOVERY_FRAMEWORK.md](./DISCOVERY_FRAMEWORK.md) - The methodology
+- [DISCOVERY_FINDINGS.md](./DISCOVERY_FINDINGS.md) - Findings for this tool
+- [NEGOTIATION_MODE.md](./NEGOTIATION_MODE.md) - Design and UI audit
 
 ---
 
