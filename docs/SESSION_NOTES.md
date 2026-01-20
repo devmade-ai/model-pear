@@ -6,14 +6,41 @@
 
 ## Current State (January 20, 2026)
 
-**Last completed**: Added Discovery Framework documentation
+**Last completed**: Discovery session for the tool itself
 
-**Status**: Working through Discovery Framework with user
+**Status**: Ready to design "Negotiation Mode" and audit UI
 
-**What was done**:
-- Created DISCOVERY_FRAMEWORK.md - methodology for understanding user flows, stakeholders, and data complexity during discovery sessions
+### What was done this session
 
-**In progress**: Working through the Discovery Framework document with user.
+1. **Created DISCOVERY_FRAMEWORK.md** - Methodology for conducting discovery sessions
+2. **Applied Discovery Framework to this tool** - Completed Session 1 (Quick Discovery)
+3. **Documented findings** - Created DISCOVERY_FINDINGS.md with all insights
+4. **Updated TODO.md** - Added high-priority action items from discovery
+
+### Key Discovery Insight
+
+> **Actual use case**: Tech-sales person guiding a non-technical exec + finance exec through options in a live session to reach agreement faster
+
+This is different from "back-office analyst running complex scenarios alone."
+
+### Design Principles (from discovery)
+
+1. **Client in the room** - Every screen explainable in 10 seconds
+2. **Neutral ground first** - Industry standards as defaults
+3. **Show both sides** - "What you get / what they get" always visible
+4. **Progressive complexity** - Simple first, details on demand
+5. **Compare to decide** - Easy save/compare/choose flow
+
+### Next Steps
+
+1. Design the ideal "Negotiation Mode" flow (5-minute walkthrough)
+2. Audit current UI against design principles
+3. Create specific fix list from audit
+
+### Key Files
+
+- [DISCOVERY_FRAMEWORK.md](./DISCOVERY_FRAMEWORK.md) - The methodology
+- [DISCOVERY_FINDINGS.md](./DISCOVERY_FINDINGS.md) - Findings for this tool
 
 ---
 

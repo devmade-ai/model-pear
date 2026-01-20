@@ -2,7 +2,56 @@
 
 > Lower priority items and improvements to capture between sessions
 
-## Feature Ideas
+---
+
+## High Priority: Align Tool with Discovery Findings
+
+*See [DISCOVERY_FINDINGS.md](./DISCOVERY_FINDINGS.md) for full context*
+
+### 1. Design "Negotiation Mode" Flow
+**Priority**: High
+**Status**: Not started
+
+Define the ideal 5-minute client walkthrough:
+- [ ] What screens are needed for a live negotiation session?
+- [ ] What's shown vs hidden by default?
+- [ ] What's the minimum viable feature set for closing a deal?
+- [ ] What features are "impressive but never used"?
+
+### 2. UI Audit Against Design Principles
+**Priority**: High
+**Status**: Not started
+
+Evaluate current UI against these principles:
+
+| Principle | Test Question |
+|-----------|---------------|
+| Client in the room | Can you explain this screen in 10 seconds? |
+| Neutral ground first | Do industry standards appear as defaults? |
+| Show both sides | Is "what you get / what they get" always visible? |
+| Progressive complexity | Can you start simple and add detail on demand? |
+| Compare to decide | Is save/compare/choose obvious and fast? |
+
+Specific checks:
+- [ ] Presentation friendly? (Professional, clear hierarchy)
+- [ ] Industry standards prominent? (Defaults populated, labelled)
+- [ ] Language accessible? (CEO-friendly terms)
+- [ ] Progressive disclosure? (Simple first, advanced tucked away)
+- [ ] Compare flow smooth? (Save/compare/choose is fast)
+- [ ] Right-sized? (No features that slow down live negotiation)
+
+### 3. Create Specific Fix List
+**Priority**: High
+**Status**: Blocked by #1 and #2
+
+After designing the flow and auditing the UI:
+- [ ] Document specific changes needed
+- [ ] Prioritise by impact on negotiation flow
+- [ ] Implement changes
+
+---
+
+## Medium Priority: Feature Ideas
 
 ### Recommendation Summary for Compare Mode
 **Priority**: Medium

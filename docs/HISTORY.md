@@ -7,9 +7,9 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
-## Discovery Framework Documentation (January 20, 2026)
+## Discovery Framework & Tool Discovery Session (January 20, 2026)
 
-**Impact**: Added methodology guide for user discovery sessions
+**Impact**: Added methodology guide and applied it to understand actual tool usage
 
 ### New Documentation
 
@@ -20,6 +20,19 @@ This file tracks all significant bug fixes, improvements, and architectural chan
   - Follow-up session templates for different stakeholder types
   - Language guide for non-technical audiences
   - Data complexity signals reference
+
+### Discovery Session: This Tool
+
+Applied the Discovery Framework to understand how this tool will actually be used.
+
+**Key finding**: The tool is used *with* clients in live negotiation sessions, not as a back-office calculator.
+
+- Created `DISCOVERY_FINDINGS.md` - full documentation of discovery session
+- Identified actual users: tech-sales + non-technical exec + finance exec
+- Mapped the flow: tool enters after discovery, during "let's structure this together"
+- Defined 5 design principles from findings
+- Updated `TODO.md` with high-priority alignment tasks
+- Updated `SESSION_NOTES.md` with current state and next steps
 
 ---
 
