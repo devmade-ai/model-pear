@@ -34,21 +34,21 @@ Audit complete. See [NEGOTIATION_MODE.md - UI Audit Results](./NEGOTIATION_MODE.
 
 ### 3. Implement Changes
 **Priority**: High
-**Status**: Ready to start
+**Status**: Mostly Complete (January 20, 2026)
 
-#### Quick Wins (Priority 1)
-- [ ] Add "Industry Standard" badges to key input fields
-- [ ] Hide Sensitivity/Projections tabs by default (collapse into "Advanced Analysis")
-- [ ] Collapse Transfer Pricing section by default
-- [ ] One-click save with auto-generated name
+#### Quick Wins (Priority 1) - DONE
+- [x] Add "Industry Standard" badges to key input fields
+- [x] Hide Sensitivity/Projections tabs by default (collapse into "Advanced Analysis")
+- [x] Collapse Transfer Pricing section by default
+- [x] One-click save with auto-generated name
 
-#### Input Grouping (Priority 2)
-- [ ] Group inputs into Essential / Advanced sections
-- [ ] Use existing `category` field in config for grouping
-- [ ] Show collapsed count: "5 more options"
+#### Input Grouping (Priority 2) - DONE
+- [x] Group inputs into Essential / Advanced sections
+- [x] Use `essential` field in config for grouping
+- [x] Show collapsed count: "Advanced Options (N)"
 
-#### Comparison Enhancement (Priority 3)
-- [ ] Make comparison button more prominent (near Save button)
+#### Comparison Enhancement (Priority 3) - Partial
+- [x] Show saved options count in action bar
 - [ ] Add summary row to comparison view
 - [ ] Add "winner" indicators per metric
 

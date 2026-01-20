@@ -48,6 +48,27 @@ Created comprehensive design for client-facing "Negotiation Mode":
   - Priority 2: Input grouping (Essential/Advanced)
   - Priority 3: Comparison enhancements
 
+### Negotiation Mode Implementation
+
+Implemented UI changes based on discovery findings and design principles:
+
+**Input Field Enhancements** (`inputFields.ts`, `InputField.svelte`):
+- Added `benchmark` property to show industry standard badges (e.g., "Industry: 5-15%")
+- Added `essential` property to control field grouping
+- InputField now displays benchmark badges next to labels
+
+**Calculator Page Refactor** (`structuring/[model]/+page.svelte`):
+- **Progressive Disclosure**: Inputs grouped into Essential (visible) and Advanced (collapsed)
+- **Collapsed Sections**: Sensitivity/Projections moved to collapsible "Advanced Analysis"
+- **Transfer Pricing**: Now collapsed by default with risk level badge visible
+- **One-Click Save**: Quick save button with auto-generated names
+- **Saved Count**: Shows number of saved options in action bar
+
+**Files Changed**:
+- `apps/web/src/lib/config/inputFields.ts`
+- `apps/web/src/lib/components/InputField.svelte`
+- `apps/web/src/routes/structuring/[model]/+page.svelte`
+
 ---
 
 ## Transfer Pricing Documentation Review (January 18, 2026)

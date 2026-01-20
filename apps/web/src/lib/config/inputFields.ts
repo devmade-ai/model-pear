@@ -15,6 +15,10 @@ export interface InputFieldConfig {
   step?: number;
   hint?: string;
   category?: 'basic' | 'cost' | 'revenue' | 'tax' | 'timing';
+  /** Industry standard benchmark label (e.g., "Industry: 5-15%") */
+  benchmark?: string;
+  /** Whether this is an essential input shown by default (vs advanced) */
+  essential?: boolean;
 }
 
 // Common fields used across multiple models
@@ -24,6 +28,7 @@ const commonFields: Record<string, InputFieldConfig> = {
     label: 'Project Name',
     type: 'text',
     category: 'basic',
+    essential: true,
   },
   developmentCost: {
     id: 'developmentCost',
@@ -32,6 +37,7 @@ const commonFields: Record<string, InputFieldConfig> = {
     min: 0,
     step: 10000,
     category: 'cost',
+    essential: true,
   },
   researchPhaseCost: {
     id: 'researchPhaseCost',
@@ -41,6 +47,7 @@ const commonFields: Record<string, InputFieldConfig> = {
     step: 10000,
     hint: 'Expensed under IAS 38',
     category: 'cost',
+    essential: false,
   },
   developmentPhaseCost: {
     id: 'developmentPhaseCost',
@@ -50,6 +57,7 @@ const commonFields: Record<string, InputFieldConfig> = {
     step: 10000,
     hint: 'Capitalised under IAS 38',
     category: 'cost',
+    essential: false,
   },
   usefulLife: {
     id: 'usefulLife',
@@ -59,6 +67,8 @@ const commonFields: Record<string, InputFieldConfig> = {
     max: 20,
     step: 1,
     category: 'timing',
+    benchmark: 'Typical: 3-10 years',
+    essential: false,
   },
   section11eType: {
     id: 'section11eType',
@@ -69,6 +79,7 @@ const commonFields: Record<string, InputFieldConfig> = {
       { value: 'mainframe-5yr', label: 'Complex Systems (5-year)' },
     ],
     category: 'tax',
+    essential: false,
   },
   corporateTaxRate: {
     id: 'corporateTaxRate',
@@ -78,6 +89,8 @@ const commonFields: Record<string, InputFieldConfig> = {
     max: 50,
     step: 1,
     category: 'tax',
+    benchmark: 'SA: 27%',
+    essential: false,
   },
 };
 
@@ -96,6 +109,8 @@ export const model1Fields: InputFieldConfig[] = [
     step: 1,
     hint: "Arm's length range: 5-15%",
     category: 'revenue',
+    benchmark: 'Industry: 5-15%',
+    essential: true,
   },
   commonFields.usefulLife,
   commonFields.section11eType,
@@ -117,6 +132,7 @@ export const model2Fields: InputFieldConfig[] = [
     step: 1,
     hint: 'How long developer will amortise the IP',
     category: 'timing',
+    essential: false,
   },
   {
     id: 'upfrontLicenceFee',
@@ -125,6 +141,8 @@ export const model2Fields: InputFieldConfig[] = [
     min: 0,
     step: 10000,
     category: 'revenue',
+    benchmark: 'Varies by scope',
+    essential: true,
   },
   {
     id: 'licenceType',
@@ -135,6 +153,7 @@ export const model2Fields: InputFieldConfig[] = [
       { value: 'term', label: 'Term-based' },
     ],
     category: 'basic',
+    essential: true,
   },
   {
     id: 'licenceTerm',
@@ -421,6 +440,8 @@ export const model5Fields: InputFieldConfig[] = [
     min: 0,
     step: 10000,
     category: 'revenue',
+    benchmark: 'Typically 1.5-3x dev cost',
+    essential: true,
   },
   {
     id: 'paymentTerms',
@@ -433,6 +454,7 @@ export const model5Fields: InputFieldConfig[] = [
       { value: 'earnout', label: 'Earnout' },
     ],
     category: 'revenue',
+    essential: true,
   },
   {
     id: 'annualMaintenanceFee',
@@ -480,6 +502,7 @@ export const model6Fields: InputFieldConfig[] = [
     min: 0,
     step: 1000,
     category: 'revenue',
+    essential: true,
   },
   {
     id: 'contractLengthMonths',
@@ -489,6 +512,8 @@ export const model6Fields: InputFieldConfig[] = [
     max: 60,
     step: 1,
     category: 'timing',
+    benchmark: 'Typical: 12-36 months',
+    essential: true,
   },
   {
     id: 'pricingModel',
@@ -500,6 +525,7 @@ export const model6Fields: InputFieldConfig[] = [
       { value: 'usage-based', label: 'Usage Based' },
     ],
     category: 'basic',
+    essential: true,
   },
   {
     id: 'annualHostingCost',

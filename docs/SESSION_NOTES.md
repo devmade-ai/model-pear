@@ -6,9 +6,9 @@
 
 ## Current State (January 20, 2026)
 
-**Last completed**: Negotiation Mode design and UI audit
+**Last completed**: Implemented Negotiation Mode UI changes
 
-**Status**: Ready to implement UI changes
+**Status**: P1 and P2 complete, P3 partially complete
 
 ### What was done this session
 
@@ -20,36 +20,32 @@
    - Screen-by-screen requirements
    - Feature visibility matrix
 5. **Audited current UI** - Compared against 5 design principles, documented gaps
-6. **Created specific fix list** - Prioritised changes in TODO.md
+6. **Implemented UI changes**:
+   - Added `benchmark` and `essential` fields to InputFieldConfig
+   - Added "Industry Standard" badges to key input fields
+   - Grouped inputs into Essential/Advanced sections (collapsible)
+   - Collapsed Sensitivity/Projections into "Advanced Analysis" section
+   - Collapsed Transfer Pricing by default
+   - Added one-click "Save Option" with auto-generated names
+   - Added saved options count in action bar
 
 ### Key Discovery Insight
 
 > **Actual use case**: Tech-sales person guiding a non-technical exec + finance exec through options in a live session to reach agreement faster
 
-### Design Principles (from discovery)
+### Remaining Work
 
-1. **Client in the room** - Every screen explainable in 10 seconds
-2. **Neutral ground first** - Industry standards as defaults
-3. **Show both sides** - "What you get / what they get" always visible
-4. **Progressive complexity** - Simple first, details on demand
-5. **Compare to decide** - Easy save/compare/choose flow
-
-### Next Steps: Implementation
-
-**Priority 1 - Quick Wins:**
-- [ ] Add "Industry Standard" badges to key input fields
-- [ ] Hide Sensitivity/Projections tabs by default
-- [ ] Collapse Transfer Pricing section by default
-- [ ] One-click save with auto-generated name
-
-**Priority 2 - Input Grouping:**
-- [ ] Group inputs into Essential / Advanced sections
-
-**Priority 3 - Comparison Enhancement:**
-- [ ] Make comparison button more prominent
 - [ ] Add summary row to comparison view
+- [ ] Add "winner" indicators per metric in comparison
+- [ ] Refine TransferPricingResults to avoid nested card styling
 
-### Key Files
+### Key Files Changed
+
+- `apps/web/src/lib/config/inputFields.ts` - Added benchmark/essential props
+- `apps/web/src/lib/components/InputField.svelte` - Display benchmark badges
+- `apps/web/src/routes/structuring/[model]/+page.svelte` - Major UI refactor
+
+### Key Documentation
 
 - [DISCOVERY_FRAMEWORK.md](./DISCOVERY_FRAMEWORK.md) - The methodology
 - [DISCOVERY_FINDINGS.md](./DISCOVERY_FINDINGS.md) - Findings for this tool

@@ -11,6 +11,7 @@
    * @prop max - For number type, maximum value
    * @prop step - For number type, step value
    * @prop hint - Optional hint text below input
+   * @prop benchmark - Industry standard label (displayed as badge)
    */
   import { createEventDispatcher } from 'svelte';
 
@@ -23,6 +24,7 @@
   export let max: number | undefined = undefined;
   export let step: number | undefined = undefined;
   export let hint: string = '';
+  export let benchmark: string = '';
 
   const dispatch = createEventDispatcher();
 
@@ -34,9 +36,16 @@
 </script>
 
 <div>
-  <label for={id} class="block text-sm font-medium text-gray-700 mb-1">
-    {label}
-  </label>
+  <div class="flex items-center justify-between mb-1">
+    <label for={id} class="block text-sm font-medium text-gray-700">
+      {label}
+    </label>
+    {#if benchmark}
+      <span class="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">
+        {benchmark}
+      </span>
+    {/if}
+  </div>
 
   {#if type === 'select'}
     <select {id} {value} on:change={handleInput} class="input">
