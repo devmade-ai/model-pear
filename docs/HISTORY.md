@@ -7,6 +7,22 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Discovery Framework Documentation (January 20, 2026)
+
+**Impact**: Added methodology guide for user discovery sessions
+
+### New Documentation
+
+- Created `DISCOVERY_FRAMEWORK.md` - comprehensive guide for conducting discovery sessions
+  - Core principle: user flows as the spine connecting people, data, questions, and contacts
+  - Session 1 structure: People, Flow, Data, Contact Mapping, Why Now
+  - Post-session analysis checklist
+  - Follow-up session templates for different stakeholder types
+  - Language guide for non-technical audiences
+  - Data complexity signals reference
+
+---
+
 ## Transfer Pricing Documentation Review (January 18, 2026)
 
 **Impact**: Corrected technical inaccuracies across all model use cases and CALCULATIONS.md
