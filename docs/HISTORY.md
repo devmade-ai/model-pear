@@ -31,8 +31,22 @@ Applied the Discovery Framework to understand how this tool will actually be use
 - Identified actual users: tech-sales + non-technical exec + finance exec
 - Mapped the flow: tool enters after discovery, during "let's structure this together"
 - Defined 5 design principles from findings
-- Updated `TODO.md` with high-priority alignment tasks
-- Updated `SESSION_NOTES.md` with current state and next steps
+
+### Negotiation Mode Design & UI Audit
+
+Created comprehensive design for client-facing "Negotiation Mode":
+
+- Created `NEGOTIATION_MODE.md` with:
+  - 5-minute walkthrough script (what to say, what they see)
+  - Screen-by-screen requirements
+  - Feature visibility matrix (what to show/hide)
+  - Implementation recommendation: "Simplified by Default"
+- Audited current UI against 5 design principles
+- Documented specific gaps and fixes needed
+- Created prioritised implementation list in `TODO.md`:
+  - Priority 1: Industry badges, hide advanced tabs, one-click save
+  - Priority 2: Input grouping (Essential/Advanced)
+  - Priority 3: Comparison enhancements
 
 ---
 

@@ -6,22 +6,25 @@
 
 ## Current State (January 20, 2026)
 
-**Last completed**: Discovery session for the tool itself
+**Last completed**: Negotiation Mode design and UI audit
 
-**Status**: Ready to design "Negotiation Mode" and audit UI
+**Status**: Ready to implement UI changes
 
 ### What was done this session
 
 1. **Created DISCOVERY_FRAMEWORK.md** - Methodology for conducting discovery sessions
 2. **Applied Discovery Framework to this tool** - Completed Session 1 (Quick Discovery)
 3. **Documented findings** - Created DISCOVERY_FINDINGS.md with all insights
-4. **Updated TODO.md** - Added high-priority action items from discovery
+4. **Designed Negotiation Mode** - Created NEGOTIATION_MODE.md with:
+   - 5-minute walkthrough script
+   - Screen-by-screen requirements
+   - Feature visibility matrix
+5. **Audited current UI** - Compared against 5 design principles, documented gaps
+6. **Created specific fix list** - Prioritised changes in TODO.md
 
 ### Key Discovery Insight
 
 > **Actual use case**: Tech-sales person guiding a non-technical exec + finance exec through options in a live session to reach agreement faster
-
-This is different from "back-office analyst running complex scenarios alone."
 
 ### Design Principles (from discovery)
 
@@ -31,16 +34,26 @@ This is different from "back-office analyst running complex scenarios alone."
 4. **Progressive complexity** - Simple first, details on demand
 5. **Compare to decide** - Easy save/compare/choose flow
 
-### Next Steps
+### Next Steps: Implementation
 
-1. Design the ideal "Negotiation Mode" flow (5-minute walkthrough)
-2. Audit current UI against design principles
-3. Create specific fix list from audit
+**Priority 1 - Quick Wins:**
+- [ ] Add "Industry Standard" badges to key input fields
+- [ ] Hide Sensitivity/Projections tabs by default
+- [ ] Collapse Transfer Pricing section by default
+- [ ] One-click save with auto-generated name
+
+**Priority 2 - Input Grouping:**
+- [ ] Group inputs into Essential / Advanced sections
+
+**Priority 3 - Comparison Enhancement:**
+- [ ] Make comparison button more prominent
+- [ ] Add summary row to comparison view
 
 ### Key Files
 
 - [DISCOVERY_FRAMEWORK.md](./DISCOVERY_FRAMEWORK.md) - The methodology
 - [DISCOVERY_FINDINGS.md](./DISCOVERY_FINDINGS.md) - Findings for this tool
+- [NEGOTIATION_MODE.md](./NEGOTIATION_MODE.md) - Design and UI audit
 
 ---
 

@@ -7,47 +7,50 @@
 ## High Priority: Align Tool with Discovery Findings
 
 *See [DISCOVERY_FINDINGS.md](./DISCOVERY_FINDINGS.md) for full context*
+*See [NEGOTIATION_MODE.md](./NEGOTIATION_MODE.md) for design and audit details*
 
 ### 1. Design "Negotiation Mode" Flow
 **Priority**: High
-**Status**: Not started
+**Status**: Complete
 
-Define the ideal 5-minute client walkthrough:
-- [ ] What screens are needed for a live negotiation session?
-- [ ] What's shown vs hidden by default?
-- [ ] What's the minimum viable feature set for closing a deal?
-- [ ] What features are "impressive but never used"?
+See [NEGOTIATION_MODE.md](./NEGOTIATION_MODE.md) for:
+- 5-minute walkthrough script
+- Screen-by-screen requirements
+- Feature visibility matrix
+- Implementation recommendation (Option 2: Simplified by Default)
 
 ### 2. UI Audit Against Design Principles
 **Priority**: High
-**Status**: Not started
+**Status**: Complete
 
-Evaluate current UI against these principles:
+Audit complete. See [NEGOTIATION_MODE.md - UI Audit Results](./NEGOTIATION_MODE.md#ui-audit-results) for full findings.
 
-| Principle | Test Question |
-|-----------|---------------|
-| Client in the room | Can you explain this screen in 10 seconds? |
-| Neutral ground first | Do industry standards appear as defaults? |
-| Show both sides | Is "what you get / what they get" always visible? |
-| Progressive complexity | Can you start simple and add detail on demand? |
-| Compare to decide | Is save/compare/choose obvious and fast? |
+**Summary by principle:**
+- Client in the room: Partial - tabs may confuse
+- Neutral ground first: Fix needed - no benchmark badges
+- Show both sides: Good - Developer/Buyer panels work well
+- Progressive complexity: Fix needed - all inputs visible
+- Compare to decide: Partial - save requires modal
 
-Specific checks:
-- [ ] Presentation friendly? (Professional, clear hierarchy)
-- [ ] Industry standards prominent? (Defaults populated, labelled)
-- [ ] Language accessible? (CEO-friendly terms)
-- [ ] Progressive disclosure? (Simple first, advanced tucked away)
-- [ ] Compare flow smooth? (Save/compare/choose is fast)
-- [ ] Right-sized? (No features that slow down live negotiation)
-
-### 3. Create Specific Fix List
+### 3. Implement Changes
 **Priority**: High
-**Status**: Blocked by #1 and #2
+**Status**: Ready to start
 
-After designing the flow and auditing the UI:
-- [ ] Document specific changes needed
-- [ ] Prioritise by impact on negotiation flow
-- [ ] Implement changes
+#### Quick Wins (Priority 1)
+- [ ] Add "Industry Standard" badges to key input fields
+- [ ] Hide Sensitivity/Projections tabs by default (collapse into "Advanced Analysis")
+- [ ] Collapse Transfer Pricing section by default
+- [ ] One-click save with auto-generated name
+
+#### Input Grouping (Priority 2)
+- [ ] Group inputs into Essential / Advanced sections
+- [ ] Use existing `category` field in config for grouping
+- [ ] Show collapsed count: "5 more options"
+
+#### Comparison Enhancement (Priority 3)
+- [ ] Make comparison button more prominent (near Save button)
+- [ ] Add summary row to comparison view
+- [ ] Add "winner" indicators per metric
 
 ---
 
