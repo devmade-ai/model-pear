@@ -177,6 +177,47 @@
     },
     {} as Record<string, CompRow[]>
   );
+
+  // Generate summary insights for each option
+  interface OptionSummary {
+    name: string;
+    wins: string[];
+  }
+
+  $: optionSummaries = $selectedOptions.map((option, i) => {
+    const wins: string[] = [];
+
+    // Check each metric with higherIsBetter defined
+    comparisonRows.forEach((row) => {
+      if (row.higherIsBetter === undefined) return;
+
+      const values = $selectedOptions.map((o) => row.getValue(o));
+      const optionValue = values[i];
+
+      if (row.higherIsBetter && optionValue === Math.max(...values) && values.filter(v => v === optionValue).length === 1) {
+        wins.push(row.label.toLowerCase());
+      } else if (!row.higherIsBetter && optionValue === Math.min(...values) && values.filter(v => v === optionValue).length === 1) {
+        wins.push(row.label.toLowerCase());
+      }
+    });
+
+    // Add risk level win
+    const riskLevels = $selectedOptions.map((o) => o.result.transferPricing.riskLevel);
+    const optionRisk = option.result.transferPricing.riskLevel;
+    if (optionRisk === 'low' && riskLevels.some(r => r !== 'low')) {
+      wins.push('lower TP risk');
+    }
+
+    return { name: option.name, wins };
+  }) as OptionSummary[];
+
+  // Generate summary text for an option
+  function getSummaryText(summary: OptionSummary): string {
+    if (summary.wins.length === 0) return '';
+    if (summary.wins.length === 1) return `Best for ${summary.wins[0]}`;
+    if (summary.wins.length === 2) return `Best for ${summary.wins[0]} and ${summary.wins[1]}`;
+    return `Best for ${summary.wins.slice(0, -1).join(', ')}, and ${summary.wins[summary.wins.length - 1]}`;
+  }
 </script>
 
 <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -190,6 +231,27 @@
       </div>
       <button class="p-2 hover:bg-gray-100 rounded-lg" on:click={close} title="Close"> ✕ </button>
     </div>
+
+    <!-- Summary Section -->
+    {#if optionSummaries.some(s => s.wins.length > 0)}
+      <div class="p-4 bg-blue-50 border-b">
+        <h3 class="text-sm font-semibold text-blue-900 mb-2">Quick Summary</h3>
+        <div class="grid gap-2 {$selectedOptions.length === 2 ? 'grid-cols-2' : $selectedOptions.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}">
+          {#each optionSummaries as summary, i}
+            <div class="bg-white rounded-lg p-3 shadow-sm">
+              <div class="font-medium text-gray-900 text-sm">{summary.name}</div>
+              {#if summary.wins.length > 0}
+                <div class="text-xs text-green-700 mt-1">
+                  {getSummaryText(summary)}
+                </div>
+              {:else}
+                <div class="text-xs text-gray-500 mt-1">No clear advantages</div>
+              {/if}
+            </div>
+          {/each}
+        </div>
+      </div>
+    {/if}
 
     <!-- Content -->
     <div class="overflow-auto max-h-[calc(90vh-8rem)]">
@@ -228,18 +290,26 @@
                   {@const isBest =
                     row.higherIsBetter !== undefined &&
                     ((row.higherIsBetter && values[i] === Math.max(...values)) ||
-                      (!row.higherIsBetter && values[i] === Math.min(...values)))}
+                      (!row.higherIsBetter && values[i] === Math.min(...values))) &&
+                    values.filter(v => v === values[i]).length === 1}
                   <td
                     class="p-3 text-center tabular-nums {isBest
-                      ? 'bg-green-50 font-semibold'
+                      ? 'bg-green-50 font-semibold text-green-700'
                       : ''}"
                   >
-                    <span class={diff.class}>
-                      {row.format(row.getValue(option))}
-                      {#if diff.arrow}
-                        <span class="ml-1">{diff.arrow}</span>
-                      {/if}
-                    </span>
+                    {#if isBest}
+                      <span class="inline-flex items-center">
+                        <span class="text-green-600 mr-1">★</span>
+                        {row.format(row.getValue(option))}
+                      </span>
+                    {:else}
+                      <span class={diff.class}>
+                        {row.format(row.getValue(option))}
+                        {#if diff.arrow}
+                          <span class="ml-1">{diff.arrow}</span>
+                        {/if}
+                      </span>
+                    {/if}
                   </td>
                 {/each}
               </tr>

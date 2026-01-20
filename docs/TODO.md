@@ -34,7 +34,7 @@ Audit complete. See [NEGOTIATION_MODE.md - UI Audit Results](./NEGOTIATION_MODE.
 
 ### 3. Implement Changes
 **Priority**: High
-**Status**: Mostly Complete (January 20, 2026)
+**Status**: Complete (January 20, 2026)
 
 #### Quick Wins (Priority 1) - DONE
 - [x] Add "Industry Standard" badges to key input fields
@@ -47,10 +47,10 @@ Audit complete. See [NEGOTIATION_MODE.md - UI Audit Results](./NEGOTIATION_MODE.
 - [x] Use `essential` field in config for grouping
 - [x] Show collapsed count: "Advanced Options (N)"
 
-#### Comparison Enhancement (Priority 3) - Partial
+#### Comparison Enhancement (Priority 3) - DONE
 - [x] Show saved options count in action bar
-- [ ] Add summary row to comparison view
-- [ ] Add "winner" indicators per metric
+- [x] Add summary row to comparison view ("Quick Summary" with best-for insights)
+- [x] Add "winner" indicators per metric (★ star icon + green highlighting)
 
 ---
 

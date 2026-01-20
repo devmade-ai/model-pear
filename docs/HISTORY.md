@@ -64,9 +64,16 @@ Implemented UI changes based on discovery findings and design principles:
 - **One-Click Save**: Quick save button with auto-generated names
 - **Saved Count**: Shows number of saved options in action bar
 
+**Comparison View Enhancements** (`ComparisonView.svelte`):
+- **Quick Summary Section**: Shows best-for insights per option at top of comparison
+- **Winner Indicators**: ★ star icon on metrics where option is best
+- **Enhanced Highlighting**: Green background + text for winning values
+- **Smart Detection**: Only shows winner when there's a clear best (no ties)
+
 **Files Changed**:
 - `apps/web/src/lib/config/inputFields.ts`
 - `apps/web/src/lib/components/InputField.svelte`
+- `apps/web/src/lib/components/ComparisonView.svelte`
 - `apps/web/src/routes/structuring/[model]/+page.svelte`
 
 ---

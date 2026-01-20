@@ -6,9 +6,9 @@
 
 ## Current State (January 20, 2026)
 
-**Last completed**: Implemented Negotiation Mode UI changes
+**Last completed**: All Negotiation Mode UI changes implemented
 
-**Status**: P1 and P2 complete, P3 partially complete
+**Status**: P1, P2, and P3 complete
 
 ### What was done this session
 
@@ -28,21 +28,26 @@
    - Collapsed Transfer Pricing by default
    - Added one-click "Save Option" with auto-generated names
    - Added saved options count in action bar
+7. **Enhanced Comparison View**:
+   - Added "Quick Summary" section showing best-for insights per option
+   - Added ★ winner indicators on best values in comparison table
+   - Enhanced green highlighting for winning metrics
 
 ### Key Discovery Insight
 
 > **Actual use case**: Tech-sales person guiding a non-technical exec + finance exec through options in a live session to reach agreement faster
 
-### Remaining Work
+### All Planned Work Complete
 
-- [ ] Add summary row to comparison view
-- [ ] Add "winner" indicators per metric in comparison
-- [ ] Refine TransferPricingResults to avoid nested card styling
+All Priority 1, 2, and 3 items from the Negotiation Mode audit have been implemented.
+
+**Optional future refinement**: Refine TransferPricingResults to avoid nested card styling
 
 ### Key Files Changed
 
 - `apps/web/src/lib/config/inputFields.ts` - Added benchmark/essential props
 - `apps/web/src/lib/components/InputField.svelte` - Display benchmark badges
+- `apps/web/src/lib/components/ComparisonView.svelte` - Summary + winner indicators
 - `apps/web/src/routes/structuring/[model]/+page.svelte` - Major UI refactor
 
 ### Key Documentation
