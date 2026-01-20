@@ -386,7 +386,7 @@
           </button>
           {#if showTransferPricing}
             <div class="px-4 pb-4">
-              <TransferPricingResults transferPricing={result.transferPricing} />
+              <TransferPricingResults transferPricing={result.transferPricing} minimal={true} />
             </div>
           {/if}
         </div>

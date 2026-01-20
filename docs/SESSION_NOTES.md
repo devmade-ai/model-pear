@@ -41,7 +41,13 @@
 
 All Priority 1, 2, and 3 items from the Negotiation Mode audit have been implemented.
 
-**Optional future refinement**: Refine TransferPricingResults to avoid nested card styling
+**Completed refinement**: Fixed TransferPricingResults nested card styling by adding `minimal` prop.
+
+**Industry standards as defaults**: Verified that all default values match industry benchmarks:
+- `markupPercentage: 10` (within Industry: 5-15%)
+- `corporateTaxRate: 27` (matches SA: 27%)
+- `usefulLife: 5` (within Typical: 3-10 years)
+- `contractLengthMonths: 36` (within Typical: 12-36 months)
 
 ### Key Files Changed
 
