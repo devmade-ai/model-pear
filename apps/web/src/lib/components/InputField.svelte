@@ -37,11 +37,11 @@
 
 <div>
   <div class="flex items-center justify-between mb-1">
-    <label for={id} class="block text-sm font-medium text-gray-700">
+    <label for={id} class="block text-sm font-medium text-foreground/80">
       {label}
     </label>
     {#if benchmark}
-      <span class="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">
+      <span class="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
         {benchmark}
       </span>
     {/if}
@@ -69,6 +69,6 @@
   {/if}
 
   {#if hint}
-    <p class="text-xs text-gray-500 mt-1">{hint}</p>
+    <p class="text-xs text-muted-foreground mt-1">{hint}</p>
   {/if}
 </div>

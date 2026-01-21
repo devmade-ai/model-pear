@@ -67,8 +67,8 @@
 </script>
 
 <div class="card p-4">
-  <h3 class="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-  <p class="text-sm text-gray-500 mb-4">
+  <h3 class="text-lg font-semibold text-foreground mb-2">{title}</h3>
+  <p class="text-sm text-muted-foreground mb-4">
     Net Present Value for each party, discounted at the specified rate.
   </p>
   <BaseChart {options} {height} />

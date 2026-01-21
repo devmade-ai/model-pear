@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Koinz Style Guide - CSS Variables */
+/* Dark Theme - CSS Variables */
 :root {
   /* Colors - HSL values for Tailwind compatibility */
   --background: 0 0% 11%;           /* #1B1B1B */
@@ -46,7 +46,7 @@
   }
 }
 
-/* Custom component styles - Koinz Dark Theme */
+/* Custom component styles - Dark Theme */
 @layer components {
   /* Card component */
   .card {

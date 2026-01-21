@@ -6,13 +6,13 @@
 
 ## Current State (January 21, 2026)
 
-**Last completed**: Koinz Style Guide implementation
+**Last completed**: Dark theme implementation
 
 **Status**: Dark theme redesign complete
 
 ### What was done this session
 
-1. **Implemented Koinz Style Guide** - Complete visual redesign:
+1. **Implemented dark theme** - Complete visual redesign:
    - Dark theme by default (background #1B1B1B, cards #2a2a2a)
    - Primary color: #2D68FF (blue for CTAs, links, focus states)
    - Figtree font family from Google Fonts

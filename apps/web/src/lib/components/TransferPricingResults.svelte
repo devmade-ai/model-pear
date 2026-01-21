@@ -24,7 +24,7 @@
       <ResultRow
         label="Arm's Length Range"
         value="{transferPricing.benchmarkRange.low}% - {transferPricing.benchmarkRange.high}%"
-        valueClass="text-sm text-gray-600"
+        valueClass="text-sm text-muted-foreground"
       />
       <ResultRow
         label="Within Range"
@@ -35,10 +35,10 @@
     </ResultSection>
 
     <ResultSection title="Recommendation">
-      <p class="text-sm text-gray-700 mb-4">{transferPricing.recommendation}</p>
+      <p class="text-sm text-foreground/80 mb-4">{transferPricing.recommendation}</p>
 
-      <h3 class="text-sm font-medium text-gray-500 mb-2">Required Documentation</h3>
-      <ul class="text-xs text-gray-600 space-y-1">
+      <h3 class="text-sm font-medium text-muted-foreground mb-2">Required Documentation</h3>
+      <ul class="text-xs text-muted-foreground space-y-1">
         {#each transferPricing.documentation as doc}
           <li>• {doc}</li>
         {/each}
@@ -59,7 +59,7 @@
         <ResultRow
           label="Arm's Length Range"
           value="{transferPricing.benchmarkRange.low}% - {transferPricing.benchmarkRange.high}%"
-          valueClass="text-sm text-gray-600"
+          valueClass="text-sm text-muted-foreground"
         />
         <ResultRow
           label="Within Range"
@@ -70,10 +70,10 @@
       </ResultSection>
 
       <ResultSection title="Recommendation">
-        <p class="text-sm text-gray-700 mb-4">{transferPricing.recommendation}</p>
+        <p class="text-sm text-foreground/80 mb-4">{transferPricing.recommendation}</p>
 
-        <h3 class="text-sm font-medium text-gray-500 mb-2">Required Documentation</h3>
-        <ul class="text-xs text-gray-600 space-y-1">
+        <h3 class="text-sm font-medium text-muted-foreground mb-2">Required Documentation</h3>
+        <ul class="text-xs text-muted-foreground space-y-1">
           {#each transferPricing.documentation as doc}
             <li>• {doc}</li>
           {/each}

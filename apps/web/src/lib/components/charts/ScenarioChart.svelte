@@ -71,25 +71,25 @@
 </script>
 
 <div class="card p-4">
-  <h3 class="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-  <p class="text-sm text-gray-500 mb-4">
+  <h3 class="text-lg font-semibold text-foreground mb-2">{title}</h3>
+  <p class="text-sm text-muted-foreground mb-4">
     Best, base, and worst case outcomes based on input ranges.
   </p>
   <BaseChart {options} {height} />
 
   <!-- Summary Stats -->
-  <div class="mt-4 pt-4 border-t border-gray-200 grid grid-cols-3 gap-4 text-center">
+  <div class="mt-4 pt-4 border-t border-border grid grid-cols-3 gap-4 text-center">
     <div>
-      <p class="text-xs text-gray-500">Range</p>
-      <p class="text-sm font-semibold text-gray-900">{formatCurrency(range)}</p>
+      <p class="text-xs text-muted-foreground">Range</p>
+      <p class="text-sm font-semibold text-foreground">{formatCurrency(range)}</p>
     </div>
     <div>
-      <p class="text-xs text-gray-500">Volatility</p>
-      <p class="text-sm font-semibold text-gray-900">{volatility.toFixed(1)}%</p>
+      <p class="text-xs text-muted-foreground">Volatility</p>
+      <p class="text-sm font-semibold text-foreground">{volatility.toFixed(1)}%</p>
     </div>
     <div>
-      <p class="text-xs text-gray-500">Upside</p>
-      <p class="text-sm font-semibold text-green-600">+{formatCurrency(bestValue - baseValue)}</p>
+      <p class="text-xs text-muted-foreground">Upside</p>
+      <p class="text-sm font-semibold text-green-400">+{formatCurrency(bestValue - baseValue)}</p>
     </div>
   </div>
 </div>

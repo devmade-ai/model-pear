@@ -149,13 +149,13 @@
   <div class="flex items-center justify-between mb-4">
     <div class="flex items-center space-x-2">
       <span class="text-2xl">📈</span>
-      <h2 class="text-xl font-bold text-gray-900">Growth Projections</h2>
+      <h2 class="text-xl font-bold text-foreground">Growth Projections</h2>
     </div>
 
     <!-- Parameter Controls -->
     <div class="flex items-center space-x-4 text-sm">
       <label class="flex items-center space-x-2">
-        <span class="text-gray-600">Years:</span>
+        <span class="text-muted-foreground">Years:</span>
         <select bind:value={projectionYears} class="input py-1 px-2 w-16">
           <option value={3}>3</option>
           <option value={5}>5</option>
@@ -164,7 +164,7 @@
         </select>
       </label>
       <label class="flex items-center space-x-2">
-        <span class="text-gray-600">Discount:</span>
+        <span class="text-muted-foreground">Discount:</span>
         <input
           type="number"
           bind:value={discountRate}
@@ -172,12 +172,12 @@
           max="50"
           class="input py-1 px-2 w-16"
         />
-        <span class="text-gray-500">%</span>
+        <span class="text-muted-foreground">%</span>
       </label>
     </div>
   </div>
 
-  <p class="text-gray-600 text-sm">
+  <p class="text-muted-foreground text-sm">
     Financial projections over {projectionYears} years at a {discountRate}% discount rate.
     These help evaluate the long-term value of the transaction structure.
   </p>
@@ -221,26 +221,26 @@
   />
 
   <!-- Summary -->
-  <div class="card p-4 bg-gray-50">
-    <h3 class="text-lg font-semibold text-gray-900 mb-3">Summary</h3>
+  <div class="card p-4 bg-muted">
+    <h3 class="text-lg font-semibold text-foreground mb-3">Summary</h3>
     <div class="grid md:grid-cols-2 gap-4 text-sm">
       <div>
-        <p class="text-gray-600 mb-1">
-          <strong>Developer:</strong>
+        <p class="text-muted-foreground mb-1">
+          <strong class="text-foreground">Developer:</strong>
           {developerAssessment.description}
         </p>
-        <p class="text-gray-500">
+        <p class="text-muted-foreground">
           {developerPayback === Infinity
             ? 'Payback not achieved within projection period'
             : `Expected payback in ${developerPayback.toFixed(1)} years`}
         </p>
       </div>
       <div>
-        <p class="text-gray-600 mb-1">
-          <strong>Buyer:</strong>
+        <p class="text-muted-foreground mb-1">
+          <strong class="text-foreground">Buyer:</strong>
           {buyerAssessment.description}
         </p>
-        <p class="text-gray-500">
+        <p class="text-muted-foreground">
           {buyerPayback === Infinity
             ? 'Payback not achieved within projection period'
             : `Expected payback in ${buyerPayback.toFixed(1)} years`}

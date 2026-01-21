@@ -7,14 +7,14 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
-## Koinz Style Guide Implementation (January 21, 2026)
+## Dark Theme Implementation (January 21, 2026)
 
 **Impact**: Complete visual redesign from light to dark theme
 
 ### Changes
 
 - **Dark theme by default** - Page background #1B1B1B, card backgrounds #2a2a2a
-- **Koinz color system** - Primary #2D68FF, secondary #767676, border #333333
+- **Custom color system** - Primary #2D68FF, secondary #767676, border #333333
 - **Figtree font** - Replaced Inter with Figtree from Google Fonts
 - **Semantic colors** - Success #16A34A (green), error #EF4444 (red), warning #EAB308 (amber)
 - **CSS variable system** - All colors defined as HSL variables for Tailwind integration

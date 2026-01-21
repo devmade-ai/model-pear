@@ -18,7 +18,7 @@
     <!-- Revenue -->
     <ResultSection title="Revenue">
       <ResultRow label="Total Revenue" value={formatCurrency(developer.revenue.total)} />
-      <ResultRow label="Recognition" value={developer.revenue.recognitionTiming} valueClass="text-sm text-gray-600" />
+      <ResultRow label="Recognition" value={developer.revenue.recognitionTiming} valueClass="text-sm text-muted-foreground" />
     </ResultSection>
 
     <!-- Profit -->
@@ -49,7 +49,7 @@
     <!-- Asset -->
     <ResultSection title="Asset Recognition">
       <ResultRow label="Asset Recognised" value={developer.asset.recognised ? 'Yes' : 'No'} valueClass="text-sm" />
-      <p class="text-xs text-gray-500 mt-1">{developer.asset.reason}</p>
+      <p class="text-xs text-muted-foreground mt-1">{developer.asset.reason}</p>
     </ResultSection>
   </div>
 </ResultPanel>
