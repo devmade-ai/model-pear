@@ -7,6 +7,23 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Wizard Navigation Improvements (January 21, 2026)
+
+**Impact**: Improved usability of the Structure Selection Wizard
+
+### Changes
+
+- **Added Back/Next navigation buttons** - Removed auto-advance on answer selection; users now explicitly click "Next" to progress
+- **Added step indicators** - Clickable numbered circles at top showing current position and progress
+- **Preserved answers on navigation** - Going back no longer clears subsequent answers
+- **Visual feedback** - Current step highlighted blue, completed steps show checkmark in green, future steps greyed out
+
+### Files Changed
+
+- `apps/web/src/lib/components/StructureWizard.svelte` - Complete navigation overhaul
+
+---
+
 ## Discovery Framework & Tool Discovery Session (January 20, 2026)
 
 **Impact**: Added methodology guide and applied it to understand actual tool usage
