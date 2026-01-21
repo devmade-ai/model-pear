@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Koinz Style Guide - CSS variable based colors
+        // CSS variable based colors for dark theme
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -63,7 +63,7 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontSize: {
-        // Koinz typography scale
+        // Custom typography scale
         'h1': ['60px', { lineHeight: '72px', letterSpacing: '2.5px', fontWeight: '500' }],
         'h2': ['48px', { lineHeight: '64px', letterSpacing: '2.5px', fontWeight: '600' }],
         'h3': ['24px', { lineHeight: '32px', letterSpacing: '2.5px', fontWeight: '500' }],
