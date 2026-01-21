@@ -229,6 +229,7 @@
         sellerMeetsTarget,
         buyerROI: sellerROI,
         buyerAnnualSavings: sellerMonthlyProfit * 12,
+        avgTransactionsPerSeller: market_activeSellers > 0 ? market_monthlyTransactions / market_activeSellers : 0,
         metricLabel: 'commission rate %'
       };
     }
@@ -662,6 +663,12 @@
                   <span class="font-semibold text-gray-900">
                     {results.buyerPaybackMonths === Infinity ? '∞' : `${results.buyerPaybackMonths.toFixed(1)} months`}
                   </span>
+                </div>
+              {/if}
+              {#if results.avgTransactionsPerSeller !== undefined}
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                  <span class="text-sm text-gray-600">Avg Transactions per Seller</span>
+                  <span class="font-semibold text-gray-900">{results.avgTransactionsPerSeller.toFixed(1)}</span>
                 </div>
               {/if}
             </div>
