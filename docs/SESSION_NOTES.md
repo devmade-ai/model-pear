@@ -6,22 +6,31 @@
 
 ## Current State (January 21, 2026)
 
-**Last completed**: Wizard navigation improvements
+**Last completed**: Koinz Style Guide implementation
 
-**Status**: Wizard usability enhancement complete
+**Status**: Dark theme redesign complete
 
 ### What was done this session
 
-1. **Added wizard navigation** - Improved Structure Selection Wizard UX:
-   - Added Back/Next navigation buttons (no more auto-advance)
-   - Added clickable step indicators (numbered circles showing progress)
-   - Users can now review answers without clearing subsequent ones
-   - "See Recommendations" appears on last question when answered
-   - Live preview of top recommendations still shown as answers are given
+1. **Implemented Koinz Style Guide** - Complete visual redesign:
+   - Dark theme by default (background #1B1B1B, cards #2a2a2a)
+   - Primary color: #2D68FF (blue for CTAs, links, focus states)
+   - Figtree font family from Google Fonts
+   - Semantic colors: success #16A34A, error #EF4444, warning #EAB308
+   - CSS variable-based color system for Tailwind
+   - Updated all component styles (.card, .btn, .input, .badge)
+   - Updated all pages and layout for dark theme
 
 ### Key Files Changed
 
-- `apps/web/src/lib/components/StructureWizard.svelte` - Complete navigation overhaul
+- `apps/web/tailwind.config.js` - New color system with CSS variables
+- `apps/web/src/app.css` - CSS variables and dark theme component styles
+- `apps/web/src/app.html` - Figtree font import, dark mode class
+- `apps/web/src/routes/+layout.svelte` - Dark header/footer
+- `apps/web/src/routes/+page.svelte` - Home page dark theme
+- `apps/web/src/routes/structuring/+page.svelte` - Transaction structuring dark theme
+- `apps/web/src/routes/structuring/[model]/+page.svelte` - Model calculator dark theme
+- `apps/web/src/routes/pricing/+page.svelte` - Pricing calculator dark theme
 
 ---
 
