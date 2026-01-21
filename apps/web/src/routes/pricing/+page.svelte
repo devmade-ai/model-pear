@@ -52,7 +52,17 @@
   let market_desiredMargin = 70;
   let market_sellerValuePerTransaction = 150;
 
-  $: results = calculateResults();
+  // List all reactive dependencies explicitly so Svelte tracks them
+  $: results = calculateResults(
+    selectedModel,
+    sub_monthlyPrice, sub_customers, sub_costToServe, sub_desiredMargin, sub_buyerValue,
+    usage_pricePerUnit, usage_monthlyUnits, usage_costPerUnit, usage_desiredMargin, usage_buyerValuePerUnit,
+    seat_pricePerSeat, seat_seats, seat_costPerSeat, seat_desiredMargin, seat_valuePerSeat,
+    onetime_licensePrice, onetime_maintenanceFee, onetime_maintenanceAttach, onetime_existingCustomers,
+    onetime_costToDeliver, onetime_monthlySupportCost, onetime_desiredMargin, onetime_buyerValuePerYear,
+    market_commissionRate, market_avgTransactionValue, market_monthlyTransactions, market_activeSellers,
+    market_costPerTransaction, market_desiredMargin, market_sellerValuePerTransaction
+  );
 
   function calculateResults() {
     if (selectedModel === 'subscription') {
@@ -229,6 +239,7 @@
         sellerMeetsTarget,
         buyerROI: sellerROI,
         buyerAnnualSavings: sellerMonthlyProfit * 12,
+        avgTransactionsPerSeller: market_activeSellers > 0 ? market_monthlyTransactions / market_activeSellers : 0,
         metricLabel: 'commission rate %'
       };
     }
@@ -662,6 +673,12 @@
                   <span class="font-semibold text-gray-900">
                     {results.buyerPaybackMonths === Infinity ? '∞' : `${results.buyerPaybackMonths.toFixed(1)} months`}
                   </span>
+                </div>
+              {/if}
+              {#if results.avgTransactionsPerSeller !== undefined}
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                  <span class="text-sm text-gray-600">Avg Transactions per Seller</span>
+                  <span class="font-semibold text-gray-900">{results.avgTransactionsPerSeller.toFixed(1)}</span>
                 </div>
               {/if}
             </div>

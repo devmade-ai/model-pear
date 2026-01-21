@@ -21,6 +21,7 @@
   let answers: Record<string, string> = {};
   let isComplete = false;
   let selectedVariantPreference: string = '';
+  let currentQuestionIndex = 0;
 
   // Derived state
   $: answeredCount = Object.keys(answers).length;
@@ -30,50 +31,38 @@
   $: recommendations = answeredCount > 0 ? getModelRecommendations(answers) : [];
   $: topRecommendation = recommendations[0];
 
-  // Get questions to show (all answered + next unanswered)
-  $: questionsToShow = getQuestionsToShow();
-
-  function getQuestionsToShow() {
-    const questions: Array<{ id: string; isAnswered: boolean }> = [];
-    let foundUnanswered = false;
-
-    for (const factorId of QUESTION_ORDER) {
-      const isAnswered = answers[factorId] !== undefined;
-      if (isAnswered || !foundUnanswered) {
-        questions.push({ id: factorId, isAnswered });
-        if (!isAnswered) foundUnanswered = true;
-      }
-    }
-    return questions;
-  }
+  // Current question
+  $: currentFactorId = QUESTION_ORDER[currentQuestionIndex];
+  $: currentQuestion = DECISION_FACTORS[currentFactorId];
+  $: currentAnswer = answers[currentFactorId];
+  $: canGoBack = currentQuestionIndex > 0;
+  $: canGoNext = currentAnswer !== undefined;
+  $: isLastQuestion = currentQuestionIndex === totalQuestions - 1;
 
   function handleAnswer(factorId: string, value: string) {
     answers = { ...answers, [factorId]: value };
-
-    // Scroll to next question after a short delay
-    setTimeout(() => {
-      const nextUnanswered = QUESTION_ORDER.find((id) => !answers[id]);
-      if (nextUnanswered) {
-        const el = document.getElementById(`question-${nextUnanswered}`);
-        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 100);
   }
 
-  function handleChangeAnswer(factorId: string) {
-    // Clear this answer and all subsequent ones
-    const factorIndex = QUESTION_ORDER.indexOf(factorId);
-    const newAnswers: Record<string, string> = {};
+  function handleBack() {
+    if (canGoBack) {
+      currentQuestionIndex--;
+    }
+  }
 
-    QUESTION_ORDER.forEach((id, idx) => {
-      if (idx < factorIndex && answers[id]) {
-        newAnswers[id] = answers[id];
-      }
-    });
+  function handleNext() {
+    if (canGoNext && !isLastQuestion) {
+      currentQuestionIndex++;
+    }
+  }
 
-    answers = newAnswers;
-    isComplete = false;
-    selectedVariantPreference = '';
+  function goToQuestion(index: number) {
+    // Only allow jumping to answered questions or the first unanswered
+    const firstUnansweredIndex = QUESTION_ORDER.findIndex((id) => answers[id] === undefined);
+    const maxAllowedIndex = firstUnansweredIndex === -1 ? totalQuestions - 1 : firstUnansweredIndex;
+
+    if (index <= maxAllowedIndex) {
+      currentQuestionIndex = index;
+    }
   }
 
   function handleSeeResults() {
@@ -84,6 +73,7 @@
     answers = {};
     isComplete = false;
     selectedVariantPreference = '';
+    currentQuestionIndex = 0;
   }
 
   function handleSkip() {
@@ -256,95 +246,116 @@
   {:else}
     <!-- QUESTIONS VIEW -->
     <div class="space-y-6">
-      <!-- Progress Bar -->
+      <!-- Progress Indicator -->
       <div>
+        <!-- Question Step Indicators -->
+        <div class="flex items-center justify-center gap-2 mb-4">
+          {#each QUESTION_ORDER as factorId, idx}
+            {@const isAnswered = answers[factorId] !== undefined}
+            {@const isCurrent = idx === currentQuestionIndex}
+            {@const isAccessible = idx <= (QUESTION_ORDER.findIndex((id) => answers[id] === undefined) === -1 ? totalQuestions - 1 : QUESTION_ORDER.findIndex((id) => answers[id] === undefined))}
+            <button
+              class="w-8 h-8 rounded-full text-xs font-medium transition-all
+                     {isCurrent
+                ? 'bg-blue-600 text-white ring-2 ring-blue-300'
+                : isAnswered
+                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                  : isAccessible
+                    ? 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                    : 'bg-gray-50 text-gray-300 cursor-not-allowed'}"
+              on:click={() => goToQuestion(idx)}
+              disabled={!isAccessible}
+              title="Question {idx + 1}{isAnswered ? ' (answered)' : ''}"
+            >
+              {#if isAnswered && !isCurrent}
+                ✓
+              {:else}
+                {idx + 1}
+              {/if}
+            </button>
+          {/each}
+        </div>
+        <!-- Progress Bar -->
         <div class="flex justify-between text-xs text-gray-500 mb-2">
-          <span>{answeredCount} of {totalQuestions} questions answered</span>
-          <span>{progress}% complete</span>
+          <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
+          <span>{answeredCount} answered</span>
         </div>
         <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div class="h-full bg-blue-500 transition-all duration-300" style="width: {progress}%"></div>
+          <div class="h-full bg-blue-500 transition-all duration-300" style="width: {((currentQuestionIndex + 1) / totalQuestions) * 100}%"></div>
         </div>
       </div>
 
-      <!-- Questions -->
-      <div class="space-y-4">
-        {#each questionsToShow as { id: factorId, isAnswered }, idx}
-          {@const question = DECISION_FACTORS[factorId]}
-          {@const selectedValue = answers[factorId]}
-          {@const selectedOption = selectedValue ? question.options.find((o) => o.value === selectedValue) : null}
+      <!-- Current Question -->
+      <div class="card p-6 border-2 border-blue-200 bg-blue-50/30">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xs text-blue-600 font-medium">Question {currentQuestionIndex + 1}</span>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">{currentQuestion.question}</h3>
+        <p class="text-sm text-gray-500 mb-4">{currentQuestion.description}</p>
 
-          {#if isAnswered}
-            <!-- Answered question (compact) -->
-            <div class="card p-4 bg-gray-50">
-              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <div class="flex items-center gap-2">
-                  <span class="text-green-500">✓</span>
-                  <span class="text-sm text-gray-500">Q{idx + 1}:</span>
-                  <span class="text-sm font-medium text-gray-700">{question.question}</span>
-                </div>
-                <button
-                  class="text-xs text-blue-600 hover:text-blue-800"
-                  on:click={() => handleChangeAnswer(factorId)}
-                >
-                  Change
-                </button>
-              </div>
-              <div class="ml-6 text-sm text-gray-600 bg-white rounded px-3 py-2 border border-gray-200">
-                {selectedOption?.label || 'Selected'}
-              </div>
-            </div>
-          {:else}
-            <!-- Active question -->
-            <div
-              id="question-{factorId}"
-              class="card p-6 border-2 border-blue-200 bg-blue-50/30"
+        <div class="space-y-3">
+          {#each currentQuestion.options as option}
+            <label
+              class="flex items-start gap-3 p-4 bg-white rounded-lg border-2 cursor-pointer transition-all
+                     {currentAnswer === option.value
+                ? 'border-blue-500 bg-blue-50'
+                : 'border-gray-200 hover:border-gray-300'}"
             >
-              <div class="flex items-center gap-2 mb-2">
-                <span class="text-xs text-blue-600 font-medium">Q{idx + 1}</span>
+              <input
+                type="radio"
+                name="question-{currentFactorId}"
+                value={option.value}
+                checked={currentAnswer === option.value}
+                on:change={() => handleAnswer(currentFactorId, option.value)}
+                class="mt-1 w-4 h-4 text-blue-600"
+              />
+              <div class="flex-1">
+                <span class="font-medium text-gray-900">{option.label}</span>
+                <p class="text-sm text-gray-500 mt-1">{option.description}</p>
               </div>
-              <h3 class="text-lg font-medium text-gray-900 mb-2">{question.question}</h3>
-              <p class="text-sm text-gray-500 mb-4">{question.description}</p>
-
-              <div class="space-y-3">
-                {#each question.options as option}
-                  <label
-                    class="flex items-start gap-3 p-4 bg-white rounded-lg border-2 cursor-pointer transition-all
-                           {selectedValue === option.value
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'}"
-                  >
-                    <input
-                      type="radio"
-                      name="question-{factorId}"
-                      value={option.value}
-                      checked={selectedValue === option.value}
-                      on:change={() => handleAnswer(factorId, option.value)}
-                      class="mt-1 w-4 h-4 text-blue-600"
-                    />
-                    <div class="flex-1">
-                      <span class="font-medium text-gray-900">{option.label}</span>
-                      <p class="text-sm text-gray-500 mt-1">{option.description}</p>
-                    </div>
-                  </label>
-                {/each}
-              </div>
-            </div>
-          {/if}
-        {/each}
+            </label>
+          {/each}
+        </div>
       </div>
 
-      <!-- See Results Button -->
-      {#if allAnswered}
-        <div class="pt-6 border-t border-gray-200">
-          <button class="btn-primary w-full py-3" on:click={handleSeeResults}>
-            See Recommendations →
-          </button>
+      <!-- Navigation Buttons -->
+      <div class="flex items-center justify-between pt-4">
+        <button
+          class="px-4 py-2 text-sm font-medium rounded-lg transition-colors
+                 {canGoBack
+            ? 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+            : 'text-gray-300 bg-gray-50 cursor-not-allowed'}"
+          on:click={handleBack}
+          disabled={!canGoBack}
+        >
+          ← Back
+        </button>
+
+        <div class="flex gap-3">
+          {#if isLastQuestion && canGoNext}
+            <button
+              class="btn-primary px-6 py-2"
+              on:click={handleSeeResults}
+            >
+              See Recommendations →
+            </button>
+          {:else}
+            <button
+              class="px-6 py-2 text-sm font-medium rounded-lg transition-colors
+                     {canGoNext
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'}"
+              on:click={handleNext}
+              disabled={!canGoNext}
+            >
+              Next →
+            </button>
+          {/if}
         </div>
-      {/if}
+      </div>
 
       <!-- Live Preview -->
-      {#if answeredCount > 0 && !allAnswered}
+      {#if answeredCount > 0}
         <div class="pt-6 border-t border-gray-200">
           <h4 class="text-sm font-medium text-gray-500 mb-3">Current Top Recommendations</h4>
           <div class="flex gap-2 flex-wrap">
