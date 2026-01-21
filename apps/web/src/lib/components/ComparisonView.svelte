@@ -58,10 +58,10 @@
     }
 
     if (value === max) {
-      return { arrow: '▲', class: 'text-green-600' };
+      return { arrow: '▲', class: 'text-green-400' };
     }
     if (value === min) {
-      return { arrow: '▼', class: 'text-red-600' };
+      return { arrow: '▼', class: 'text-red-400' };
     }
     return { arrow: '', class: '' };
   }
@@ -220,32 +220,32 @@
   }
 </script>
 
-<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+<div class="fixed inset-0 bg-background/80 z-50 flex items-center justify-center p-4">
+  <div class="bg-card rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden border border-border">
     <!-- Header -->
-    <div class="flex items-center justify-between p-4 border-b">
+    <div class="flex items-center justify-between p-4 border-b border-border">
       <div class="flex items-center space-x-2">
         <span class="text-xl">📊</span>
-        <h2 class="text-xl font-bold text-gray-900">Comparison View</h2>
-        <span class="text-sm text-gray-500">({$selectedOptions.length} options)</span>
+        <h2 class="text-xl font-bold text-foreground">Comparison View</h2>
+        <span class="text-sm text-muted-foreground">({$selectedOptions.length} options)</span>
       </div>
-      <button class="p-2 hover:bg-gray-100 rounded-lg" on:click={close} title="Close"> ✕ </button>
+      <button class="p-2 hover:bg-muted rounded-lg text-foreground" on:click={close} title="Close"> ✕ </button>
     </div>
 
     <!-- Summary Section -->
     {#if optionSummaries.some(s => s.wins.length > 0)}
-      <div class="p-4 bg-blue-50 border-b">
-        <h3 class="text-sm font-semibold text-blue-900 mb-2">Quick Summary</h3>
+      <div class="p-4 bg-primary/10 border-b border-border">
+        <h3 class="text-sm font-semibold text-primary mb-2">Quick Summary</h3>
         <div class="grid gap-2 {$selectedOptions.length === 2 ? 'grid-cols-2' : $selectedOptions.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}">
           {#each optionSummaries as summary, i}
-            <div class="bg-white rounded-lg p-3 shadow-sm">
-              <div class="font-medium text-gray-900 text-sm">{summary.name}</div>
+            <div class="bg-card rounded-lg p-3 shadow-sm border border-border/50">
+              <div class="font-medium text-foreground text-sm">{summary.name}</div>
               {#if summary.wins.length > 0}
-                <div class="text-xs text-green-700 mt-1">
+                <div class="text-xs text-green-400 mt-1">
                   {getSummaryText(summary)}
                 </div>
               {:else}
-                <div class="text-xs text-gray-500 mt-1">No clear advantages</div>
+                <div class="text-xs text-muted-foreground mt-1">No clear advantages</div>
               {/if}
             </div>
           {/each}
@@ -257,13 +257,13 @@
     <div class="overflow-auto max-h-[calc(90vh-8rem)]">
       <table class="w-full">
         <!-- Column headers -->
-        <thead class="sticky top-0 bg-white z-10">
+        <thead class="sticky top-0 bg-card z-10">
           <tr>
-            <th class="text-left p-3 bg-gray-50 font-medium text-gray-700 w-40">Metric</th>
+            <th class="text-left p-3 bg-muted font-medium text-foreground/80 w-40">Metric</th>
             {#each $selectedOptions as option}
-              <th class="p-3 bg-gray-50 text-center min-w-[160px]">
-                <div class="font-semibold text-gray-900">{option.name}</div>
-                <div class="text-xs text-gray-500 mt-1">
+              <th class="p-3 bg-muted text-center min-w-[160px]">
+                <div class="font-semibold text-foreground">{option.name}</div>
+                <div class="text-xs text-muted-foreground mt-1">
                   {getModelLabel(option.modelId)} ({option.variantId})
                 </div>
               </th>
@@ -274,8 +274,8 @@
         <tbody>
           {#each Object.entries(sections) as [sectionName, rows]}
             <!-- Section header -->
-            <tr class="bg-gray-100">
-              <td colspan={$selectedOptions.length + 1} class="p-2 font-semibold text-gray-700">
+            <tr class="bg-muted">
+              <td colspan={$selectedOptions.length + 1} class="p-2 font-semibold text-foreground/80">
                 {sectionName}
               </td>
             </tr>
@@ -283,8 +283,8 @@
             <!-- Section rows -->
             {#each rows as row}
               {@const values = $selectedOptions.map((o) => row.getValue(o))}
-              <tr class="border-b border-gray-100 hover:bg-gray-50">
-                <td class="p-3 text-sm text-gray-600">{row.label}</td>
+              <tr class="border-b border-border/50 hover:bg-muted/50">
+                <td class="p-3 text-sm text-muted-foreground">{row.label}</td>
                 {#each $selectedOptions as option, i}
                   {@const diff = getDiff(values, i)}
                   {@const isBest =
@@ -294,12 +294,12 @@
                     values.filter(v => v === values[i]).length === 1}
                   <td
                     class="p-3 text-center tabular-nums {isBest
-                      ? 'bg-green-50 font-semibold text-green-700'
-                      : ''}"
+                      ? 'bg-green-500/10 font-semibold text-green-400'
+                      : 'text-foreground'}"
                   >
                     {#if isBest}
                       <span class="inline-flex items-center">
-                        <span class="text-green-600 mr-1">★</span>
+                        <span class="text-green-400 mr-1">★</span>
                         {row.format(row.getValue(option))}
                       </span>
                     {:else}
@@ -317,32 +317,32 @@
           {/each}
 
           <!-- Risk Level row -->
-          <tr class="bg-gray-100">
-            <td colspan={$selectedOptions.length + 1} class="p-2 font-semibold text-gray-700">
+          <tr class="bg-muted">
+            <td colspan={$selectedOptions.length + 1} class="p-2 font-semibold text-foreground/80">
               Risk Assessment
             </td>
           </tr>
-          <tr class="border-b border-gray-100">
-            <td class="p-3 text-sm text-gray-600">Risk Level</td>
+          <tr class="border-b border-border/50">
+            <td class="p-3 text-sm text-muted-foreground">Risk Level</td>
             {#each $selectedOptions as option}
               {@const level = option.result.transferPricing.riskLevel}
               <td class="p-3 text-center">
                 <span
                   class="px-2 py-1 rounded text-xs font-medium {level === 'low'
-                    ? 'bg-green-100 text-green-800'
+                    ? 'bg-green-500/20 text-green-400'
                     : level === 'medium'
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-red-100 text-red-800'}"
+                      ? 'bg-amber-500/20 text-amber-400'
+                      : 'bg-red-500/20 text-red-400'}"
                 >
                   {level.toUpperCase()}
                 </span>
               </td>
             {/each}
           </tr>
-          <tr class="border-b border-gray-100">
-            <td class="p-3 text-sm text-gray-600">Within Range</td>
+          <tr class="border-b border-border/50">
+            <td class="p-3 text-sm text-muted-foreground">Within Range</td>
             {#each $selectedOptions as option}
-              <td class="p-3 text-center">
+              <td class="p-3 text-center text-foreground">
                 {option.result.transferPricing.withinRange ? '✓ Yes' : '✗ No'}
               </td>
             {/each}
@@ -352,7 +352,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="p-4 border-t bg-gray-50 flex justify-between">
+    <div class="p-4 border-t border-border bg-muted flex justify-between">
       <div class="flex space-x-2">
         <button class="btn-outline no-print" on:click={exportToCSV} title="Export as CSV">
           Export CSV

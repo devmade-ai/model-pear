@@ -18,7 +18,7 @@
     {#if icon}
       <span class="text-xl">{icon}</span>
     {/if}
-    <h2 class="text-lg font-semibold text-gray-900">{title}</h2>
+    <h2 class="text-lg font-semibold text-foreground">{title}</h2>
     {#if badge}
       <span class={badgeClass}>{badge}</span>
     {/if}

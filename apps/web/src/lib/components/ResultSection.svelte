@@ -10,6 +10,6 @@
 </script>
 
 <div class={colspan ? 'sm:col-span-2' : ''}>
-  <h3 class="text-sm font-medium text-gray-500 mb-2">{title}</h3>
+  <h3 class="text-sm font-medium text-muted-foreground mb-2">{title}</h3>
   <slot />
 </div>

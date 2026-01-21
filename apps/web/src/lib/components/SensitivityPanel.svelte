@@ -43,10 +43,10 @@
 <div class="space-y-6">
   <div class="flex items-center space-x-2 mb-4">
     <span class="text-2xl">📊</span>
-    <h2 class="text-xl font-bold text-gray-900">Sensitivity Analysis</h2>
+    <h2 class="text-xl font-bold text-foreground">Sensitivity Analysis</h2>
   </div>
 
-  <p class="text-gray-600 text-sm">
+  <p class="text-muted-foreground text-sm">
     Understand how changes in your inputs affect the outcome. This helps identify which assumptions
     have the biggest impact on profitability.
   </p>
@@ -71,26 +71,26 @@
   <!-- Top Influencers Summary -->
   {#if sensitivities.topInfluencers.length > 0}
     <div class="card p-4">
-      <h3 class="text-lg font-semibold text-gray-900 mb-3">Key Drivers</h3>
+      <h3 class="text-lg font-semibold text-foreground mb-3">Key Drivers</h3>
       <div class="space-y-2">
         {#each sensitivities.topInfluencers.slice(0, 5) as influencer}
-          <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+          <div class="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
             <div class="flex items-center space-x-2">
               <span
                 class="w-2 h-2 rounded-full {influencer.direction === 'positive'
-                  ? 'bg-green-500'
-                  : 'bg-red-500'}"
+                  ? 'bg-green-400'
+                  : 'bg-red-400'}"
               ></span>
-              <span class="text-sm font-medium text-gray-700">{influencer.label}</span>
+              <span class="text-sm font-medium text-foreground/80">{influencer.label}</span>
             </div>
             <div class="flex items-center space-x-4">
-              <span class="text-xs text-gray-500">
+              <span class="text-xs text-muted-foreground">
                 {influencer.lowValue.toLocaleString()} - {influencer.highValue.toLocaleString()}
               </span>
               <span
                 class="text-sm font-semibold {influencer.percentChange > 0
-                  ? 'text-green-600'
-                  : 'text-red-600'}"
+                  ? 'text-green-400'
+                  : 'text-red-400'}"
               >
                 ±{Math.abs(influencer.percentChange).toFixed(1)}%
               </span>

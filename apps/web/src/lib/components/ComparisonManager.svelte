@@ -107,22 +107,22 @@
   >
     <div class="flex items-center space-x-2">
       <span class="text-lg">📊</span>
-      <h2 class="text-lg font-semibold text-gray-900">Saved Options</h2>
+      <h2 class="text-lg font-semibold text-foreground">Saved Options</h2>
       <span class="badge-blue">{$savedOptions.length}</span>
     </div>
-    <span class="text-gray-400">{isExpanded ? '▼' : '▶'}</span>
+    <span class="text-muted-foreground">{isExpanded ? '▼' : '▶'}</span>
   </button>
 
   {#if isExpanded}
-    <div class="border-t border-gray-100 p-4">
+    <div class="border-t border-border p-4">
       {#if $savedOptions.length === 0}
-        <p class="text-sm text-gray-500 text-center py-4">
+        <p class="text-sm text-muted-foreground text-center py-4">
           No saved options yet. Calculate a model and click "Save Option" to start comparing.
         </p>
       {:else}
         <!-- Selection info -->
         <div class="flex items-center justify-between mb-4">
-          <p class="text-sm text-gray-600">
+          <p class="text-sm text-muted-foreground">
             {#if $selectedCount > 0}
               {$selectedCount} selected for comparison
             {:else}
@@ -132,7 +132,7 @@
           <div class="flex space-x-2">
             {#if $selectedCount > 0}
               <button
-                class="text-sm text-gray-500 hover:text-gray-700"
+                class="text-sm text-muted-foreground hover:text-foreground"
                 on:click={() => comparisonStore.clearSelection()}
               >
                 Clear
@@ -154,15 +154,15 @@
             {@const isSelected = $comparisonStore.selectedIds.includes(option.id)}
             <div
               class="flex items-center p-3 rounded-lg border transition-colors {isSelected
-                ? 'border-blue-300 bg-blue-50'
-                : 'border-gray-200 hover:border-gray-300'}"
+                ? 'border-primary/50 bg-primary/10'
+                : 'border-border hover:border-border/80'}"
             >
               <!-- Checkbox -->
               <input
                 type="checkbox"
                 checked={isSelected}
                 on:change={() => comparisonStore.toggleSelection(option.id)}
-                class="mr-3 h-4 w-4 text-blue-600 rounded"
+                class="mr-3 h-4 w-4 text-primary rounded"
               />
 
               <!-- Content -->
@@ -177,14 +177,14 @@
                   />
                 {:else}
                   <button
-                    class="font-medium text-gray-900 truncate block text-left w-full"
+                    class="font-medium text-foreground truncate block text-left w-full"
                     on:dblclick={() => startEdit(option)}
                     title="Double-click to rename"
                   >
                     {option.name}
                   </button>
                 {/if}
-                <div class="flex items-center space-x-2 text-xs text-gray-500 mt-0.5">
+                <div class="flex items-center space-x-2 text-xs text-muted-foreground mt-0.5">
                   <span class="badge-blue text-xs py-0">{getModelLabel(option.modelId)}</span>
                   <span>{option.variantId}</span>
                   <span>•</span>
@@ -197,14 +197,14 @@
               <!-- Actions -->
               <div class="flex items-center space-x-1 ml-2">
                 <button
-                  class="p-1 text-gray-400 hover:text-gray-600"
+                  class="p-1 text-muted-foreground hover:text-foreground"
                   title="Rename"
                   on:click={() => startEdit(option)}
                 >
                   ✏️
                 </button>
                 <button
-                  class="p-1 text-gray-400 hover:text-red-600"
+                  class="p-1 text-muted-foreground hover:text-red-400"
                   title="Delete"
                   on:click={() => comparisonStore.delete(option.id)}
                 >
@@ -216,17 +216,17 @@
         </div>
 
         <!-- Footer actions -->
-        <div class="flex justify-between mt-4 pt-4 border-t border-gray-100">
+        <div class="flex justify-between mt-4 pt-4 border-t border-border">
           <div class="flex space-x-2">
-            <button class="text-sm text-gray-500 hover:text-gray-700" on:click={exportOptions}>
+            <button class="text-sm text-muted-foreground hover:text-foreground" on:click={exportOptions}>
               Export
             </button>
-            <button class="text-sm text-gray-500 hover:text-gray-700" on:click={importOptions}>
+            <button class="text-sm text-muted-foreground hover:text-foreground" on:click={importOptions}>
               Import
             </button>
           </div>
           <button
-            class="text-sm text-red-500 hover:text-red-700"
+            class="text-sm text-red-400 hover:text-red-300"
             on:click={() => {
               if (confirm('Delete all saved options?')) {
                 comparisonStore.clearAll();

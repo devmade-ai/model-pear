@@ -94,11 +94,12 @@
   }
 
   function getMatchColorClass(color: string) {
+    // Dark-theme compatible semantic colors
     const colorMap: Record<string, string> = {
-      green: 'text-green-500 bg-green-50 border-green-200',
-      blue: 'text-blue-500 bg-blue-50 border-blue-200',
-      yellow: 'text-yellow-600 bg-yellow-50 border-yellow-200',
-      red: 'text-red-500 bg-red-50 border-red-200',
+      green: 'text-green-400 bg-green-500/10 border-green-500/30',
+      blue: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
+      yellow: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30',
+      red: 'text-red-400 bg-red-500/10 border-red-500/30',
     };
     return colorMap[color] || colorMap.blue;
   }
@@ -108,19 +109,19 @@
   <!-- Header -->
   <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
     <div>
-      <h2 class="text-xl font-semibold text-gray-900">Structure Selection Wizard</h2>
-      <p class="text-sm text-gray-500 mt-1">
+      <h2 class="text-xl font-semibold text-foreground">Structure Selection Wizard</h2>
+      <p class="text-sm text-muted-foreground mt-1">
         {isComplete ? 'Review your recommended transaction structures' : 'Answer questions to find the optimal transaction model'}
       </p>
     </div>
     <div class="flex gap-3">
       {#if !isComplete}
-        <button class="text-sm text-gray-500 hover:text-gray-700 underline" on:click={handleSkip}>
+        <button class="text-sm text-muted-foreground hover:text-foreground underline" on:click={handleSkip}>
           Skip wizard
         </button>
       {/if}
       {#if answeredCount > 0}
-        <button class="text-sm text-blue-600 hover:text-blue-800 underline" on:click={handleRestart}>
+        <button class="text-sm text-primary hover:text-primary/80 underline" on:click={handleRestart}>
           Start over
         </button>
       {/if}
@@ -131,28 +132,28 @@
     <!-- RESULTS VIEW -->
     <div class="space-y-6">
       <!-- Top Recommendation -->
-      <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 border border-green-200">
+      <div class="bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-lg p-6 border border-green-500/30">
         <div class="flex items-center gap-3 mb-4">
           <span class="text-3xl">{topRecommendation.icon}</span>
           <div>
-            <h3 class="text-xl font-semibold text-green-700">Recommended: {topRecommendation.name}</h3>
-            <p class="text-sm text-green-600">
+            <h3 class="text-xl font-semibold text-green-400">Recommended: {topRecommendation.name}</h3>
+            <p class="text-sm text-green-400/80">
               {topRecommendation.matchLevel.label} ({topRecommendation.normalizedScore}% match)
             </p>
           </div>
         </div>
-        <p class="text-gray-700 mb-4">{topRecommendation.description}</p>
+        <p class="text-foreground/80 mb-4">{topRecommendation.description}</p>
 
         <!-- Rationale -->
-        <div class="bg-white/60 rounded-lg p-4 mb-4">
-          <h4 class="text-sm font-medium text-gray-700 mb-2">Why this model?</h4>
-          <div class="text-sm text-gray-600 whitespace-pre-line">{generateRationale(topRecommendation)}</div>
+        <div class="bg-card/60 rounded-lg p-4 mb-4">
+          <h4 class="text-sm font-medium text-foreground/80 mb-2">Why this model?</h4>
+          <div class="text-sm text-muted-foreground whitespace-pre-line">{generateRationale(topRecommendation)}</div>
         </div>
 
         <!-- Variant Selector -->
         {#if VARIANT_FACTORS[topRecommendation.modelId]}
-          <div class="border-t border-gray-200 pt-4 mt-4">
-            <h4 class="text-sm font-medium text-gray-700 mb-2">
+          <div class="border-t border-border pt-4 mt-4">
+            <h4 class="text-sm font-medium text-foreground/80 mb-2">
               {VARIANT_FACTORS[topRecommendation.modelId].question}
             </h4>
             <select
@@ -168,13 +169,13 @@
             {#if selectedVariantPreference}
               {@const variantRec = getVariantRecommendation(topRecommendation.modelId, selectedVariantPreference)}
               {#if variantRec}
-                <div class="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p class="text-sm text-blue-700">
+                <div class="mt-3 bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+                  <p class="text-sm text-blue-400">
                     <span class="font-medium">Recommended variant:</span>
                     {variantRec.variants.join(', ')}
                   </p>
-                  <p class="text-xs text-gray-600 mt-1">
-                    <span class="text-gray-700">Best for:</span>
+                  <p class="text-xs text-muted-foreground mt-1">
+                    <span class="text-foreground/80">Best for:</span>
                     {variantRec.scenario}
                   </p>
                 </div>
@@ -193,31 +194,31 @@
 
       <!-- Alternative Options -->
       <div>
-        <h4 class="text-lg font-medium text-gray-900 mb-4">Alternative Options</h4>
+        <h4 class="text-lg font-medium text-foreground mb-4">Alternative Options</h4>
         <div class="space-y-3">
           {#each recommendations.slice(1) as rec}
-            <div class="card p-4 hover:border-gray-300 transition-colors">
+            <div class="card p-4 hover:border-border transition-colors">
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                   <span class="text-xl">{rec.icon}</span>
                   <span class="{getMatchColorClass(rec.matchLevel.color)} px-2 py-0.5 rounded text-xs font-medium">
                     {rec.matchLevel.icon}
                   </span>
-                  <h5 class="font-medium text-gray-900">{rec.shortName}</h5>
+                  <h5 class="font-medium text-foreground">{rec.shortName}</h5>
                 </div>
-                <span class="text-sm text-gray-500">{rec.normalizedScore}%</span>
+                <span class="text-sm text-muted-foreground">{rec.normalizedScore}%</span>
               </div>
-              <p class="text-sm text-gray-600 mb-3">{rec.description}</p>
+              <p class="text-sm text-muted-foreground mb-3">{rec.description}</p>
 
               {#if rec.strengths.length > 0}
-                <p class="text-xs text-gray-500 mb-3">
-                  <span class="text-green-500">✓</span>
+                <p class="text-xs text-muted-foreground mb-3">
+                  <span class="text-green-400">✓</span>
                   {rec.strengths.slice(0, 2).map((s) => s.reason).join(', ')}
                 </p>
               {/if}
 
               <button
-                class="text-sm text-blue-600 hover:text-blue-800"
+                class="text-sm text-primary hover:text-primary/80"
                 on:click={() => handleUseModel(rec.modelId)}
               >
                 Use this model →
@@ -228,16 +229,16 @@
       </div>
 
       <!-- Answer Summary -->
-      <div class="card p-4 bg-gray-50">
-        <h4 class="text-sm font-medium text-gray-700 mb-3">Your Answers</h4>
+      <div class="card p-4 bg-muted">
+        <h4 class="text-sm font-medium text-foreground/80 mb-3">Your Answers</h4>
         <div class="space-y-2">
           {#each QUESTION_ORDER as factorId}
             {@const factor = DECISION_FACTORS[factorId]}
             {@const answer = answers[factorId]}
             {@const option = factor.options.find((o) => o.value === answer)}
             <div class="flex justify-between text-sm">
-              <span class="text-gray-500">{factor.question}</span>
-              <span class="text-gray-900">{option?.label || 'Not answered'}</span>
+              <span class="text-muted-foreground">{factor.question}</span>
+              <span class="text-foreground">{option?.label || 'Not answered'}</span>
             </div>
           {/each}
         </div>
@@ -257,12 +258,12 @@
             <button
               class="w-8 h-8 rounded-full text-xs font-medium transition-all
                      {isCurrent
-                ? 'bg-blue-600 text-white ring-2 ring-blue-300'
+                ? 'bg-primary text-primary-foreground ring-2 ring-primary/50'
                 : isAnswered
-                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                  ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
                   : isAccessible
-                    ? 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                    : 'bg-gray-50 text-gray-300 cursor-not-allowed'}"
+                    ? 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    : 'bg-muted/50 text-muted-foreground/50 cursor-not-allowed'}"
               on:click={() => goToQuestion(idx)}
               disabled={!isAccessible}
               title="Question {idx + 1}{isAnswered ? ' (answered)' : ''}"
@@ -276,30 +277,30 @@
           {/each}
         </div>
         <!-- Progress Bar -->
-        <div class="flex justify-between text-xs text-gray-500 mb-2">
+        <div class="flex justify-between text-xs text-muted-foreground mb-2">
           <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
           <span>{answeredCount} answered</span>
         </div>
-        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div class="h-full bg-blue-500 transition-all duration-300" style="width: {((currentQuestionIndex + 1) / totalQuestions) * 100}%"></div>
+        <div class="h-2 bg-border rounded-full overflow-hidden">
+          <div class="h-full bg-primary transition-all duration-300" style="width: {((currentQuestionIndex + 1) / totalQuestions) * 100}%"></div>
         </div>
       </div>
 
       <!-- Current Question -->
-      <div class="card p-6 border-2 border-blue-200 bg-blue-50/30">
+      <div class="card p-6 border-2 border-primary/30 bg-primary/5">
         <div class="flex items-center gap-2 mb-2">
-          <span class="text-xs text-blue-600 font-medium">Question {currentQuestionIndex + 1}</span>
+          <span class="text-xs text-primary font-medium">Question {currentQuestionIndex + 1}</span>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">{currentQuestion.question}</h3>
-        <p class="text-sm text-gray-500 mb-4">{currentQuestion.description}</p>
+        <h3 class="text-lg font-medium text-foreground mb-2">{currentQuestion.question}</h3>
+        <p class="text-sm text-muted-foreground mb-4">{currentQuestion.description}</p>
 
         <div class="space-y-3">
           {#each currentQuestion.options as option}
             <label
-              class="flex items-start gap-3 p-4 bg-white rounded-lg border-2 cursor-pointer transition-all
+              class="flex items-start gap-3 p-4 bg-card rounded-lg border-2 cursor-pointer transition-all
                      {currentAnswer === option.value
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 hover:border-gray-300'}"
+                ? 'border-primary bg-primary/10'
+                : 'border-border hover:border-border/80'}"
             >
               <input
                 type="radio"
@@ -307,11 +308,11 @@
                 value={option.value}
                 checked={currentAnswer === option.value}
                 on:change={() => handleAnswer(currentFactorId, option.value)}
-                class="mt-1 w-4 h-4 text-blue-600"
+                class="mt-1 w-4 h-4 text-primary"
               />
               <div class="flex-1">
-                <span class="font-medium text-gray-900">{option.label}</span>
-                <p class="text-sm text-gray-500 mt-1">{option.description}</p>
+                <span class="font-medium text-foreground">{option.label}</span>
+                <p class="text-sm text-muted-foreground mt-1">{option.description}</p>
               </div>
             </label>
           {/each}
@@ -323,8 +324,8 @@
         <button
           class="px-4 py-2 text-sm font-medium rounded-lg transition-colors
                  {canGoBack
-            ? 'text-gray-700 bg-gray-100 hover:bg-gray-200'
-            : 'text-gray-300 bg-gray-50 cursor-not-allowed'}"
+            ? 'text-foreground/80 bg-muted hover:bg-muted/80'
+            : 'text-muted-foreground/50 bg-muted/50 cursor-not-allowed'}"
           on:click={handleBack}
           disabled={!canGoBack}
         >
@@ -343,8 +344,8 @@
             <button
               class="px-6 py-2 text-sm font-medium rounded-lg transition-colors
                      {canGoNext
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed'}"
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                : 'bg-muted text-muted-foreground cursor-not-allowed'}"
               on:click={handleNext}
               disabled={!canGoNext}
             >
@@ -356,14 +357,14 @@
 
       <!-- Live Preview -->
       {#if answeredCount > 0}
-        <div class="pt-6 border-t border-gray-200">
-          <h4 class="text-sm font-medium text-gray-500 mb-3">Current Top Recommendations</h4>
+        <div class="pt-6 border-t border-border">
+          <h4 class="text-sm font-medium text-muted-foreground mb-3">Current Top Recommendations</h4>
           <div class="flex gap-2 flex-wrap">
             {#each recommendations.slice(0, 3) as rec}
-              <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full text-sm">
+              <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-sm">
                 <span class="text-lg">{rec.icon}</span>
-                <span class="text-gray-700">{rec.shortName}</span>
-                <span class="text-gray-400">{rec.normalizedScore}%</span>
+                <span class="text-foreground/80">{rec.shortName}</span>
+                <span class="text-muted-foreground">{rec.normalizedScore}%</span>
               </span>
             {/each}
           </div>
