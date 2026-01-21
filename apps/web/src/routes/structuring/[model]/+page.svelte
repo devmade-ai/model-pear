@@ -254,15 +254,15 @@
     <!-- Page header -->
     <div class="mb-8">
       <div class="flex items-center space-x-2 mb-2">
-        <a href="{base}/structuring" class="text-blue-600 hover:text-blue-800 text-sm">
+        <a href="{base}/structuring" class="text-primary hover:text-primary/80 text-sm">
           ← All Models
         </a>
       </div>
       <div class="flex items-center space-x-3">
         <span class="text-3xl">{config.model.icon}</span>
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">{config.model.name}</h1>
-          <p class="text-gray-600 mt-1">{config.model.description}</p>
+          <h1 class="text-3xl font-bold text-foreground">{config.model.name}</h1>
+          <p class="text-secondary mt-1">{config.model.description}</p>
         </div>
       </div>
     </div>
@@ -271,7 +271,7 @@
       <!-- Input Form -->
       <div class="lg:col-span-1">
         <div class="card p-6 sticky top-4">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">Inputs</h2>
+          <h2 class="text-lg font-semibold text-foreground mb-4">Inputs</h2>
 
           <!-- Essential Inputs -->
           <div class="space-y-4">
@@ -294,9 +294,9 @@
 
           <!-- Advanced Inputs (Collapsed) -->
           {#if advancedFields.length > 0}
-            <div class="mt-6 pt-4 border-t border-gray-200">
+            <div class="mt-6 pt-4 border-t border-border">
               <button
-                class="flex items-center justify-between w-full text-sm font-medium text-gray-600 hover:text-gray-900"
+                class="flex items-center justify-between w-full text-sm font-medium text-secondary hover:text-foreground"
                 on:click={() => showAdvancedInputs = !showAdvancedInputs}
               >
                 <span>Advanced Options ({advancedFields.length})</span>
@@ -340,16 +340,16 @@
           <button class="btn-primary" on:click={quickSave}>
             Save Option
           </button>
-          <button class="btn-secondary text-sm" on:click={openSaveModal}>
+          <button class="btn-outline text-sm" on:click={openSaveModal}>
             Save As...
           </button>
           {#if savedCount > 0}
-            <span class="text-sm text-gray-600 border-l border-gray-300 pl-3">
+            <span class="text-sm text-secondary border-l border-border pl-3">
               {savedCount} option{savedCount !== 1 ? 's' : ''} saved
             </span>
           {/if}
           {#if saveConfirmation}
-            <span class="text-sm text-green-600 animate-pulse">{saveConfirmation}</span>
+            <span class="text-sm text-success animate-pulse">{saveConfirmation}</span>
           {/if}
         </div>
 
@@ -366,16 +366,16 @@
             <div class="flex items-center space-x-3">
               <span class="text-xl">⚖️</span>
               <div>
-                <h3 class="font-semibold text-gray-900">Transfer Pricing Assessment</h3>
-                <p class="text-sm text-gray-500">Related party compliance details</p>
+                <h3 class="font-semibold text-foreground">Transfer Pricing Assessment</h3>
+                <p class="text-sm text-secondary">Related party compliance details</p>
               </div>
             </div>
             <div class="flex items-center space-x-2">
-              <span class="text-xs px-2 py-1 rounded-full {result.transferPricing.riskLevel === 'low' ? 'bg-green-100 text-green-800' : result.transferPricing.riskLevel === 'medium' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}">
+              <span class="text-xs px-2 py-1 rounded-full {result.transferPricing.riskLevel === 'low' ? 'bg-success/10 text-success border border-success/30' : result.transferPricing.riskLevel === 'medium' ? 'bg-warning/10 text-warning border border-warning/30' : 'bg-error/10 text-error border border-error/30'}">
                 {result.transferPricing.riskLevel.toUpperCase()} RISK
               </span>
               <svg
-                class="w-5 h-5 text-gray-400 transition-transform {showTransferPricing ? 'rotate-180' : ''}"
+                class="w-5 h-5 text-secondary transition-transform {showTransferPricing ? 'rotate-180' : ''}"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -400,12 +400,12 @@
             <div class="flex items-center space-x-3">
               <span class="text-xl">📊</span>
               <div>
-                <h3 class="font-semibold text-gray-900">Advanced Analysis</h3>
-                <p class="text-sm text-gray-500">Sensitivity, projections, and detailed metrics</p>
+                <h3 class="font-semibold text-foreground">Advanced Analysis</h3>
+                <p class="text-sm text-secondary">Sensitivity, projections, and detailed metrics</p>
               </div>
             </div>
             <svg
-              class="w-5 h-5 text-gray-400 transition-transform {showAdvancedAnalysis ? 'rotate-180' : ''}"
+              class="w-5 h-5 text-secondary transition-transform {showAdvancedAnalysis ? 'rotate-180' : ''}"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -416,7 +416,7 @@
           {#if showAdvancedAnalysis}
             <div class="p-4 pt-0 space-y-6">
               <div>
-                <h4 class="text-sm font-medium text-gray-700 mb-3">Sensitivity Analysis</h4>
+                <h4 class="text-sm font-medium text-secondary mb-3">Sensitivity Analysis</h4>
                 <SensitivityPanel
                   {inputs}
                   {result}
@@ -424,7 +424,7 @@
                 />
               </div>
               <div>
-                <h4 class="text-sm font-medium text-gray-700 mb-3">Growth Projections</h4>
+                <h4 class="text-sm font-medium text-secondary mb-3">Growth Projections</h4>
                 <ProjectionsPanel {result} />
               </div>
             </div>
@@ -435,7 +435,7 @@
         <ComparisonManager />
 
         <!-- Metadata -->
-        <div class="text-xs text-gray-400 text-right">
+        <div class="text-xs text-secondary/60 text-right">
           Model: {result.metadata.modelName} ({result.metadata.variantId}: {result.metadata.variantName})
         </div>
       </div>
@@ -444,11 +444,11 @@
 
   <!-- Save Modal -->
   {#if showSaveModal}
-    <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Save Option</h3>
+    <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+      <div class="bg-card rounded-xl border border-border shadow-xl max-w-md w-full p-6">
+        <h3 class="text-lg font-semibold text-foreground mb-4">Save Option</h3>
         <div class="mb-4">
-          <label for="saveName" class="block text-sm font-medium text-gray-700 mb-1">
+          <label for="saveName" class="block text-sm font-medium text-secondary mb-1">
             Option Name
           </label>
           <input
@@ -461,7 +461,7 @@
           />
         </div>
         <div class="flex justify-end space-x-3">
-          <button class="btn-secondary" on:click={cancelSave}>Cancel</button>
+          <button class="btn-outline" on:click={cancelSave}>Cancel</button>
           <button class="btn-primary" on:click={saveOption} disabled={!saveName.trim()}>
             Save
           </button>
@@ -477,9 +477,9 @@
 {:else}
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center">
-      <h1 class="text-2xl font-bold text-gray-900 mb-4">Model Not Found</h1>
-      <p class="text-gray-600 mb-4">The requested model "{modelId}" was not found.</p>
-      <a href="{base}/structuring" class="text-blue-600 hover:text-blue-800">
+      <h1 class="text-2xl font-bold text-foreground mb-4">Model Not Found</h1>
+      <p class="text-secondary mb-4">The requested model "{modelId}" was not found.</p>
+      <a href="{base}/structuring" class="text-primary hover:text-primary/80">
         ← Back to Model Selection
       </a>
     </div>

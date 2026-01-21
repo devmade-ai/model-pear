@@ -77,8 +77,8 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- Page header -->
   <div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">Transaction Structuring</h1>
-    <p class="text-gray-600 mt-2">
+    <h1 class="text-3xl font-bold text-foreground">Transaction Structuring</h1>
+    <p class="text-secondary mt-2">
       {viewMode === 'wizard'
         ? 'Answer a few questions to find the best transaction model for your situation.'
         : 'Choose a transaction model to analyze financial outcomes for both parties.'}
@@ -90,8 +90,8 @@
     <button
       class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
              {viewMode === 'wizard'
-        ? 'bg-blue-100 text-blue-700 border border-blue-200'
-        : 'text-gray-600 hover:bg-gray-100'}"
+        ? 'bg-primary/20 text-primary border border-primary/30'
+        : 'text-secondary hover:bg-card'}"
       on:click={() => (viewMode = 'wizard')}
     >
       <span class="mr-2">🧙</span>
@@ -100,8 +100,8 @@
     <button
       class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
              {viewMode === 'overview'
-        ? 'bg-blue-100 text-blue-700 border border-blue-200'
-        : 'text-gray-600 hover:bg-gray-100'}"
+        ? 'bg-primary/20 text-primary border border-primary/30'
+        : 'text-secondary hover:bg-card'}"
       on:click={() => (viewMode = 'overview')}
     >
       <span class="mr-2">📋</span>
@@ -120,35 +120,35 @@
       {#each models as model}
         <button
           on:click={() => selectModel(model.id)}
-          class="card p-6 text-left hover:border-blue-500 hover:shadow-lg transition-all duration-200 group"
+          class="card p-6 text-left hover:border-primary/50 transition-all duration-200 group"
         >
           <!-- Header -->
           <div class="flex items-start justify-between mb-4">
             <div class="flex items-center space-x-3">
               <span class="text-2xl">{model.icon}</span>
               <div>
-                <h3 class="font-semibold text-gray-900 group-hover:text-blue-600">
+                <h3 class="font-semibold text-foreground group-hover:text-primary transition-colors">
                   {model.shortName}
                 </h3>
-                <p class="text-xs text-gray-500">{model.id.toUpperCase()}</p>
+                <p class="text-xs text-secondary">{model.id.toUpperCase()}</p>
               </div>
             </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+            <span class="text-xs px-2 py-1 rounded-full bg-secondary-light text-secondary">
               {Object.keys(model.variants).length} variants
             </span>
           </div>
 
           <!-- Description -->
-          <p class="text-sm text-gray-600 mb-4">
+          <p class="text-sm text-secondary mb-4">
             {model.description}
           </p>
 
           <!-- Best for -->
           <div class="mb-4">
-            <p class="text-xs font-medium text-gray-500 mb-2">Best for:</p>
+            <p class="text-xs font-medium text-secondary mb-2">Best for:</p>
             <div class="flex flex-wrap gap-1">
               {#each model.bestFor as tag}
-                <span class="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700">
+                <span class="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
                   {tag}
                 </span>
               {/each}
@@ -157,11 +157,11 @@
 
           <!-- Key features -->
           <div class="mb-4">
-            <p class="text-xs font-medium text-gray-500 mb-2">Key features:</p>
-            <ul class="text-xs text-gray-600 space-y-1">
+            <p class="text-xs font-medium text-secondary mb-2">Key features:</p>
+            <ul class="text-xs text-secondary space-y-1">
               {#each model.keyFeatures as feature}
                 <li class="flex items-center">
-                  <span class="text-green-500 mr-2">✓</span>
+                  <span class="text-success mr-2">✓</span>
                   {feature}
                 </li>
               {/each}
@@ -169,11 +169,11 @@
           </div>
 
           <!-- CTA -->
-          <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-            <span class="text-xs text-gray-500">
+          <div class="flex items-center justify-between pt-4 border-t border-border">
+            <span class="text-xs text-secondary">
               {model.accountingSummary.developer.split('.')[0]}.
             </span>
-            <span class="text-blue-600 text-sm font-medium group-hover:translate-x-1 transition-transform">
+            <span class="text-primary text-sm font-medium group-hover:translate-x-1 transition-transform">
               Explore →
             </span>
           </div>
@@ -183,60 +183,60 @@
 
     <!-- Quick comparison table -->
     <div class="mt-12">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Comparison</h2>
+      <h2 class="text-xl font-semibold text-foreground mb-4">Quick Comparison</h2>
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
-          <thead class="bg-gray-50">
+        <table class="table-dark min-w-full border border-border rounded-lg overflow-hidden">
+          <thead>
             <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">IP Ownership</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment Type</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Risk Profile</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Variants</th>
+              <th>Model</th>
+              <th>IP Ownership</th>
+              <th>Payment Type</th>
+              <th>Risk Profile</th>
+              <th>Variants</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
+          <tbody>
             <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">Cost-Plus</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Buyer</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Project-based</td>
-              <td class="px-4 py-3"><span class="badge-green">Low</span></td>
-              <td class="px-4 py-3 text-sm text-gray-600">6</td>
+              <td class="font-medium text-foreground">Cost-Plus</td>
+              <td>Buyer</td>
+              <td>Project-based</td>
+              <td><span class="badge-success">Low</span></td>
+              <td>6</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">Licence</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Developer</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Upfront / Royalty</td>
-              <td class="px-4 py-3"><span class="badge-amber">Medium</span></td>
-              <td class="px-4 py-3 text-sm text-gray-600">8</td>
+              <td class="font-medium text-foreground">Licence</td>
+              <td>Developer</td>
+              <td>Upfront / Royalty</td>
+              <td><span class="badge-warning">Medium</span></td>
+              <td>8</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">Joint Dev</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Shared</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Cost contribution</td>
-              <td class="px-4 py-3"><span class="badge-green">Low</span></td>
-              <td class="px-4 py-3 text-sm text-gray-600">8</td>
+              <td class="font-medium text-foreground">Joint Dev</td>
+              <td>Shared</td>
+              <td>Cost contribution</td>
+              <td><span class="badge-success">Low</span></td>
+              <td>8</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">BOT</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Developer → Buyer</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Fees + Transfer</td>
-              <td class="px-4 py-3"><span class="badge-amber">Medium</span></td>
-              <td class="px-4 py-3 text-sm text-gray-600">8</td>
+              <td class="font-medium text-foreground">BOT</td>
+              <td>Developer → Buyer</td>
+              <td>Fees + Transfer</td>
+              <td><span class="badge-warning">Medium</span></td>
+              <td>8</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">Sale</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Buyer</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Upfront / Earnout</td>
-              <td class="px-4 py-3"><span class="badge-amber">Medium</span></td>
-              <td class="px-4 py-3 text-sm text-gray-600">8</td>
+              <td class="font-medium text-foreground">Sale</td>
+              <td>Buyer</td>
+              <td>Upfront / Earnout</td>
+              <td><span class="badge-warning">Medium</span></td>
+              <td>8</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 text-sm font-medium text-gray-900">SaaS</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Developer</td>
-              <td class="px-4 py-3 text-sm text-gray-600">Subscription</td>
-              <td class="px-4 py-3"><span class="badge-green">Low</span></td>
-              <td class="px-4 py-3 text-sm text-gray-600">9</td>
+              <td class="font-medium text-foreground">SaaS</td>
+              <td>Developer</td>
+              <td>Subscription</td>
+              <td><span class="badge-success">Low</span></td>
+              <td>9</td>
             </tr>
           </tbody>
         </table>

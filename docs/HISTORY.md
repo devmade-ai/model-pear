@@ -7,6 +7,42 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Koinz Style Guide Implementation (January 21, 2026)
+
+**Impact**: Complete visual redesign from light to dark theme
+
+### Changes
+
+- **Dark theme by default** - Page background #1B1B1B, card backgrounds #2a2a2a
+- **Koinz color system** - Primary #2D68FF, secondary #767676, border #333333
+- **Figtree font** - Replaced Inter with Figtree from Google Fonts
+- **Semantic colors** - Success #16A34A (green), error #EF4444 (red), warning #EAB308 (amber)
+- **CSS variable system** - All colors defined as HSL variables for Tailwind integration
+- **Updated component classes** - .card, .btn, .input, .badge all use new dark theme
+- **All pages updated** - Home, structuring, pricing, model calculator pages
+
+### Design System Reference
+
+```css
+:root {
+  --background: 0 0% 11%;     /* #1B1B1B */
+  --foreground: 0 0% 100%;    /* #FFFFFF */
+  --card: 0 0% 16%;           /* #2a2a2a */
+  --primary: 222 100% 59%;    /* #2D68FF */
+  --secondary: 0 0% 46%;      /* #767676 */
+  --border: 0 0% 20%;         /* #333333 */
+}
+```
+
+### Files Changed
+
+- `apps/web/tailwind.config.js` - CSS variable-based color system
+- `apps/web/src/app.css` - CSS variables and component styles
+- `apps/web/src/app.html` - Figtree font, dark mode
+- `apps/web/src/routes/*.svelte` - All page components
+
+---
+
 ## Wizard Navigation Improvements (January 21, 2026)
 
 **Impact**: Improved usability of the Structure Selection Wizard
