@@ -4,33 +4,30 @@
 
 ---
 
-## Current State (January 21, 2026)
+## Current State (February 13, 2026)
 
-**Last completed**: Dark theme implementation
+**Last completed**: CLAUDE.md restructure - merged engineering standards template with existing project context
 
-**Status**: Dark theme redesign complete
+**Status**: CLAUDE.md updated with merged content
 
 ### What was done this session
 
-1. **Implemented dark theme** - Complete visual redesign:
-   - Dark theme by default (background #1B1B1B, cards #2a2a2a)
-   - Primary color: #2D68FF (blue for CTAs, links, focus states)
-   - Figtree font family from Google Fonts
-   - Semantic colors: success #16A34A, error #EF4444, warning #EAB308
-   - CSS variable-based color system for Tailwind
-   - Updated all component styles (.card, .btn, .input, .badge)
-   - Updated all pages and layout for dark theme
+1. **Compared existing CLAUDE.md against proposed engineering standards template** - Identified gaps, overlaps, and conflicts
+2. **Merged CLAUDE.md** - Combined both files into a single cohesive document:
+   - Added HARD RULES section (code organization limits, decision documentation, UX rules, security, cleanup, quality checks)
+   - Preserved AI SESSION MANAGEMENT (checklists, session notes, compact prep)
+   - Added COMMUNICATION STYLE, TESTING, PROHIBITIONS sections
+   - Added PROJECT-SPECIFIC CONFIGURATION with filled-in values (TypeScript, SvelteKit, pnpm, etc.)
+   - Added explicit WORKFLOW (7 steps)
+   - Preserved all project domain context (models, formulas, tax rules, benchmarks, troubleshooting)
+   - Fixed stale "keep vanilla JS" instruction (now references TypeScript/SvelteKit)
+   - Added Tailwind exception to "no inline CSS" rule
+   - Updated decision documentation example to use project-relevant TypeScript/IRR code
+   - Updated "Last Updated" to February 2026
 
 ### Key Files Changed
 
-- `apps/web/tailwind.config.js` - New color system with CSS variables
-- `apps/web/src/app.css` - CSS variables and dark theme component styles
-- `apps/web/src/app.html` - Figtree font import, dark mode class
-- `apps/web/src/routes/+layout.svelte` - Dark header/footer
-- `apps/web/src/routes/+page.svelte` - Home page dark theme
-- `apps/web/src/routes/structuring/+page.svelte` - Transaction structuring dark theme
-- `apps/web/src/routes/structuring/[model]/+page.svelte` - Model calculator dark theme
-- `apps/web/src/routes/pricing/+page.svelte` - Pricing calculator dark theme
+- `CLAUDE.md` - Complete restructure merging engineering standards with project context
 
 ---
 

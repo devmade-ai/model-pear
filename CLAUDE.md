@@ -1,49 +1,149 @@
-# My Preferences
+# CLAUDE.md
 
-## Process
-1. **Read these preferences first**
-2. **Gather context from documentation** (CLAUDE.md, relevant docs/)
-3. **Then proceed with the task**
+## HARD RULES
 
-## Principles
+These rules are non-negotiable. Stop and ask before proceeding if any rule would be violated.
+
+### Before Making Changes
+
+- [ ] Read relevant existing code and documentation first
+- [ ] Read SESSION_NOTES.md for current state and context
+- [ ] Check TODO.md for pending items
+- [ ] Ask clarifying questions if scope, approach, or intent is unclear
+- [ ] Confirm understanding before implementing non-trivial changes
+- [ ] Never assume - when in doubt, ask
+
+### Best Practices
+
+- [ ] Follow established patterns and conventions in the codebase
+- [ ] Use industry-standard solutions over custom implementations when available
+- [ ] Apply SOLID principles, DRY, and separation of concerns
+- [ ] Prefer well-maintained, widely-adopted libraries over obscure alternatives
+- [ ] Follow security best practices (input validation, sanitization, principle of least privilege)
+- [ ] Handle errors gracefully with meaningful messages
+- [ ] Write self-documenting code with clear naming
+
+### Code Organization
+
+- [ ] Prefer smaller, focused files and functions
+- [ ] Pause and consider extraction at: 500 lines (file), 100 lines (function), 400 lines (class)
+- [ ] Strongly consider refactoring at: 800+ lines (file), 150+ lines (function), 600+ lines (class)
+- [ ] Extract reusable logic into separate modules/files immediately
+- [ ] Group related functionality into logical directories
+- [ ] Split large classes into smaller, focused classes when responsibilities diverge
+
+### Decision Documentation in Code
+
+Every non-trivial code change must include comments explaining:
+- **What** was the requirement or instruction
+- **Why** this approach was chosen
+- **What alternatives** were considered and why they were rejected
+
+Example:
+```typescript
+// Requirement: Calculate NPV for multi-year projections
+// Approach: Newton-Raphson method for IRR, standard DCF for NPV
+// Alternatives considered:
+//   - Simple payback: Rejected - doesn't account for time value of money
+//   - Excel-style XIRR: Rejected - irregular dates not needed, adds complexity
+//   - Bisection method: Rejected - slower convergence than Newton-Raphson
+function calculateIRR(cashFlows: number[]): number {
+    ...
+}
+```
+
+### User Experience (CRITICAL)
+
+Assume all end users are non-technical. This is non-negotiable.
+
+- [ ] UI must be intuitive without instructions
+- [ ] Use plain language - no jargon, technical terms, or developer-speak
+- [ ] Error messages must tell users what went wrong AND what to do next, in simple terms
+- [ ] Labels, buttons, and instructions should be clear to someone unfamiliar with the domain
+- [ ] Prioritize clarity over brevity in user-facing text
+- [ ] Confirm destructive actions with clear consequences explained
+- [ ] Provide feedback for all user actions (loading states, success confirmations, etc.)
+- [ ] Design for the least technical person who will use this
+
+Bad: "Error 500: Internal server exception"
+Good: "Something went wrong on our end. Please try again, or contact support if this continues."
+
+Bad: "Invalid input format"
+Good: "Please enter your phone number as 10 digits, like 0821234567"
+
+### Frontend: Styles and Scripts
+
+- [ ] Never write inline CSS or JS (Tailwind utility classes are acceptable)
+- [ ] All custom styles must be in dedicated stylesheet files
+- [ ] Use CSS variables for theming (colors, spacing, typography)
+- [ ] Separate component styles into individual files when component is created
+
+### Documentation
+
+- [ ] Update relevant documentation with every code change
+- [ ] All documentation lives in `/docs` directory
+- [ ] Plans, notes, and scratch files go in `/docs/working`
+- [ ] Never write docs or plans to root directory or random locations
+- [ ] Keep docs updated immediately - update right after each change, before moving to the next task (sessions can end abruptly)
+
+### Cleanup
+
+- [ ] Remove all temporary files after implementation is complete
+- [ ] Delete unused imports, variables, and dead code immediately
+- [ ] Remove commented-out code unless explicitly marked for preservation
+- [ ] Clean up console.log/print statements before marking work complete
+- [ ] Clean up completed or obsolete docs/files and remove references to them
+
+### Quality Checks
+
+During every change, actively scan for:
+- [ ] Error handling gaps
+- [ ] Edge cases not covered
+- [ ] Inconsistent naming
+- [ ] Code duplication that should be extracted
+- [ ] Missing validation
+- [ ] Security concerns
+- [ ] Performance issues
+
+Report findings even if not directly related to current task.
+
+---
+
+## AI SESSION MANAGEMENT
+
+### Principles
+
 1. **User-first design** - Align with how real people will use the tool (top priority)
 2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
 3. **Document WHY** - Explain decisions and how they align with tool goals
-4. **Keep docs updated immediately** - Update relevant docs right after each change, before moving to the next task (sessions can end abruptly)
-5. **Testability** - Ensure correctness and alignment with usage goals can be verified
-6. **Know the purpose** - Always be aware of what the tool is for
-7. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
-8. **Follow conventions** - Best practices and consistent patterns
-9. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
-10. **Repeatable process** - Follow consistent steps to ensure all the above
-11. **Document user actions** - When manual user action is required (external dashboards, credentials, etc.), add detailed instructions to docs/USER_ACTIONS.md
-
-## AI Checklists
-
-### At Session Start
-- [ ] Read CLAUDE.md (this file)
-- [ ] Read SESSION_NOTES.md for current state and context
-- [ ] Check TODO.md for pending items
-- [ ] Understand what was last done before starting new work
+4. **Testability** - Ensure correctness and alignment with usage goals can be verified
+5. **Know the purpose** - Always be aware of what the tool is for
+6. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
+7. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
+8. **Document user actions** - When manual user action is required (external dashboards, credentials, etc.), add detailed instructions to docs/USER_ACTIONS.md
 
 ### After Each Significant Task
+
 - [ ] Update SESSION_NOTES.md with current state
 - [ ] Update relevant docs (CALCULATIONS.md, BUSINESS_GUIDE.md, etc.)
 - [ ] Add entry to HISTORY.md if code/docs changed
 - [ ] Commit changes (code + docs together)
 
 ### Before Each Commit
+
 - [ ] Relevant docs updated for changes in this commit
 - [ ] HISTORY.md entry added (if significant change)
 - [ ] SESSION_NOTES.md reflects current state
 - [ ] Commit message is clear and descriptive
 
 ### Before Each Push
+
 - [ ] All commits include their related doc updates
 - [ ] SESSION_NOTES.md is current (in case session ends)
 - [ ] No work-in-progress that would be lost
 
 ### Before Compact
+
 - [ ] SESSION_NOTES.md updated with full context needed to continue after summary:
   - What's being worked on?
   - Current state of the work?
@@ -51,20 +151,108 @@
   - Any decisions or blockers?
   - Key details that shouldn't be lost in the summary
 
-## AI Notes
+### AI Notes
 
 <!-- Reminders and learnings for AI assistants - add to this as needed -->
 
 - Always read a file before attempting to edit it
 - Check for existing patterns in the codebase before creating new ones
-- Clean up completed or obsolete docs/files and remove references to them
+
+---
+
+## COMMUNICATION STYLE
+
+- Direct, concise responses
+- No filler phrases or conversational padding
+- State facts and actions, not opinions
+- Ask specific questions with concrete options when clarification needed
+- Never proceed with assumptions on ambiguous requests
+
+---
+
+## TESTING
+
+- Write tests for critical paths and core business logic
+- Test error handling and edge cases for critical functions
+- Tests are not required for trivial getters/setters or UI-only code
+- Run existing tests before and after changes (`pnpm test`)
+
+---
+
+## PROJECT-SPECIFIC CONFIGURATION
+
+### Paths
+```
+DOCS_PATH=/docs
+WORKING_DOCS_PATH=/docs/working
+COMPONENTS_PATH=apps/web/src/lib/components
+STYLES_PATH=apps/web/src/app.css
+TESTS_PATH=packages/calculator/tests
+E2E_TESTS_PATH=apps/web/tests/e2e
+```
+
+### Stack
+```
+LANGUAGE=TypeScript
+FRAMEWORK=SvelteKit 2.x
+STYLING=Tailwind CSS
+CHARTS=ApexCharts
+TEST_RUNNER=Vitest (unit), Playwright (E2E)
+PACKAGE_MANAGER=pnpm
+HOSTING=GitHub Pages
+```
+
+### Conventions
+```
+NAMING_CONVENTION=camelCase
+FILE_NAMING=camelCase (TS), PascalCase (Svelte components)
+COMPONENT_STRUCTURE=feature-based (routes/ for pages, lib/components/ for shared)
+```
+
+### Build Commands
+```bash
+pnpm install          # Install dependencies
+pnpm test             # Run calculator tests (301 tests)
+pnpm build            # Build all packages
+pnpm dev              # Start dev server (apps/web)
+pnpm test:e2e         # Run Playwright E2E tests
+pnpm test:e2e:ui      # Run Playwright with UI
+```
+
+---
+
+## WORKFLOW
+
+1. **Receive task** - Ask clarifying questions if needed
+2. **Gather context** - Read CLAUDE.md, SESSION_NOTES.md, TODO.md, relevant code
+3. **Plan** - Write plan to `/docs/working` if task is non-trivial
+4. **Implement** - Follow all hard rules above
+5. **Verify** - Run tests, check for errors, review cleanup
+6. **Document** - Update all affected documentation (SESSION_NOTES.md, HISTORY.md, etc.)
+7. **Report** - Summarize changes and any issues found
+
+---
+
+## PROHIBITIONS
+
+Never:
+- Start implementation without understanding full scope
+- Create files outside established project structure
+- Leave TODO comments without tracking them in docs/TODO.md
+- Ignore errors or warnings in output
+- Make "while I'm here" changes without asking
+- Use placeholder data that looks like real data
+- Skip error handling "for now"
+- Write code without decision context comments (for non-trivial changes)
+- Modify default values without business justification
+- Add features without updating documentation
 
 ---
 
 # Software Transaction Structuring Tool
 
 > **Purpose**: AI assistant context file for the Software Transaction Structuring Tool
-> **Last Updated**: January 2026
+> **Last Updated**: February 2026
 > **Status**: Active - TypeScript + SvelteKit application with 5 pricing models and 6 transaction models (47 variants)
 
 ## System Purpose
@@ -97,17 +285,6 @@ The tool helps you optimise across multiple dimensions:
 - "Mutual ownership" (related parties) is just one optional configuration
 
 ## Architecture
-
-### Tech Stack
-
-| Technology | Purpose |
-|------------|---------|
-| TypeScript | Type-safe calculation logic |
-| SvelteKit | Web framework |
-| Tailwind CSS | Styling |
-| ApexCharts | Visualisations |
-| pnpm | Package manager |
-| GitHub Pages | Static hosting |
 
 ### File Structure
 
@@ -238,7 +415,7 @@ Default landing view showing all 6 transaction models at a glance:
 - Visual grid of model cards with icons, summaries, key features
 - "Best for" tags showing ideal use cases
 - Quick comparison table (IP ownership, payment type, risk profile)
-- "Explore →" buttons to select a model
+- "Explore" buttons to select a model
 - "Use the guided wizard" link for decision tree flow
 - View mode persisted in localStorage
 
@@ -249,7 +426,7 @@ Save and compare calculation results side-by-side:
 - Save calculations as named options (up to 20)
 - Comparison manager panel (list, load, delete, rename, edit notes)
 - Side-by-side comparison view (2-4 options)
-- Difference column with directional arrows (▲ ▼)
+- Difference column with directional arrows
 - Best/worst value highlighting (green/red)
 - Compatibility warnings for different models/perspectives
 - Export: JSON, CSV, Print/PDF
@@ -314,21 +491,21 @@ Transactions are analysed from two perspectives:
 | Section 11(e) PC | 2-year write-off (50% p.a.) |
 | Section 11(e) Mainframe | 5-year write-off (20% p.a.) |
 | CGT inclusion rate | 80% for companies |
-| CGT effective rate | 21.6% (27% × 80%) |
+| CGT effective rate | 21.6% (27% x 80%) |
 | Deferred tax | Calculated on timing differences |
 
 ## Key Calculation Formulas
 
 ### Cost-Plus (Model 1)
 ```javascript
-developerRevenue = totalCost × (1 + marginPercent / 100)
+developerRevenue = totalCost * (1 + marginPercent / 100)
 developerProfit = developerRevenue - totalCost
 buyerCapitalisedAsset = developerRevenue
 ```
 
 ### Licence Royalty (Model 2)
 ```javascript
-annualRoyalty = buyerRevenue × (royaltyRate / 100)
+annualRoyalty = buyerRevenue * (royaltyRate / 100)
 developerRoyaltyIncome = annualRoyalty
 buyerRoyaltyExpense = annualRoyalty
 ```
@@ -342,7 +519,7 @@ buyerOwnership = buyerContribution / totalContribution
 
 ### NPV Calculation (Stage 3)
 ```javascript
-NPV = Σ (cashFlow_t / (1 + discountRate)^t) for t = 0 to n
+NPV = Sum(cashFlow_t / (1 + discountRate)^t) for t = 0 to n
 ```
 
 ### IRR Calculation (Newton-Raphson)
@@ -358,11 +535,11 @@ while (Math.abs(npv) > tolerance) {
 ### Transfer Pricing Risk Score
 ```javascript
 riskScore =
-  marginComplianceScore × 0.30 +
-  documentationScore × 0.25 +
-  substanceScore × 0.20 +
-  comparabilityScore × 0.15 +
-  consistencyScore × 0.10
+  marginComplianceScore * 0.30 +
+  documentationScore * 0.25 +
+  substanceScore * 0.20 +
+  comparabilityScore * 0.15 +
+  consistencyScore * 0.10
 ```
 
 ## Entity Configuration
@@ -413,48 +590,24 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 
 ### Adding a New Model Variant
 
-1. Add variant definition to the model file (e.g., `model-1-cost-plus.js`)
+1. Add variant definition to the model file in `packages/calculator/src/models/`
 2. Include: name, description, scenario, calculation modifiers
 3. Test with different input combinations
 4. Update documentation
 
 ### Adding a New Calculation
 
-1. Add to appropriate module (`calculators/` or `models/intercompany/`)
-2. Include JSDoc comments explaining the formula
+1. Add to appropriate module in `packages/calculator/src/`
+2. Include JSDoc/TSDoc comments explaining the formula
 3. Handle edge cases (division by zero, negative values)
-4. Add unit tests if applicable
+4. Add unit tests
 
 ### Adding a New Visualisation
 
-1. Add chart configuration to visualisation module
+1. Add chart component to `apps/web/src/lib/components/charts/`
 2. Use ApexCharts for consistency
 3. Ensure responsive design
 4. Include loading states
-
-### What NOT to Do
-
-- Don't add features without updating documentation
-- Don't introduce build dependencies (keep vanilla JS)
-- Don't modify default values without business justification
-- Don't skip error handling for edge cases
-- Don't create new files unless necessary
-
-## Comment Philosophy
-
-Comments should explain **why**, not **what**:
-
-**Bad** (explains what):
-```javascript
-// Calculate developer profit
-const profit = revenue - cost;
-```
-
-**Good** (explains why):
-```javascript
-// Developer profit = gross margin before tax; used for TP compliance scoring
-const profit = revenue - cost;
-```
 
 ## Documentation Reference
 

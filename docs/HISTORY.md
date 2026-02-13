@@ -1,9 +1,40 @@
 # Development History & Bug Fixes
 
-> **Last Updated**: January 2026
+> **Last Updated**: February 2026
 > **Purpose**: Historical record of bug fixes, improvements, and major refactoring work
 
 This file tracks all significant bug fixes, improvements, and architectural changes made to the Revenue Model Calculator project. For current project status and architecture, see [CLAUDE.md](../CLAUDE.md).
+
+---
+
+## CLAUDE.md Restructure (February 13, 2026)
+
+**Impact**: Merged engineering standards template with existing project-specific CLAUDE.md
+
+### Changes
+
+- **Added HARD RULES section** - Non-negotiable engineering standards:
+  - Code organization limits (500/800 line files, 100/150 line functions)
+  - Decision documentation in code (what/why/alternatives for non-trivial changes)
+  - User experience rules (non-technical users, plain language, actionable errors)
+  - Frontend rules (no inline CSS/JS, CSS variables, Tailwind exception)
+  - Cleanup requirements (remove temp files, dead code, console.logs)
+  - Quality checks (error handling, edge cases, security, performance)
+  - Security best practices (input validation, sanitization, least privilege)
+- **Added COMMUNICATION STYLE** - Direct, concise, no filler
+- **Added TESTING section** - Critical paths, edge cases, when to skip
+- **Added PROJECT-SPECIFIC CONFIGURATION** - Filled in paths, stack, conventions
+- **Added WORKFLOW** - 7-step process (receive, gather, plan, implement, verify, document, report)
+- **Added PROHIBITIONS** - Explicit "never do" list
+- **Preserved AI SESSION MANAGEMENT** - Checklists, session notes, compact prep
+- **Preserved all project context** - Models, formulas, tax rules, benchmarks, troubleshooting
+- **Fixed stale instruction** - Removed "keep vanilla JS" (project uses TypeScript/SvelteKit)
+
+### Files Changed
+
+- `CLAUDE.md` - Complete restructure
+- `docs/SESSION_NOTES.md` - Updated for this session
+- `docs/HISTORY.md` - This entry
 
 ---
 
