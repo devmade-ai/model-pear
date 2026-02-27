@@ -7,21 +7,29 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
-## Fix Calculator Package Exports for Vercel Build (February 27, 2026)
+## Fix Vercel Build — Calculator Exports & Output Directory (February 27, 2026)
 
-**Impact**: Build fix — Vercel deployments were failing because calculator package exports pointed to non-existent `dist/` directory
+**Impact**: Build fix — two issues preventing Vercel deployments
 
-### Problem
+### Problem 1: Calculator package resolution failure
 
 The `@model-pear/calculator` package's `exports` field in `package.json` pointed to `./dist/index.js` (compiled output). On Vercel, only the web app's `vite build` runs — the calculator's TypeScript compilation step (`tsc`) was not executed first, so `dist/` didn't exist. This caused Vite's module resolver to fail with: `Failed to resolve entry for package "@model-pear/calculator"`.
 
-### Fix
+### Problem 2: Output directory not found
 
-Changed all export paths from `./dist/*.js` / `./dist/*.d.ts` to `./src/*.ts` source files. Vite handles TypeScript natively via esbuild, so no separate build step is needed. Also changed `files` from `["dist"]` to `["src"]` for consistency.
+After fixing the exports, Vercel's SvelteKit framework auto-detection was overriding `outputDirectory` from `vercel.json`. Vercel looked for `build` at its auto-detected location instead of `apps/web/build`, causing: `No Output Directory named "build" found after the Build completed.`
+
+### Fixes
+
+1. **Calculator exports**: Changed all export paths from `./dist/*.js` / `./dist/*.d.ts` to `./src/*.ts` source files. Vite handles TypeScript natively via esbuild, so no separate build step is needed.
+2. **Vercel config**: Added `"framework": null` to `vercel.json` to disable SvelteKit auto-detection, ensuring `outputDirectory: "apps/web/build"` is respected.
+3. **adapter-static cleanup**: Removed redundant options (all were defaults), kept only `fallback: '200.html'` for SPA routing. Eliminates the "Please remove adapter-static options" warning.
 
 ### Files Changed
 
 - `packages/calculator/package.json` — `main`, `module`, `types`, `exports`, `files` all updated from `dist/` to `src/`
+- `vercel.json` — Added `"framework": null`
+- `apps/web/svelte.config.js` — Simplified adapter-static config to fallback only
 
 ---
 

@@ -6,22 +6,26 @@
 
 ## Current State (February 27, 2026)
 
-**Last completed**: Fixed calculator package exports for Vercel build
+**Last completed**: Fixed Vercel build — calculator exports and output directory
 
-**Status**: Calculator exports point to source TypeScript files; Vercel build succeeds
+**Status**: Both Vercel build errors resolved; build succeeds end-to-end
 
 ### What was done this session
 
-1. **Fixed Vercel build failure** — `@model-pear/calculator` exports pointed to `./dist/` which doesn't exist on Vercel (TypeScript not pre-compiled). Changed exports to point to `./src/*.ts` source files instead. Vite handles TypeScript natively, so no separate build step needed.
+1. **Fixed calculator package resolution** — `@model-pear/calculator` exports pointed to `./dist/` which doesn't exist on Vercel (TypeScript not pre-compiled). Changed exports to point to `./src/*.ts` source files instead. Vite handles TypeScript natively, so no separate build step needed.
+2. **Fixed Vercel output directory not found** — Vercel's SvelteKit framework auto-detection was overriding `outputDirectory` from `vercel.json`. Added `"framework": null` to disable auto-detection. Also removed redundant adapter-static options (all were defaults), keeping only `fallback: '200.html'` for SPA routing.
 
 ### Key Files Changed
 
 - `packages/calculator/package.json` — Changed `main`, `module`, `types`, `exports`, and `files` from `dist/` to `src/` paths
+- `vercel.json` — Added `"framework": null` to disable SvelteKit auto-detection
+- `apps/web/svelte.config.js` — Removed redundant adapter-static options, kept only fallback
 
 ### Verified
 
 - All 301 calculator tests pass
-- Web app builds successfully (`pnpm build` from `apps/web`)
+- Web app builds successfully with no warnings
+- 200.html fallback page generated correctly
 
 ---
 
