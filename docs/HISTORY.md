@@ -7,6 +7,24 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Fix Calculator Package Exports for Vercel Build (February 27, 2026)
+
+**Impact**: Build fix — Vercel deployments were failing because calculator package exports pointed to non-existent `dist/` directory
+
+### Problem
+
+The `@model-pear/calculator` package's `exports` field in `package.json` pointed to `./dist/index.js` (compiled output). On Vercel, only the web app's `vite build` runs — the calculator's TypeScript compilation step (`tsc`) was not executed first, so `dist/` didn't exist. This caused Vite's module resolver to fail with: `Failed to resolve entry for package "@model-pear/calculator"`.
+
+### Fix
+
+Changed all export paths from `./dist/*.js` / `./dist/*.d.ts` to `./src/*.ts` source files. Vite handles TypeScript natively via esbuild, so no separate build step is needed. Also changed `files` from `["dist"]` to `["src"]` for consistency.
+
+### Files Changed
+
+- `packages/calculator/package.json` — `main`, `module`, `types`, `exports`, `files` all updated from `dist/` to `src/`
+
+---
+
 ## Migrate from GitHub Pages to Vercel (February 27, 2026)
 
 **Impact**: Hosting platform migration — simplified deployment, removed base-path workarounds

@@ -6,37 +6,22 @@
 
 ## Current State (February 27, 2026)
 
-**Last completed**: Migrated from GitHub Pages to Vercel deployment
+**Last completed**: Fixed calculator package exports for Vercel build
 
-**Status**: GitHub Pages workflow and artifacts removed, Vercel config added, all docs updated
+**Status**: Calculator exports point to source TypeScript files; Vercel build succeeds
 
 ### What was done this session
 
-1. **Reviewed external glow-props CLAUDE.md** — Adopted AI_MISTAKES.md and cross-reference patterns
-2. **Migrated hosting from GitHub Pages to Vercel**:
-   - Deleted `.github/workflows/deploy.yml` (GitHub Actions deploy workflow)
-   - Deleted `.nojekyll` (GitHub Pages artifact)
-   - Updated `svelte.config.js` — removed `paths.base: '/model-pear'`, changed fallback from `404.html` to `200.html`
-   - Added `vercel.json` at repo root (build command, output directory, SPA rewrites)
-   - Updated all docs referencing GitHub Pages (CLAUDE.md, ARCHITECTURE.md, README.md)
-3. **Note**: `{base}` imports from `$app/paths` kept in Svelte files — SvelteKit best practice, resolves to `''` with no base path configured
+1. **Fixed Vercel build failure** — `@model-pear/calculator` exports pointed to `./dist/` which doesn't exist on Vercel (TypeScript not pre-compiled). Changed exports to point to `./src/*.ts` source files instead. Vite handles TypeScript natively, so no separate build step needed.
 
 ### Key Files Changed
 
-- `.github/workflows/deploy.yml` — Deleted
-- `.nojekyll` — Deleted
-- `vercel.json` — New file (Vercel deployment config)
-- `apps/web/svelte.config.js` — Removed GitHub Pages base path and 404 fallback
-- `CLAUDE.md` — Hosting changed to Vercel, file tree updated, troubleshooting updated
-- `docs/ARCHITECTURE.md` — Hosting references updated
-- `docs/README.md` — Hosting reference updated
+- `packages/calculator/package.json` — Changed `main`, `module`, `types`, `exports`, and `files` from `dist/` to `src/` paths
 
-### Vercel Setup Required
+### Verified
 
-To complete the migration, connect the repo in the Vercel dashboard:
-1. Import the `devmade-ai/model-pear` repo in Vercel
-2. Vercel will auto-detect the config from `vercel.json`
-3. Auto-deploys on push to `main`
+- All 301 calculator tests pass
+- Web app builds successfully (`pnpm build` from `apps/web`)
 
 ---
 
