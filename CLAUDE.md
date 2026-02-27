@@ -237,7 +237,7 @@ STYLING=Tailwind CSS
 CHARTS=ApexCharts
 TEST_RUNNER=Vitest (unit), Playwright (E2E)
 PACKAGE_MANAGER=pnpm
-HOSTING=GitHub Pages
+HOSTING=Vercel
 ```
 
 ### Conventions
@@ -345,7 +345,7 @@ model-pear/
 │       │       ├── stores/                     # Svelte stores
 │       │       ├── config/                     # Configuration
 │       │       └── utils/                      # Utilities
-│       ├── svelte.config.js                    # SvelteKit config (GitHub Pages adapter)
+│       ├── svelte.config.js                    # SvelteKit config (adapter-static for Vercel)
 │       └── package.json
 │
 ├── packages/
@@ -677,7 +677,6 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 - Check for negative numbers in log/power calculations
 
 ### ES6 Module Errors
-- Ensure `.nojekyll` file exists in root
 - Use relative imports with `.js` extensions
 - Check for circular dependencies
 

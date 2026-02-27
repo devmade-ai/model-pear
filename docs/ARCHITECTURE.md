@@ -90,7 +90,7 @@
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   GitHub Pages (unchanged)                   │
+│                   Vercel (static hosting)                     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -110,7 +110,7 @@
 | **Package Manager** | pnpm | Fast, disk-efficient, good monorepo support |
 | **Monorepo** | pnpm workspaces | Simple, no extra tooling needed |
 | **Validation** | Zod | Runtime validation of financial inputs |
-| **Hosting** | GitHub Pages | No change - SvelteKit static adapter |
+| **Hosting** | Vercel | Static hosting with SPA rewrites, auto-deploy on push |
 
 ---
 
@@ -245,7 +245,7 @@ All migration phases are complete:
 - ✅ Structure Selector wizard
 
 **Phase 4: Polish & Deploy**
-- ✅ Static build to GitHub Pages
+- ✅ Static build to Vercel
 - ✅ Legacy code removed
 
 ---

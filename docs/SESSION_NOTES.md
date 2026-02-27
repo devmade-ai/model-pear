@@ -6,26 +6,37 @@
 
 ## Current State (February 27, 2026)
 
-**Last completed**: Cross-project review of glow-props CLAUDE.md — adopted useful patterns
+**Last completed**: Migrated from GitHub Pages to Vercel deployment
 
-**Status**: CLAUDE.md updated, docs/AI_MISTAKES.md created
+**Status**: GitHub Pages workflow and artifacts removed, Vercel config added, all docs updated
 
 ### What was done this session
 
-1. **Reviewed external glow-props CLAUDE.md** — Compared against model-pear's CLAUDE.md to identify useful patterns
-2. **Created docs/AI_MISTAKES.md** — New doc for logging AI assistant mistakes to prevent repeat errors across sessions (adopted from glow-props)
-3. **Added cross-reference to glow-props** — HTML comment in AI Notes section linking to the sibling project's CLAUDE.md with last-reviewed date and list of shared conventions
-4. **Added AI note** — "Ask clarifying questions before assuming bug causes" (from glow-props AI Notes)
-5. **Added AI note** — "Check docs/AI_MISTAKES.md at session start and log new mistakes"
-6. **Updated documentation reference table** — Added AI_MISTAKES.md entry
-7. **Updated file tree** — Added AI_MISTAKES.md to the docs/ listing
+1. **Reviewed external glow-props CLAUDE.md** — Adopted AI_MISTAKES.md and cross-reference patterns
+2. **Migrated hosting from GitHub Pages to Vercel**:
+   - Deleted `.github/workflows/deploy.yml` (GitHub Actions deploy workflow)
+   - Deleted `.nojekyll` (GitHub Pages artifact)
+   - Updated `svelte.config.js` — removed `paths.base: '/model-pear'`, changed fallback from `404.html` to `200.html`
+   - Added `vercel.json` at repo root (build command, output directory, SPA rewrites)
+   - Updated all docs referencing GitHub Pages (CLAUDE.md, ARCHITECTURE.md, README.md)
+3. **Note**: `{base}` imports from `$app/paths` kept in Svelte files — SvelteKit best practice, resolves to `''` with no base path configured
 
 ### Key Files Changed
 
-- `CLAUDE.md` — AI Notes expanded (2 new notes + cross-reference comment), doc reference table updated, file tree updated
-- `docs/AI_MISTAKES.md` — New file
-- `docs/SESSION_NOTES.md` — Updated with current session context
-- `docs/HISTORY.md` — Added entry for this change
+- `.github/workflows/deploy.yml` — Deleted
+- `.nojekyll` — Deleted
+- `vercel.json` — New file (Vercel deployment config)
+- `apps/web/svelte.config.js` — Removed GitHub Pages base path and 404 fallback
+- `CLAUDE.md` — Hosting changed to Vercel, file tree updated, troubleshooting updated
+- `docs/ARCHITECTURE.md` — Hosting references updated
+- `docs/README.md` — Hosting reference updated
+
+### Vercel Setup Required
+
+To complete the migration, connect the repo in the Vercel dashboard:
+1. Import the `devmade-ai/model-pear` repo in Vercel
+2. Vercel will auto-detect the config from `vercel.json`
+3. Auto-deploys on push to `main`
 
 ---
 
