@@ -7,6 +7,24 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Cross-Project CLAUDE.md Review (February 27, 2026)
+
+**Impact**: Adopted useful patterns from glow-props sibling project
+
+### Changes
+
+- **Created `docs/AI_MISTAKES.md`** — New doc for tracking AI assistant mistakes across sessions (adopted from glow-props pattern)
+- **Added cross-reference to glow-props CLAUDE.md** — HTML comment in AI Notes with link, last-reviewed date, and shared conventions list
+- **Added AI notes** — "Ask before assuming bug causes" and "Check AI_MISTAKES.md at session start"
+- **Updated documentation reference table** — Added AI_MISTAKES.md entry
+- **Updated file tree** — Added AI_MISTAKES.md to docs/ listing
+
+### Rationale
+
+Both model-pear and glow-props share the same engineering conventions template. Periodic cross-review ensures useful patterns (like the mistake log) propagate between projects. The cross-reference comment enables future AI sessions to check for new patterns.
+
+---
+
 ## CLAUDE.md Restructure (February 13, 2026)
 
 **Impact**: Merged engineering standards template with existing project-specific CLAUDE.md

@@ -4,30 +4,28 @@
 
 ---
 
-## Current State (February 13, 2026)
+## Current State (February 27, 2026)
 
-**Last completed**: CLAUDE.md restructure - merged engineering standards template with existing project context
+**Last completed**: Cross-project review of glow-props CLAUDE.md — adopted useful patterns
 
-**Status**: CLAUDE.md updated with merged content
+**Status**: CLAUDE.md updated, docs/AI_MISTAKES.md created
 
 ### What was done this session
 
-1. **Compared existing CLAUDE.md against proposed engineering standards template** - Identified gaps, overlaps, and conflicts
-2. **Merged CLAUDE.md** - Combined both files into a single cohesive document:
-   - Added HARD RULES section (code organization limits, decision documentation, UX rules, security, cleanup, quality checks)
-   - Preserved AI SESSION MANAGEMENT (checklists, session notes, compact prep)
-   - Added COMMUNICATION STYLE, TESTING, PROHIBITIONS sections
-   - Added PROJECT-SPECIFIC CONFIGURATION with filled-in values (TypeScript, SvelteKit, pnpm, etc.)
-   - Added explicit WORKFLOW (7 steps)
-   - Preserved all project domain context (models, formulas, tax rules, benchmarks, troubleshooting)
-   - Fixed stale "keep vanilla JS" instruction (now references TypeScript/SvelteKit)
-   - Added Tailwind exception to "no inline CSS" rule
-   - Updated decision documentation example to use project-relevant TypeScript/IRR code
-   - Updated "Last Updated" to February 2026
+1. **Reviewed external glow-props CLAUDE.md** — Compared against model-pear's CLAUDE.md to identify useful patterns
+2. **Created docs/AI_MISTAKES.md** — New doc for logging AI assistant mistakes to prevent repeat errors across sessions (adopted from glow-props)
+3. **Added cross-reference to glow-props** — HTML comment in AI Notes section linking to the sibling project's CLAUDE.md with last-reviewed date and list of shared conventions
+4. **Added AI note** — "Ask clarifying questions before assuming bug causes" (from glow-props AI Notes)
+5. **Added AI note** — "Check docs/AI_MISTAKES.md at session start and log new mistakes"
+6. **Updated documentation reference table** — Added AI_MISTAKES.md entry
+7. **Updated file tree** — Added AI_MISTAKES.md to the docs/ listing
 
 ### Key Files Changed
 
-- `CLAUDE.md` - Complete restructure merging engineering standards with project context
+- `CLAUDE.md` — AI Notes expanded (2 new notes + cross-reference comment), doc reference table updated, file tree updated
+- `docs/AI_MISTAKES.md` — New file
+- `docs/SESSION_NOTES.md` — Updated with current session context
+- `docs/HISTORY.md` — Added entry for this change
 
 ---
 
