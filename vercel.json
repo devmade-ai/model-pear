@@ -1,9 +1,0 @@
-{
-  "framework": null,
-  "buildCommand": "pnpm build",
-  "installCommand": "pnpm install",
-  "outputDirectory": "apps/web/build",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/200.html" }
-  ]
-}
