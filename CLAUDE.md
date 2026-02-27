@@ -187,6 +187,14 @@ These footers are required on every commit. No exceptions.
 
 - Always read a file before attempting to edit it
 - Check for existing patterns in the codebase before creating new ones
+- Ask clarifying questions before assuming bug causes — wrong assumptions lead to wrong commits
+- Check docs/AI_MISTAKES.md at session start and log new mistakes as they occur
+
+<!-- Cross-reference: This project shares engineering conventions with glow-props.
+     Review https://github.com/devmade-ai/glow-props/blob/main/CLAUDE.md periodically
+     for new patterns or learnings that may apply here. Last reviewed: 2026-02-27.
+     Shared conventions: code org thresholds, decision docs, commit format, cleanup rules,
+     quality scans, non-technical user UX, prohibitions, communication style. -->
 
 ---
 
@@ -229,7 +237,7 @@ STYLING=Tailwind CSS
 CHARTS=ApexCharts
 TEST_RUNNER=Vitest (unit), Playwright (E2E)
 PACKAGE_MANAGER=pnpm
-HOSTING=GitHub Pages
+HOSTING=Vercel
 ```
 
 ### Conventions
@@ -337,7 +345,7 @@ model-pear/
 │       │       ├── stores/                     # Svelte stores
 │       │       ├── config/                     # Configuration
 │       │       └── utils/                      # Utilities
-│       ├── svelte.config.js                    # SvelteKit config (GitHub Pages adapter)
+│       ├── svelte.config.js                    # SvelteKit config (adapter-static for Vercel)
 │       └── package.json
 │
 ├── packages/
@@ -365,6 +373,7 @@ model-pear/
     ├── SESSION_NOTES.md        # Build commands and architecture reference
     ├── TODO.md                 # Feature ideas and backlog
     ├── USER_ACTIONS.md         # Manual user action instructions (when needed)
+    ├── AI_MISTAKES.md          # AI mistake log (prevent repeat errors across sessions)
     └── model-use-cases/        # When to use each model variant
         ├── README.md           # Model selection guide
         ├── model-1-development-services.md
@@ -652,6 +661,7 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 | **docs/SESSION_NOTES.md** | Session continuity - context for next AI to continue work | After each significant task (sessions end abruptly); remove stale notes |
 | **docs/TODO.md** | Feature ideas and backlog | Add ideas to persist between sessions |
 | **docs/USER_ACTIONS.md** | Manual user action instructions | When user needs to do something outside the tool |
+| **docs/AI_MISTAKES.md** | AI assistant mistake log to prevent repeat errors | When an AI makes a mistake during a session |
 | **docs/model-use-cases/** | When to use each model variant, TP considerations | Model logic or variant definitions change |
 
 ## Troubleshooting
@@ -667,7 +677,6 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 - Check for negative numbers in log/power calculations
 
 ### ES6 Module Errors
-- Ensure `.nojekyll` file exists in root
 - Use relative imports with `.js` extensions
 - Check for circular dependencies
 

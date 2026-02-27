@@ -80,7 +80,7 @@ pnpm test:e2e
 | Build | Vite |
 | Testing | Vitest + Playwright |
 | Package Manager | pnpm |
-| Hosting | GitHub Pages |
+| Hosting | Vercel |
 
 ## Documentation
 

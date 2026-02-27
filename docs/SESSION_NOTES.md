@@ -4,30 +4,39 @@
 
 ---
 
-## Current State (February 13, 2026)
+## Current State (February 27, 2026)
 
-**Last completed**: CLAUDE.md restructure - merged engineering standards template with existing project context
+**Last completed**: Migrated from GitHub Pages to Vercel deployment
 
-**Status**: CLAUDE.md updated with merged content
+**Status**: GitHub Pages workflow and artifacts removed, Vercel config added, all docs updated
 
 ### What was done this session
 
-1. **Compared existing CLAUDE.md against proposed engineering standards template** - Identified gaps, overlaps, and conflicts
-2. **Merged CLAUDE.md** - Combined both files into a single cohesive document:
-   - Added HARD RULES section (code organization limits, decision documentation, UX rules, security, cleanup, quality checks)
-   - Preserved AI SESSION MANAGEMENT (checklists, session notes, compact prep)
-   - Added COMMUNICATION STYLE, TESTING, PROHIBITIONS sections
-   - Added PROJECT-SPECIFIC CONFIGURATION with filled-in values (TypeScript, SvelteKit, pnpm, etc.)
-   - Added explicit WORKFLOW (7 steps)
-   - Preserved all project domain context (models, formulas, tax rules, benchmarks, troubleshooting)
-   - Fixed stale "keep vanilla JS" instruction (now references TypeScript/SvelteKit)
-   - Added Tailwind exception to "no inline CSS" rule
-   - Updated decision documentation example to use project-relevant TypeScript/IRR code
-   - Updated "Last Updated" to February 2026
+1. **Reviewed external glow-props CLAUDE.md** — Adopted AI_MISTAKES.md and cross-reference patterns
+2. **Migrated hosting from GitHub Pages to Vercel**:
+   - Deleted `.github/workflows/deploy.yml` (GitHub Actions deploy workflow)
+   - Deleted `.nojekyll` (GitHub Pages artifact)
+   - Updated `svelte.config.js` — removed `paths.base: '/model-pear'`, changed fallback from `404.html` to `200.html`
+   - Added `vercel.json` at repo root (build command, output directory, SPA rewrites)
+   - Updated all docs referencing GitHub Pages (CLAUDE.md, ARCHITECTURE.md, README.md)
+3. **Note**: `{base}` imports from `$app/paths` kept in Svelte files — SvelteKit best practice, resolves to `''` with no base path configured
 
 ### Key Files Changed
 
-- `CLAUDE.md` - Complete restructure merging engineering standards with project context
+- `.github/workflows/deploy.yml` — Deleted
+- `.nojekyll` — Deleted
+- `vercel.json` — New file (Vercel deployment config)
+- `apps/web/svelte.config.js` — Removed GitHub Pages base path and 404 fallback
+- `CLAUDE.md` — Hosting changed to Vercel, file tree updated, troubleshooting updated
+- `docs/ARCHITECTURE.md` — Hosting references updated
+- `docs/README.md` — Hosting reference updated
+
+### Vercel Setup Required
+
+To complete the migration, connect the repo in the Vercel dashboard:
+1. Import the `devmade-ai/model-pear` repo in Vercel
+2. Vercel will auto-detect the config from `vercel.json`
+3. Auto-deploys on push to `main`
 
 ---
 

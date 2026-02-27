@@ -1,24 +1,27 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
+// Requirement: Migrate from GitHub Pages to Vercel hosting
+// Approach: Keep adapter-static (app is fully client-side, no SSR needed) with Vercel-compatible config
+// Alternatives considered:
+//   - adapter-vercel: Rejected — adds SSR serverless functions unnecessarily for a static app
+//   - adapter-auto: Rejected — auto-detects Vercel and uses adapter-vercel, same SSR overhead
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  // Consult https://kit.svelte.dev/docs/integrations#preprocessors
   preprocess: vitePreprocess(),
 
   kit: {
-    // Static adapter for GitHub Pages deployment
+    // Static adapter for Vercel deployment
+    // Outputs pre-built HTML/JS/CSS to 'build/' directory
     adapter: adapter({
       pages: 'build',
       assets: 'build',
-      fallback: '404.html',
+      fallback: '200.html',
       precompress: false,
       strict: true
-    }),
-    paths: {
-      // Set base path for GitHub Pages deployment
-      base: process.env.NODE_ENV === 'production' ? '/model-pear' : ''
-    }
+    })
+    // No paths.base needed — Vercel serves at root '/' (not a subdirectory like GitHub Pages)
   }
 };
 

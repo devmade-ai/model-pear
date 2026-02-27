@@ -7,6 +7,48 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Migrate from GitHub Pages to Vercel (February 27, 2026)
+
+**Impact**: Hosting platform migration — simplified deployment, removed base-path workarounds
+
+### Changes
+
+- **Deleted `.github/workflows/deploy.yml`** — GitHub Actions deploy workflow no longer needed
+- **Deleted `.nojekyll`** — GitHub Pages artifact preventing Jekyll processing
+- **Updated `apps/web/svelte.config.js`** — Removed `paths.base: '/model-pear'` (Vercel serves at root), changed fallback from `404.html` to `200.html` (Vercel convention)
+- **Added `vercel.json`** — Build command (`pnpm build`), output directory (`apps/web/build`), SPA rewrites
+- **Updated docs** — CLAUDE.md, ARCHITECTURE.md, README.md all updated from "GitHub Pages" to "Vercel"
+
+### Rationale
+
+GitHub Pages required a base-path prefix (`/model-pear/`) for subdirectory hosting, a `404.html` fallback hack for SPA routing, and a `.nojekyll` file. Vercel handles all of this natively — serves at root `/`, has built-in SPA rewrites, and auto-deploys on push.
+
+### Migration Notes
+
+- Kept `adapter-static` — the app is fully client-side, no SSR needed
+- Kept `{base}` imports from `$app/paths` — SvelteKit best practice, resolves to `''` with no base configured
+- `vercel.json` uses `200.html` for SPA fallback (Vercel convention vs GitHub Pages' `404.html`)
+
+---
+
+## Cross-Project CLAUDE.md Review (February 27, 2026)
+
+**Impact**: Adopted useful patterns from glow-props sibling project
+
+### Changes
+
+- **Created `docs/AI_MISTAKES.md`** — New doc for tracking AI assistant mistakes across sessions (adopted from glow-props pattern)
+- **Added cross-reference to glow-props CLAUDE.md** — HTML comment in AI Notes with link, last-reviewed date, and shared conventions list
+- **Added AI notes** — "Ask before assuming bug causes" and "Check AI_MISTAKES.md at session start"
+- **Updated documentation reference table** — Added AI_MISTAKES.md entry
+- **Updated file tree** — Added AI_MISTAKES.md to docs/ listing
+
+### Rationale
+
+Both model-pear and glow-props share the same engineering conventions template. Periodic cross-review ensures useful patterns (like the mistake log) propagate between projects. The cross-reference comment enables future AI sessions to check for new patterns.
+
+---
+
 ## CLAUDE.md Restructure (February 13, 2026)
 
 **Impact**: Merged engineering standards template with existing project-specific CLAUDE.md
