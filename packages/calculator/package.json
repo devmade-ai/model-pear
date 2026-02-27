@@ -3,29 +3,29 @@
   "version": "1.0.0",
   "description": "Pure TypeScript calculation engine for software transaction structuring",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
     },
     "./models": {
-      "types": "./dist/models/index.d.ts",
-      "import": "./dist/models/index.js"
+      "types": "./src/models/index.ts",
+      "import": "./src/models/index.ts"
     },
     "./projections": {
-      "types": "./dist/projections/index.d.ts",
-      "import": "./dist/projections/index.js"
+      "types": "./src/projections/index.ts",
+      "import": "./src/projections/index.ts"
     },
     "./types": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/types/index.js"
+      "types": "./src/types/index.ts",
+      "import": "./src/types/index.ts"
     }
   },
   "files": [
-    "dist",
+    "src",
     "README.md"
   ],
   "scripts": {

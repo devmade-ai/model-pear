@@ -7,6 +7,37 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Fix Vercel Build — Calculator Exports & Output Directory (February 27, 2026)
+
+**Impact**: Build fix — two issues preventing Vercel deployments
+
+### Problem 1: Calculator package resolution failure
+
+The `@model-pear/calculator` package's `exports` field in `package.json` pointed to `./dist/index.js` (compiled output). On Vercel, only the web app's `vite build` runs — the calculator's TypeScript compilation step (`tsc`) was not executed first, so `dist/` didn't exist. This caused Vite's module resolver to fail with: `Failed to resolve entry for package "@model-pear/calculator"`.
+
+### Problem 2: Output directory not found
+
+After fixing the exports, Vercel reported: `No Output Directory named "build" found after the Build completed.`
+
+Two issues caused this:
+1. **SvelteKit auto-detection**: Vercel detected SvelteKit and overrode `outputDirectory`. Fix: `"framework": null`.
+2. **Root vercel.json ignored**: The Vercel project's Root Directory is set to `apps/web` in the dashboard. This means Vercel only reads `apps/web/vercel.json` — the root `vercel.json` was completely ignored. The initial fix (adding `framework: null` to root) had no effect.
+
+### Fixes
+
+1. **Calculator exports**: Changed all export paths from `./dist/*.js` / `./dist/*.d.ts` to `./src/*.ts` source files. Vite handles TypeScript natively via esbuild, so no separate build step is needed.
+2. **Moved vercel.json to `apps/web/`**: Since Vercel Root Directory is `apps/web`, the config must live there. Changed `outputDirectory` from `"apps/web/build"` to `"build"` (relative to `apps/web`). Removed `buildCommand`/`installCommand` (Vercel auto-detects pnpm and uses `package.json` scripts). Kept `framework: null` and SPA rewrites.
+3. **adapter-static cleanup**: Removed redundant options (all were defaults), kept only `fallback: '200.html'` for SPA routing. Eliminates the "Please remove adapter-static options" warning.
+
+### Files Changed
+
+- `packages/calculator/package.json` — `main`, `module`, `types`, `exports`, `files` all updated from `dist/` to `src/`
+- `apps/web/vercel.json` — **NEW** — `framework: null`, `outputDirectory: "build"`, SPA rewrites
+- `vercel.json` (root) — **DELETED** — Was ignored by Vercel
+- `apps/web/svelte.config.js` — Simplified adapter-static config, updated comment about vercel.json location
+
+---
+
 ## Migrate from GitHub Pages to Vercel (February 27, 2026)
 
 **Impact**: Hosting platform migration — simplified deployment, removed base-path workarounds
