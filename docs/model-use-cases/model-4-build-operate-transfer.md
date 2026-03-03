@@ -1,7 +1,7 @@
 # Model 4: Build-Operate-Transfer (BOT) — Use Cases
 
 > **Purpose**: When to use each variant of the Build-Operate-Transfer model
-> **Variants**: 7 (4A–4F, 4H) + Standard Provisions applicable to all
+> **Variants**: 8 (4A–4H)
 > **Core Concept**: Developer builds and operates software, then transfers ownership to Buyer at predetermined terms
 
 ---
@@ -246,6 +246,5 @@ TP expertise required in both jurisdictions. Document compliance with both count
 
 ## Related Documentation
 
-- [Model 4 Concept](../model_4_build_operate_transfer_concept.md) — Technical implementation details
 - [Calculations Guide](../CALCULATIONS.md) — Formula explanations
 - [Business Guide](../BUSINESS_GUIDE.md) — User workflows

@@ -148,7 +148,7 @@ Epic: feature-name
 Semver: patch|minor|major
 ```
 
-**Tags:** Use from the project's tag list (see docs/EXTRACTION_PLAYBOOK.md)
+**Tags:** Use descriptive tags relevant to the change (e.g., docs, calculator, ui, models, tests, config)
 **Complexity:** 1=trivial, 2=small, 3=medium, 4=large, 5=major rewrite
 **Urgency:** 1=planned, 2=normal, 3=elevated, 4=urgent, 5=critical
 **Impact:** internal, user-facing, infrastructure, or api
@@ -290,7 +290,7 @@ Never:
 # Software Transaction Structuring Tool
 
 > **Purpose**: AI assistant context file for the Software Transaction Structuring Tool
-> **Last Updated**: February 2026
+> **Last Updated**: March 2026
 > **Status**: Active - TypeScript + SvelteKit application with 5 pricing models and 6 transaction models (47 variants)
 
 ## System Purpose
@@ -352,12 +352,15 @@ model-pear/
 │   └── calculator/             # Pure TypeScript calculation engine
 │       ├── src/
 │       │   ├── models/                         # 6 transaction models with variants
-│       │   │   ├── costPlus.ts                 # Model 1: Development Services (6 variants)
-│       │   │   ├── licenceRoyalties.ts         # Model 2: Software Licence (8 variants)
-│       │   │   ├── jointDevelopment.ts         # Model 3: Joint Development (8 variants)
-│       │   │   ├── buildOperateTransfer.ts     # Model 4: BOT (8 variants)
-│       │   │   ├── softwareSale.ts             # Model 5: Software Sale (8 variants)
-│       │   │   └── saasSubscription.ts         # Model 6: SaaS/Subscription (9 variants)
+│       │   │   ├── index.ts                    # Model registry and re-exports
+│       │   │   ├── model-1-cost-plus.ts        # Model 1: Development Services (6 variants)
+│       │   │   ├── model-2-licence.ts          # Model 2: Software Licence (8 variants)
+│       │   │   ├── model-3-joint-development.ts # Model 3: Joint Development (8 variants)
+│       │   │   ├── model-4-bot.ts              # Model 4: BOT (8 variants)
+│       │   │   ├── model-5-software-sale.ts    # Model 5: Software Sale (8 variants)
+│       │   │   └── model-6-saas.ts             # Model 6: SaaS/Subscription (9 variants)
+│       │   ├── projections/                    # NPV, IRR, payback calculations
+│       │   ├── sensitivity/                    # Ranges, scenarios, Monte Carlo
 │       │   └── types/                          # TypeScript interfaces
 │       ├── tsconfig.json
 │       └── package.json
@@ -374,6 +377,11 @@ model-pear/
     ├── TODO.md                 # Feature ideas and backlog
     ├── USER_ACTIONS.md         # Manual user action instructions (when needed)
     ├── AI_MISTAKES.md          # AI mistake log (prevent repeat errors across sessions)
+    ├── DISCOVERY_FINDINGS.md   # Discovery research findings
+    ├── DISCOVERY_FRAMEWORK.md  # Discovery research framework
+    ├── NEGOTIATION_MODE.md     # Negotiation mode design notes
+    ├── UI_UX_GUIDE.md          # UI/UX design guidelines
+    ├── working/                # Plans, notes, and scratch files
     └── model-use-cases/        # When to use each model variant
         ├── README.md           # Model selection guide
         ├── model-1-development-services.md
@@ -414,7 +422,7 @@ model-pear/
 ## The Three Modules
 
 ### Module 1: Structure Selector
-**File**: `models/intercompany/structure-selector.js`
+**Files**: `apps/web/src/lib/components/StructureWizard.svelte`, `apps/web/src/lib/config/wizard.ts`
 
 Decision tree wizard that helps users choose the optimal model by asking about:
 - IP ownership preferences
@@ -425,7 +433,7 @@ Decision tree wizard that helps users choose the optimal model by asking about:
 - Transaction timeframe
 
 ### Module 2: Pricing Calculator
-**Files**: `ui/intercompany/calculator.js`, `ui/intercompany/results-display.js`
+**Files**: `apps/web/src/routes/structuring/[model]/+page.svelte`, `apps/web/src/lib/components/DeveloperResults.svelte`, `apps/web/src/lib/components/BuyerResults.svelte`
 
 Dynamic calculator that:
 - Generates input forms per model/variant
@@ -435,7 +443,7 @@ Dynamic calculator that:
 - Displays visualisations
 
 ### Module 3: Compliance Analyzer
-**File**: `models/intercompany/compliance-analyzer.js`
+**Files**: `apps/web/src/lib/components/TransferPricingResults.svelte`, `packages/calculator/src/models/` (each model's TP assessment)
 
 Transfer pricing compliance analysis:
 - TP risk score (composite of 5 factors)
@@ -448,7 +456,7 @@ Transfer pricing compliance analysis:
 ## Advanced Features
 
 ### Options Overview
-**File**: `ui/intercompany/options-overview.js`
+**File**: `apps/web/src/routes/structuring/+page.svelte`
 
 Default landing view showing all 6 transaction models at a glance:
 - Visual grid of model cards with icons, summaries, key features
@@ -459,7 +467,7 @@ Default landing view showing all 6 transaction models at a glance:
 - View mode persisted in localStorage
 
 ### Compare Mode
-**Files**: `ui/intercompany/comparison-manager.js`, `ui/intercompany/comparison-view.js`, `utils/storage.js`
+**Files**: `apps/web/src/lib/components/ComparisonManager.svelte`, `apps/web/src/lib/components/ComparisonView.svelte`, `apps/web/src/lib/stores/comparison.ts`
 
 Save and compare calculation results side-by-side:
 - Save calculations as named options (up to 20)
@@ -473,7 +481,7 @@ Save and compare calculation results side-by-side:
 - localStorage persistence with version tracking
 
 ### Stage 2: Sensitivity Analysis
-**Files**: `models/intercompany/sensitivity-analysis.js`, `ui/intercompany/range-input.js`, `ui/intercompany/sensitivity-visualizations.js`
+**Files**: `apps/web/src/lib/components/SensitivityPanel.svelte`, `packages/calculator/src/sensitivity/calculations.ts`
 
 - Range inputs (Low / Base / High)
 - Best case / Base case / Worst case scenarios
@@ -483,7 +491,7 @@ Save and compare calculation results side-by-side:
 - Monte Carlo simulation (optional)
 
 ### Stage 3: Growth Projections
-**Files**: `models/intercompany/growth-projections.js`, `ui/intercompany/projection-visualizations.js`
+**Files**: `apps/web/src/lib/components/ProjectionsPanel.svelte`, `packages/calculator/src/projections/calculations.ts`
 
 - Multi-year projections (3/5/7/10 years)
 - NPV calculations per party
@@ -494,7 +502,7 @@ Save and compare calculation results side-by-side:
 - ROI trajectory visualisations
 
 ### Advanced Visualisations
-**Files**: `models/intercompany/advanced-visualizations.js`, `ui/intercompany/advanced-visualizations.js`
+**Files**: `apps/web/src/lib/components/charts/` (ApexCharts-based components)
 
 - Cross-model comparison charts
 - Asset location timeline (animated)
@@ -662,6 +670,10 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 | **docs/TODO.md** | Feature ideas and backlog | Add ideas to persist between sessions |
 | **docs/USER_ACTIONS.md** | Manual user action instructions | When user needs to do something outside the tool |
 | **docs/AI_MISTAKES.md** | AI assistant mistake log to prevent repeat errors | When an AI makes a mistake during a session |
+| **docs/DISCOVERY_FINDINGS.md** | Discovery research findings | Discovery phase findings change |
+| **docs/DISCOVERY_FRAMEWORK.md** | Discovery research framework | Discovery methodology changes |
+| **docs/NEGOTIATION_MODE.md** | Negotiation mode design notes | Negotiation feature changes |
+| **docs/UI_UX_GUIDE.md** | UI/UX design guidelines | UI patterns or design decisions change |
 | **docs/model-use-cases/** | When to use each model variant, TP considerations | Model logic or variant definitions change |
 
 ## Troubleshooting
@@ -676,14 +688,15 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 - Verify input validation catches invalid values
 - Check for negative numbers in log/power calculations
 
-### ES6 Module Errors
-- Use relative imports with `.js` extensions
-- Check for circular dependencies
+### Import/Module Errors
+- Check for circular dependencies between packages
+- Ensure calculator exports point to `src/` (not `dist/`)
+- Verify `@model-pear/calculator` resolves in web app
 
 ### State Not Updating
-- Verify pub/sub subscription is active
-- Check event names match exactly
-- Ensure state mutations call notify()
+- Check Svelte reactive declarations (`$:`) include all dependencies
+- Verify store subscriptions are active
+- Ensure state changes trigger reactivity (reassignment, not mutation)
 
 ---
 

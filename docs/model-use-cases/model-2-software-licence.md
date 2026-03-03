@@ -227,6 +227,5 @@ Source code premium benchmarkable (typically 10–30% above binary-only licence)
 
 ## Related Documentation
 
-- [Model 2 Concept](../model_2_licence_royalties_concept.md) — Technical implementation details
 - [Calculations Guide](../CALCULATIONS.md) — Formula explanations
 - [Business Guide](../BUSINESS_GUIDE.md) — User workflows

@@ -276,6 +276,5 @@ Different variants have different recognition patterns:
 
 ## Related Documentation
 
-- [Model 5 Concept](../model_5_software_sale_support_concept.md) — Technical implementation details
 - [Calculations Guide](../CALCULATIONS.md) — Formula explanations
 - [Business Guide](../BUSINESS_GUIDE.md) — User workflows

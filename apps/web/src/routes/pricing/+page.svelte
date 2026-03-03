@@ -52,7 +52,10 @@
   let market_desiredMargin = 70;
   let market_sellerValuePerTransaction = 150;
 
-  // List all reactive dependencies explicitly so Svelte tracks them
+  // Requirement: Recalculate pricing results reactively when any input changes.
+  // Approach: List all reactive dependencies explicitly in the $: declaration
+  //   so Svelte's compiler tracks them. The function itself reads from closure
+  //   variables, but Svelte needs them in the call expression to trigger reactivity.
   $: results = calculateResults(
     selectedModel,
     sub_monthlyPrice, sub_customers, sub_costToServe, sub_desiredMargin, sub_buyerValue,
@@ -64,6 +67,20 @@
     market_costPerTransaction, market_desiredMargin, market_sellerValuePerTransaction
   );
 
+  // Requirement: Find the price range where seller hits margin AND buyer sees ROI.
+  // Approach: For each pricing model, calculate three key values:
+  //   1. minimumPrice (seller floor): cost / (1 - desiredMargin%) — the price
+  //      where seller exactly hits their target margin.
+  //   2. maximumPrice (buyer ceiling): buyerValue × 0.4 — the most a buyer would
+  //      pay, set at 40% of total value received. This reflects the principle that
+  //      buyers typically expect to retain at least 60% of the value as their ROI.
+  //   3. suggestedPrice (equilibrium): midpoint of floor and ceiling — a balanced
+  //      starting point for negotiation.
+  // Alternatives considered:
+  //   - Buyer ceiling at 50% of value: Rejected — too aggressive, leaves
+  //     insufficient ROI cushion for buyers to feel they're getting a good deal.
+  //   - Dynamic ceiling based on market: Rejected — requires external data we
+  //     don't have. The 40% heuristic is a reasonable starting point.
   function calculateResults() {
     if (selectedModel === 'subscription') {
       const monthlyRevenue = sub_monthlyPrice * sub_customers;
