@@ -1,7 +1,7 @@
 # Model 3: Joint Development / Cost-Sharing — Use Cases
 
 > **Purpose**: When to use each variant of the Joint Development model
-> **Variants**: 7 (3A–3F, 3H) + Required Provisions applicable to all
+> **Variants**: 8 (3A–3H)
 > **Core Concept**: Both parties contribute resources and share IP ownership based on contributions or anticipated benefits
 
 ---
@@ -244,6 +244,5 @@ Requires TP expertise in all relevant jurisdictions. Documentation must satisfy 
 
 ## Related Documentation
 
-- [Model 3 Concept](../model_3_joint_development_concept.md) — Technical implementation details
 - [Calculations Guide](../CALCULATIONS.md) — Formula explanations
 - [Business Guide](../BUSINESS_GUIDE.md) — User workflows

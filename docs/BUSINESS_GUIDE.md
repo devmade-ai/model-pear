@@ -1,7 +1,7 @@
 # Business User Guide
 # Software Transaction Structuring Tool
 
-> **Last Updated**: January 2026
+> **Last Updated**: March 2026
 > **Target Audience**: CFOs, Finance Directors, Business Owners, Software Company Leaders
 
 ## Table of Contents
@@ -193,14 +193,14 @@ The tool operates in two distinct modes, each answering a different question:
 
 | Variant | Name | Best For |
 |---------|------|----------|
-| **3A** | Equal 50/50 Sharing | Equal partners |
+| **3A** | Proportional Cost Sharing (Equal) | Simple, equal ownership |
 | **3B** | Contribution-Based Sharing | Proportional to input value |
 | **3C** | Benefit-Based Sharing | Proportional to expected benefit |
-| **3D** | Platform + Application Split | Core vs derivative development |
-| **3E** | Development + Commercialisation | Build vs sell split |
-| **3F** | Joint Venture Entity | Separate legal vehicle |
-| **3G** | Consortium / Multi-Party | Three+ party arrangements |
-| **3H** | Pre-Competitive R&D | Industry collaboration |
+| **3D** | Usage Rights Split | Different commercial exploitation needs |
+| **3E** | Platform + Derivatives | Base platform with customisable modules |
+| **3F** | Buy-In Arrangement | New party joining ongoing project |
+| **3G** | Termination Provisions | Clear exit strategy and IP treatment |
+| **3H** | Cross-Border Joint Development | Parties in different tax jurisdictions |
 
 **Typical Split**: 40-60% of residual profits (arm's length benchmark)
 
@@ -221,14 +221,14 @@ The tool operates in two distinct modes, each answering a different question:
 
 | Variant | Name | Best For |
 |---------|------|----------|
-| **4A** | Fixed Transfer Price | Certainty on transfer cost |
-| **4B** | Formula-Based Price | Price linked to performance |
-| **4C** | Fair Market Value | Independent valuation at transfer |
-| **4D** | With Purchase Option | Buyer flexibility |
-| **4E** | Build-Operate-Own (BOO) | No transfer planned |
-| **4F** | Build-Transfer-Operate (BTO) | Early ownership transfer |
-| **4G** | Build-Lease-Transfer | IFRS 16 lease accounting |
-| **4H** | Phased Transfer | Gradual ownership transition |
+| **4A** | Fixed Transfer Price | Both parties want certainty |
+| **4B** | Formula-Based Transfer Price | Price reflects actual performance |
+| **4C** | Fair Market Value at Transfer | TP defensibility paramount |
+| **4D** | Cost Recovery Plus | Risk-sharing with guaranteed cost recovery |
+| **4E** | Performance-Based Transfer | Align incentives with KPIs |
+| **4F** | Retained Stake | Ongoing alignment with shared upside |
+| **4G** | Transfer with Warranty | Risk mitigation for Buyer |
+| **4H** | Cross-Border BOT | Different jurisdictions with tax considerations |
 
 **Key Considerations**:
 - Developer recognises service revenue during operation
@@ -247,14 +247,14 @@ The tool operates in two distinct modes, each answering a different question:
 
 | Variant | Name | Best For |
 |---------|------|----------|
-| **5A** | Clean Sale | No post-sale obligations |
-| **5B** | Sale + Maintenance | Ongoing fixes and updates |
-| **5C** | Sale + Support & Updates | Full support package |
-| **5D** | Sale with Warranty | Limited post-sale obligations |
-| **5E** | Sale with Buyback | Future optionality |
-| **5F** | Retained Improvements | Developer keeps enhancement rights |
-| **5G** | Asset Sale vs Share Sale | Different legal structures |
-| **5H** | Sale with Licence-Back | Developer retains usage |
+| **5A** | Outright Sale (Upfront) | Clean transaction with immediate cash |
+| **5B** | Instalment Sale | Buyer cash flow management |
+| **5C** | Deferred Payment | Buyer needs time to generate returns |
+| **5D** | Sale with SLA-Based Maintenance | Performance-based ongoing relationship |
+| **5E** | Source Code Sale | Buyer wants full control and independence |
+| **5F** | Sale with Extended Warranty | Risk mitigation for Buyer |
+| **5G** | Sale with Earnout | Bridge valuation gap with upside sharing |
+| **5H** | Sale with Transition Support | Ensure successful handover |
 
 **Key Considerations**:
 - Developer recognises capital gain (CGT) on sale
@@ -273,15 +273,15 @@ The tool operates in two distinct modes, each answering a different question:
 
 | Variant | Name | Best For |
 |---------|------|----------|
-| **6A** | Pure SaaS (Multi-Tenant) | Standard cloud delivery |
-| **6B** | Dedicated Instance | Single-tenant isolation |
-| **6C** | With Customisation | Bespoke modifications |
-| **6D** | Hybrid (Cloud + On-Premise) | Mixed deployment |
-| **6E** | Freemium / Tiered | Customer acquisition strategy |
-| **6F** | Consumption-Based | Variable usage pricing |
-| **6G** | Enterprise Agreement | Committed annual spend |
-| **6H** | Private Label SaaS | White-label distribution |
-| **6I** | Managed Service + Transition | Future ownership option |
+| **6A** | Flat-Rate Subscription | Simple pricing, predictable costs |
+| **6B** | Per-User Pricing | Usage aligns with headcount |
+| **6C** | Usage-Based Pricing | Variable usage patterns |
+| **6D** | Tiered Pricing | Different customer segments |
+| **6E** | SaaS with Customization | Platform needs tailoring |
+| **6F** | SaaS with Premium Support | Mission-critical deployments |
+| **6G** | SaaS with Data Residency | Regulated industries |
+| **6H** | Committed Use Discount | Enterprise agreements |
+| **6I** | White-Label SaaS | Channel distribution |
 
 **Key Considerations**:
 - Developer retains asset, recognises recurring revenue

@@ -303,6 +303,5 @@ Buyer's data resides in Developer's systems:
 
 ## Related Documentation
 
-- [Model 6 Concept](../model_6_saas_subscription_concept.md) — Technical implementation details
 - [Calculations Guide](../CALCULATIONS.md) — Formula explanations
 - [Business Guide](../BUSINESS_GUIDE.md) — User workflows

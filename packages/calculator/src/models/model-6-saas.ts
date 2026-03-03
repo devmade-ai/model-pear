@@ -123,6 +123,16 @@ export const BENCHMARK_RANGE: BenchmarkRange = { low: 60, median: 75, high: 85, 
 // CALCULATION FUNCTIONS
 // ============================================================
 
+// Requirement: Calculate revenue for 9 SaaS pricing variants
+// Approach: Simple variant-based switch — each variant has a direct formula
+//   mapping its pricing model inputs to monthly revenue.
+// Why simpler than Models 1-2: SaaS revenue is always a function of
+//   subscription fee × modifier (users, usage, tier). No IP ownership split,
+//   no capitalisation logic, no multi-phase recognition needed.
+// Alternatives considered:
+//   - Shared base calculation with variant modifiers: Rejected — variants
+//     have genuinely different inputs (user count vs usage vs tier), so a
+//     common base would require more conditional logic, not less.
 function calculateMonthlyRevenue(inputs: SaaSInputs): Currency {
   switch (inputs.variant) {
     case '6A':

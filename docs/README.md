@@ -31,8 +31,8 @@ Find the **sweet spot** in pricing by showing you:
 |-------|------|----------|
 | 1 | Development Services (Cost-Plus) | 6 (1A-1F) |
 | 2 | Software Licence with Royalties | 8 (2A-2H) |
-| 3 | Joint Development / Cost-Sharing | 7 + Required Provisions |
-| 4 | Build-Operate-Transfer (BOT) | 7 + Standard Provisions |
+| 3 | Joint Development / Cost-Sharing | 8 (3A-3H) |
+| 4 | Build-Operate-Transfer (BOT) | 8 (4A-4H) |
 | 5 | Software Sale with Ongoing Support | 8 (5A-5H) |
 | 6 | SaaS/Subscription Enhancement | 9 (6A-6I) |
 

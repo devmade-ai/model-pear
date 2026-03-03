@@ -1,9 +1,42 @@
 # Development History & Bug Fixes
 
-> **Last Updated**: February 2026
+> **Last Updated**: March 2026
 > **Purpose**: Historical record of bug fixes, improvements, and major refactoring work
 
 This file tracks all significant bug fixes, improvements, and architectural changes made to the Revenue Model Calculator project. For current project status and architecture, see [CLAUDE.md](../CLAUDE.md).
+
+---
+
+## Documentation & Code Comments Audit (March 3, 2026)
+
+**Impact**: Documentation accuracy — docs now reflect actual code
+
+### Problem
+
+Comprehensive audit revealed documentation had drifted significantly from the codebase:
+- CLAUDE.md referenced 15 JavaScript files from the pre-TypeScript architecture (none exist)
+- CLAUDE.md listed wrong model filenames (e.g., `costPlus.ts` instead of `model-1-cost-plus.ts`)
+- BUSINESS_GUIDE.md had completely different variant names for Models 3, 4, 5, and 6
+- README.md had wrong variant counts for Models 3 and 4
+- All 6 model-use-cases docs linked to non-existent concept files
+- 4 docs existed but weren't listed in CLAUDE.md's documentation table
+- `/docs/working/` directory referenced but didn't exist
+- `docs/EXTRACTION_PLAYBOOK.md` referenced but doesn't exist
+- 3 key code files lacked CLAUDE.md-required decision documentation comments
+
+### Fixes
+
+1. **CLAUDE.md**: Updated all file references to actual Svelte/TS components, fixed model filenames, added missing docs to table, fixed Troubleshooting section, added `projections/` and `sensitivity/` to file tree
+2. **BUSINESS_GUIDE.md**: Updated variant name tables for Models 3, 4, 5, 6 to match code VARIANTS definitions
+3. **README.md**: Fixed variant counts — Model 3: "8 (3A-3H)", Model 4: "8 (4A-4H)"
+4. **Model-use-cases (all 6)**: Removed stale concept file links, fixed variant count headers
+5. **Code comments**: Added What/Why/Alternatives decision docs to `model-6-saas.ts`, `pricing/+page.svelte`, `structuring/[model]/+page.svelte`
+6. **Created `/docs/working/`**: Directory now exists as referenced in CLAUDE.md
+7. **Removed stale reference**: EXTRACTION_PLAYBOOK.md reference replaced with inline guidance
+
+### Known remaining issue
+
+Model 3 model-use-cases doc has detailed business analysis for variant concepts (3D-3G) that differ from the code variant names. The doc analysis is thorough and valuable but describes different variants than the code implements. Requires future decision: update code to match docs or rewrite docs.
 
 ---
 

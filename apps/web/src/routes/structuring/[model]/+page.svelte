@@ -46,11 +46,21 @@
   // Get input field configuration for current model
   $: fieldConfig = modelFieldConfigs[modelId] || [];
 
-  // Split fields into essential and advanced for progressive disclosure
+  // Requirement: Show only essential inputs by default, reveal advanced inputs on demand.
+  // Approach: Progressive disclosure — split fields by their `essential` flag.
+  //   Essential fields (the minimum needed for a basic calculation) show immediately.
+  //   Advanced fields (fine-tuning options) are hidden behind an expandable section.
+  // Why: Non-technical users (per CLAUDE.md UX rules) should not be overwhelmed
+  //   with 15+ inputs on first load. Essential-first reduces cognitive load.
   $: essentialFields = fieldConfig.filter((f: InputFieldConfig) => f.essential !== false);
   $: advancedFields = fieldConfig.filter((f: InputFieldConfig) => f.essential === false);
 
-  // Model configurations
+  // Requirement: Map each model route to its calculator function and sensible defaults.
+  // Approach: Static config object keyed by model ID from the URL parameter.
+  //   Each entry provides: the model metadata, the calculate function, and default
+  //   inputs with the most commonly used variant pre-selected (e.g., 1B for cost-plus,
+  //   2A for licence). Default values use representative South African software
+  //   transaction amounts to give users a realistic starting point.
   const modelConfigs = {
     'model-1': {
       model: MODEL_1_COST_PLUS,

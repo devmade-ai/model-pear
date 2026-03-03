@@ -173,6 +173,5 @@ Retainer should reflect market rates for equivalent team composition. Buyer's co
 
 ## Related Documentation
 
-- [Model 1 Concept](../model_1_cost_plus_concept.md) — Technical implementation details
 - [Calculations Guide](../CALCULATIONS.md) — Formula explanations
 - [Business Guide](../BUSINESS_GUIDE.md) — User workflows
