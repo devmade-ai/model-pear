@@ -3,7 +3,28 @@
 > **Last Updated**: March 2026
 > **Purpose**: Historical record of bug fixes, improvements, and major refactoring work
 
-This file tracks all significant bug fixes, improvements, and architectural changes made to the Revenue Model Calculator project. For current project status and architecture, see [CLAUDE.md](../CLAUDE.md).
+This file tracks all significant bug fixes, improvements, and architectural changes made to the Software Transaction Structuring Tool project. For current project status and architecture, see [CLAUDE.md](../CLAUDE.md).
+
+---
+
+## Fix Stale Product Names & Orphaned Compliance Comment (March 23, 2026)
+
+**Impact**: Documentation accuracy — removed references to old product names
+
+### Problem
+
+Cross-repo documentation audit identified stale references in model-pear:
+- `CALCULATIONS.md` title and conclusion still said "Pricing Equilibrium Calculator" (old name)
+- `UI_UX_GUIDE.md` title and intro still said "Pricing Equilibrium Calculator"
+- `HISTORY.md` intro still said "Revenue Model Calculator"
+- `packages/calculator/src/index.ts` had a "COMPLIANCE (to be implemented)" section with a commented-out export to `compliance/transfer-pricing.js` — a module that was never created. Transfer pricing is fully implemented inline in each model.
+
+### Fixes
+
+1. **CALCULATIONS.md**: Updated title and conclusion to "Software Transaction Structuring Tool"
+2. **UI_UX_GUIDE.md**: Updated title and intro to "Software Transaction Structuring Tool"
+3. **HISTORY.md**: Updated intro to "Software Transaction Structuring Tool"
+4. **calculator/src/index.ts**: Replaced misleading "to be implemented" comment with accurate description of where TP lives
 
 ---
 
