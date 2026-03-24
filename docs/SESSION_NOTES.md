@@ -6,27 +6,38 @@
 
 ## Current State (March 23, 2026)
 
-**Last completed**: Fixed stale product name references and orphaned compliance comment
+**Last completed**: Aligned CLAUDE.md with glow-props canonical conventions
 
-**Status**: All documentation synced with actual code; stale name references fixed
+**Status**: CLAUDE.md now matches glow-props structure and conventions; all docs synced
 
 ### What was done this session
 
-1. **CALCULATIONS.md — Fixed stale product name**: Title and conclusion referenced "Pricing Equilibrium Calculator" (old name). Updated to "Software Transaction Structuring Tool".
-2. **UI_UX_GUIDE.md — Fixed stale product name**: Title and intro referenced "Pricing Equilibrium Calculator". Updated to "Software Transaction Structuring Tool".
-3. **HISTORY.md — Fixed stale product name**: Intro referenced "Revenue Model Calculator". Updated to "Software Transaction Structuring Tool".
-4. **calculator/src/index.ts — Cleaned up orphaned compliance comment**: Lines 285-289 had a "COMPLIANCE (to be implemented)" section with a commented-out export to a non-existent `compliance/transfer-pricing.js` module. Transfer pricing is fully implemented inline in each model's calculate function. Replaced misleading comment with accurate description.
+1. **Fixed stale product names**: Updated "Pricing Equilibrium Calculator" in CALCULATIONS.md and UI_UX_GUIDE.md, "Revenue Model Calculator" in HISTORY.md → all now say "Software Transaction Structuring Tool"
+2. **Cleaned up orphaned compliance comment** in calculator/src/index.ts (referenced never-created module; TP is implemented inline)
+3. **Aligned CLAUDE.md with glow-props conventions**:
+   - Added "READ AND FOLLOW..." header and Process section
+   - Added REMINDER banners after key sections
+   - Added Principles #6 "Follow conventions" and #7 "Repeatable process"
+   - Aligned Cleanup to use `// KEEP:` marker convention
+   - Added specific Quality Check items (XSS via `{@html}`, reactivity, keys)
+   - Added full Documentation section with per-doc descriptions (what/when/why) including BUSINESS_GUIDE.md as User Guide and TESTING_GUIDE.md
+   - Added Triggers section (10 analysis triggers: review, audit, docs, mobile, clean, perf, security, debug, improve, start)
+   - Added 3 missing Prohibitions from glow-props
+   - Expanded AI Notes (commit before ending, sibling repo access, communication style merged in)
+   - Removed standalone COMMUNICATION STYLE section (merged into AI Notes)
+   - Updated cross-reference date to 2026-03-24
 
 ### Known remaining issue
 
-- **Model 3 model-use-cases doc**: Variant headings for 3D-3G describe different concepts than the code variants (e.g., doc says "Joint Venture Entity" for 3F but code says "Buy-In Arrangement"). The doc's business analysis is thorough and valuable, but the variant names/concepts diverged from the code. This requires a larger decision: update the code variant names to match the docs, or rewrite the doc business analysis. Flagged for a future session.
+- **Model 3 model-use-cases doc**: Variant headings for 3D-3G describe different concepts than the code variants (e.g., doc says "Joint Venture Entity" for 3F but code says "Buy-In Arrangement"). Flagged for a future session.
 
 ### Key Files Changed
 
-- `docs/CALCULATIONS.md` — Fixed stale product name (was "Pricing Equilibrium Calculator")
-- `docs/UI_UX_GUIDE.md` — Fixed stale product name (was "Pricing Equilibrium Calculator")
-- `docs/HISTORY.md` — Fixed stale product name (was "Revenue Model Calculator")
-- `packages/calculator/src/index.ts` — Replaced orphaned compliance module comment with accurate TP description
+- `CLAUDE.md` — Major alignment with glow-props conventions
+- `docs/CALCULATIONS.md` — Fixed stale product name
+- `docs/UI_UX_GUIDE.md` — Fixed stale product name
+- `docs/HISTORY.md` — Fixed stale product name + new entry
+- `packages/calculator/src/index.ts` — Cleaned up orphaned compliance comment
 
 ---
 

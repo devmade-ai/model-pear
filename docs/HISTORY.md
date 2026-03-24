@@ -7,6 +7,27 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Align CLAUDE.md with glow-props Conventions (March 24, 2026)
+
+**Impact**: Documentation consistency — CLAUDE.md now follows canonical glow-props structure
+
+### Changes
+
+Cross-repo audit revealed model-pear's CLAUDE.md had drifted from the glow-props canonical version:
+
+1. Added "READ AND FOLLOW..." header and explicit Process section
+2. Added REMINDER banners after all key sections (Code Standards, Session Management, Documentation, AI Notes, Prohibitions, Triggers)
+3. Added Principles #6 "Follow conventions" and #7 "Repeatable process"
+4. Aligned Cleanup to use `// KEEP:` marker convention (was "explicitly marked for preservation")
+5. Added specific Quality Check items matching glow-props (XSS, reactivity, keys)
+6. Added comprehensive Documentation section with per-doc descriptions (what/when/why) for all 9 doc files, including BUSINESS_GUIDE.md as User Guide and TESTING_GUIDE.md
+7. Added Triggers section (10 analysis triggers with aliases and sweep behavior)
+8. Added 3 missing Prohibitions: no removing features during cleanup, no assumptions over clarifying questions, no interactive prompts
+9. Expanded AI Notes: commit before ending, sibling repo access pattern, communication style merged in from standalone section
+10. Updated cross-reference last-reviewed date to 2026-03-24
+
+---
+
 ## Fix Stale Product Names & Orphaned Compliance Comment (March 23, 2026)
 
 **Impact**: Documentation accuracy — removed references to old product names
