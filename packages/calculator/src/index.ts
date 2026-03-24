@@ -282,8 +282,5 @@ export type {
   BreakEvenChartData,
 } from './sensitivity/index.js';
 
-// ============================================================
-// COMPLIANCE (to be implemented)
-// ============================================================
-
-// export { assessTransferPricing } from './compliance/transfer-pricing.js';
+// Transfer pricing assessment is implemented inline within each model's calculate function.
+// Each model returns a TransferPricingAssessment as part of its CalculationResult.

@@ -1,6 +1,6 @@
-# Pricing Equilibrium Calculator - Calculations & Rationale
+# Software Transaction Structuring Tool - Calculations & Rationale
 
-This document explains all calculations performed by the Pricing Equilibrium Calculator, the formulas used, and the economic rationale behind them.
+This document explains all calculations performed by the Software Transaction Structuring Tool, the formulas used, and the economic rationale behind them.
 
 ## Table of Contents
 
@@ -1606,7 +1606,7 @@ Enhancement Addition = Annual Enhancement Cost (capitalised)
 
 ## Conclusion
 
-The Pricing Equilibrium Calculator implements fundamental economic principles:
+The Software Transaction Structuring Tool implements fundamental economic principles:
 
 1. **Cost-plus pricing** (seller perspective): Price must cover costs + desired margin
 2. **Value-based pricing** (buyer perspective): Price must deliver compelling ROI

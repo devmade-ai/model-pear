@@ -1,6 +1,6 @@
-# UI/UX Guide - Pricing Equilibrium Calculator
+# UI/UX Guide - Software Transaction Structuring Tool
 
-This guide documents all the user interface and user experience features of the Pricing Equilibrium Calculator, including accessibility, keyboard shortcuts, and design patterns.
+This guide documents all the user interface and user experience features of the Software Transaction Structuring Tool, including accessibility, keyboard shortcuts, and design patterns.
 
 ## Table of Contents
 

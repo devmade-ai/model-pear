@@ -1,4 +1,12 @@
-# CLAUDE.md
+# READ AND FOLLOW THE PROCESS, PRINCIPLES, CODE STANDARDS, DOCUMENTATION, AI NOTES, TRIGGERS, AND PROHIBITIONS EVERY TIME
+
+## Process
+
+1. **Read these preferences first**
+2. **Gather context from documentation** (CLAUDE.md, SESSION_NOTES.md, TODO.md, relevant docs/)
+3. **Then proceed with the task**
+
+### REMINDER: READ AND FOLLOW THE PROCESS EVERY TIME
 
 ## HARD RULES
 
@@ -90,7 +98,7 @@ Good: "Please enter your phone number as 10 digits, like 0821234567"
 
 - [ ] Remove all temporary files after implementation is complete
 - [ ] Delete unused imports, variables, and dead code immediately
-- [ ] Remove commented-out code unless explicitly marked for preservation
+- [ ] Remove commented-out code unless explicitly marked `// KEEP:` with reason
 - [ ] Clean up console.log/print statements before marking work complete
 - [ ] Clean up completed or obsolete docs/files and remove references to them
 
@@ -101,11 +109,13 @@ During every change, actively scan for:
 - [ ] Edge cases not covered
 - [ ] Inconsistent naming
 - [ ] Code duplication that should be extracted
-- [ ] Missing validation
-- [ ] Security concerns
-- [ ] Performance issues
+- [ ] Missing input validation at boundaries
+- [ ] Security concerns (XSS via {@html}, unsanitized user input)
+- [ ] Performance issues (unnecessary reactivity, large re-computations, missing keys)
 
 Report findings even if not directly related to current task.
+
+### REMINDER: READ AND FOLLOW THE CODE STANDARDS EVERY TIME
 
 ---
 
@@ -118,9 +128,11 @@ Report findings even if not directly related to current task.
 3. **Document WHY** - Explain decisions and how they align with tool goals
 4. **Testability** - Ensure correctness and alignment with usage goals can be verified
 5. **Know the purpose** - Always be aware of what the tool is for
-6. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
-7. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
-8. **Document user actions** - When manual user action is required (external dashboards, credentials, etc.), add detailed instructions to docs/USER_ACTIONS.md
+6. **Follow conventions** - Best practices and consistent patterns
+7. **Repeatable process** - Follow consistent steps to ensure all the above
+8. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
+9. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
+10. **Document user actions** - When manual user action is required (external dashboards, credentials, etc.), add detailed instructions to docs/USER_ACTIONS.md
 
 ### After Each Significant Task
 
@@ -128,6 +140,8 @@ Report findings even if not directly related to current task.
 - [ ] Update relevant docs (CALCULATIONS.md, BUSINESS_GUIDE.md, etc.)
 - [ ] Add entry to HISTORY.md if code/docs changed
 - [ ] Commit changes (code + docs together)
+
+### REMINDER: READ AND FOLLOW THE SESSION MANAGEMENT EVERY TIME
 
 ### Commit Message Format
 
@@ -187,24 +201,159 @@ These footers are required on every commit. No exceptions.
 
 - Always read a file before attempting to edit it
 - Check for existing patterns in the codebase before creating new ones
-- Ask clarifying questions before assuming bug causes — wrong assumptions lead to wrong commits
+- Commit and push changes before ending a session
+- Clean up completed or obsolete docs/files and remove references to them
+- **ASK before assuming.** When a user reports a bug, ask clarifying questions (which mode? what inputs? what do you see?) BEFORE writing code. Don't guess the cause and build a fix on an assumption — wrong assumptions lead to wrong commits. One clarifying question saves multiple wrong commits.
+- **Always read files before editing.** Use the Read tool on every file before attempting to Edit it. Editing without reading first will fail.
 - Check docs/AI_MISTAKES.md at session start and log new mistakes as they occur
+- **Communication style:** Direct, concise responses. No filler phrases or conversational padding. State facts and actions. Ask specific questions with concrete options when clarification is needed.
+- **Claude Code mobile/web — accessing sibling repos:**
+  - Use `GITHUB_ALL_REPO_TOKEN` with the GitHub API (`api.github.com/repos/devmade-ai/{repo}/contents/{path}`) to read files from other devmade-ai repos
+  - Use `$(printenv GITHUB_ALL_REPO_TOKEN)` not `$GITHUB_ALL_REPO_TOKEN` to avoid shell expansion issues
+  - Never clone sibling repos — use the API instead
 
-<!-- Cross-reference: This project shares engineering conventions with glow-props.
-     Review https://github.com/devmade-ai/glow-props/blob/main/CLAUDE.md periodically
-     for new patterns or learnings that may apply here. Last reviewed: 2026-02-27.
-     Shared conventions: code org thresholds, decision docs, commit format, cleanup rules,
-     quality scans, non-technical user UX, prohibitions, communication style. -->
+- **Shared conventions with glow-props:**
+  - glow-props CLAUDE.md contains suggested implementations (PWA, debug system, app icons, PDF download, HTTPS proxy) that may apply here
+  - Fetch it at session start when working on features that overlap: `curl -sf "https://raw.githubusercontent.com/devmade-ai/glow-props/main/CLAUDE.md"`
+  - Or via GitHub API: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/glow-props/contents/CLAUDE.md" | jq -r '.content' | base64 -d`
+  - Shared conventions: code org thresholds, decision docs, commit format, cleanup rules, quality scans, non-technical user UX, prohibitions, triggers
+
+### REMINDER: READ AND FOLLOW THE AI NOTES EVERY TIME
 
 ---
 
-## COMMUNICATION STYLE
+## Documentation
 
-- Direct, concise responses
-- No filler phrases or conversational padding
-- State facts and actions, not opinions
-- Ask specific questions with concrete options when clarification needed
-- Never proceed with assumptions on ambiguous requests
+**AI assistants automatically maintain these documents.** Update them as you work — don't wait for the user to ask. This ensures context is always current for the next session.
+
+### `CLAUDE.md`
+
+**Purpose:** AI preferences, project overview, architecture, key state structures.
+**When to read:** At the start of every session, before doing any work.
+**When to update:** When project architecture changes, state structure changes, or preferences evolve.
+**What to include:**
+
+- Process, Principles, AI Notes: Update when learning new patterns or preferences
+- Project Status: Current working features (bullet list)
+- Architecture: File structure with brief descriptions
+- Key State Structure: Important state shapes with comments
+- Any section that becomes outdated after feature changes
+
+**Why:** This is the primary context for AI assistants. Accurate info here prevents mistakes.
+
+### `docs/SESSION_NOTES.md`
+
+**Purpose:** Compact context summary for session continuity (like `/compact` output).
+**When to read:** At the start of a session to quickly understand what was done previously.
+**When to update:** Rewrite at session end with a fresh summary. Clear previous content.
+**What to include:**
+
+- **Worked on:** Brief description of focus area
+- **Accomplished:** Bullet list of completions
+- **Current state:** Where things stand (working/broken/in-progress)
+- **Key context:** Important info the next session needs to know
+
+**Why:** Enables quick resumption without re-reading entire codebase. Not a changelog — a snapshot.
+
+### `docs/TODO.md`
+
+**Purpose:** AI-managed backlog of ideas and potential improvements.
+**When to read:** When looking for work to do, or when the user asks about pending tasks.
+**When to update:** When noticing potential improvements. Move completed items to HISTORY.md.
+**What to include:**
+
+- Group by category (Features, UX, Technical, etc.)
+- Use `- [ ]` for pending items only
+- Brief description of what and why
+- When complete, move to HISTORY.md (don't keep in TODO)
+
+**Why:** User reviews this to prioritize work. Keeps TODO focused on pending items only.
+
+### `docs/HISTORY.md`
+
+**Purpose:** Changelog and record of completed work.
+**When to read:** When you need historical context about why something was built a certain way.
+**When to update:** When completing TODO items or making significant changes.
+**What to include:**
+
+- Completed TODO items (organized by category)
+- Bug fixes and changes (organized by date)
+- Brief description of what was done
+
+**Why:** Historical context separate from active TODO. Tracks what's been accomplished.
+
+### `docs/USER_ACTIONS.md`
+
+**Purpose:** Manual actions requiring user intervention outside the codebase.
+**When to read:** When something requires manual user intervention (deployments, API keys, external config).
+**When to update:** When tasks need external action. Clear when completed.
+**What to include:**
+
+- Action title and description
+- Why it's needed
+- Steps to complete
+- Keep empty when nothing pending (with placeholder text)
+
+**Why:** Some tasks require credentials, dashboards, or manual config the AI can't do.
+
+### `docs/AI_MISTAKES.md`
+
+**Purpose:** Record significant AI mistakes and learnings to prevent repetition.
+**When to read:** When starting a session, to avoid repeating past mistakes.
+**When to update:** After making a mistake that wasted time or broke things.
+**What to include:**
+
+- What went wrong
+- Why it happened
+- How to prevent it
+- Date (for context)
+
+**Why:** AI assistants repeat mistakes across sessions. This document builds institutional memory.
+
+### `docs/README.md`
+
+**Purpose:** User-facing guide for the application.
+**When to read:** When you need a quick overview of what the tool does and its main features.
+**When to update:** When features change that affect how users interact with the tool.
+**What to include:**
+
+- What the tool does (overview)
+- Current features (keep in sync with actual functionality)
+- How to use each feature (user guide)
+- Getting started / installation
+- Tech stack and deployment info
+
+**Why:** Users and contributors read this first. Must accurately reflect the current state.
+
+### `docs/BUSINESS_GUIDE.md` (serves as User Guide)
+
+**Purpose:** Comprehensive user documentation explaining how to use every feature.
+**When to read:** When you need to understand what users can do with the tool, or how a feature is supposed to work from the user's perspective.
+**When to update:** When adding new features, changing UI workflows, or modifying how existing features work.
+**What to include:**
+
+- Mode-by-mode walkthrough of the interface
+- Explanation of every control and what it does
+- Workflow tips and best practices
+- Organized by user tasks, not technical implementation
+
+**Why:** Serves as the authoritative reference for user-facing behavior. Helps ensure AI assistants understand the user experience.
+
+### `docs/TESTING_GUIDE.md`
+
+**Purpose:** Manual test scenarios for verifying the application works correctly.
+**When to read:** Before testing changes, or when you need to verify specific functionality works.
+**When to update:** When adding new features that need test coverage, or when existing tests become outdated.
+**What to include:**
+
+- Step-by-step test scenarios with exact actions
+- Where to click/look for each step
+- Expected results for each action
+- Regression checklist for quick verification
+
+**Why:** Ensures consistent, thorough testing. Prevents regressions by documenting what to verify after changes.
+
+### REMINDER: READ AND FOLLOW THE DOCUMENTATION EVERY TIME
 
 ---
 
@@ -276,14 +425,62 @@ pnpm test:e2e:ui      # Run Playwright with UI
 Never:
 - Start implementation without understanding full scope
 - Create files outside established project structure
-- Leave TODO comments without tracking them in docs/TODO.md
-- Ignore errors or warnings in output
-- Make "while I'm here" changes without asking
+- Leave TODO comments in code without tracking them in `docs/TODO.md`
+- Ignore errors or warnings in build/console output
+- Make "while I'm here" changes without asking first
 - Use placeholder data that looks like real data
 - Skip error handling "for now"
 - Write code without decision context comments (for non-trivial changes)
 - Modify default values without business justification
 - Add features without updating documentation
+- Remove features during "cleanup" without checking if they're documented as intentional (see AI_MISTAKES.md)
+- Proceed with assumptions when a single clarifying question would prevent a wrong commit
+- Use interactive input prompts or selection UIs — list options as numbered text instead
+
+### REMINDER: READ AND FOLLOW THE PROHIBITIONS EVERY TIME
+
+---
+
+## Triggers
+
+Single-word commands that invoke focused analysis passes. Each trigger has a short alias. Type the word or alias to activate.
+
+| # | Trigger | Alias | What it does |
+|---|---------|-------|--------------|
+| 1 | `review` | `rev` | Code review — bugs, UI, UX, simplification |
+| 2 | `audit` | `aud` | Code quality — hacks, anti-patterns, latent bugs, race conditions |
+| 3 | `docs` | `doc` | Documentation accuracy vs actual code |
+| 4 | `mobile` | `tap` | Mobile UX — touch targets, viewport, safe areas |
+| 5 | `clean` | `cln` | Hygiene — duplication, refactor candidates, dead code |
+| 6 | `performance` | `perf` | Re-renders, expensive ops, bundle size, DB/API, memory |
+| 7 | `security` | `sec` | Injection, auth gaps, data exposure, insecure defaults, CVEs |
+| 8 | `debug` | `dbg` | Debug coverage — missing logs, noise |
+| 9 | `improve` | `imp` | Open-ended — architecture, DX, anything else |
+| 10 | `start` | `go` | Sequential sweep of all 9 above, one at a time |
+
+### Trigger behavior
+
+- Each trigger runs a single focused pass and reports findings.
+- Findings are listed as numbered text — never interactive prompts or selection UIs.
+- One trigger per response. Never combine multiple triggers in a single response.
+
+### `start` / `go` behavior
+
+Runs all 9 triggers in priority sequence, one at a time:
+
+`rev` → `aud` → `doc` → `tap` → `cln` → `perf` → `sec` → `dbg` → `imp`
+
+After each trigger completes and findings are presented, the user responds with one of:
+1. `fix` — apply the suggested fixes, then move to the next trigger
+2. `skip` — skip this trigger's findings and move to the next trigger
+3. `stop` — end the sweep entirely
+
+Rules:
+- Always pause after each trigger — never auto-advance to the next one.
+- Never run multiple triggers in one response.
+- Wait for the user's explicit `fix`, `skip`, or `stop` before proceeding.
+
+### REMINDER: READ AND FOLLOW THE TRIGGERS EVERY TIME
 
 ---
 

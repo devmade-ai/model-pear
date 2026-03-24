@@ -3,7 +3,49 @@
 > **Last Updated**: March 2026
 > **Purpose**: Historical record of bug fixes, improvements, and major refactoring work
 
-This file tracks all significant bug fixes, improvements, and architectural changes made to the Revenue Model Calculator project. For current project status and architecture, see [CLAUDE.md](../CLAUDE.md).
+This file tracks all significant bug fixes, improvements, and architectural changes made to the Software Transaction Structuring Tool project. For current project status and architecture, see [CLAUDE.md](../CLAUDE.md).
+
+---
+
+## Align CLAUDE.md with glow-props Conventions (March 24, 2026)
+
+**Impact**: Documentation consistency — CLAUDE.md now follows canonical glow-props structure
+
+### Changes
+
+Cross-repo audit revealed model-pear's CLAUDE.md had drifted from the glow-props canonical version:
+
+1. Added "READ AND FOLLOW..." header and explicit Process section
+2. Added REMINDER banners after all key sections (Code Standards, Session Management, Documentation, AI Notes, Prohibitions, Triggers)
+3. Added Principles #6 "Follow conventions" and #7 "Repeatable process"
+4. Aligned Cleanup to use `// KEEP:` marker convention (was "explicitly marked for preservation")
+5. Added specific Quality Check items matching glow-props (XSS, reactivity, keys)
+6. Added comprehensive Documentation section with per-doc descriptions (what/when/why) for all 9 doc files, including BUSINESS_GUIDE.md as User Guide and TESTING_GUIDE.md
+7. Added Triggers section (10 analysis triggers with aliases and sweep behavior)
+8. Added 3 missing Prohibitions: no removing features during cleanup, no assumptions over clarifying questions, no interactive prompts
+9. Expanded AI Notes: commit before ending, sibling repo access pattern, communication style merged in from standalone section
+10. Updated cross-reference last-reviewed date to 2026-03-24
+
+---
+
+## Fix Stale Product Names & Orphaned Compliance Comment (March 23, 2026)
+
+**Impact**: Documentation accuracy — removed references to old product names
+
+### Problem
+
+Cross-repo documentation audit identified stale references in model-pear:
+- `CALCULATIONS.md` title and conclusion still said "Pricing Equilibrium Calculator" (old name)
+- `UI_UX_GUIDE.md` title and intro still said "Pricing Equilibrium Calculator"
+- `HISTORY.md` intro still said "Revenue Model Calculator"
+- `packages/calculator/src/index.ts` had a "COMPLIANCE (to be implemented)" section with a commented-out export to `compliance/transfer-pricing.js` — a module that was never created. Transfer pricing is fully implemented inline in each model.
+
+### Fixes
+
+1. **CALCULATIONS.md**: Updated title and conclusion to "Software Transaction Structuring Tool"
+2. **UI_UX_GUIDE.md**: Updated title and intro to "Software Transaction Structuring Tool"
+3. **HISTORY.md**: Updated intro to "Software Transaction Structuring Tool"
+4. **calculator/src/index.ts**: Replaced misleading "to be implemented" comment with accurate description of where TP lives
 
 ---
 
