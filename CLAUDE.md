@@ -212,11 +212,11 @@ These footers are required on every commit. No exceptions.
   - Use `$(printenv GITHUB_ALL_REPO_TOKEN)` not `$GITHUB_ALL_REPO_TOKEN` to avoid shell expansion issues
   - Never clone sibling repos — use the API instead
 
-<!-- Cross-reference: This project shares engineering conventions with glow-props.
-     Review https://github.com/devmade-ai/glow-props/blob/main/CLAUDE.md periodically
-     for new patterns or learnings that may apply here. Last reviewed: 2026-03-24.
-     Shared conventions: code org thresholds, decision docs, commit format, cleanup rules,
-     quality scans, non-technical user UX, prohibitions, communication style, triggers. -->
+- **Shared conventions with glow-props:**
+  - glow-props CLAUDE.md contains suggested implementations (PWA, debug system, app icons, PDF download, HTTPS proxy) that may apply here
+  - Fetch it at session start when working on features that overlap: `curl -sf "https://raw.githubusercontent.com/devmade-ai/glow-props/main/CLAUDE.md"`
+  - Or via GitHub API: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/glow-props/contents/CLAUDE.md" | jq -r '.content' | base64 -d`
+  - Shared conventions: code org thresholds, decision docs, commit format, cleanup rules, quality scans, non-technical user UX, prohibitions, triggers
 
 ### REMINDER: READ AND FOLLOW THE AI NOTES EVERY TIME
 
