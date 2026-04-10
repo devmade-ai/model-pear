@@ -9,7 +9,7 @@
   Source: glow-props DEBUG_SYSTEM.md pattern, adapted for Svelte 4
 -->
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, tick } from 'svelte';
   import type { DebugEntry } from '$lib/debugLog';
   import {
     debugAdd,
@@ -42,18 +42,19 @@
   $: errorCount = entries.filter((e) => e.severity === 'error').length;
   $: warnCount = entries.filter((e) => e.severity === 'warn').length;
 
-  // Auto-scroll log to bottom on new entries
+  // Auto-scroll log to bottom on new entries.
+  // tick() waits for Svelte's pending DOM updates to flush before scrolling.
   $: if (logContainer && entries.length) {
-    // Use tick-like delay to ensure DOM has updated
-    setTimeout(() => {
+    tick().then(() => {
       if (logContainer) logContainer.scrollTop = logContainer.scrollHeight;
-    }, 0);
+    });
   }
 
   let unsubscribe: (() => void) | null = null;
 
   onMount(() => {
-    entries = debugGetEntries();
+    // debugSubscribe delivers all existing entries immediately on subscribe,
+    // then notifies on each new entry — no separate initialisation needed.
     unsubscribe = debugSubscribe(() => {
       entries = [...debugGetEntries()];
     });

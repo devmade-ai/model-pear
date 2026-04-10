@@ -119,17 +119,38 @@ if (typeof window !== 'undefined') {
   // --- Console interception ---
   // Captures framework warnings, library errors, and any other console output automatically.
   // Must run at module load time to catch early console calls.
-  const originalError = console.error
-  const originalWarn = console.warn
+  //
+  // HMR guard: Store true originals on window so they survive module re-execution.
+  // Without this, each HMR cycle captures the already-patched console.error as
+  // "original", creating nested wrappers that produce duplicate log entries.
+  const w = window as any
+  if (!w.__debugOriginalConsoleError) {
+    w.__debugOriginalConsoleError = console.error
+    w.__debugOriginalConsoleWarn = console.warn
+  }
+  const originalError: (...args: unknown[]) => void = w.__debugOriginalConsoleError
+  const originalWarn: (...args: unknown[]) => void = w.__debugOriginalConsoleWarn
+
+  // Re-entrancy guard: prevents infinite recursion if a subscriber or library
+  // calls console.error/warn during a debugAdd callback chain.
+  let intercepting = false
 
   console.error = (...args: unknown[]) => {
     originalError.apply(console, args)
-    debugAdd('global', 'error', args.map(String).join(' '))
+    if (!intercepting) {
+      intercepting = true
+      debugAdd('global', 'error', args.map(String).join(' '))
+      intercepting = false
+    }
   }
 
   console.warn = (...args: unknown[]) => {
     originalWarn.apply(console, args)
-    debugAdd('global', 'warn', args.map(String).join(' '))
+    if (!intercepting) {
+      intercepting = true
+      debugAdd('global', 'warn', args.map(String).join(' '))
+      intercepting = false
+    }
   }
 
   // --- Global error capture ---

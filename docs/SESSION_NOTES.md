@@ -13,11 +13,11 @@
 ### What was done this session
 
 1. **Fetched DEBUG_SYSTEM.md pattern** from glow-props repo (source of truth)
-2. **Created `debugLog.ts`** (`apps/web/src/lib/debugLog.ts`): Circular buffer (200 entries), exported types (`DebugSource`, `DebugSeverity`, `MAX_ENTRIES`), shared `formatDebugTimestamp()`, pub/sub with immediate delivery, console interception (error/warn), global error capture, report generation with URL redaction, HMR guard, pre-framework error bridge with inline listener cleanup. All browser side-effects wrapped in `typeof window` guard for SSR safety.
+2. **Created `debugLog.ts`** (`apps/web/src/lib/debugLog.ts`): Circular buffer (200 entries), exported types (`DebugSource`, `DebugSeverity`, `MAX_ENTRIES`), shared `formatDebugTimestamp()`, pub/sub with immediate delivery, console interception (error/warn) with HMR guard (true originals on window) and re-entrancy guard, global error capture, report generation with URL redaction, pre-framework error bridge with inline listener cleanup. All browser side-effects wrapped in `typeof window` guard for SSR safety.
 3. **Created `clipboardUtils.ts`** (`apps/web/src/lib/clipboardUtils.ts`): Three-tier clipboard fallback (ClipboardItem Blob → writeText → textarea execCommand)
-4. **Created `DebugPill.svelte`** (`apps/web/src/lib/components/DebugPill.svelte`): Floating pill with inline styles (not Tailwind), 3 tabs (Log with structured details, Environment, PWA Diagnostics with stale-run cancellation), mounted in separate `#debug-root` outside SvelteKit tree for crash isolation. Logs boot confirmation on mount.
+4. **Created `DebugPill.svelte`** (`apps/web/src/lib/components/DebugPill.svelte`): Floating pill with inline styles (not Tailwind), 3 tabs (Log with structured details, Environment, PWA Diagnostics with stale-run cancellation), mounted in separate `#debug-root` outside SvelteKit tree for crash isolation. Uses `tick()` for DOM-safe auto-scroll. Initialisation via subscriber immediate delivery. Logs boot confirmation on mount.
 5. **Updated `app.html`**: Added `#debug-root` div, pre-framework inline `<script>` with `window.__debugPushError()`, 20-second loading timeout, named listener references for cleanup
-6. **Updated `+layout.svelte`**: Dynamic import of DebugPill (SSR-safe), stores pill reference, cleanup on unmount via `$destroy()`
+6. **Updated `+layout.svelte`**: Dynamic import of DebugPill (SSR-safe), stores pill reference, `destroyed` flag for race condition safety, cleanup on unmount via `$destroy()`
 7. **Verified**: Build passes, 301 tests pass, `debugLog.ts` confirmed absent from SSR bundle
 
 ### Key Files Changed
