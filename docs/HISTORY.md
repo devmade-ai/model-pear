@@ -13,10 +13,12 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 1. Created SVG source icon (`assets/icon-source.svg`): White pear silhouette on primary blue (#2D68FF) background, `shape-rendering="geometricPrecision"`, content within 80% safe zone for maskable crop
 2. Added `sharp` as root devDependency for high-quality SVG-to-PNG rasterisation
-3. Created generation script (`scripts/generate-icons.mjs`): Rasterises SVG at 400 DPI, outputs 5 PNGs (48, 180, 192, 512, 1024) to `apps/web/static/`
+3. Created generation script (`scripts/generate-icons.mjs`): Rasterises SVG at 400 DPI, outputs 5 PNGs (48, 180, 192, 512, 1024) to `apps/web/static/`. Includes SVG source existence check with meaningful error message.
 4. Created PWA manifest (`apps/web/static/manifest.webmanifest`): 192/512 as `any`, 1024 as `maskable`, theme/background colours match app
-5. Updated `app.html`: Added `<link rel="apple-touch-icon">` and `<link rel="manifest">`
+5. Updated `app.html`: Added `<link rel="apple-touch-icon" sizes="180x180">`, `<link rel="manifest">`, and `<meta name="theme-color" content="#2D68FF">`
 6. Added `pnpm generate-icons` script to root package.json
+7. Updated CLAUDE.md file structure (added `assets/`, `scripts/`, `static/` sections) and build commands (`pnpm generate-icons`)
+8. Fixed ARCHITECTURE.md: `static/` was incorrectly nested under `src/` — moved to correct sibling position, updated contents listing
 
 ---
 

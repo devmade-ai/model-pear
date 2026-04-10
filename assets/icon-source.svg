@@ -4,11 +4,11 @@
        Safe zone: Content within inner 80% (102-922px) for maskable crop
        Legibility: Simple shape, no fine details — works at 48px favicon size -->
 
-  <!-- Background fills entire canvas -->
-  <rect width="1024" height="1024" rx="0" ry="0" fill="#2D68FF"/>
+  <!-- Background fills entire canvas (no transparency for maskable compatibility) -->
+  <rect width="1024" height="1024" fill="#2D68FF"/>
 
   <!-- Pear shape — centered in safe zone
-       Built from two overlapping ellipses (body + top) merged via single path
+       Single cubic bezier path: narrow top, wide bottom = classic pear silhouette
        Stem and leaf add recognisability at small sizes -->
   <g transform="translate(512, 530)">
     <!-- Pear body: teardrop shape using cubic beziers

@@ -198,11 +198,22 @@ model-pear/
 │       │   │   │   └── ui.ts            # UI state
 │       │   │   └── utils/
 │       │   │       └── formatting.ts
-│       │   └── static/
-│       │       └── favicon.png
+│       ├── static/                     # Static assets (served at root URL)
+│       │   ├── favicon.png             # 48px browser tab icon
+│       │   ├── apple-touch-icon.png    # 180px iOS home screen
+│       │   ├── icon-192.png            # PWA manifest (any)
+│       │   ├── icon-512.png            # PWA manifest (any)
+│       │   ├── icon-1024.png           # PWA manifest (maskable)
+│       │   └── manifest.webmanifest    # PWA web app manifest
 │       └── tests/
 │           └── e2e/
 │               └── calculation-flow.test.ts
+│
+├── assets/
+│   └── icon-source.svg             # SVG source — edit this, run pnpm generate-icons
+│
+├── scripts/
+│   └── generate-icons.mjs          # Sharp: SVG → PNG icons at 400 DPI
 │
 ├── docs/                           # Documentation (shared)
 │   ├── ARCHITECTURE.md             # This file

@@ -13,7 +13,7 @@
  */
 
 import sharp from 'sharp';
-import { readFileSync, mkdirSync } from 'fs';
+import { readFileSync, mkdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -36,6 +36,12 @@ const ICONS = [
 ];
 
 async function generate() {
+  if (!existsSync(SVG_SOURCE)) {
+    console.error(`SVG source not found: ${SVG_SOURCE}`);
+    console.error('Create assets/icon-source.svg first, then re-run.');
+    process.exit(1);
+  }
+
   const svgBuffer = readFileSync(SVG_SOURCE);
   mkdirSync(OUTPUT_DIR, { recursive: true });
 

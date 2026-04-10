@@ -6,18 +6,20 @@
 
 ## Current State (April 10, 2026)
 
-**Last completed**: App icons — SVG source + Sharp generation pipeline
+**Last completed**: App icons — full implementation + quality cleanup
 
-**Status**: All app icons generated and wired up. Favicon, Apple touch icon, and PWA manifest icons working.
+**Status**: All app icons generated, wired up, and production-ready. Favicon, Apple touch icon, PWA manifest, theme-color meta all in place. All documentation updated. Build verified.
 
 ### What was done this session
 
 1. **Created SVG source icon** (`assets/icon-source.svg`): White pear silhouette on primary blue (#2D68FF), `shape-rendering="geometricPrecision"`, content within 80% maskable safe zone
 2. **Added `sharp` devDependency** at root level with `pnpm.onlyBuiltDependencies` config for pnpm v10
-3. **Created generation script** (`scripts/generate-icons.mjs`): 400 DPI rasterisation, outputs 5 PNGs (48, 180, 192, 512, 1024) to `apps/web/static/`
+3. **Created generation script** (`scripts/generate-icons.mjs`): 400 DPI rasterisation, outputs 5 PNGs (48, 180, 192, 512, 1024) to `apps/web/static/`. Includes SVG source existence check with clear error message.
 4. **Created PWA manifest** (`apps/web/static/manifest.webmanifest`): 192/512 as `any`, 1024 as `maskable`
-5. **Updated app.html**: Added apple-touch-icon and manifest links
+5. **Updated app.html**: Added `apple-touch-icon` (with `sizes="180x180"`), `manifest` link, and `<meta name="theme-color" content="#2D68FF">` for mobile browser chrome
 6. **Added `pnpm generate-icons`** script to root package.json
+7. **Quality cleanup**: Removed redundant SVG attrs (`rx="0" ry="0"`), fixed inaccurate SVG comment, added proper error handling to generation script
+8. **Documentation**: Updated CLAUDE.md file structure (assets/, scripts/, static/) and build commands. Fixed ARCHITECTURE.md `static/` nesting (was incorrectly under `src/`, moved to correct sibling position). Updated HISTORY.md changelog.
 
 ### Known remaining issue
 
@@ -26,11 +28,13 @@
 ### Key Files Changed
 
 - `assets/icon-source.svg` — SVG source icon (single source of truth)
-- `scripts/generate-icons.mjs` — Sharp-based icon generation script
+- `scripts/generate-icons.mjs` — Sharp-based icon generation script with error handling
 - `apps/web/static/manifest.webmanifest` — PWA manifest with icon entries
 - `apps/web/static/*.png` — 5 generated icon PNGs
-- `apps/web/src/app.html` — Added apple-touch-icon and manifest links
-- `package.json` — Added sharp devDep, generate-icons script, onlyBuiltDependencies config
+- `apps/web/src/app.html` — apple-touch-icon, manifest link, theme-color meta
+- `package.json` — sharp devDep, generate-icons script, onlyBuiltDependencies config
+- `CLAUDE.md` — Updated file structure and build commands
+- `docs/ARCHITECTURE.md` — Fixed static/ nesting, updated icon file listing
 - `docs/HISTORY.md` — Changelog entry
 - `docs/SESSION_NOTES.md` — Updated session context
 
