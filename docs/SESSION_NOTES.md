@@ -6,39 +6,42 @@
 
 ## Current State (April 10, 2026)
 
-**Last completed**: Z-index scale — audit and normalize to glow-props standard
+**Last completed**: Debug system — in-memory logging + floating debug pill
 
-**Status**: All z-index values in the codebase now follow the glow-props Z_INDEX_SCALE standard. Tailwind config extended with z-60/70/80 utilities. Build verified, 301 tests pass.
+**Status**: Debug system fully implemented following glow-props DEBUG_SYSTEM.md pattern. Build passes, 301 tests pass.
 
 ### What was done this session
 
-1. **Fetched Z_INDEX_SCALE pattern** from glow-props repo (source of truth)
-2. **Audited all z-index usage** — found 4 values across 3 files
-3. **Normalized values to the standard scale**:
-   - `+layout.svelte`: Sticky header `z-40` → `z-20` (layer: Sticky headers)
-   - `[model]/+page.svelte`: Save Modal — split single `z-50` div into backdrop (`z-40`) + modal (`z-60`) siblings
-   - `ComparisonView.svelte`: Comparison modal — same split into backdrop (`z-40`) + modal (`z-60`) siblings
-   - `ComparisonView.svelte`: Sticky thead `z-10` — already correct (layer: Base content)
-4. **Split backdrop/modal per pattern rule**: "Backdrop and its content are always adjacent — backdrop is always z-40." Added `pointer-events-none` on modal container + `pointer-events-auto` on card. Backdrop has no click handler (preserves original behavior — no click-outside-to-close).
-5. **Extended Tailwind config** with `zIndex: { 60, 70, 80 }` for named classes (avoids arbitrary `z-[60]` syntax)
-6. **Verified**: Build passes, 301 tests pass
+1. **Fetched DEBUG_SYSTEM.md pattern** from glow-props repo (source of truth)
+2. **Created `debugLog.ts`** (`apps/web/src/lib/debugLog.ts`): Circular buffer (200 entries), exported types (`DebugSource`, `DebugSeverity`, `MAX_ENTRIES`), shared `formatDebugTimestamp()`, pub/sub with immediate delivery, console interception (error/warn) with HMR guard (true originals on window) and re-entrancy guard, global error capture, report generation with URL redaction, pre-framework error bridge with inline listener cleanup. All browser side-effects wrapped in `typeof window` guard for SSR safety.
+3. **Created `clipboardUtils.ts`** (`apps/web/src/lib/clipboardUtils.ts`): Three-tier clipboard fallback (ClipboardItem Blob → writeText → textarea execCommand)
+4. **Created `DebugPill.svelte`** (`apps/web/src/lib/components/DebugPill.svelte`): Floating pill with inline styles (not Tailwind), 3 tabs (Log with structured details, Environment, PWA Diagnostics with stale-run cancellation), mounted in separate `#debug-root` outside SvelteKit tree for crash isolation. Uses `tick()` for DOM-safe auto-scroll. Log container fills available panel space. Visible textarea fallback when clipboard copy fails. Initialisation via subscriber immediate delivery. Logs boot confirmation on mount.
+5. **Updated `app.html`**: Added `#debug-root` div, pre-framework inline `<script>` with `window.__debugPushError()`, 20-second loading timeout, named listener references for cleanup
+6. **Updated `+layout.svelte`**: Dynamic import of DebugPill (SSR-safe), stores pill reference, `destroyed` flag for race condition safety, cleanup on unmount via `$destroy()`
+7. **Verified**: Build passes, 301 tests pass, `debugLog.ts` confirmed absent from SSR bundle
+
+### Key Files Changed
+
+- `apps/web/src/lib/debugLog.ts` — Debug log module (new)
+- `apps/web/src/lib/clipboardUtils.ts` — Clipboard utility (new)
+- `apps/web/src/lib/components/DebugPill.svelte` — Debug pill component (new)
+- `apps/web/src/app.html` — Added #debug-root and inline pre-framework pill
+- `apps/web/src/routes/+layout.svelte` — Mount DebugPill into #debug-root
+
+### Pattern items intentionally omitted
+
+Two items from the glow-props `DEBUG_SYSTEM.md` pattern were deliberately scoped out (not forgotten):
+
+- **`diagnoseFailure()` utility**: Pattern describes it as "used by both the diagnostic panel and form submission error handlers." This app has no API calls or form submissions to external services — the utility would have zero consumers.
+- **Embed mode skip** (`?embed=` in URL): The app has no embed/iframe mode. Adding a guard for a non-existent feature would be speculative.
+
+### Removal note
+
+The debug system is alpha-only (per pattern: "intended to be removed post-alpha"). When alpha ends, remove: `debugLog.ts`, `clipboardUtils.ts`, `DebugPill.svelte`, `#debug-root` + inline `<script>` + inline pill in `app.html`, dynamic import in `+layout.svelte`. The z-80 layer becomes unused.
 
 ### Known remaining issue
 
 - **Model 3 model-use-cases doc**: Variant headings for 3D-3G describe different concepts than the code variants (e.g., doc says "Joint Venture Entity" for 3F but code says "Buy-In Arrangement"). Flagged for a future session.
-
-### Key Files Changed
-
-- `assets/icon-source.svg` — SVG source icon (single source of truth)
-- `scripts/generate-icons.mjs` — Sharp-based icon generation script with error handling
-- `apps/web/static/manifest.webmanifest` — PWA manifest with icon entries
-- `apps/web/static/*.png` — 5 generated icon PNGs
-- `apps/web/src/app.html` — apple-touch-icon, manifest link, theme-color meta
-- `package.json` — sharp devDep, generate-icons script, onlyBuiltDependencies config
-- `CLAUDE.md` — Updated file structure and build commands
-- `docs/ARCHITECTURE.md` — Fixed static/ nesting, updated icon file listing
-- `docs/HISTORY.md` — Changelog entry
-- `docs/SESSION_NOTES.md` — Updated session context
 
 ---
 

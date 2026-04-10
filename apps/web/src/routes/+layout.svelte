@@ -1,6 +1,7 @@
 <script lang="ts">
   import '../app.css';
   import { base } from '$app/paths';
+  import { onMount } from 'svelte';
 
   let mobileMenuOpen = false;
 
@@ -11,6 +12,31 @@
   function closeMobileMenu() {
     mobileMenuOpen = false;
   }
+
+  // Mount DebugPill into separate #debug-root (outside SvelteKit tree).
+  // Dynamic import ensures debugLog.ts module-level code (console interception,
+  // global error listeners) only runs in the browser, not during SSR build.
+  // Returns cleanup function so Svelte destroys the pill if the layout unmounts.
+  // The `destroyed` flag guards against a race where the layout unmounts before
+  // the dynamic import resolves — without it, the pill would be created after
+  // cleanup ran and never destroyed.
+  onMount(() => {
+    let pill: { $destroy: () => void } | null = null;
+    let destroyed = false;
+
+    import('$lib/components/DebugPill.svelte').then(({ default: DebugPill }) => {
+      if (destroyed) return;
+      const target = document.getElementById('debug-root');
+      if (target) {
+        pill = new DebugPill({ target });
+      }
+    });
+
+    return () => {
+      destroyed = true;
+      if (pill) pill.$destroy();
+    };
+  });
 </script>
 
 <div class="min-h-screen flex flex-col">

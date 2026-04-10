@@ -18,5 +18,94 @@
   </head>
   <body data-sveltekit-preload-data="hover" class="bg-background text-foreground antialiased">
     <div style="display: contents">%sveltekit.body%</div>
+
+    <!-- Debug pill root — separate from SvelteKit tree so it survives app crashes -->
+    <div id="debug-root"></div>
+
+    <!--
+      Pre-framework debug pill (inline, no dependencies).
+      Captures errors before JS bundles load. Includes 20-second loading timeout
+      that warns users if the framework fails to mount.
+      Bridges to the Svelte app via window.__debugPushError().
+    -->
+    <script>
+      // Circular buffer for pre-framework errors
+      window.__debugErrors = [];
+      window.__debugPushError = function(msg, stack) {
+        window.__debugErrors.push({ msg: msg, stack: stack, time: Date.now() });
+        if (window.__debugErrors.length > 200) window.__debugErrors.shift();
+        // Update inline pill badge if it exists
+        var badge = document.getElementById('debug-inline-error-count');
+        if (badge) { badge.textContent = window.__debugErrors.length; badge.style.display = 'inline'; }
+      };
+
+      // Capture errors before any module scripts load.
+      // Stored as named references on window so debugLog.ts can remove them
+      // once the module takes over (prevents double-capture).
+      window.__debugInlineErrorHandler = function(e) {
+        window.__debugPushError(e.message || 'Unknown error', e.filename + ':' + e.lineno);
+      };
+      window.__debugInlineRejectionHandler = function(e) {
+        window.__debugPushError('Unhandled rejection: ' + e.reason);
+      };
+      window.addEventListener('error', window.__debugInlineErrorHandler);
+      window.addEventListener('unhandledrejection', window.__debugInlineRejectionHandler);
+
+      // Loading timeout — warn user if framework fails to mount within 20s
+      window.__debugSvelteMounted = false;
+      window.__debugClearLoadTimer = function() {
+        window.__debugSvelteMounted = true;
+        clearTimeout(window.__debugLoadTimer);
+        // Hide inline pill once Svelte pill takes over
+        var inlinePill = document.getElementById('debug-inline-pill');
+        if (inlinePill) inlinePill.style.display = 'none';
+      };
+      window.__debugLoadTimer = setTimeout(function() {
+        if (!window.__debugSvelteMounted) {
+          // Show inline pill with warning
+          var pill = document.getElementById('debug-inline-pill');
+          if (pill) pill.style.display = 'flex';
+          var warning = document.getElementById('debug-inline-warning');
+          if (warning) warning.style.display = 'block';
+        }
+      }, 20000);
+    </script>
+
+    <!-- Inline debug pill (visible only if framework fails to mount within 20s) -->
+    <div id="debug-inline-pill" style="
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 80;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      font-family: monospace;
+      font-size: 12px;
+    ">
+      <div id="debug-inline-warning" style="
+        display: none;
+        background: #1a1a1a;
+        color: #eab308;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 12px 16px;
+        max-width: 320px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        line-height: 1.4;
+      ">
+        This is taking longer than usual. Check the browser console for errors, or try reloading.
+        <span id="debug-inline-error-count" style="
+          display: none;
+          background: #ef4444;
+          color: #fff;
+          border-radius: 9999px;
+          padding: 0 5px;
+          font-size: 10px;
+          margin-left: 4px;
+        ">0</span>
+      </div>
+    </div>
   </body>
 </html>
