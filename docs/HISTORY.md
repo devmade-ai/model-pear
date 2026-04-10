@@ -7,6 +7,18 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Align CLAUDE.md glow-props Implementation Patterns (April 10, 2026)
+
+**Impact**: Documentation — stale AI Note replaced with standard implementation patterns section
+
+### Changes
+
+1. Replaced "Shared conventions with glow-props" AI Note with canonical "Implementation patterns — always fetch from glow-props" note
+2. Added "Implementation Patterns (Source of Truth)" section with fetch URLs and rules
+3. Added prohibition: no local copies of implementation pattern files
+
+---
+
 ## Align CLAUDE.md with glow-props Conventions (March 24, 2026)
 
 **Impact**: Documentation consistency — CLAUDE.md now follows canonical glow-props structure
