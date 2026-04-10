@@ -6,16 +6,18 @@
 
 ## Current State (April 10, 2026)
 
-**Last completed**: Aligned CLAUDE.md glow-props implementation patterns
+**Last completed**: Complete PDF download feature — buttons + full print CSS overhaul
 
-**Status**: CLAUDE.md stale "Shared conventions with glow-props" AI Note replaced; standard Implementation Patterns section and prohibition added
+**Status**: Both calculator pages have "Save as PDF" buttons. Print CSS fully aligned with glow-props DOWNLOAD_PDF pattern. Critical dark-theme-in-print bug fixed.
 
 ### What was done this session
 
-1. **Replaced stale AI Note** (~line 215): Removed "Shared conventions with glow-props" block referencing "suggested implementations". Replaced with canonical "Implementation patterns — always fetch from glow-props" note pointing to `docs/implementations/` in glow-props repo.
-2. **Added "Implementation Patterns (Source of Truth)" section**: Standard section from glow-props CLAUDE.md with fetch instructions (GitHub Pages URL, GitHub API URL, listing command) and rules.
-3. **Added prohibition**: "Create local copies of implementation pattern files in any repo — always fetch from glow-props"
-4. **Verified**: No references to "suggested implementations in glow-props CLAUDE.md" remain.
+1. **Added "Save as PDF" button to structuring calculator** (`apps/web/src/routes/structuring/[model]/+page.svelte`): Placed in the existing action bar alongside "Save Option" and "Save As..." buttons.
+2. **Added "Save as PDF" button to pricing calculator** (`apps/web/src/routes/pricing/+page.svelte`): Added to the results section header, right-aligned next to the "Results" heading.
+3. **Fixed critical dark-theme-in-print bug** (`apps/web/src/app.css`): Overrode `:root` CSS variables with light-theme values in `@media print`. Without this, `text-foreground` resolved to white (invisible on white paper) and `bg-card` rendered dark gray backgrounds.
+4. **Print CSS overhaul**: Added hardcoded dark color overrides, link styling, `.print-avoid-break` utility class, modern+legacy break properties, `.sticky` override, `section/.card/.result-panel` break-inside rules, `!important` on `print-color-adjust`, decision context comments throughout.
+5. **Print content quality**: Hidden ComparisonManager (interactive-only), collapsed sections hidden when collapsed (no empty card shells), expanded sections preserve heading via `print-include`, added `.print-only` utility class, pricing page shows selected model name in print.
+6. ComparisonView already had "Print / PDF" button — unchanged.
 
 ### Known remaining issue
 
@@ -23,7 +25,13 @@
 
 ### Key Files Changed
 
-- `CLAUDE.md` — Replaced stale AI Note, added Implementation Patterns section, added prohibition
+- `apps/web/src/app.css` — Complete print CSS rewrite: dark→light variable overrides, `.print-only`/`.print-include`/`.no-print` utilities, break control, collapsible section handling
+- `apps/web/src/routes/structuring/[model]/+page.svelte` — "Save as PDF" button, `no-print` on ComparisonManager, `class:no-print` on collapsed sections, `print-include` on toggle buttons
+- `apps/web/src/routes/pricing/+page.svelte` — "Save as PDF" button, `no-print` on model tabs, `print-only` selected model heading
+- `docs/HISTORY.md` — Detailed changelog
+- `docs/BUSINESS_GUIDE.md` — Updated export documentation
+- `docs/README.md` — Updated features list
+- `docs/SESSION_NOTES.md` — Updated session context
 
 ---
 

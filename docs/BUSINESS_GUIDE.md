@@ -550,6 +550,9 @@ The comparison view displays selected options in a side-by-side table:
 
 #### Export Options
 
+From any calculator page (Pricing or Transaction Structuring):
+- **Save as PDF**: Opens your browser's print dialog to save results as a PDF
+
 From the Comparison Manager:
 - **Export JSON**: Full data export for backup or sharing
 - **Export CSV**: Spreadsheet-compatible format for Excel/Google Sheets
@@ -1112,6 +1115,7 @@ Always validate results against your specific circumstances.
 - **Import**: Load previously exported JSON files
 
 **From Results View:**
+- **Save as PDF**: Click the "Save as PDF" button to save your current results
 - On-screen results and visualisations
 - Printable compliance checklists
 - Copy/paste capability for all outputs
@@ -1121,7 +1125,12 @@ Always validate results against your specific circumstances.
 2. Open the Comparison Manager (click "View Saved")
 3. Click "Export JSON" or "Export CSV"
 
-**For PDF Export:**
+**For PDF Export (Individual Results):**
+1. Click "Save as PDF" on any calculator page (Pricing or Transaction Structuring)
+2. In your browser's print dialog, select "Save as PDF" as the destination
+3. The page is formatted for clean, readable output on white paper
+
+**For PDF Export (Comparison):**
 1. Open the Comparison View (select 2+ options and click Compare)
 2. Click the "Print / PDF" button in the toolbar
 3. In your browser's print dialog, select "Save as PDF" as the destination

@@ -12,6 +12,9 @@
 
   let selectedModel = 'subscription';
 
+  // Derived: selected model metadata for print heading
+  $: selectedModelInfo = models.find(m => m.id === selectedModel);
+
   // Subscription inputs
   let sub_monthlyPrice = 500;
   let sub_customers = 100;
@@ -278,8 +281,8 @@
     </p>
   </div>
 
-  <!-- Model Selector -->
-  <div class="mb-8">
+  <!-- Model Selector (interactive — hidden in print) -->
+  <div class="mb-8 no-print">
     <label class="block text-sm font-medium text-secondary mb-3">Pricing Model</label>
     <!-- Mobile: horizontal scroll, Tablet+: grid -->
     <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-3 md:grid-cols-5 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -298,6 +301,15 @@
     </div>
     <p class="text-xs text-secondary/60 mt-2 sm:hidden text-center">Swipe to see all models</p>
   </div>
+
+  <!-- Print-only: show selected model name (tab buttons are hidden in print).
+       Uses .print-only utility — hidden on screen, visible in print. -->
+  {#if selectedModelInfo}
+    <div class="print-only mb-6">
+      <p class="text-sm text-secondary">Pricing Model</p>
+      <p class="text-lg font-semibold text-foreground">{selectedModelInfo.icon} {selectedModelInfo.name}</p>
+    </div>
+  {/if}
 
   <div class="grid lg:grid-cols-2 gap-8">
     <!-- Inputs -->
@@ -573,7 +585,16 @@
     <!-- Results -->
     <div>
       <div class="card p-6">
-        <h2 class="text-lg font-semibold text-foreground mb-4">Results</h2>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-foreground">Results</h2>
+          <!-- Requirement: Let users save pricing results as PDF via the browser's native print dialog.
+               Approach: window.print() — zero dependencies, leverages existing @media print CSS in app.css.
+               Alternative considered: pdf-lib — rejected because content is text/tables (not canvas),
+               so the browser print engine handles it well without extra bundle size. -->
+          <button class="btn-outline text-sm no-print" on:click={() => window.print()} title="Save this page as a PDF using your browser's print dialog">
+            Save as PDF
+          </button>
+        </div>
 
         {#if results}
           <!-- Equilibrium Status -->

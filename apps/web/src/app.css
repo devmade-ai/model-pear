@@ -250,6 +250,13 @@
     padding-right: env(safe-area-inset-right);
   }
 
+  /* Print visibility utilities:
+     - .no-print: hidden in print, visible on screen (defined in @media print block)
+     - .print-only: hidden on screen, visible in print */
+  .print-only {
+    display: none;
+  }
+
   /* Text colors using CSS variables */
   .text-primary-color {
     color: hsl(var(--primary));
@@ -260,9 +267,38 @@
   }
 }
 
-/* Print styles for comparison view and reports */
+/* Print styles for PDF export via window.print()
+   Approach: Override dark theme CSS variables to light values so all Tailwind
+   utility classes (text-foreground, bg-card, etc.) automatically resolve to
+   print-friendly colors. This is cleaner than overriding individual classes.
+   See glow-props docs/implementations/DOWNLOAD_PDF.md for the canonical pattern. */
 @media print {
-  /* Hide navigation and interactive elements */
+  /* Override dark theme CSS variables with light-theme values for print.
+     Without this, text-foreground resolves to white (invisible on white paper)
+     and bg-card resolves to dark gray. Overriding at :root fixes all
+     Tailwind utility classes that reference these variables. */
+  :root {
+    --background: 0 0% 100%;         /* white */
+    --foreground: 0 0% 7%;           /* near-black */
+    --card: 0 0% 100%;               /* white */
+    --card-foreground: 0 0% 7%;      /* near-black */
+    --primary: 222 100% 40%;         /* darker blue for readability on white */
+    --primary-foreground: 0 0% 100%; /* white (for badges on primary bg) */
+    --secondary: 0 0% 35%;           /* dark gray — readable as secondary text */
+    --secondary-foreground: 0 0% 7%;
+    --muted: 0 0% 96%;               /* very light gray */
+    --muted-foreground: 0 0% 35%;    /* dark gray */
+    --border: 0 0% 80%;              /* light gray border */
+    --ring: 222 100% 40%;
+
+    color-scheme: light;
+  }
+
+  /* Hide navigation and interactive elements.
+     - .no-print: semantic class for elements that should never appear in PDF
+     - button:not(.print-include): hides all buttons unless explicitly marked
+     - .btn-*: also targets <a> elements styled as buttons (Tailwind @apply
+       copies properties, doesn't add the base class to the element) */
   nav,
   header,
   footer,
@@ -274,12 +310,36 @@
     display: none !important;
   }
 
-  /* Reset background for printing */
+  /* Reset background for printing.
+     !important on print-color-adjust ensures browsers preserve background
+     colors for badges, status indicators, and colored elements. */
   body {
     background: white !important;
     color: black !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Override hardcoded dark colors that aren't CSS-variable-based.
+     Tailwind config defines secondary-light (#222222) and secondary-dark (#333333)
+     as static hex values. These need explicit overrides for print. */
+  .bg-secondary-light {
+    background-color: #f5f5f5 !important;
+  }
+
+  .bg-secondary-dark {
+    background-color: #e5e5e5 !important;
+  }
+
+  /* Links lose their hover state in print — underlines make them identifiable */
+  a {
+    color: black !important;
+    text-decoration: underline !important;
+  }
+
+  /* Sticky elements overlap content in print. Override to normal flow. */
+  .sticky {
+    position: static !important;
   }
 
   /* Full width for print content */
@@ -301,13 +361,30 @@
     box-shadow: none !important;
   }
 
-  /* Keep colors for badges and highlights */
+  /* Show print-only elements (hidden on screen via .print-only utility) */
+  .print-only {
+    display: block !important;
+  }
+
+  /* Collapsible section toggle buttons with print-include:
+     Keep the heading text visible but hide the expand/collapse chevron SVG,
+     since it references interactive behavior that doesn't exist in print. */
+  button.print-include {
+    display: flex !important;
+    cursor: default;
+  }
+
+  button.print-include svg {
+    display: none !important;
+  }
+
+  /* Preserve background colors for badges and status indicators */
   .badge-success,
   .badge-warning,
   .badge-error,
   .badge-primary {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   /* Table styling for print */
@@ -323,16 +400,36 @@
     color: black !important;
   }
 
-  /* Page break control */
+  /* Page break control — named utility class per glow-props pattern.
+     Apply selectively to cards, result panels, and content blocks
+     that should not be split across pages.
+     Uses both modern (break-inside) and legacy (page-break-inside) properties. */
+  .print-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
   .page-break-before {
+    break-before: page;
     page-break-before: always;
   }
 
   .page-break-after {
+    break-after: page;
     page-break-after: always;
   }
 
+  /* Legacy alias — kept for existing usages, prefer .print-avoid-break for new code */
   .avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Fallback: prevent content blocks from splitting across pages */
+  section,
+  .card,
+  .result-panel {
+    break-inside: avoid;
     page-break-inside: avoid;
   }
 }
