@@ -28,6 +28,17 @@
 - `apps/web/src/app.html` — Added #debug-root and inline pre-framework pill
 - `apps/web/src/routes/+layout.svelte` — Mount DebugPill into #debug-root
 
+### Pattern items intentionally omitted
+
+Two items from the glow-props `DEBUG_SYSTEM.md` pattern were deliberately scoped out (not forgotten):
+
+- **`diagnoseFailure()` utility**: Pattern describes it as "used by both the diagnostic panel and form submission error handlers." This app has no API calls or form submissions to external services — the utility would have zero consumers.
+- **Embed mode skip** (`?embed=` in URL): The app has no embed/iframe mode. Adding a guard for a non-existent feature would be speculative.
+
+### Removal note
+
+The debug system is alpha-only (per pattern: "intended to be removed post-alpha"). When alpha ends, remove: `debugLog.ts`, `clipboardUtils.ts`, `DebugPill.svelte`, `#debug-root` + inline `<script>` + inline pill in `app.html`, dynamic import in `+layout.svelte`. The z-80 layer becomes unused.
+
 ### Known remaining issue
 
 - **Model 3 model-use-cases doc**: Variant headings for 3D-3G describe different concepts than the code variants (e.g., doc says "Joint Venture Entity" for 3F but code says "Buy-In Arrangement"). Flagged for a future session.
