@@ -7,6 +7,19 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Debug System — In-Memory Logging + Floating Pill (April 10, 2026)
+
+**Impact**: Infrastructure — alpha-phase diagnostic tool for runtime debugging
+
+1. Created `debugLog.ts` module: circular buffer (max 200 entries), typed sources/severities, pub/sub with immediate delivery for late subscribers, console.error/warn interception, global error/unhandledrejection capture, report generation with URL redaction
+2. Created `clipboardUtils.ts`: three-tier clipboard fallback (ClipboardItem Blob, writeText, textarea execCommand) for all browser contexts including mobile PWA webviews
+3. Created `DebugPill.svelte`: floating debug pill with inline styles (not Tailwind — survives stylesheet failures), 3 tabs (Log with color-coded entries, Environment with runtime info, PWA Diagnostics with active health probes), mounted in separate `#debug-root` outside SvelteKit tree to survive app crashes
+4. Updated `app.html`: added `#debug-root` div, pre-framework inline `<script>` with `window.__debugPushError()` bridge and 20-second loading timeout that shows warning if framework fails to mount
+5. Updated `+layout.svelte`: mounts DebugPill into `#debug-root` via `new DebugPill({ target })` for crash isolation
+6. Pattern source: glow-props `DEBUG_SYSTEM.md`, adapted from React to SvelteKit 4
+
+---
+
 ## Z-Index Scale — Audit and Normalize (April 10, 2026)
 
 **Impact**: Infrastructure — standardized stacking order across all UI layers

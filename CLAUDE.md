@@ -556,9 +556,12 @@ model-pear/
 │       │   │           └── +page.svelte        # Model calculator with variants
 │       │   └── lib/
 │       │       ├── components/                 # Reusable UI components
+│       │       │   └── DebugPill.svelte        # Floating debug pill (inline styles, 3 tabs)
 │       │       ├── stores/                     # Svelte stores
 │       │       ├── config/                     # Configuration
-│       │       └── utils/                      # Utilities
+│       │       ├── utils/                      # Utilities
+│       │       ├── debugLog.ts                 # In-memory debug log (circular buffer, pub/sub)
+│       │       └── clipboardUtils.ts           # Clipboard copy with multiple fallbacks
 │       ├── static/                             # Static assets (served at root)
 │       │   ├── favicon.png                     # 48x48 browser tab icon
 │       │   ├── apple-touch-icon.png            # 180x180 iOS home screen

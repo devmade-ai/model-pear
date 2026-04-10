@@ -1,6 +1,8 @@
 <script lang="ts">
   import '../app.css';
   import { base } from '$app/paths';
+  import { onMount } from 'svelte';
+  import DebugPill from '$lib/components/DebugPill.svelte';
 
   let mobileMenuOpen = false;
 
@@ -11,6 +13,15 @@
   function closeMobileMenu() {
     mobileMenuOpen = false;
   }
+
+  // Mount DebugPill into separate #debug-root (outside SvelteKit tree).
+  // Survives app crashes because it's an independent Svelte component tree.
+  onMount(() => {
+    const target = document.getElementById('debug-root');
+    if (target) {
+      new DebugPill({ target });
+    }
+  });
 </script>
 
 <div class="min-h-screen flex flex-col">
