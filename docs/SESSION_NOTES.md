@@ -4,28 +4,18 @@
 
 ---
 
-## Current State (March 23, 2026)
+## Current State (April 10, 2026)
 
-**Last completed**: Aligned CLAUDE.md with glow-props canonical conventions
+**Last completed**: Aligned CLAUDE.md glow-props implementation patterns
 
-**Status**: CLAUDE.md now matches glow-props structure and conventions; all docs synced
+**Status**: CLAUDE.md stale "Shared conventions with glow-props" AI Note replaced; standard Implementation Patterns section and prohibition added
 
 ### What was done this session
 
-1. **Fixed stale product names**: Updated "Pricing Equilibrium Calculator" in CALCULATIONS.md and UI_UX_GUIDE.md, "Revenue Model Calculator" in HISTORY.md → all now say "Software Transaction Structuring Tool"
-2. **Cleaned up orphaned compliance comment** in calculator/src/index.ts (referenced never-created module; TP is implemented inline)
-3. **Aligned CLAUDE.md with glow-props conventions**:
-   - Added "READ AND FOLLOW..." header and Process section
-   - Added REMINDER banners after key sections
-   - Added Principles #6 "Follow conventions" and #7 "Repeatable process"
-   - Aligned Cleanup to use `// KEEP:` marker convention
-   - Added specific Quality Check items (XSS via `{@html}`, reactivity, keys)
-   - Added full Documentation section with per-doc descriptions (what/when/why) including BUSINESS_GUIDE.md as User Guide and TESTING_GUIDE.md
-   - Added Triggers section (10 analysis triggers: review, audit, docs, mobile, clean, perf, security, debug, improve, start)
-   - Added 3 missing Prohibitions from glow-props
-   - Expanded AI Notes (commit before ending, sibling repo access, communication style merged in)
-   - Removed standalone COMMUNICATION STYLE section (merged into AI Notes)
-   - Updated cross-reference date to 2026-03-24
+1. **Replaced stale AI Note** (~line 215): Removed "Shared conventions with glow-props" block referencing "suggested implementations". Replaced with canonical "Implementation patterns — always fetch from glow-props" note pointing to `docs/implementations/` in glow-props repo.
+2. **Added "Implementation Patterns (Source of Truth)" section**: Standard section from glow-props CLAUDE.md with fetch instructions (GitHub Pages URL, GitHub API URL, listing command) and rules.
+3. **Added prohibition**: "Create local copies of implementation pattern files in any repo — always fetch from glow-props"
+4. **Verified**: No references to "suggested implementations in glow-props CLAUDE.md" remain.
 
 ### Known remaining issue
 
@@ -33,11 +23,7 @@
 
 ### Key Files Changed
 
-- `CLAUDE.md` — Major alignment with glow-props conventions
-- `docs/CALCULATIONS.md` — Fixed stale product name
-- `docs/UI_UX_GUIDE.md` — Fixed stale product name
-- `docs/HISTORY.md` — Fixed stale product name + new entry
-- `packages/calculator/src/index.ts` — Cleaned up orphaned compliance comment
+- `CLAUDE.md` — Replaced stale AI Note, added Implementation Patterns section, added prohibition
 
 ---
 

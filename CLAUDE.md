@@ -212,11 +212,7 @@ These footers are required on every commit. No exceptions.
   - Use `$(printenv GITHUB_ALL_REPO_TOKEN)` not `$GITHUB_ALL_REPO_TOKEN` to avoid shell expansion issues
   - Never clone sibling repos — use the API instead
 
-- **Shared conventions with glow-props:**
-  - glow-props CLAUDE.md contains suggested implementations (PWA, debug system, app icons, PDF download, HTTPS proxy) that may apply here
-  - Fetch it at session start when working on features that overlap: `curl -sf "https://raw.githubusercontent.com/devmade-ai/glow-props/main/CLAUDE.md"`
-  - Or via GitHub API: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/glow-props/contents/CLAUDE.md" | jq -r '.content' | base64 -d`
-  - Shared conventions: code org thresholds, decision docs, commit format, cleanup rules, quality scans, non-technical user UX, prohibitions, triggers
+- **Implementation patterns — always fetch from glow-props.** Never look for local copies of implementation pattern files (e.g., `docs/implementations/*.md`) in downstream repos. They do not exist locally — the single source of truth is the `docs/implementations/` folder in the glow-props repo. Fetch the latest version before every implementation task.
 
 ### REMINDER: READ AND FOLLOW THE AI NOTES EVERY TIME
 
@@ -366,6 +362,25 @@ These footers are required on every commit. No exceptions.
 
 ---
 
+## Implementation Patterns (Source of Truth)
+
+All implementation patterns live in the **glow-props** repo and are the single source of truth for all devmade-ai projects.
+
+**Source location:** `docs/implementations/` in the glow-props repo
+
+**How to access from any repo:**
+- Fetch via GitHub Pages: `curl -sf "https://devmade-ai.github.io/glow-props/patterns/{PATTERN_NAME}.md"`
+- Fetch via GitHub API: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/glow-props/contents/docs/implementations/{PATTERN_NAME}.md" | jq -r .content | base64 -d`
+- To list all available patterns: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/glow-props/contents/docs/implementations" | jq -r '.[].name'`
+
+**Rules:**
+- **Always fetch the latest version** from glow-props before implementing — patterns are continuously improved
+- **Never create local copies** of implementation pattern files in downstream repos
+- **Do not hardcode a list of patterns** — scan the source folder to discover what's available
+- The set of patterns grows over time; always check the source for new additions
+
+---
+
 ## PROJECT-SPECIFIC CONFIGURATION
 
 ### Paths
@@ -436,6 +451,7 @@ Never:
 - Remove features during "cleanup" without checking if they're documented as intentional (see AI_MISTAKES.md)
 - Proceed with assumptions when a single clarifying question would prevent a wrong commit
 - Use interactive input prompts or selection UIs — list options as numbered text instead
+- Create local copies of implementation pattern files in any repo — always fetch from glow-props
 
 ### REMINDER: READ AND FOLLOW THE PROHIBITIONS EVERY TIME
 
