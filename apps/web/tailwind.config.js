@@ -75,6 +75,14 @@ export default {
         // Ensure 8px base unit spacing is available
         '18': '4.5rem', // 72px for XL icons
       },
+      // Z-index scale (glow-props standard): 0-10 base, 20 sticky, 30 sheets,
+      // 40 backdrop, 50 menu, 60 modal, 70 toast, 80 debug.
+      // Tailwind defaults cover 0-50; extend for 60+ to avoid arbitrary values.
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+      },
     },
   },
   plugins: [],
