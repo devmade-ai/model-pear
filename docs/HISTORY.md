@@ -14,7 +14,7 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 1. Audited all z-index values in the codebase (4 values across 3 files)
 2. Normalized sticky header from `z-40` to `z-20` (Sticky headers layer)
 3. Split Save Modal and Comparison View from single `z-50` div into adjacent backdrop (`z-40`) + modal (`z-60`) siblings, per pattern rule: "Backdrop and its content are always adjacent"
-4. Added `pointer-events-none` on modal container + `pointer-events-auto` on card so click-to-close backdrop works through the modal centering layer
+4. Added `pointer-events-none` on modal container + `pointer-events-auto` on card so backdrop blocks page interaction while card remains interactive (no click-to-close — preserves original behavior)
 5. Sticky thead `z-10` was already correct (Base content = 0-10)
 6. Extended Tailwind config with `zIndex: { 60, 70, 80 }` named utilities for layers above Tailwind's default z-50
 7. Scale: 0-10 base, 20 sticky, 30 sheets, 40 backdrop, 50 menu, 60 modal, 70 toast, 80 debug

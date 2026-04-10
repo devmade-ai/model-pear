@@ -349,7 +349,9 @@
     padding: 0 !important;
   }
 
-  /* Ensure comparison modal prints properly */
+  /* Ensure comparison modal prints properly.
+     Modals use two adjacent .fixed.inset-0 siblings (backdrop z-40 + modal z-60).
+     Both match this selector — the empty backdrop collapses to 0 height harmlessly. */
   .fixed.inset-0 {
     position: relative !important;
     background: white !important;

@@ -19,7 +19,7 @@
    - `[model]/+page.svelte`: Save Modal — split single `z-50` div into backdrop (`z-40`) + modal (`z-60`) siblings
    - `ComparisonView.svelte`: Comparison modal — same split into backdrop (`z-40`) + modal (`z-60`) siblings
    - `ComparisonView.svelte`: Sticky thead `z-10` — already correct (layer: Base content)
-4. **Split backdrop/modal per pattern rule**: "Backdrop and its content are always adjacent — backdrop is always z-40." Added `pointer-events-none` on modal container + `pointer-events-auto` on card for click-to-close.
+4. **Split backdrop/modal per pattern rule**: "Backdrop and its content are always adjacent — backdrop is always z-40." Added `pointer-events-none` on modal container + `pointer-events-auto` on card. Backdrop has no click handler (preserves original behavior — no click-outside-to-close).
 5. **Extended Tailwind config** with `zIndex: { 60, 70, 80 }` for named classes (avoids arbitrary `z-[60]` syntax)
 6. **Verified**: Build passes, 301 tests pass
 
