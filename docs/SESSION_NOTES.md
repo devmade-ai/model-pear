@@ -6,20 +6,21 @@
 
 ## Current State (April 10, 2026)
 
-**Last completed**: App icons — full implementation + quality cleanup
+**Last completed**: Z-index scale — audit and normalize to glow-props standard
 
-**Status**: All app icons generated, wired up, and production-ready. Favicon, Apple touch icon, PWA manifest, theme-color meta all in place. All documentation updated. Build verified.
+**Status**: All z-index values in the codebase now follow the glow-props Z_INDEX_SCALE standard. Tailwind config extended with z-60/70/80 utilities. Build verified, 301 tests pass.
 
 ### What was done this session
 
-1. **Created SVG source icon** (`assets/icon-source.svg`): White pear silhouette on primary blue (#2D68FF), `shape-rendering="geometricPrecision"`, content within 80% maskable safe zone
-2. **Added `sharp` devDependency** at root level with `pnpm.onlyBuiltDependencies` config for pnpm v10
-3. **Created generation script** (`scripts/generate-icons.mjs`): 400 DPI rasterisation, outputs 5 PNGs (48, 180, 192, 512, 1024) to `apps/web/static/`. Includes SVG source existence check with clear error message.
-4. **Created PWA manifest** (`apps/web/static/manifest.webmanifest`): 192/512 as `any`, 1024 as `maskable`
-5. **Updated app.html**: Added `apple-touch-icon` (with `sizes="180x180"`), `manifest` link, and `<meta name="theme-color" content="#2D68FF">` for mobile browser chrome
-6. **Added `pnpm generate-icons`** script to root package.json
-7. **Quality cleanup**: Removed redundant SVG attrs (`rx="0" ry="0"`), fixed inaccurate SVG comment, added proper error handling to generation script
-8. **Documentation**: Updated CLAUDE.md file structure (assets/, scripts/, static/) and build commands. Fixed ARCHITECTURE.md `static/` nesting (was incorrectly under `src/`, moved to correct sibling position). Updated HISTORY.md changelog.
+1. **Fetched Z_INDEX_SCALE pattern** from glow-props repo (source of truth)
+2. **Audited all z-index usage** — found 4 values across 3 files
+3. **Normalized values to the standard scale**:
+   - `+layout.svelte`: Sticky header `z-40` → `z-20` (layer: Sticky headers)
+   - `[model]/+page.svelte`: Save Modal `z-50` → `z-60` (layer: Modal)
+   - `ComparisonView.svelte`: Comparison modal `z-50` → `z-60` (layer: Modal)
+   - `ComparisonView.svelte`: Sticky thead `z-10` — already correct (layer: Base content)
+4. **Extended Tailwind config** with `zIndex: { 60, 70, 80 }` for named classes (avoids arbitrary `z-[60]` syntax)
+5. **Verified**: Build passes, 301 tests pass
 
 ### Known remaining issue
 

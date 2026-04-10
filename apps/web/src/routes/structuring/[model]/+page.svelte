@@ -467,7 +467,7 @@
 
   <!-- Save Modal -->
   {#if showSaveModal}
-    <div class="fixed inset-0 bg-background/90 z-50 flex items-center justify-center p-4">
+    <div class="fixed inset-0 bg-background/90 z-60 flex items-center justify-center p-4">
       <div class="bg-card rounded-xl border border-border shadow-xl max-w-md w-full p-6">
         <h3 class="text-lg font-semibold text-foreground mb-4">Save Option</h3>
         <div class="mb-4">

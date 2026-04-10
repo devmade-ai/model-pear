@@ -7,6 +7,19 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Z-Index Scale — Audit and Normalize (April 10, 2026)
+
+**Impact**: Infrastructure — standardized stacking order across all UI layers
+
+1. Audited all z-index values in the codebase (4 values across 3 files)
+2. Normalized sticky header from `z-40` to `z-20` (glow-props standard: Sticky headers = 20)
+3. Normalized Save Modal and Comparison View modal from `z-50` to `z-60` (glow-props standard: Modal = 60)
+4. Sticky thead `z-10` was already correct (Base content = 0-10)
+5. Extended Tailwind config with `zIndex: { 60, 70, 80 }` named utilities for layers above Tailwind's default z-50
+6. Scale: 0-10 base, 20 sticky, 30 sheets, 40 backdrop, 50 menu, 60 modal, 70 toast, 80 debug
+
+---
+
 ## App Icons — SVG Source + Sharp Generation (April 10, 2026)
 
 **Impact**: User-facing — favicon, Apple touch icon, and PWA manifest icons

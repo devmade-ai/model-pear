@@ -220,7 +220,7 @@
   }
 </script>
 
-<div class="fixed inset-0 bg-background/80 z-50 flex items-center justify-center p-4">
+<div class="fixed inset-0 bg-background/80 z-60 flex items-center justify-center p-4">
   <div class="bg-card rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden border border-border">
     <!-- Header -->
     <div class="flex items-center justify-between p-4 border-b border-border">
