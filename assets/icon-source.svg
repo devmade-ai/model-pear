@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" shape-rendering="geometricPrecision">
+  <!-- Model Pear app icon
+       Design: White pear silhouette on primary blue (#2D68FF) background
+       Safe zone: Content within inner 80% (102-922px) for maskable crop
+       Legibility: Simple shape, no fine details — works at 48px favicon size -->
+
+  <!-- Background fills entire canvas -->
+  <rect width="1024" height="1024" rx="0" ry="0" fill="#2D68FF"/>
+
+  <!-- Pear shape — centered in safe zone
+       Built from two overlapping ellipses (body + top) merged via single path
+       Stem and leaf add recognisability at small sizes -->
+  <g transform="translate(512, 530)">
+    <!-- Pear body: teardrop shape using cubic beziers
+         Wider bottom, narrower top — classic pear silhouette -->
+    <path d="
+      M 0,-280
+      C  80,-280  130,-240  150,-180
+      C 180,-100  200, -20  200,  60
+      C 200, 160  180, 240  140, 300
+      C 100, 360   50, 390    0, 390
+      C -50, 390 -100, 360 -140, 300
+      C-180, 240 -200, 160 -200,  60
+      C-200, -20 -180,-100 -150,-180
+      C-130,-240  -80,-280    0,-280
+      Z
+    " fill="#FFFFFF"/>
+
+    <!-- Stem -->
+    <path d="
+      M -6,-280
+      C -6,-310  -4,-340   0,-370
+      C  4,-340   6,-310   6,-280
+      Z
+    " fill="#FFFFFF"/>
+
+    <!-- Leaf — small, angled to the right for visual balance -->
+    <path d="
+      M 6,-340
+      C  30,-370   70,-380   90,-360
+      C  70,-340   30,-330    6,-340
+      Z
+    " fill="#FFFFFF"/>
+  </g>
+</svg>

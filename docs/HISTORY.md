@@ -7,6 +7,19 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## App Icons — SVG Source + Sharp Generation (April 10, 2026)
+
+**Impact**: User-facing — favicon, Apple touch icon, and PWA manifest icons
+
+1. Created SVG source icon (`assets/icon-source.svg`): White pear silhouette on primary blue (#2D68FF) background, `shape-rendering="geometricPrecision"`, content within 80% safe zone for maskable crop
+2. Added `sharp` as root devDependency for high-quality SVG-to-PNG rasterisation
+3. Created generation script (`scripts/generate-icons.mjs`): Rasterises SVG at 400 DPI, outputs 5 PNGs (48, 180, 192, 512, 1024) to `apps/web/static/`
+4. Created PWA manifest (`apps/web/static/manifest.webmanifest`): 192/512 as `any`, 1024 as `maskable`, theme/background colours match app
+5. Updated `app.html`: Added `<link rel="apple-touch-icon">` and `<link rel="manifest">`
+6. Added `pnpm generate-icons` script to root package.json
+
+---
+
 ## Complete PDF Download Feature (April 10, 2026)
 
 **Impact**: User-facing — both calculators have "Save as PDF" buttons with production-quality print output
