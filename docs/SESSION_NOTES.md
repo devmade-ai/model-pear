@@ -16,11 +16,12 @@
 2. **Audited all z-index usage** — found 4 values across 3 files
 3. **Normalized values to the standard scale**:
    - `+layout.svelte`: Sticky header `z-40` → `z-20` (layer: Sticky headers)
-   - `[model]/+page.svelte`: Save Modal `z-50` → `z-60` (layer: Modal)
-   - `ComparisonView.svelte`: Comparison modal `z-50` → `z-60` (layer: Modal)
+   - `[model]/+page.svelte`: Save Modal — split single `z-50` div into backdrop (`z-40`) + modal (`z-60`) siblings
+   - `ComparisonView.svelte`: Comparison modal — same split into backdrop (`z-40`) + modal (`z-60`) siblings
    - `ComparisonView.svelte`: Sticky thead `z-10` — already correct (layer: Base content)
-4. **Extended Tailwind config** with `zIndex: { 60, 70, 80 }` for named classes (avoids arbitrary `z-[60]` syntax)
-5. **Verified**: Build passes, 301 tests pass
+4. **Split backdrop/modal per pattern rule**: "Backdrop and its content are always adjacent — backdrop is always z-40." Added `pointer-events-none` on modal container + `pointer-events-auto` on card for click-to-close.
+5. **Extended Tailwind config** with `zIndex: { 60, 70, 80 }` for named classes (avoids arbitrary `z-[60]` syntax)
+6. **Verified**: Build passes, 301 tests pass
 
 ### Known remaining issue
 
