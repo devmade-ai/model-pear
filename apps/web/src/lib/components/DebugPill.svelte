@@ -12,11 +12,13 @@
   import { onMount, onDestroy } from 'svelte';
   import type { DebugEntry } from '$lib/debugLog';
   import {
+    debugAdd,
     debugSubscribe,
     debugGetEntries,
     debugClear,
     debugGenerateReport,
     debugGetEnvironment,
+    formatDebugTimestamp,
   } from '$lib/debugLog';
   import { copyToClipboard } from '$lib/clipboardUtils';
 
@@ -52,16 +54,17 @@
 
   onMount(() => {
     entries = debugGetEntries();
-    unsubscribe = debugSubscribe((entry) => {
+    unsubscribe = debugSubscribe(() => {
       entries = [...debugGetEntries()];
     });
+
     // Signal to inline pill that the framework has mounted
-    if (typeof window !== 'undefined') {
-      (window as any).__debugSvelteMounted = true;
-      if (typeof (window as any).__debugClearLoadTimer === 'function') {
-        (window as any).__debugClearLoadTimer();
-      }
+    (window as any).__debugSvelteMounted = true;
+    if (typeof (window as any).__debugClearLoadTimer === 'function') {
+      (window as any).__debugClearLoadTimer();
     }
+
+    debugAdd('boot', 'success', 'SvelteKit mounted, debug pill active');
   });
 
   onDestroy(() => {
@@ -84,25 +87,21 @@
     setTimeout(() => { copyStatus = 'idle'; }, 2000);
   }
 
-  function formatTimestamp(ts: number): string {
-    const t = new Date(ts);
-    return `${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}:${t.getSeconds().toString().padStart(2, '0')}.${t.getMilliseconds().toString().padStart(3, '0')}`;
-  }
-
   // Source → color mapping (inline style values)
+  const SOURCE_COLORS: Record<string, string> = {
+    boot: '#f59e0b',
+    pwa: '#06b6d4',
+    render: '#8b5cf6',
+    global: '#ef4444',
+    api: '#3b82f6',
+    auth: '#ec4899',
+    db: '#10b981',
+    form: '#f97316',
+    engine: '#6366f1',
+  };
+
   function sourceColor(source: string): string {
-    const map: Record<string, string> = {
-      boot: '#f59e0b',
-      pwa: '#06b6d4',
-      render: '#8b5cf6',
-      global: '#ef4444',
-      api: '#3b82f6',
-      auth: '#ec4899',
-      db: '#10b981',
-      form: '#f97316',
-      engine: '#6366f1',
-    };
-    return map[source] || '#9ca3af';
+    return SOURCE_COLORS[source] || '#9ca3af';
   }
 
   // Severity → color mapping
@@ -133,6 +132,8 @@
   }
 
   // --- PWA Diagnostics ---
+  // Uses monotonic counter (diagnosticRunId) for stale-run cancellation —
+  // if user closes/reopens while probes are in-flight, stale results are dropped.
   async function runDiagnostics(): Promise<void> {
     const runId = ++diagnosticRunId;
     diagnostics = [{ label: 'Running...', status: 'running', detail: '' }];
@@ -160,9 +161,11 @@
     if ('serviceWorker' in navigator) {
       try {
         const reg = await navigator.serviceWorker.getRegistration('/');
+        if (runId !== diagnosticRunId) return;
         const state = reg?.active ? 'active' : reg?.waiting ? 'waiting' : reg?.installing ? 'installing' : 'none';
         results.push({ label: 'SW State', status: reg ? 'pass' : 'warn', detail: state });
       } catch (e) {
+        if (runId !== diagnosticRunId) return;
         results.push({ label: 'SW State', status: 'fail', detail: String(e) });
       }
     }
@@ -172,6 +175,7 @@
     if (manifestLink) {
       try {
         const res = await fetch(manifestLink.getAttribute('href') || '/manifest.webmanifest');
+        if (runId !== diagnosticRunId) return;
         const manifest = await res.json();
         const hasIcons = manifest.icons?.length > 0;
         const hasName = !!manifest.name;
@@ -181,6 +185,7 @@
           detail: `name=${manifest.name || 'missing'}, icons=${manifest.icons?.length || 0}`,
         });
       } catch {
+        if (runId !== diagnosticRunId) return;
         results.push({ label: 'Manifest', status: 'fail', detail: 'Failed to fetch' });
       }
     } else {
@@ -196,7 +201,7 @@
     const hasPrompt = !!(window as any).__pwaInstallPromptEvent;
     results.push({ label: 'Install Prompt', status: hasPrompt ? 'pass' : 'warn', detail: hasPrompt ? 'Captured' : 'Not received' });
 
-    // Stale-run guard: only apply if this is still the latest run
+    // Final stale-run guard before applying results
     if (runId === diagnosticRunId) {
       diagnostics = results;
     }
@@ -211,6 +216,13 @@
       default: return '\u2753';
     }
   }
+
+  // Tab definitions — typed as const for type safety on activeTab assignment
+  const TABS = [
+    { key: 'log' as const, label: 'Log' },
+    { key: 'env' as const, label: 'Environment' },
+    { key: 'pwa' as const, label: 'PWA Diagnostics' },
+  ];
 </script>
 
 <!-- Collapsed pill -->
@@ -358,11 +370,7 @@
       background: #1e1e1e;
       flex-shrink: 0;
     ">
-      {#each [
-        { key: 'log', label: 'Log' },
-        { key: 'env', label: 'Environment' },
-        { key: 'pwa', label: 'PWA Diagnostics' },
-      ] as tab}
+      {#each TABS as tab}
         <button
           on:click={() => {
             activeTab = tab.key;
@@ -396,25 +404,33 @@
               <div style="
                 padding: 3px 10px;
                 border-bottom: 1px solid #262626;
-                display: flex;
-                gap: 6px;
-                align-items: baseline;
                 line-height: 1.4;
               ">
-                <span style="color: #6b7280; flex-shrink: 0;">{formatTimestamp(entry.timestamp)}</span>
-                <span style="
-                  color: {severityColor(entry.severity)};
-                  flex-shrink: 0;
-                  font-size: 10px;
-                  text-transform: uppercase;
-                  min-width: 36px;
-                ">{entry.severity}</span>
-                <span style="
-                  color: {sourceColor(entry.source)};
-                  flex-shrink: 0;
-                  font-size: 10px;
-                ">[{entry.source}]</span>
-                <span style="color: #d4d4d4; word-break: break-word;">{entry.event}</span>
+                <div style="display: flex; gap: 6px; align-items: baseline;">
+                  <span style="color: #6b7280; flex-shrink: 0;">{formatDebugTimestamp(entry.timestamp)}</span>
+                  <span style="
+                    color: {severityColor(entry.severity)};
+                    flex-shrink: 0;
+                    font-size: 10px;
+                    text-transform: uppercase;
+                    min-width: 36px;
+                  ">{entry.severity}</span>
+                  <span style="
+                    color: {sourceColor(entry.source)};
+                    flex-shrink: 0;
+                    font-size: 10px;
+                  ">[{entry.source}]</span>
+                  <span style="color: #d4d4d4; word-break: break-word;">{entry.event}</span>
+                </div>
+                {#if entry.details}
+                  <div style="
+                    color: #6b7280;
+                    font-size: 10px;
+                    margin-top: 1px;
+                    margin-left: 82px;
+                    word-break: break-all;
+                  ">{JSON.stringify(entry.details)}</div>
+                {/if}
               </div>
             {/each}
           {/if}

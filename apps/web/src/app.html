@@ -39,13 +39,17 @@
         if (badge) { badge.textContent = window.__debugErrors.length; badge.style.display = 'inline'; }
       };
 
-      // Capture errors before any module scripts load
-      window.addEventListener('error', function(e) {
+      // Capture errors before any module scripts load.
+      // Stored as named references on window so debugLog.ts can remove them
+      // once the module takes over (prevents double-capture).
+      window.__debugInlineErrorHandler = function(e) {
         window.__debugPushError(e.message || 'Unknown error', e.filename + ':' + e.lineno);
-      });
-      window.addEventListener('unhandledrejection', function(e) {
+      };
+      window.__debugInlineRejectionHandler = function(e) {
         window.__debugPushError('Unhandled rejection: ' + e.reason);
-      });
+      };
+      window.addEventListener('error', window.__debugInlineErrorHandler);
+      window.addEventListener('unhandledrejection', window.__debugInlineRejectionHandler);
 
       // Loading timeout — warn user if framework fails to mount within 20s
       window.__debugSvelteMounted = false;

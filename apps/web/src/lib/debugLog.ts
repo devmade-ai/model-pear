@@ -6,12 +6,12 @@
 // Source: glow-props DEBUG_SYSTEM.md pattern, adapted for SvelteKit
 
 // Typed sources with string fallback — preserves IDE autocomplete while allowing ad-hoc sources
-type DebugSource =
+export type DebugSource =
   | 'boot' | 'db' | 'pwa' | 'render' | 'global' | 'auth' | 'api' | 'form'
   | 'engine' | 'ml' | 'import' | 'export' | 'query' | 'canvas'
   | (string & {})
 
-type DebugSeverity = 'info' | 'success' | 'warn' | 'error'
+export type DebugSeverity = 'info' | 'success' | 'warn' | 'error'
 
 export interface DebugEntry {
   id: number
@@ -22,7 +22,7 @@ export interface DebugEntry {
   details?: Record<string, unknown>
 }
 
-const MAX_ENTRIES = 200
+export const MAX_ENTRIES = 200
 let nextId = 0
 const entries: DebugEntry[] = []
 const subscribers = new Set<(entry: DebugEntry) => void>()
@@ -66,6 +66,13 @@ export function debugSubscribe(fn: (entry: DebugEntry) => void): () => void {
   return () => subscribers.delete(fn)
 }
 
+// Shared timestamp formatter — used by both report generation and pill display.
+// Format: HH:MM:SS.mmm (24h with milliseconds)
+export function formatDebugTimestamp(ts: number): string {
+  const t = new Date(ts)
+  return `${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}:${t.getSeconds().toString().padStart(2, '0')}.${t.getMilliseconds().toString().padStart(3, '0')}`
+}
+
 // --- Report generation ---
 // Lives in the module, not the pill component — reusable by any consumer.
 export function debugGenerateReport(): string {
@@ -87,10 +94,8 @@ export function debugGenerateReport(): string {
     '',
     '--- Log ---',
     ...entries.map((e) => {
-      const t = new Date(e.timestamp)
-      const ts = `${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}:${t.getSeconds().toString().padStart(2, '0')}.${t.getMilliseconds().toString().padStart(3, '0')}`
       const detail = e.details ? ` | ${JSON.stringify(e.details)}` : ''
-      return `[${ts}] [${e.severity.toUpperCase()}] [${e.source}] ${e.event}${detail}`
+      return `[${formatDebugTimestamp(e.timestamp)}] [${e.severity.toUpperCase()}] [${e.source}] ${e.event}${detail}`
     }),
   ]
   return lines.join('\n')
@@ -104,46 +109,69 @@ export function debugGetEnvironment(): { standalone: boolean; swSupport: boolean
   }
 }
 
-// --- Console interception ---
-// Captures framework warnings, library errors, and any other console output automatically.
-// Must run at module load time to catch early console calls.
-const originalError = console.error
-const originalWarn = console.warn
+// --- Browser-only initialisation ---
+// All side effects (console interception, global listeners, pre-framework bridge)
+// are guarded by `typeof window !== 'undefined'` to prevent execution during
+// SvelteKit's SSR build, where Node.js has no `window` and patching its console
+// would be an unwanted side effect.
+if (typeof window !== 'undefined') {
 
-console.error = (...args: unknown[]) => {
-  originalError.apply(console, args)
-  debugAdd('global', 'error', args.map(String).join(' '))
-}
+  // --- Console interception ---
+  // Captures framework warnings, library errors, and any other console output automatically.
+  // Must run at module load time to catch early console calls.
+  const originalError = console.error
+  const originalWarn = console.warn
 
-console.warn = (...args: unknown[]) => {
-  originalWarn.apply(console, args)
-  debugAdd('global', 'warn', args.map(String).join(' '))
-}
-
-// --- Global error capture ---
-// Installed at module load time — captures crashes before SvelteKit mounts.
-// HMR guard prevents duplicate listeners during development.
-if (typeof window !== 'undefined' && !(window as any).__debugLogListenersAttached) {
-  (window as any).__debugLogListenersAttached = true
-
-  window.addEventListener('error', (e) => {
-    debugAdd('global', 'error', e.message || 'Unknown error', {
-      filename: e.filename,
-      lineno: e.lineno,
-      colno: e.colno,
-    })
-  })
-
-  window.addEventListener('unhandledrejection', (e) => {
-    debugAdd('global', 'error', `Unhandled rejection: ${e.reason}`)
-  })
-}
-
-// Bridge pre-framework errors into the structured log.
-// The inline script in app.html captures errors before JS bundles load and stores them
-// in window.__debugErrors. Import them into the circular buffer on module init.
-if (typeof window !== 'undefined' && Array.isArray((window as any).__debugErrors)) {
-  for (const err of (window as any).__debugErrors) {
-    debugAdd('boot', 'error', err.msg, err.stack ? { stack: err.stack } : undefined)
+  console.error = (...args: unknown[]) => {
+    originalError.apply(console, args)
+    debugAdd('global', 'error', args.map(String).join(' '))
   }
+
+  console.warn = (...args: unknown[]) => {
+    originalWarn.apply(console, args)
+    debugAdd('global', 'warn', args.map(String).join(' '))
+  }
+
+  // --- Global error capture ---
+  // Installed at module load time — captures crashes before SvelteKit mounts.
+  // HMR guard prevents duplicate listeners during development.
+  if (!(window as any).__debugLogListenersAttached) {
+    (window as any).__debugLogListenersAttached = true
+
+    window.addEventListener('error', (e) => {
+      debugAdd('global', 'error', e.message || 'Unknown error', {
+        filename: e.filename,
+        lineno: e.lineno,
+        colno: e.colno,
+      })
+    })
+
+    window.addEventListener('unhandledrejection', (e) => {
+      debugAdd('global', 'error', `Unhandled rejection: ${e.reason}`)
+    })
+  }
+
+  // --- Bridge pre-framework errors into the structured log ---
+  // The inline <script> in app.html captures errors before JS bundles load and stores
+  // them in window.__debugErrors. Import them into the circular buffer, then clean up
+  // the inline listeners to prevent double-capture now that the module has taken over.
+  if (Array.isArray((window as any).__debugErrors)) {
+    for (const err of (window as any).__debugErrors) {
+      debugAdd('boot', 'error', err.msg, err.stack ? { stack: err.stack } : undefined)
+    }
+    // Clean up: module listeners now handle all future errors.
+    // Remove inline listeners (stored as named references on window by app.html)
+    // and clear the pre-framework buffer.
+    if (typeof (window as any).__debugInlineErrorHandler === 'function') {
+      window.removeEventListener('error', (window as any).__debugInlineErrorHandler)
+      delete (window as any).__debugInlineErrorHandler
+    }
+    if (typeof (window as any).__debugInlineRejectionHandler === 'function') {
+      window.removeEventListener('unhandledrejection', (window as any).__debugInlineRejectionHandler)
+      delete (window as any).__debugInlineRejectionHandler
+    }
+    (window as any).__debugErrors = []
+  }
+
+  debugAdd('boot', 'info', 'Debug log module initialised')
 }
