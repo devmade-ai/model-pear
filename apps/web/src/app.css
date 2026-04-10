@@ -250,6 +250,13 @@
     padding-right: env(safe-area-inset-right);
   }
 
+  /* Print visibility utilities:
+     - .no-print: hidden in print, visible on screen (defined in @media print block)
+     - .print-only: hidden on screen, visible in print */
+  .print-only {
+    display: none;
+  }
+
   /* Text colors using CSS variables */
   .text-primary-color {
     color: hsl(var(--primary));
@@ -352,6 +359,23 @@
     max-width: 100% !important;
     max-height: none !important;
     box-shadow: none !important;
+  }
+
+  /* Show print-only elements (hidden on screen via .print-only utility) */
+  .print-only {
+    display: block !important;
+  }
+
+  /* Collapsible section toggle buttons with print-include:
+     Keep the heading text visible but hide the expand/collapse chevron SVG,
+     since it references interactive behavior that doesn't exist in print. */
+  button.print-include {
+    display: flex !important;
+    cursor: default;
+  }
+
+  button.print-include svg {
+    display: none !important;
   }
 
   /* Preserve background colors for badges and status indicators */

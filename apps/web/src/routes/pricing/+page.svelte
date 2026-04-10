@@ -12,6 +12,9 @@
 
   let selectedModel = 'subscription';
 
+  // Derived: selected model metadata for print heading
+  $: selectedModelInfo = models.find(m => m.id === selectedModel);
+
   // Subscription inputs
   let sub_monthlyPrice = 500;
   let sub_customers = 100;
@@ -278,8 +281,8 @@
     </p>
   </div>
 
-  <!-- Model Selector -->
-  <div class="mb-8">
+  <!-- Model Selector (interactive — hidden in print) -->
+  <div class="mb-8 no-print">
     <label class="block text-sm font-medium text-secondary mb-3">Pricing Model</label>
     <!-- Mobile: horizontal scroll, Tablet+: grid -->
     <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-3 md:grid-cols-5 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -298,6 +301,15 @@
     </div>
     <p class="text-xs text-secondary/60 mt-2 sm:hidden text-center">Swipe to see all models</p>
   </div>
+
+  <!-- Print-only: show selected model name (tab buttons are hidden in print).
+       Uses .print-only utility — hidden on screen, visible in print. -->
+  {#if selectedModelInfo}
+    <div class="print-only mb-6">
+      <p class="text-sm text-secondary">Pricing Model</p>
+      <p class="text-lg font-semibold text-foreground">{selectedModelInfo.icon} {selectedModelInfo.name}</p>
+    </div>
+  {/if}
 
   <div class="grid lg:grid-cols-2 gap-8">
     <!-- Inputs -->

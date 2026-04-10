@@ -374,10 +374,12 @@
         <DeveloperResults developer={result.developer} />
         <BuyerResults buyer={result.buyer} />
 
-        <!-- Transfer Pricing (Collapsed by Default) -->
-        <div class="card">
+        <!-- Transfer Pricing (Collapsed by Default)
+             Print behavior: hidden when collapsed (empty card), visible with heading when expanded.
+             class:no-print hides the empty shell; print-include keeps the heading visible. -->
+        <div class="card" class:no-print={!showTransferPricing}>
           <button
-            class="w-full p-4 flex items-center justify-between text-left"
+            class="w-full p-4 flex items-center justify-between text-left print-include"
             on:click={() => showTransferPricing = !showTransferPricing}
           >
             <div class="flex items-center space-x-3">
@@ -408,10 +410,12 @@
           {/if}
         </div>
 
-        <!-- Advanced Analysis (Collapsed by Default) -->
-        <div class="card">
+        <!-- Advanced Analysis (Collapsed by Default)
+             Print behavior: hidden when collapsed (empty card), visible with heading when expanded.
+             class:no-print hides the empty shell; print-include keeps the heading visible. -->
+        <div class="card" class:no-print={!showAdvancedAnalysis}>
           <button
-            class="w-full p-4 flex items-center justify-between text-left"
+            class="w-full p-4 flex items-center justify-between text-left print-include"
             on:click={() => showAdvancedAnalysis = !showAdvancedAnalysis}
           >
             <div class="flex items-center space-x-3">
@@ -448,8 +452,10 @@
           {/if}
         </div>
 
-        <!-- Comparison Manager -->
-        <ComparisonManager />
+        <!-- Comparison Manager (interactive-only — hidden in print) -->
+        <div class="no-print">
+          <ComparisonManager />
+        </div>
 
         <!-- Metadata -->
         <div class="text-xs text-secondary/60 text-right">

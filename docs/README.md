@@ -46,7 +46,7 @@ Find the **sweet spot** in pricing by showing you:
 - **Growth Projections**: NPV, IRR, payback period calculations
 - **South African Tax**: Section 11(e), deferred tax, CGT calculations
 - **Transfer Pricing**: Risk scoring for related party transactions
-- **Export**: JSON and CSV export of saved comparisons
+- **Export**: JSON, CSV, and PDF export of results and comparisons
 
 ## Quick Start
 

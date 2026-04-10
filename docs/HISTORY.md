@@ -32,6 +32,15 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 14. Added `color-scheme: light` to print `:root` overrides
 15. Added decision context comments explaining each section
 
+### Print Content Quality
+
+16. Hidden ComparisonManager in print (purely interactive — checkboxes, rename, delete, import/export)
+17. Collapsed sections (Transfer Pricing, Advanced Analysis) now hidden in print when collapsed — prevents empty card shells appearing
+18. Expanded sections preserve heading text via `print-include` class on toggle buttons, with chevron SVGs hidden
+19. Added `.print-only` / `.print-include` utility classes for print visibility control
+20. Pricing page: added print-only heading showing selected model name (tab buttons are hidden in print)
+21. Updated docs/README.md export features to include PDF
+
 ---
 
 ## Align CLAUDE.md glow-props Implementation Patterns (April 10, 2026)
