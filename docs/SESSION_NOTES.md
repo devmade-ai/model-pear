@@ -6,16 +6,17 @@
 
 ## Current State (April 10, 2026)
 
-**Last completed**: Added "Save as PDF" buttons to pricing and structuring calculators
+**Last completed**: Complete PDF download feature — buttons + full print CSS overhaul
 
-**Status**: Both calculator pages now have `window.print()` triggers; existing print CSS handles layout
+**Status**: Both calculator pages have "Save as PDF" buttons. Print CSS fully aligned with glow-props DOWNLOAD_PDF pattern. Critical dark-theme-in-print bug fixed.
 
 ### What was done this session
 
 1. **Added "Save as PDF" button to structuring calculator** (`apps/web/src/routes/structuring/[model]/+page.svelte`): Placed in the existing action bar alongside "Save Option" and "Save As..." buttons.
 2. **Added "Save as PDF" button to pricing calculator** (`apps/web/src/routes/pricing/+page.svelte`): Added to the results section header, right-aligned next to the "Results" heading.
-3. Both buttons call `window.print()` and use the `no-print` CSS class so they auto-hide during print preview.
-4. Existing `@media print` CSS in `app.css` already handles white background, hidden nav/buttons, page break control, and table borders.
+3. **Fixed critical dark-theme-in-print bug** (`apps/web/src/app.css`): Overrode `:root` CSS variables with light-theme values in `@media print`. Without this, `text-foreground` resolved to white (invisible on white paper) and `bg-card` rendered dark gray backgrounds.
+4. **Print CSS overhaul**: Added hardcoded dark color overrides, link styling, `.print-avoid-break` utility class, modern+legacy break properties, `.sticky` override, `section/.card/.result-panel` break-inside rules, `!important` on `print-color-adjust`, decision context comments throughout.
+5. ComparisonView already had "Print / PDF" button — unchanged.
 
 ### Known remaining issue
 
@@ -23,9 +24,11 @@
 
 ### Key Files Changed
 
-- `apps/web/src/routes/structuring/[model]/+page.svelte` — Added "Save as PDF" button to action bar
-- `apps/web/src/routes/pricing/+page.svelte` — Added "Save as PDF" button to results header
-- `docs/HISTORY.md` — Added changelog entry
+- `apps/web/src/app.css` — Complete print CSS rewrite aligned with glow-props pattern
+- `apps/web/src/routes/structuring/[model]/+page.svelte` — Added "Save as PDF" button
+- `apps/web/src/routes/pricing/+page.svelte` — Added "Save as PDF" button
+- `docs/HISTORY.md` — Detailed changelog entry
+- `docs/SESSION_NOTES.md` — Updated session context
 
 ---
 

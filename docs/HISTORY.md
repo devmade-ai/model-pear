@@ -1,22 +1,36 @@
 # Development History & Bug Fixes
 
-> **Last Updated**: March 2026
+> **Last Updated**: April 2026
 > **Purpose**: Historical record of bug fixes, improvements, and major refactoring work
 
 This file tracks all significant bug fixes, improvements, and architectural changes made to the Software Transaction Structuring Tool project. For current project status and architecture, see [CLAUDE.md](../CLAUDE.md).
 
 ---
 
-## Add "Save as PDF" Button (April 10, 2026)
+## Complete PDF Download Feature (April 10, 2026)
 
-**Impact**: User-facing — both pricing and structuring calculators now have a PDF export option
+**Impact**: User-facing — both calculators have "Save as PDF" buttons with production-quality print output
 
-### Changes
+### Buttons
 
 1. Added "Save as PDF" button to the structuring model calculator action bar (`structuring/[model]/+page.svelte`)
 2. Added "Save as PDF" button to the pricing calculator results header (`pricing/+page.svelte`)
-3. Both buttons call `window.print()`, leveraging existing `@media print` CSS in `app.css`
-4. Buttons use `no-print` class so they hide automatically during print preview
+3. ComparisonView already had "Print / PDF" button — unchanged
+4. All buttons call `window.print()` (zero dependencies, per glow-props DOWNLOAD_PDF pattern)
+5. Buttons use `no-print` class so they hide automatically during print preview
+
+### Print CSS Overhaul (`app.css`)
+
+6. **Fixed critical dark-theme-in-print bug**: Overrode `:root` CSS variables with light-theme values for `@media print`. Without this, `text-foreground` resolved to white (invisible on white paper) and `bg-card` resolved to dark gray
+7. Overrode hardcoded dark hex colors (`bg-secondary-light: #222222`, `bg-secondary-dark: #333333`) to light values
+8. Added link styling for print (`a { color: black; text-decoration: underline }`)
+9. Added `.print-avoid-break` utility class with both modern (`break-inside`) and legacy (`page-break-inside`) properties
+10. Updated `.avoid-break`, `.page-break-before`, `.page-break-after` to include modern CSS properties alongside legacy ones
+11. Added `section, .card, .result-panel { break-inside: avoid }` to prevent content blocks from splitting across pages
+12. Added `.sticky { position: static }` override to prevent overlapping content in print
+13. Added `!important` to `print-color-adjust` values (required to override browser ink-saving defaults)
+14. Added `color-scheme: light` to print `:root` overrides
+15. Added decision context comments explaining each section
 
 ---
 
