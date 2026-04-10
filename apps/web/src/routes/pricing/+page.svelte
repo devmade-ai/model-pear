@@ -573,7 +573,16 @@
     <!-- Results -->
     <div>
       <div class="card p-6">
-        <h2 class="text-lg font-semibold text-foreground mb-4">Results</h2>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-foreground">Results</h2>
+          <!-- Requirement: Let users save pricing results as PDF via the browser's native print dialog.
+               Approach: window.print() — zero dependencies, leverages existing @media print CSS in app.css.
+               Alternative considered: pdf-lib — rejected because content is text/tables (not canvas),
+               so the browser print engine handles it well without extra bundle size. -->
+          <button class="btn-outline text-sm no-print" on:click={() => window.print()} title="Save this page as a PDF using your browser's print dialog">
+            Save as PDF
+          </button>
+        </div>
 
         {#if results}
           <!-- Equilibrium Status -->

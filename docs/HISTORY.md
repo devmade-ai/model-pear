@@ -7,6 +7,19 @@ This file tracks all significant bug fixes, improvements, and architectural chan
 
 ---
 
+## Add "Save as PDF" Button (April 10, 2026)
+
+**Impact**: User-facing — both pricing and structuring calculators now have a PDF export option
+
+### Changes
+
+1. Added "Save as PDF" button to the structuring model calculator action bar (`structuring/[model]/+page.svelte`)
+2. Added "Save as PDF" button to the pricing calculator results header (`pricing/+page.svelte`)
+3. Both buttons call `window.print()`, leveraging existing `@media print` CSS in `app.css`
+4. Buttons use `no-print` class so they hide automatically during print preview
+
+---
+
 ## Align CLAUDE.md glow-props Implementation Patterns (April 10, 2026)
 
 **Impact**: Documentation — stale AI Note replaced with standard implementation patterns section

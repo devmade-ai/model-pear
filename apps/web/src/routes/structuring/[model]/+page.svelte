@@ -353,6 +353,13 @@
           <button class="btn-outline text-sm" on:click={openSaveModal}>
             Save As...
           </button>
+          <!-- Requirement: Let users save results as PDF via the browser's native print dialog.
+               Approach: window.print() — zero dependencies, leverages existing @media print CSS in app.css.
+               Alternative considered: pdf-lib — rejected because content is text/tables (not canvas),
+               so the browser print engine handles it well without extra bundle size. -->
+          <button class="btn-outline text-sm no-print" on:click={() => window.print()} title="Save this page as a PDF using your browser's print dialog">
+            Save as PDF
+          </button>
           {#if savedCount > 0}
             <span class="text-sm text-secondary border-l border-border pl-3">
               {savedCount} option{savedCount !== 1 ? 's' : ''} saved

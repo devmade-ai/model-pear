@@ -6,16 +6,16 @@
 
 ## Current State (April 10, 2026)
 
-**Last completed**: Aligned CLAUDE.md glow-props implementation patterns
+**Last completed**: Added "Save as PDF" buttons to pricing and structuring calculators
 
-**Status**: CLAUDE.md stale "Shared conventions with glow-props" AI Note replaced; standard Implementation Patterns section and prohibition added
+**Status**: Both calculator pages now have `window.print()` triggers; existing print CSS handles layout
 
 ### What was done this session
 
-1. **Replaced stale AI Note** (~line 215): Removed "Shared conventions with glow-props" block referencing "suggested implementations". Replaced with canonical "Implementation patterns — always fetch from glow-props" note pointing to `docs/implementations/` in glow-props repo.
-2. **Added "Implementation Patterns (Source of Truth)" section**: Standard section from glow-props CLAUDE.md with fetch instructions (GitHub Pages URL, GitHub API URL, listing command) and rules.
-3. **Added prohibition**: "Create local copies of implementation pattern files in any repo — always fetch from glow-props"
-4. **Verified**: No references to "suggested implementations in glow-props CLAUDE.md" remain.
+1. **Added "Save as PDF" button to structuring calculator** (`apps/web/src/routes/structuring/[model]/+page.svelte`): Placed in the existing action bar alongside "Save Option" and "Save As..." buttons.
+2. **Added "Save as PDF" button to pricing calculator** (`apps/web/src/routes/pricing/+page.svelte`): Added to the results section header, right-aligned next to the "Results" heading.
+3. Both buttons call `window.print()` and use the `no-print` CSS class so they auto-hide during print preview.
+4. Existing `@media print` CSS in `app.css` already handles white background, hidden nav/buttons, page break control, and table borders.
 
 ### Known remaining issue
 
@@ -23,7 +23,9 @@
 
 ### Key Files Changed
 
-- `CLAUDE.md` — Replaced stale AI Note, added Implementation Patterns section, added prohibition
+- `apps/web/src/routes/structuring/[model]/+page.svelte` — Added "Save as PDF" button to action bar
+- `apps/web/src/routes/pricing/+page.svelte` — Added "Save as PDF" button to results header
+- `docs/HISTORY.md` — Added changelog entry
 
 ---
 
