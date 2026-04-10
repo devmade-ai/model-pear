@@ -78,6 +78,7 @@ pnpm build            # Build all packages
 pnpm dev              # Start dev server (apps/web)
 pnpm test:e2e         # Run Playwright E2E tests
 pnpm test:e2e:ui      # Run Playwright with UI
+pnpm generate-icons   # Regenerate PNGs from assets/icon-source.svg
 ```
 
 ---
