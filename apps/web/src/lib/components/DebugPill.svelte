@@ -28,6 +28,9 @@
   let entries: DebugEntry[] = [];
   let copyStatus: 'idle' | 'copied' | 'failed' = 'idle';
   let logContainer: HTMLDivElement | null = null;
+  // Visible textarea fallback for mobile browsers where clipboard API fails entirely.
+  // Shows report text with auto-select so users can manually copy.
+  let copyFallbackText = '';
 
   // PWA diagnostics
   interface DiagnosticResult {
@@ -84,8 +87,16 @@
   async function handleCopy() {
     const report = debugGenerateReport();
     const success = await copyToClipboard(report);
-    copyStatus = success ? 'copied' : 'failed';
-    setTimeout(() => { copyStatus = 'idle'; }, 2000);
+    if (success) {
+      copyStatus = 'copied';
+      copyFallbackText = '';
+      setTimeout(() => { copyStatus = 'idle'; }, 2000);
+    } else {
+      // Clipboard API failed in all 3 tiers — show visible textarea so users
+      // can manually select and copy (pattern: textarea with onFocus auto-select).
+      copyStatus = 'failed';
+      copyFallbackText = report;
+    }
   }
 
   // Source → color mapping (inline style values)
@@ -364,6 +375,50 @@
       </div>
     </div>
 
+    <!-- Clipboard fallback: visible textarea when all clipboard methods fail -->
+    {#if copyFallbackText}
+      <div style="
+        padding: 8px 12px;
+        background: #262626;
+        border-bottom: 1px solid #333;
+        flex-shrink: 0;
+      ">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span style="color: #eab308; font-size: 11px;">Copy failed — select text below and copy manually</span>
+          <button
+            on:click={() => { copyFallbackText = ''; copyStatus = 'idle'; }}
+            style="
+              padding: 2px 6px;
+              background: #333;
+              color: #d4d4d4;
+              border: 1px solid #444;
+              border-radius: 4px;
+              cursor: pointer;
+              font-family: monospace;
+              font-size: 10px;
+            "
+          >Dismiss</button>
+        </div>
+        <textarea
+          readonly
+          on:focus={(e) => { e.currentTarget.select(); }}
+          style="
+            width: 100%;
+            height: 80px;
+            background: #1a1a1a;
+            color: #d4d4d4;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 10px;
+            padding: 4px 6px;
+            resize: none;
+            box-sizing: border-box;
+          "
+        >{copyFallbackText}</textarea>
+      </div>
+    {/if}
+
     <!-- Tabs -->
     <div style="
       display: flex;
@@ -397,7 +452,7 @@
     <div style="flex: 1; overflow-y: auto; min-height: 0;">
       <!-- Log tab -->
       {#if activeTab === 'log'}
-        <div bind:this={logContainer} style="padding: 4px 0; overflow-y: auto; max-height: 360px;">
+        <div bind:this={logContainer} style="padding: 4px 0; overflow-y: auto; height: 100%;">
           {#if entries.length === 0}
             <div style="padding: 16px; color: #6b7280; text-align: center;">No log entries yet</div>
           {:else}
