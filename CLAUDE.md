@@ -419,6 +419,7 @@ pnpm build            # Build all packages
 pnpm dev              # Start dev server (apps/web)
 pnpm test:e2e         # Run Playwright E2E tests
 pnpm test:e2e:ui      # Run Playwright with UI
+pnpm generate-icons   # Regenerate PNGs from assets/icon-source.svg
 ```
 
 ---
@@ -558,6 +559,13 @@ model-pear/
 │       │       ├── stores/                     # Svelte stores
 │       │       ├── config/                     # Configuration
 │       │       └── utils/                      # Utilities
+│       ├── static/                             # Static assets (served at root)
+│       │   ├── favicon.png                     # 48x48 browser tab icon
+│       │   ├── apple-touch-icon.png            # 180x180 iOS home screen
+│       │   ├── icon-192.png                    # PWA manifest (any)
+│       │   ├── icon-512.png                    # PWA manifest (any)
+│       │   ├── icon-1024.png                   # PWA manifest (maskable)
+│       │   └── manifest.webmanifest            # PWA manifest
 │       ├── svelte.config.js                    # SvelteKit config (adapter-static for Vercel)
 │       └── package.json
 │
@@ -577,6 +585,12 @@ model-pear/
 │       │   └── types/                          # TypeScript interfaces
 │       ├── tsconfig.json
 │       └── package.json
+│
+├── assets/
+│   └── icon-source.svg         # SVG source icon (edit this, regenerate PNGs)
+│
+├── scripts/
+│   └── generate-icons.mjs      # Sharp script: SVG → PNG icons (run: pnpm generate-icons)
 │
 ├── CLAUDE.md                   # This file (AI assistant context)
 │

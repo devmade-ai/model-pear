@@ -6,18 +6,20 @@
 
 ## Current State (April 10, 2026)
 
-**Last completed**: Complete PDF download feature — buttons + full print CSS overhaul
+**Last completed**: App icons — full implementation + quality cleanup
 
-**Status**: Both calculator pages have "Save as PDF" buttons. Print CSS fully aligned with glow-props DOWNLOAD_PDF pattern. Critical dark-theme-in-print bug fixed.
+**Status**: All app icons generated, wired up, and production-ready. Favicon, Apple touch icon, PWA manifest, theme-color meta all in place. All documentation updated. Build verified.
 
 ### What was done this session
 
-1. **Added "Save as PDF" button to structuring calculator** (`apps/web/src/routes/structuring/[model]/+page.svelte`): Placed in the existing action bar alongside "Save Option" and "Save As..." buttons.
-2. **Added "Save as PDF" button to pricing calculator** (`apps/web/src/routes/pricing/+page.svelte`): Added to the results section header, right-aligned next to the "Results" heading.
-3. **Fixed critical dark-theme-in-print bug** (`apps/web/src/app.css`): Overrode `:root` CSS variables with light-theme values in `@media print`. Without this, `text-foreground` resolved to white (invisible on white paper) and `bg-card` rendered dark gray backgrounds.
-4. **Print CSS overhaul**: Added hardcoded dark color overrides, link styling, `.print-avoid-break` utility class, modern+legacy break properties, `.sticky` override, `section/.card/.result-panel` break-inside rules, `!important` on `print-color-adjust`, decision context comments throughout.
-5. **Print content quality**: Hidden ComparisonManager (interactive-only), collapsed sections hidden when collapsed (no empty card shells), expanded sections preserve heading via `print-include`, added `.print-only` utility class, pricing page shows selected model name in print.
-6. ComparisonView already had "Print / PDF" button — unchanged.
+1. **Created SVG source icon** (`assets/icon-source.svg`): White pear silhouette on primary blue (#2D68FF), `shape-rendering="geometricPrecision"`, content within 80% maskable safe zone
+2. **Added `sharp` devDependency** at root level with `pnpm.onlyBuiltDependencies` config for pnpm v10
+3. **Created generation script** (`scripts/generate-icons.mjs`): 400 DPI rasterisation, outputs 5 PNGs (48, 180, 192, 512, 1024) to `apps/web/static/`. Includes SVG source existence check with clear error message.
+4. **Created PWA manifest** (`apps/web/static/manifest.webmanifest`): 192/512 as `any`, 1024 as `maskable`
+5. **Updated app.html**: Added `apple-touch-icon` (with `sizes="180x180"`), `manifest` link, and `<meta name="theme-color" content="#2D68FF">` for mobile browser chrome
+6. **Added `pnpm generate-icons`** script to root package.json
+7. **Quality cleanup**: Removed redundant SVG attrs (`rx="0" ry="0"`), fixed inaccurate SVG comment, added proper error handling to generation script
+8. **Documentation**: Updated CLAUDE.md file structure (assets/, scripts/, static/) and build commands. Fixed ARCHITECTURE.md `static/` nesting (was incorrectly under `src/`, moved to correct sibling position). Updated HISTORY.md changelog.
 
 ### Known remaining issue
 
@@ -25,12 +27,15 @@
 
 ### Key Files Changed
 
-- `apps/web/src/app.css` — Complete print CSS rewrite: dark→light variable overrides, `.print-only`/`.print-include`/`.no-print` utilities, break control, collapsible section handling
-- `apps/web/src/routes/structuring/[model]/+page.svelte` — "Save as PDF" button, `no-print` on ComparisonManager, `class:no-print` on collapsed sections, `print-include` on toggle buttons
-- `apps/web/src/routes/pricing/+page.svelte` — "Save as PDF" button, `no-print` on model tabs, `print-only` selected model heading
-- `docs/HISTORY.md` — Detailed changelog
-- `docs/BUSINESS_GUIDE.md` — Updated export documentation
-- `docs/README.md` — Updated features list
+- `assets/icon-source.svg` — SVG source icon (single source of truth)
+- `scripts/generate-icons.mjs` — Sharp-based icon generation script with error handling
+- `apps/web/static/manifest.webmanifest` — PWA manifest with icon entries
+- `apps/web/static/*.png` — 5 generated icon PNGs
+- `apps/web/src/app.html` — apple-touch-icon, manifest link, theme-color meta
+- `package.json` — sharp devDep, generate-icons script, onlyBuiltDependencies config
+- `CLAUDE.md` — Updated file structure and build commands
+- `docs/ARCHITECTURE.md` — Fixed static/ nesting, updated icon file listing
+- `docs/HISTORY.md` — Changelog entry
 - `docs/SESSION_NOTES.md` — Updated session context
 
 ---
@@ -73,6 +78,7 @@ pnpm build            # Build all packages
 pnpm dev              # Start dev server (apps/web)
 pnpm test:e2e         # Run Playwright E2E tests
 pnpm test:e2e:ui      # Run Playwright with UI
+pnpm generate-icons   # Regenerate PNGs from assets/icon-source.svg
 ```
 
 ---
