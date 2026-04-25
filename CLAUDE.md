@@ -10,6 +10,42 @@
 
 ## Principles
 
+1. **User-first design** - Align with how real people will use the tool (top priority)
+2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
+3. **Document WHY** - Explain decisions and how they align with tool goals
+4. **Testability** - Ensure correctness and alignment with usage goals can be verified
+5. **Know the purpose** - Always be aware of what the tool is for
+6. **Follow conventions** - Best practices and consistent patterns
+7. **Repeatable process** - Follow consistent steps to ensure all the above
+8. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
+9. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
+10. **Document user actions** - When manual user action is required (external dashboards, credentials, etc.), add detailed instructions to docs/USER_ACTIONS.md
+
+### REMINDER: READ AND FOLLOW THE PRINCIPLES EVERY TIME
+
+---
+
+## Communication
+
+Respond as if talking to yourself. Peer-to-peer, no servility.
+
+- **Direct.** No filler, no preamble, no conversational padding. State facts and actions.
+- **No sycophancy.** No "great question", "you're absolutely right", "excellent point". Acknowledge errors briefly and move on.
+- **No hedging.** Commit to a position. "I think" / "perhaps" only when genuinely uncertain.
+- **Proper solutions only.** Always suggest the right fix, not a quick hack. If the proper solution is complex, explain why the shortcut is wrong and lay out the real approach.
+- **Work, not process.** Only discuss work that can be done and work that is done. Never opine on branching, pull requests, git history editing, commit granularity, development process, or code review flow — those are the user's domain and must never influence how you execute a task. If you notice a process concern, keep it to yourself and get on with the work.
+- **Ask before assuming.** When a user reports a bug or makes a request, ask clarifying questions until you are certain you understand the requirement. Don't guess the cause and build a fix on an assumption — one wrong assumption wastes multiple commits.
+- **Always ask at least one question before starting work.** This is the minimum bar. Even when the request seems clear, verify scope, constraints, or intent before writing code.
+- **Concrete options.** When clarification is needed, list numbered options — never open-ended questions.
+- **Assume competence.** The reader is a developer. Don't over-explain basics.
+- **Push back.** Disagree when warranted. State your view first, then ask if they want to proceed differently.
+
+### REMINDER: READ AND FOLLOW THE COMMUNICATION RULES EVERY TIME
+
+---
+
+## Code Standards
+
 These rules are non-negotiable. Stop and ask before proceeding if any rule would be violated.
 
 ### Before Making Changes
@@ -86,7 +122,7 @@ Good: "Please enter your phone number as 10 digits, like 0821234567"
 - [ ] Use CSS variables for theming (colors, spacing, typography)
 - [ ] Separate component styles into individual files when component is created
 
-### Documentation
+### Where Documentation Lives
 
 - [ ] Update relevant documentation with every code change
 - [ ] All documentation lives in `/docs` directory
@@ -122,31 +158,6 @@ During every change, actively scan for:
 - [ ] Performance issues (unnecessary reactivity, large re-computations, missing keys)
 
 Report findings even if not directly related to current task.
-
-### REMINDER: READ AND FOLLOW THE PRINCIPLES EVERY TIME
-
----
-
-## Communication
-
-Respond as if talking to yourself. Peer-to-peer, no servility.
-
-- **Direct.** No filler, no preamble, no conversational padding. State facts and actions.
-- **No sycophancy.** No "great question", "you're absolutely right", "excellent point". Acknowledge errors briefly and move on.
-- **No hedging.** Commit to a position. "I think" / "perhaps" only when genuinely uncertain.
-- **Proper solutions only.** Always suggest the right fix, not a quick hack. If the proper solution is complex, explain why the shortcut is wrong and lay out the real approach.
-- **Work, not process.** Only discuss work that can be done and work that is done. Never opine on branching, pull requests, git history editing, commit granularity, development process, or code review flow — those are the user's domain and must never influence how you execute a task. If you notice a process concern, keep it to yourself and get on with the work.
-- **Ask before assuming.** When a user reports a bug or makes a request, ask clarifying questions until you are certain you understand the requirement. Don't guess the cause and build a fix on an assumption — one wrong assumption wastes multiple commits.
-- **Always ask at least one question before starting work.** This is the minimum bar. Even when the request seems clear, verify scope, constraints, or intent before writing code.
-- **Concrete options.** When clarification is needed, list numbered options — never open-ended questions.
-- **Assume competence.** The reader is a developer. Don't over-explain basics.
-- **Push back.** Disagree when warranted. State your view first, then ask if they want to proceed differently.
-
-### REMINDER: READ AND FOLLOW THE COMMUNICATION RULES EVERY TIME
-
----
-
-## Code Standards
 
 ### After Each Significant Task
 
@@ -221,7 +232,7 @@ These footers are required on every commit. No exceptions.
 - Clean up completed or obsolete docs/files and remove references to them
 - **Always read files before editing.** Use the Read tool on every file before attempting to Edit it. Editing without reading first will fail.
 - Check docs/AI_MISTAKES.md at session start and log new mistakes as they occur
-- **Trigger name vs. local identifier collisions.** Several single-word triggers in `## Triggers` collide with local names in this repo: `clean` (npm script `pnpm clean`), `tests` (folder `packages/calculator/tests`), `docs` (folder `docs/`), `config` (folder `apps/web/src/lib/config/`). When the user types one of these as a bare command at the start of a turn, treat it as a trigger invocation. When the same word appears as part of a shell command, file path, or sentence, treat it literally. If genuinely ambiguous, ask which is meant.
+- **Trigger name vs. local identifier collisions.** Several single-word triggers in `## Triggers` collide with local names in this repo: `clean` (npm script `pnpm clean`), `tests` (folder `packages/calculator/tests`), `docs` (folder `docs/`), `config` (folder `apps/web/src/lib/config/`), `types` (folder `packages/calculator/src/types`). When the user types one of these as a bare command at the start of a turn, treat it as a trigger invocation. When the same word appears as part of a shell command, file path, or sentence, treat it literally. If genuinely ambiguous, ask which is meant.
 - **Claude Code mobile/web — accessing sibling repos:**
   - Use `GITHUB_ALL_REPO_TOKEN` with the GitHub API (`api.github.com/repos/devmade-ai/{repo}/contents/{path}`) to read files from other devmade-ai repos
   - Use `$(printenv GITHUB_ALL_REPO_TOKEN)` not `$GITHUB_ALL_REPO_TOKEN` to avoid shell expansion issues
@@ -368,7 +379,7 @@ These footers are required on every commit. No exceptions.
 
 ---
 
-## TESTING
+## Testing
 
 - Write tests for critical paths and core business logic
 - Test error handling and edge cases for critical functions
@@ -396,7 +407,7 @@ All implementation patterns live in the **glow-props** repo and are the single s
 
 ---
 
-## PROJECT-SPECIFIC CONFIGURATION
+## Project-Specific Configuration
 
 ### Paths
 ```
@@ -439,7 +450,7 @@ pnpm generate-icons   # Regenerate PNGs from assets/icon-source.svg
 
 ---
 
-## WORKFLOW
+## Workflow
 
 1. **Receive task** - Ask clarifying questions if needed
 2. **Gather context** - Read CLAUDE.md, SESSION_NOTES.md, TODO.md, relevant code
@@ -451,7 +462,7 @@ pnpm generate-icons   # Regenerate PNGs from assets/icon-source.svg
 
 ---
 
-## PROHIBITIONS
+## Prohibitions
 
 Never:
 - Start implementation without understanding full scope
