@@ -1,5 +1,61 @@
 @import "tailwindcss";
-@config "../tailwind.config.js";
+
+/* ============================================================
+   Theme tokens (Tailwind v4 CSS-first config)
+   Replaces apps/web/tailwind.config.js (deleted in 3a-iii).
+   ============================================================ */
+@theme {
+  /* Brand / semantic colors mapped from CSS variables.
+     The HSL var indirection lets the @media print block at the bottom
+     override every color in one place. The 3c bridge will redefine
+     --background/--card/--foreground to point at DaisyUI tokens. */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-light: #222222;
+  --color-secondary-dark: #333333;
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-ring: hsl(var(--ring));
+
+  /* Status colors */
+  --color-success: #16A34A;
+  --color-success-foreground: #FFFFFF;
+  --color-error: #EF4444;
+  --color-error-foreground: #FFFFFF;
+  --color-warning: #EAB308;
+  --color-warning-foreground: #000000;
+
+  /* Brand model identifiers for transaction-model UI accents and charts */
+  --color-model-1: #3B82F6;
+  --color-model-2: #8B5CF6;
+  --color-model-3: #10B981;
+  --color-model-4: #F59E0B;
+  --color-model-5: #EF4444;
+  --color-model-6: #06B6D4;
+
+  /* Typography */
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Consolas", monospace;
+
+  /* Border radius — maps Tailwind's lg/md/sm onto the --radius token */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* Z-index extensions per the glow-props Z_INDEX_SCALE pattern.
+   v4 has no --z-index-* theme namespace, so these are utilities.
+   60 = sticky overlays, 70 = PWA banner (Chunk 5), 80 = debug pill. */
+@utility z-60 { z-index: 60; }
+@utility z-70 { z-index: 70; }
+@utility z-80 { z-index: 80; }
 
 /* Dark Theme - CSS Variables */
 :root {
