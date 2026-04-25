@@ -246,6 +246,8 @@ These footers are required on every commit. No exceptions.
 
 **AI assistants automatically maintain these documents.** Update them as you work — don't wait for the user to ask. This ensures context is always current for the next session.
 
+**Git log is the changelog.** Don't create or maintain a separate `CHANGELOG.md` / `HISTORY.md`. To answer "when did X land / why was Y done that way", use `git log -S '<symbol>'`, `git log -- <path>`, or `git log --all --oneline | grep`.
+
 ### `CLAUDE.md`
 
 **Purpose:** AI preferences, project overview, architecture, key state structures.
@@ -283,7 +285,8 @@ These footers are required on every commit. No exceptions.
 **What to include:**
 
 - Group by category (Features, UX, Technical, etc.)
-- Use `- [ ]` for pending items only
+- Short items: `- [ ]` checkbox bullet
+- Larger items (those needing problem/solution context, rationale, mock-ups): `### Heading` followed by `**Priority**: …` and a body
 - Brief description of what and why
 - When complete, delete (git history tracks what was done)
 
