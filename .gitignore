@@ -44,6 +44,11 @@ build/
 # Coverage
 coverage/
 
+# Playwright e2e artifacts
+playwright-report/
+test-results/
+playwright/.cache/
+
 # Environment variables
 .env
 .env.local
