@@ -91,7 +91,6 @@ pnpm test:e2e
 | **[ARCHITECTURE.md](ARCHITECTURE.md)** | Technical architecture |
 | **[model-use-cases/](model-use-cases/)** | When to use each model variant |
 | **[CLAUDE.md](../CLAUDE.md)** | AI assistant context and development guide |
-| **[HISTORY.md](HISTORY.md)** | Changelog and bug fixes |
 
 ## Example: Finding Equilibrium
 

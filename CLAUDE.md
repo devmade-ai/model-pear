@@ -163,7 +163,6 @@ Report findings even if not directly related to current task.
 
 - [ ] Update SESSION_NOTES.md with current state
 - [ ] Update relevant docs (CALCULATIONS.md, BUSINESS_GUIDE.md, etc.)
-- [ ] Add entry to HISTORY.md if code/docs changed
 - [ ] Commit changes (code + docs together)
 
 ### Commit Message Format
@@ -199,7 +198,6 @@ These footers are required on every commit. No exceptions.
 ### Before Each Commit
 
 - [ ] Relevant docs updated for changes in this commit
-- [ ] HISTORY.md entry added (if significant change)
 - [ ] SESSION_NOTES.md reflects current state
 - [ ] Commit message is clear and descriptive
 
@@ -281,28 +279,15 @@ These footers are required on every commit. No exceptions.
 
 **Purpose:** AI-managed backlog of ideas and potential improvements.
 **When to read:** When looking for work to do, or when the user asks about pending tasks.
-**When to update:** When noticing potential improvements. Move completed items to HISTORY.md.
+**When to update:** When noticing potential improvements. Delete completed items (git history tracks them).
 **What to include:**
 
 - Group by category (Features, UX, Technical, etc.)
 - Use `- [ ]` for pending items only
 - Brief description of what and why
-- When complete, move to HISTORY.md (don't keep in TODO)
+- When complete, delete (git history tracks what was done)
 
 **Why:** User reviews this to prioritize work. Keeps TODO focused on pending items only.
-
-### `docs/HISTORY.md`
-
-**Purpose:** Changelog and record of completed work.
-**When to read:** When you need historical context about why something was built a certain way.
-**When to update:** When completing TODO items or making significant changes.
-**What to include:**
-
-- Completed TODO items (organized by category)
-- Bug fixes and changes (organized by date)
-- Brief description of what was done
-
-**Why:** Historical context separate from active TODO. Tracks what's been accomplished.
 
 ### `docs/USER_ACTIONS.md`
 
@@ -457,7 +442,7 @@ pnpm generate-icons   # Regenerate PNGs from assets/icon-source.svg
 3. **Plan** - Write plan to `/docs/working` if task is non-trivial
 4. **Implement** - Follow all hard rules above
 5. **Verify** - Run tests, check for errors, review cleanup
-6. **Document** - Update all affected documentation (SESSION_NOTES.md, HISTORY.md, etc.)
+6. **Document** - Update all affected documentation (SESSION_NOTES.md, etc.)
 7. **Report** - Summarize changes and any issues found
 
 ---
@@ -740,7 +725,6 @@ model-pear/
     ├── BUSINESS_GUIDE.md       # Comprehensive user guide with tutorials
     ├── CALCULATIONS.md         # Formula explanations and economic theory
     ├── ARCHITECTURE.md         # Technical architecture (TypeScript monorepo)
-    ├── HISTORY.md              # Changelog and bug fixes
     ├── SESSION_NOTES.md        # Build commands and architecture reference
     ├── TODO.md                 # Feature ideas and backlog
     ├── USER_ACTIONS.md         # Manual user action instructions (when needed)
@@ -1033,7 +1017,6 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 | **docs/BUSINESS_GUIDE.md** | Comprehensive user guide with tutorials | User workflows, features, or terminology change |
 | **docs/CALCULATIONS.md** | All formulas, rationale, economic theory | Formulas or calculation logic change |
 | **docs/ARCHITECTURE.md** | Technical architecture (TypeScript monorepo) | Build process, package structure, or tech decisions change |
-| **docs/HISTORY.md** | Changelog and bug fixes | Any change to the application |
 | **docs/SESSION_NOTES.md** | Session continuity - context for next AI to continue work | After each significant task (sessions end abruptly); remove stale notes |
 | **docs/TODO.md** | Feature ideas and backlog | Add ideas to persist between sessions |
 | **docs/USER_ACTIONS.md** | Manual user action instructions | When user needs to do something outside the tool |
