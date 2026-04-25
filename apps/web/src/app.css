@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+/* Dark Theme - CSS Variables.
+   Defined before @theme so the @theme block's `hsl(var(--background))`
+   indirections have a defined source even during a strict-resolution
+   build. The @media print block at the bottom of this file overrides
+   these to a light-mode palette in one place. */
+:root {
+  /* Colors - HSL values for Tailwind compatibility */
+  --background: 0 0% 11%;           /* #1B1B1B */
+  --foreground: 0 0% 100%;          /* #FFFFFF */
+  --card: 0 0% 16%;                 /* #2a2a2a */
+  --card-foreground: 0 0% 100%;
+  --primary: 222 100% 59%;          /* #2D68FF */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 46%;            /* #767676 */
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 16%;
+  --muted-foreground: 0 0% 46%;
+  --border: 0 0% 20%;               /* #333333 */
+  --ring: 222 100% 59%;             /* #2D68FF */
+
+  /* Spacing */
+  --radius: 0.5rem;
+
+  /* Color scheme */
+  color-scheme: dark;
+}
+
 /* ============================================================
    Theme tokens (Tailwind v4 CSS-first config)
    Replaces apps/web/tailwind.config.js (deleted in 3a-iii).
@@ -40,44 +67,16 @@
   --color-model-5: #EF4444;
   --color-model-6: #06B6D4;
 
-  /* Typography */
-  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Typography. Sans stack mirrors Tailwind v3's defaultTheme.fontFamily.sans
+     with Figtree prepended; emoji fonts kept so cross-platform glyph
+     fallbacks match the v3 baseline. */
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: "JetBrains Mono", "Consolas", monospace;
 
   /* Border radius — maps Tailwind's lg/md/sm onto the --radius token */
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
-}
-
-/* Z-index extensions per the glow-props Z_INDEX_SCALE pattern.
-   v4 has no --z-index-* theme namespace, so these are utilities.
-   60 = sticky overlays, 70 = PWA banner (Chunk 5), 80 = debug pill. */
-@utility z-60 { z-index: 60; }
-@utility z-70 { z-index: 70; }
-@utility z-80 { z-index: 80; }
-
-/* Dark Theme - CSS Variables */
-:root {
-  /* Colors - HSL values for Tailwind compatibility */
-  --background: 0 0% 11%;           /* #1B1B1B */
-  --foreground: 0 0% 100%;          /* #FFFFFF */
-  --card: 0 0% 16%;                 /* #2a2a2a */
-  --card-foreground: 0 0% 100%;
-  --primary: 222 100% 59%;          /* #2D68FF */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 46%;            /* #767676 */
-  --secondary-foreground: 0 0% 100%;
-  --muted: 0 0% 16%;
-  --muted-foreground: 0 0% 46%;
-  --border: 0 0% 20%;               /* #333333 */
-  --ring: 222 100% 59%;             /* #2D68FF */
-
-  /* Spacing */
-  --radius: 0.5rem;
-
-  /* Color scheme */
-  color-scheme: dark;
 }
 
 /* Custom base styles */
