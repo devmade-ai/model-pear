@@ -1,5 +1,9 @@
 <script lang="ts">
   import '../app.css';
+  // Side-effect import: attaches cross-tab storage + matchMedia listeners
+  // and exposes `window.__theme` for Chunk 4's burger menu. Must run on
+  // every page load, not lazily, so cross-tab sync works without UI interaction.
+  import '$lib/theme';
   import { base } from '$app/paths';
   import { onMount } from 'svelte';
 
