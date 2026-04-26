@@ -46,6 +46,13 @@ export function applyTheme(dark: boolean, { skipPersist = false } = {}): void {
       // localStorage blocked (private mode) — class/attr still applied.
     }
   }
+  // Notify subscribers (charts, modals, etc.) that the theme changed.
+  // ApexCharts in BaseChart listens for this and switches its theme.mode.
+  try {
+    window.dispatchEvent(new CustomEvent<{ dark: boolean }>('theme:change', { detail: { dark } }));
+  } catch {
+    // Old browsers without CustomEvent constructor — ignore.
+  }
 }
 
 /** Whether the dark theme is currently active. */
