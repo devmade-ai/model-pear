@@ -107,22 +107,22 @@
   >
     <div class="flex items-center space-x-2">
       <span class="text-lg">📊</span>
-      <h2 class="text-lg font-semibold text-foreground">Saved Options</h2>
-      <span class="badge-blue">{$savedOptions.length}</span>
+      <h2 class="text-lg font-semibold text-base-content">Saved Options</h2>
+      <span class="badge-primary">{$savedOptions.length}</span>
     </div>
-    <span class="text-muted-foreground">{isExpanded ? '▼' : '▶'}</span>
+    <span class="text-base-content/70">{isExpanded ? '▼' : '▶'}</span>
   </button>
 
   {#if isExpanded}
-    <div class="border-t border-border p-4">
+    <div class="border-t border-base-300 p-4">
       {#if $savedOptions.length === 0}
-        <p class="text-sm text-muted-foreground text-center py-4">
+        <p class="text-sm text-base-content/70 text-center py-4">
           No saved options yet. Calculate a model and click "Save Option" to start comparing.
         </p>
       {:else}
         <!-- Selection info -->
         <div class="flex items-center justify-between mb-4">
-          <p class="text-sm text-muted-foreground">
+          <p class="text-sm text-base-content/70">
             {#if $selectedCount > 0}
               {$selectedCount} selected for comparison
             {:else}
@@ -132,7 +132,7 @@
           <div class="flex space-x-2">
             {#if $selectedCount > 0}
               <button
-                class="text-sm text-muted-foreground hover:text-foreground"
+                class="text-sm text-base-content/70 hover:text-base-content"
                 on:click={() => comparisonStore.clearSelection()}
               >
                 Clear
@@ -155,7 +155,7 @@
             <div
               class="flex items-center p-3 rounded-lg border transition-colors {isSelected
                 ? 'border-primary/50 bg-primary/10'
-                : 'border-border hover:border-border/80'}"
+                : 'border-base-300 hover:border-base-300/80'}"
             >
               <!-- Checkbox -->
               <input
@@ -177,15 +177,15 @@
                   />
                 {:else}
                   <button
-                    class="font-medium text-foreground truncate block text-left w-full"
+                    class="font-medium text-base-content truncate block text-left w-full"
                     on:dblclick={() => startEdit(option)}
                     title="Double-click to rename"
                   >
                     {option.name}
                   </button>
                 {/if}
-                <div class="flex items-center space-x-2 text-xs text-muted-foreground mt-0.5">
-                  <span class="badge-blue text-xs py-0">{getModelLabel(option.modelId)}</span>
+                <div class="flex items-center space-x-2 text-xs text-base-content/70 mt-0.5">
+                  <span class="badge-primary text-xs py-0">{getModelLabel(option.modelId)}</span>
                   <span>{option.variantId}</span>
                   <span>•</span>
                   <span>{formatCurrency(option.result.developer.revenue.total)}</span>
@@ -197,14 +197,14 @@
               <!-- Actions -->
               <div class="flex items-center space-x-1 ml-2">
                 <button
-                  class="p-1 text-muted-foreground hover:text-foreground"
+                  class="p-1 text-base-content/70 hover:text-base-content"
                   title="Rename"
                   on:click={() => startEdit(option)}
                 >
                   ✏️
                 </button>
                 <button
-                  class="p-1 text-muted-foreground hover:text-red-400"
+                  class="p-1 text-base-content/70 hover:text-red-400"
                   title="Delete"
                   on:click={() => comparisonStore.delete(option.id)}
                 >
@@ -216,12 +216,12 @@
         </div>
 
         <!-- Footer actions -->
-        <div class="flex justify-between mt-4 pt-4 border-t border-border">
+        <div class="flex justify-between mt-4 pt-4 border-t border-base-300">
           <div class="flex space-x-2">
-            <button class="text-sm text-muted-foreground hover:text-foreground" on:click={exportOptions}>
+            <button class="text-sm text-base-content/70 hover:text-base-content" on:click={exportOptions}>
               Export
             </button>
-            <button class="text-sm text-muted-foreground hover:text-foreground" on:click={importOptions}>
+            <button class="text-sm text-base-content/70 hover:text-base-content" on:click={importOptions}>
               Import
             </button>
           </div>

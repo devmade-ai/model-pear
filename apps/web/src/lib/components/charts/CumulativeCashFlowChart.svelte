@@ -87,13 +87,13 @@
 </script>
 
 <div class="card p-4">
-  <h3 class="text-lg font-semibold text-foreground mb-2">{title}</h3>
-  <p class="text-sm text-muted-foreground mb-4">
+  <h3 class="text-lg font-semibold text-base-content mb-2">{title}</h3>
+  <p class="text-sm text-base-content/70 mb-4">
     Cumulative cash position over time. The point where lines cross zero indicates payback.
   </p>
   {#if developerData.length > 0}
     <BaseChart {options} {height} />
   {:else}
-    <p class="text-muted-foreground text-center py-8">No projection data available</p>
+    <p class="text-base-content/70 text-center py-8">No projection data available</p>
   {/if}
 </div>

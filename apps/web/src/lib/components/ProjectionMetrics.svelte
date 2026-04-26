@@ -39,7 +39,7 @@
 
 <div class="card p-4 {colors.bg} {colors.border}">
   <div class="flex items-center justify-between mb-4">
-    <h3 class="text-lg font-semibold text-foreground">{partyName}</h3>
+    <h3 class="text-lg font-semibold text-base-content">{partyName}</h3>
     <span class="px-2 py-1 text-xs font-medium rounded-full {getAssessmentColor(assessment.color)}">
       {assessment.rating}
     </span>
@@ -48,7 +48,7 @@
   <div class="grid grid-cols-2 gap-4">
     <!-- NPV -->
     <div>
-      <p class="text-sm text-muted-foreground">Net Present Value</p>
+      <p class="text-sm text-base-content/70">Net Present Value</p>
       <p class="text-xl font-bold {metrics.npv >= 0 ? 'text-green-400' : 'text-red-400'}">
         {formatCurrency(metrics.npv)}
       </p>
@@ -56,7 +56,7 @@
 
     <!-- IRR -->
     <div>
-      <p class="text-sm text-muted-foreground">Internal Rate of Return</p>
+      <p class="text-sm text-base-content/70">Internal Rate of Return</p>
       <p class="text-xl font-bold {metrics.irr >= 0 ? 'text-green-400' : 'text-red-400'}">
         {formatPercent(metrics.irr)}
       </p>
@@ -64,8 +64,8 @@
 
     <!-- Payback Period -->
     <div>
-      <p class="text-sm text-muted-foreground">Payback Period</p>
-      <p class="text-xl font-bold text-foreground">
+      <p class="text-sm text-base-content/70">Payback Period</p>
+      <p class="text-xl font-bold text-base-content">
         {#if metrics.paybackPeriod === Infinity}
           Never
         {:else if metrics.paybackPeriod < 0}
@@ -78,8 +78,8 @@
 
     <!-- Discounted Payback -->
     <div>
-      <p class="text-sm text-muted-foreground">Discounted Payback</p>
-      <p class="text-xl font-bold text-foreground">
+      <p class="text-sm text-base-content/70">Discounted Payback</p>
+      <p class="text-xl font-bold text-base-content">
         {#if metrics.discountedPaybackPeriod === Infinity}
           Never
         {:else if metrics.discountedPaybackPeriod < 0}
@@ -92,7 +92,7 @@
   </div>
 
   <!-- Assessment Description -->
-  <div class="mt-4 pt-4 border-t border-border">
-    <p class="text-sm text-muted-foreground">{assessment.description}</p>
+  <div class="mt-4 pt-4 border-t border-base-300">
+    <p class="text-sm text-base-content/70">{assessment.description}</p>
   </div>
 </div>

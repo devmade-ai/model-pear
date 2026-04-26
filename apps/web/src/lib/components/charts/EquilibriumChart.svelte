@@ -85,13 +85,13 @@
         const seriesName = w.globals.seriesNames[seriesIndex];
         const data = w.config.series[seriesIndex].data[dataPointIndex];
         if (seriesIndex === 0 && equilibriumExists) {
-          return `<div class="p-2 p-2 bg-card shadow rounded text-sm text-foreground">
+          return `<div class="p-2 p-2 bg-base-200 shadow rounded text-sm text-base-content">
             <strong>${seriesName}</strong><br/>
             ${formatValue(data.y[0])} - ${formatValue(data.y[1])}
           </div>`;
         }
         const midpoint = (data.y[0] + data.y[1]) / 2;
-        return `<div class="p-2 p-2 bg-card shadow rounded text-sm text-foreground">
+        return `<div class="p-2 p-2 bg-base-200 shadow rounded text-sm text-base-content">
           <strong>${seriesName}</strong>: ${formatValue(midpoint)}
         </div>`;
       },
@@ -120,7 +120,7 @@
 
 <div class="w-full">
   <BaseChart {options} {height} />
-  <div class="mt-2 text-center text-sm text-muted-foreground">
+  <div class="mt-2 text-center text-sm text-base-content/70">
     {#if equilibriumExists}
       <span class="text-green-400 font-medium">Equilibrium zone:</span>
       {formatValue(minimumPrice)} to {formatValue(maximumPrice)}

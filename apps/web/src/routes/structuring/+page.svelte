@@ -77,8 +77,8 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- Page header -->
   <div class="mb-8">
-    <h1 class="text-3xl font-bold text-foreground">Transaction Structuring</h1>
-    <p class="text-secondary mt-2">
+    <h1 class="text-3xl font-bold text-base-content">Transaction Structuring</h1>
+    <p class="text-base-content/70 mt-2">
       {viewMode === 'wizard'
         ? 'Answer a few questions to find the best transaction model for your situation.'
         : 'Choose a transaction model to analyze financial outcomes for both parties.'}
@@ -91,7 +91,7 @@
       class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
              {viewMode === 'wizard'
         ? 'bg-primary/20 text-primary border border-primary/30'
-        : 'text-secondary hover:bg-card'}"
+        : 'text-base-content/70 hover:bg-base-200'}"
       on:click={() => (viewMode = 'wizard')}
     >
       <span class="mr-2">🧙</span>
@@ -101,7 +101,7 @@
       class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
              {viewMode === 'overview'
         ? 'bg-primary/20 text-primary border border-primary/30'
-        : 'text-secondary hover:bg-card'}"
+        : 'text-base-content/70 hover:bg-base-200'}"
       on:click={() => (viewMode = 'overview')}
     >
       <span class="mr-2">📋</span>
@@ -127,25 +127,25 @@
             <div class="flex items-center space-x-3">
               <span class="text-2xl">{model.icon}</span>
               <div>
-                <h3 class="font-semibold text-foreground group-hover:text-primary transition-colors">
+                <h3 class="font-semibold text-base-content group-hover:text-primary transition-colors">
                   {model.shortName}
                 </h3>
-                <p class="text-xs text-secondary">{model.id.toUpperCase()}</p>
+                <p class="text-xs text-base-content/70">{model.id.toUpperCase()}</p>
               </div>
             </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-secondary-light text-secondary">
+            <span class="text-xs px-2 py-1 rounded-full bg-base-300 text-base-content/70">
               {Object.keys(model.variants).length} variants
             </span>
           </div>
 
           <!-- Description -->
-          <p class="text-sm text-secondary mb-4">
+          <p class="text-sm text-base-content/70 mb-4">
             {model.description}
           </p>
 
           <!-- Best for -->
           <div class="mb-4">
-            <p class="text-xs font-medium text-secondary mb-2">Best for:</p>
+            <p class="text-xs font-medium text-base-content/70 mb-2">Best for:</p>
             <div class="flex flex-wrap gap-1">
               {#each model.bestFor as tag}
                 <span class="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
@@ -157,8 +157,8 @@
 
           <!-- Key features -->
           <div class="mb-4">
-            <p class="text-xs font-medium text-secondary mb-2">Key features:</p>
-            <ul class="text-xs text-secondary space-y-1">
+            <p class="text-xs font-medium text-base-content/70 mb-2">Key features:</p>
+            <ul class="text-xs text-base-content/70 space-y-1">
               {#each model.keyFeatures as feature}
                 <li class="flex items-center">
                   <span class="text-success mr-2">✓</span>
@@ -169,8 +169,8 @@
           </div>
 
           <!-- CTA -->
-          <div class="flex items-center justify-between pt-4 border-t border-border">
-            <span class="text-xs text-secondary">
+          <div class="flex items-center justify-between pt-4 border-t border-base-300">
+            <span class="text-xs text-base-content/70">
               {model.accountingSummary.developer.split('.')[0]}.
             </span>
             <span class="text-primary text-sm font-medium group-hover:translate-x-1 transition-transform">
@@ -183,9 +183,9 @@
 
     <!-- Quick comparison table -->
     <div class="mt-12">
-      <h2 class="text-xl font-semibold text-foreground mb-4">Quick Comparison</h2>
+      <h2 class="text-xl font-semibold text-base-content mb-4">Quick Comparison</h2>
       <div class="overflow-x-auto">
-        <table class="table-dark min-w-full border border-border rounded-lg overflow-hidden">
+        <table class="table table-zebra min-w-full">
           <thead>
             <tr>
               <th>Model</th>
@@ -197,42 +197,42 @@
           </thead>
           <tbody>
             <tr>
-              <td class="font-medium text-foreground">Cost-Plus</td>
+              <td class="font-medium text-base-content">Cost-Plus</td>
               <td>Buyer</td>
               <td>Project-based</td>
               <td><span class="badge-success">Low</span></td>
               <td>6</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">Licence</td>
+              <td class="font-medium text-base-content">Licence</td>
               <td>Developer</td>
               <td>Upfront / Royalty</td>
               <td><span class="badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">Joint Dev</td>
+              <td class="font-medium text-base-content">Joint Dev</td>
               <td>Shared</td>
               <td>Cost contribution</td>
               <td><span class="badge-success">Low</span></td>
               <td>8</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">BOT</td>
+              <td class="font-medium text-base-content">BOT</td>
               <td>Developer → Buyer</td>
               <td>Fees + Transfer</td>
               <td><span class="badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">Sale</td>
+              <td class="font-medium text-base-content">Sale</td>
               <td>Buyer</td>
               <td>Upfront / Earnout</td>
               <td><span class="badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">SaaS</td>
+              <td class="font-medium text-base-content">SaaS</td>
               <td>Developer</td>
               <td>Subscription</td>
               <td><span class="badge-success">Low</span></td>

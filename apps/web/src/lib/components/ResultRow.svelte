@@ -12,7 +12,7 @@
   export let label: string;
   export let value: string | number;
   export let format: 'currency' | 'percent' | 'text' = 'text';
-  export let valueClass: string = 'result-value';
+  export let valueClass: string = 'font-medium text-base-content';
 
   function formatValue(val: string | number, fmt: string): string {
     if (typeof val === 'string') return val;
@@ -27,7 +27,7 @@
   }
 </script>
 
-<div class="result-row">
-  <span class="result-label">{label}</span>
+<div class="flex justify-between items-center py-1.5 px-2 rounded hover:bg-base-content/5">
+  <span class="text-sm text-base-content/70">{label}</span>
   <span class={valueClass}>{formatValue(value, format)}</span>
 </div>

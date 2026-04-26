@@ -41,22 +41,22 @@
 
 <div class="min-h-screen flex flex-col">
   <!-- Header -->
-  <header class="bg-card border-b border-border sticky top-0 z-20">
+  <header class="bg-base-200 border-b border-base-300 sticky top-0 z-20">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center">
           <a href="{base}/" class="flex items-center space-x-2" on:click={closeMobileMenu}>
             <span class="text-2xl">🍐</span>
-            <span class="font-semibold text-xl text-foreground">Model Pear</span>
+            <span class="font-semibold text-xl text-base-content">Model Pear</span>
           </a>
         </div>
 
         <!-- Desktop navigation -->
         <div class="hidden sm:flex items-center space-x-4">
-          <a href="{base}/structuring" class="text-secondary hover:text-foreground px-3 py-2 text-sm font-medium transition-colors">
+          <a href="{base}/structuring" class="text-base-content/70 hover:text-base-content px-3 py-2 text-sm font-medium transition-colors">
             Transaction Structuring
           </a>
-          <a href="{base}/pricing" class="text-secondary hover:text-foreground px-3 py-2 text-sm font-medium transition-colors">
+          <a href="{base}/pricing" class="text-base-content/70 hover:text-base-content px-3 py-2 text-sm font-medium transition-colors">
             Pricing Calculator
           </a>
         </div>
@@ -65,7 +65,7 @@
         <div class="flex items-center sm:hidden">
           <button
             type="button"
-            class="inline-flex items-center justify-center p-2 rounded text-secondary hover:text-foreground hover:bg-secondary-light focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+            class="inline-flex items-center justify-center p-2 rounded text-base-content/70 hover:text-base-content hover:bg-base-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             aria-expanded={mobileMenuOpen}
             on:click={toggleMobileMenu}
           >
@@ -87,18 +87,18 @@
 
       <!-- Mobile navigation menu -->
       {#if mobileMenuOpen}
-        <div class="sm:hidden border-t border-border">
+        <div class="sm:hidden border-t border-base-300">
           <div class="py-2 space-y-1">
             <a
               href="{base}/structuring"
-              class="block px-4 py-3 text-base font-medium text-secondary hover:text-foreground hover:bg-secondary-light transition-colors"
+              class="block px-4 py-3 text-base font-medium text-base-content/70 hover:text-base-content hover:bg-base-300 transition-colors"
               on:click={closeMobileMenu}
             >
               Transaction Structuring
             </a>
             <a
               href="{base}/pricing"
-              class="block px-4 py-3 text-base font-medium text-secondary hover:text-foreground hover:bg-secondary-light transition-colors"
+              class="block px-4 py-3 text-base font-medium text-base-content/70 hover:text-base-content hover:bg-base-300 transition-colors"
               on:click={closeMobileMenu}
             >
               Pricing Calculator
@@ -115,13 +115,13 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-card border-t border-border">
+  <footer class="bg-base-200 border-t border-base-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div class="flex flex-col sm:flex-row justify-between items-center gap-2">
-        <p class="text-sm text-secondary text-center sm:text-left">
+        <p class="text-sm text-base-content/70 text-center sm:text-left">
           Software Transaction Structuring Tool
         </p>
-        <p class="text-sm text-secondary/60">
+        <p class="text-sm text-base-content/70/60">
           v2.0.0 - TypeScript + SvelteKit
         </p>
       </div>

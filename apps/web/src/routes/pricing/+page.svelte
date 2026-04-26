@@ -275,39 +275,39 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
   <!-- Header -->
   <div class="mb-8">
-    <h1 class="text-3xl font-bold text-foreground mb-2">Pricing Calculator</h1>
-    <p class="text-lg text-secondary">
+    <h1 class="text-3xl font-bold text-base-content mb-2">Pricing Calculator</h1>
+    <p class="text-lg text-base-content/70">
       Find the price where you hit your margin AND your client sees clear ROI
     </p>
   </div>
 
   <!-- Model Selector (interactive — hidden in print) -->
   <div class="mb-8 no-print">
-    <label class="block text-sm font-medium text-secondary mb-3">Pricing Model</label>
+    <label class="block text-sm font-medium text-base-content/70 mb-3">Pricing Model</label>
     <!-- Mobile: horizontal scroll, Tablet+: grid -->
     <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-3 md:grid-cols-5 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
       {#each models as model}
         <button
           class="flex-shrink-0 w-28 sm:w-auto p-3 sm:p-4 border-2 rounded-lg transition-all text-left touch-manipulation {selectedModel === model.id
             ? 'border-primary bg-primary/10'
-            : 'border-border hover:border-secondary active:bg-card'}"
+            : 'border-base-300 hover:border-secondary active:bg-base-200'}"
           on:click={() => selectedModel = model.id}
         >
           <div class="text-xl sm:text-2xl mb-1 sm:mb-2">{model.icon}</div>
-          <div class="font-medium text-xs sm:text-sm text-foreground leading-tight">{model.name}</div>
-          <div class="text-xs text-secondary mt-1 hidden sm:block">{model.description}</div>
+          <div class="font-medium text-xs sm:text-sm text-base-content leading-tight">{model.name}</div>
+          <div class="text-xs text-base-content/70 mt-1 hidden sm:block">{model.description}</div>
         </button>
       {/each}
     </div>
-    <p class="text-xs text-secondary/60 mt-2 sm:hidden text-center">Swipe to see all models</p>
+    <p class="text-xs text-base-content/70/60 mt-2 sm:hidden text-center">Swipe to see all models</p>
   </div>
 
   <!-- Print-only: show selected model name (tab buttons are hidden in print).
        Uses .print-only utility — hidden on screen, visible in print. -->
   {#if selectedModelInfo}
     <div class="print-only mb-6">
-      <p class="text-sm text-secondary">Pricing Model</p>
-      <p class="text-lg font-semibold text-foreground">{selectedModelInfo.icon} {selectedModelInfo.name}</p>
+      <p class="text-sm text-base-content/70">Pricing Model</p>
+      <p class="text-lg font-semibold text-base-content">{selectedModelInfo.icon} {selectedModelInfo.name}</p>
     </div>
   {/if}
 
@@ -315,20 +315,20 @@
     <!-- Inputs -->
     <div>
       <div class="card p-6">
-        <h2 class="text-lg font-semibold text-foreground mb-4">Inputs</h2>
+        <h2 class="text-lg font-semibold text-base-content mb-4">Inputs</h2>
 
         {#if selectedModel === 'subscription'}
           <div class="space-y-6">
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Pricing</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Pricing</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Monthly Price per Customer (R)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Monthly Price per Customer (R)</label>
                   <input type="number" bind:value={sub_monthlyPrice} min="0" step="10"
                     class="input">
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Number of Customers</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Number of Customers</label>
                   <input type="number" bind:value={sub_customers} min="0" step="1"
                     class="input">
                 </div>
@@ -336,46 +336,46 @@
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Your Costs</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Your Costs</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Cost to Serve per Customer (R/month)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Cost to Serve per Customer (R/month)</label>
                   <input type="number" bind:value={sub_costToServe} min="0" step="10"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Infrastructure, support costs per customer</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Infrastructure, support costs per customer</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Desired Gross Margin (%)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
                   <input type="number" bind:value={sub_desiredMargin} min="0" max="100" step="1"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Target profit margin (typical SaaS: 70-85%)</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Target profit margin (typical SaaS: 70-85%)</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Client Value</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Client Value</h3>
               <div>
-                <label class="block text-sm text-secondary mb-1">Monthly Value to Client (R)</label>
+                <label class="block text-sm text-base-content/70 mb-1">Monthly Value to Client (R)</label>
                 <input type="number" bind:value={sub_buyerValue} min="0" step="100"
                   class="input">
-                <p class="text-xs text-secondary/60 mt-1">Revenue enabled or cost saved per month</p>
+                <p class="text-xs text-base-content/70/60 mt-1">Revenue enabled or cost saved per month</p>
               </div>
             </div>
           </div>
         {:else if selectedModel === 'usage-based'}
           <div class="space-y-6">
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Pricing</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Pricing</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Price per Unit (R)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Price per Unit (R)</label>
                   <input type="number" bind:value={usage_pricePerUnit} min="0" step="0.10"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">E.g., per 1,000 API calls</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">E.g., per 1,000 API calls</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Monthly Units</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Monthly Units</label>
                   <input type="number" bind:value={usage_monthlyUnits} min="0" step="100"
                     class="input">
                 </div>
@@ -383,45 +383,45 @@
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Your Costs</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Your Costs</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Cost per Unit (R)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Cost per Unit (R)</label>
                   <input type="number" bind:value={usage_costPerUnit} min="0" step="0.05"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Infrastructure cost per unit</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Infrastructure cost per unit</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Desired Gross Margin (%)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
                   <input type="number" bind:value={usage_desiredMargin} min="0" max="100" step="1"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Typical usage-based: 75-90%</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Typical usage-based: 75-90%</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Client Value</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Client Value</h3>
               <div>
-                <label class="block text-sm text-secondary mb-1">Value per Unit to Client (R)</label>
+                <label class="block text-sm text-base-content/70 mb-1">Value per Unit to Client (R)</label>
                 <input type="number" bind:value={usage_buyerValuePerUnit} min="0" step="0.50"
                   class="input">
-                <p class="text-xs text-secondary/60 mt-1">Revenue enabled or cost saved per unit</p>
+                <p class="text-xs text-base-content/70/60 mt-1">Revenue enabled or cost saved per unit</p>
               </div>
             </div>
           </div>
         {:else if selectedModel === 'per-seat'}
           <div class="space-y-6">
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Pricing</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Pricing</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Price per Seat (R/month)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Price per Seat (R/month)</label>
                   <input type="number" bind:value={seat_pricePerSeat} min="0" step="10"
                     class="input">
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Number of Seats</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Number of Seats</label>
                   <input type="number" bind:value={seat_seats} min="0" step="1"
                     class="input">
                 </div>
@@ -429,58 +429,58 @@
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Your Costs</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Your Costs</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Cost per Seat (R/month)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Cost per Seat (R/month)</label>
                   <input type="number" bind:value={seat_costPerSeat} min="0" step="5"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Infrastructure and support cost per seat</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Infrastructure and support cost per seat</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Desired Gross Margin (%)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
                   <input type="number" bind:value={seat_desiredMargin} min="0" max="100" step="1"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Typical per-seat: 70-80%</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Typical per-seat: 70-80%</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Client Value</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Client Value</h3>
               <div>
-                <label class="block text-sm text-secondary mb-1">Monthly Value per Seat to Client (R)</label>
+                <label class="block text-sm text-base-content/70 mb-1">Monthly Value per Seat to Client (R)</label>
                 <input type="number" bind:value={seat_valuePerSeat} min="0" step="50"
                   class="input">
-                <p class="text-xs text-secondary/60 mt-1">Productivity gain or cost saved per user per month</p>
+                <p class="text-xs text-base-content/70/60 mt-1">Productivity gain or cost saved per user per month</p>
               </div>
             </div>
           </div>
         {:else if selectedModel === 'one-time'}
           <div class="space-y-6">
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Pricing</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Pricing</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">License Price (R)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">License Price (R)</label>
                   <input type="number" bind:value={onetime_licensePrice} min="0" step="100"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">One-time perpetual license fee</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">One-time perpetual license fee</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Annual Maintenance Fee (%)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Annual Maintenance Fee (%)</label>
                   <input type="number" bind:value={onetime_maintenanceFee} min="0" max="100" step="1"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">% of license price (typical: 15-25%)</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">% of license price (typical: 15-25%)</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Maintenance Attach Rate (%)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Maintenance Attach Rate (%)</label>
                   <input type="number" bind:value={onetime_maintenanceAttach} min="0" max="100" step="1"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">% of customers buying maintenance</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">% of customers buying maintenance</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Existing Customers on Maintenance</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Existing Customers on Maintenance</label>
                   <input type="number" bind:value={onetime_existingCustomers} min="0" step="1"
                     class="input">
                 </div>
@@ -488,62 +488,62 @@
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Your Costs</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Your Costs</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Cost to Deliver per License (R)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Cost to Deliver per License (R)</label>
                   <input type="number" bind:value={onetime_costToDeliver} min="0" step="100"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">One-time onboarding, implementation cost</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">One-time onboarding, implementation cost</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Monthly Support Cost per Customer (R)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Monthly Support Cost per Customer (R)</label>
                   <input type="number" bind:value={onetime_monthlySupportCost} min="0" step="10"
                     class="input">
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Desired Gross Margin (%)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
                   <input type="number" bind:value={onetime_desiredMargin} min="0" max="100" step="1"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Typical: 70-80%</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Typical: 70-80%</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Client Value</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Client Value</h3>
               <div>
-                <label class="block text-sm text-secondary mb-1">Annual Value to Client (R)</label>
+                <label class="block text-sm text-base-content/70 mb-1">Annual Value to Client (R)</label>
                 <input type="number" bind:value={onetime_buyerValuePerYear} min="0" step="500"
                   class="input">
-                <p class="text-xs text-secondary/60 mt-1">Annual productivity gain or cost saved</p>
+                <p class="text-xs text-base-content/70/60 mt-1">Annual productivity gain or cost saved</p>
               </div>
             </div>
           </div>
         {:else if selectedModel === 'marketplace'}
           <div class="space-y-6">
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Pricing</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Pricing</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Commission Rate (%)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Commission Rate (%)</label>
                   <input type="number" bind:value={market_commissionRate} min="0" max="100" step="0.5"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">% commission on each transaction</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">% commission on each transaction</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Average Transaction Value (R)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Average Transaction Value (R)</label>
                   <input type="number" bind:value={market_avgTransactionValue} min="0" step="50"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Average GMV per transaction</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Average GMV per transaction</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Monthly Transactions</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Monthly Transactions</label>
                   <input type="number" bind:value={market_monthlyTransactions} min="0" step="10"
                     class="input">
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Active Sellers</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Active Sellers</label>
                   <input type="number" bind:value={market_activeSellers} min="0" step="1"
                     class="input">
                 </div>
@@ -551,30 +551,30 @@
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Your Costs</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Your Costs</h3>
               <div class="space-y-3">
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Cost per Transaction (R)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Cost per Transaction (R)</label>
                   <input type="number" bind:value={market_costPerTransaction} min="0" step="1"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Payment processing, support, fraud prevention</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Payment processing, support, fraud prevention</p>
                 </div>
                 <div>
-                  <label class="block text-sm text-secondary mb-1">Desired Gross Margin (%)</label>
+                  <label class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
                   <input type="number" bind:value={market_desiredMargin} min="0" max="100" step="1"
                     class="input">
-                  <p class="text-xs text-secondary/60 mt-1">Typical: 60-75%</p>
+                  <p class="text-xs text-base-content/70/60 mt-1">Typical: 60-75%</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-secondary mb-3">Seller Value</h3>
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Seller Value</h3>
               <div>
-                <label class="block text-sm text-secondary mb-1">Value per Transaction to Seller (R)</label>
+                <label class="block text-sm text-base-content/70 mb-1">Value per Transaction to Seller (R)</label>
                 <input type="number" bind:value={market_sellerValuePerTransaction} min="0" step="10"
                   class="input">
-                <p class="text-xs text-secondary/60 mt-1">Profit seller makes per transaction (before commission)</p>
+                <p class="text-xs text-base-content/70/60 mt-1">Profit seller makes per transaction (before commission)</p>
               </div>
             </div>
           </div>
@@ -586,7 +586,7 @@
     <div>
       <div class="card p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-foreground">Results</h2>
+          <h2 class="text-lg font-semibold text-base-content">Results</h2>
           <!-- Requirement: Let users save pricing results as PDF via the browser's native print dialog.
                Approach: window.print() — zero dependencies, leverages existing @media print CSS in app.css.
                Alternative considered: pdf-lib — rejected because content is text/tables (not canvas),
@@ -609,12 +609,12 @@
               <p class="text-sm text-success/80">
                 A mutually beneficial price exists between {selectedModel === 'marketplace' ? formatPercent(results.minimumPrice) : formatCurrency(results.minimumPrice)} and {selectedModel === 'marketplace' ? formatPercent(results.maximumPrice) : formatCurrency(results.maximumPrice)}
               </p>
-              <div class="mt-3 p-3 bg-card rounded border border-success/30">
-                <div class="text-xs text-secondary mb-1">Suggested Price</div>
+              <div class="mt-3 p-3 bg-base-200 rounded border border-success/30">
+                <div class="text-xs text-base-content/70 mb-1">Suggested Price</div>
                 <div class="text-2xl font-bold text-success">
                   {selectedModel === 'marketplace' ? formatPercent(results.suggestedPrice) : formatCurrency(results.suggestedPrice)}
                 </div>
-                <div class="text-xs text-secondary mt-1">{results.metricLabel}</div>
+                <div class="text-xs text-base-content/70 mt-1">{results.metricLabel}</div>
               </div>
             {:else}
               <p class="text-sm text-error/80">
@@ -625,8 +625,8 @@
 
           <!-- Equilibrium Visualization -->
           <div class="mb-6">
-            <h3 class="text-sm font-medium text-secondary mb-3">Price Range Visualization</h3>
-            <div class="bg-secondary-light rounded-lg p-4">
+            <h3 class="text-sm font-medium text-base-content/70 mb-3">Price Range Visualization</h3>
+            <div class="bg-base-300 rounded-lg p-4">
               <EquilibriumChart
                 minimumPrice={results.minimumPrice}
                 maximumPrice={results.maximumPrice}
@@ -645,43 +645,43 @@
 
           <!-- Financial Metrics -->
           <div class="mb-6">
-            <h3 class="text-sm font-medium text-secondary mb-3">Financial Performance</h3>
+            <h3 class="text-sm font-medium text-base-content/70 mb-3">Financial Performance</h3>
             <div class="grid grid-cols-2 gap-3">
-              <div class="p-3 bg-secondary-light rounded">
-                <div class="text-xs text-secondary">Monthly Revenue</div>
-                <div class="font-semibold text-foreground">{formatCurrency(results.monthlyRevenue)}</div>
+              <div class="p-3 bg-base-300 rounded">
+                <div class="text-xs text-base-content/70">Monthly Revenue</div>
+                <div class="font-semibold text-base-content">{formatCurrency(results.monthlyRevenue)}</div>
               </div>
-              <div class="p-3 bg-secondary-light rounded">
-                <div class="text-xs text-secondary">Monthly Profit</div>
-                <div class="font-semibold text-foreground">{formatCurrency(results.monthlyProfit)}</div>
+              <div class="p-3 bg-base-300 rounded">
+                <div class="text-xs text-base-content/70">Monthly Profit</div>
+                <div class="font-semibold text-base-content">{formatCurrency(results.monthlyProfit)}</div>
               </div>
-              <div class="p-3 bg-secondary-light rounded">
-                <div class="text-xs text-secondary">Annual Revenue</div>
-                <div class="font-semibold text-foreground">{formatCurrency(results.annualRevenue)}</div>
+              <div class="p-3 bg-base-300 rounded">
+                <div class="text-xs text-base-content/70">Annual Revenue</div>
+                <div class="font-semibold text-base-content">{formatCurrency(results.annualRevenue)}</div>
               </div>
-              <div class="p-3 bg-secondary-light rounded">
-                <div class="text-xs text-secondary">Annual Profit</div>
-                <div class="font-semibold text-foreground">{formatCurrency(results.annualProfit)}</div>
+              <div class="p-3 bg-base-300 rounded">
+                <div class="text-xs text-base-content/70">Annual Profit</div>
+                <div class="font-semibold text-base-content">{formatCurrency(results.annualProfit)}</div>
               </div>
             </div>
           </div>
 
           <!-- Seller Perspective -->
           <div class="mb-6">
-            <h3 class="text-sm font-medium text-secondary mb-3">Your Position</h3>
+            <h3 class="text-sm font-medium text-base-content/70 mb-3">Your Position</h3>
             <div class="space-y-2">
-              <div class="flex justify-between items-center p-2 bg-secondary-light rounded">
-                <span class="text-sm text-secondary">Actual Margin</span>
+              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
+                <span class="text-sm text-base-content/70">Actual Margin</span>
                 <span class="font-semibold {results.sellerMeetsTarget ? 'text-success' : 'text-error'}">
                   {formatPercent(results.actualMargin)}
                 </span>
               </div>
-              <div class="flex justify-between items-center p-2 bg-secondary-light rounded">
-                <span class="text-sm text-secondary">Minimum Price Needed</span>
-                <span class="font-semibold text-foreground">{selectedModel === 'marketplace' ? formatPercent(results.minimumPrice) : formatCurrency(results.minimumPrice)}</span>
+              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
+                <span class="text-sm text-base-content/70">Minimum Price Needed</span>
+                <span class="font-semibold text-base-content">{selectedModel === 'marketplace' ? formatPercent(results.minimumPrice) : formatCurrency(results.minimumPrice)}</span>
               </div>
-              <div class="flex justify-between items-center p-2 bg-secondary-light rounded">
-                <span class="text-sm text-secondary">Meets Target?</span>
+              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
+                <span class="text-sm text-base-content/70">Meets Target?</span>
                 <span class="font-semibold {results.sellerMeetsTarget ? 'text-success' : 'text-error'}">
                   {results.sellerMeetsTarget ? 'Yes' : 'No'}
                 </span>
@@ -691,32 +691,32 @@
 
           <!-- Buyer Perspective -->
           <div>
-            <h3 class="text-sm font-medium text-secondary mb-3">{selectedModel === 'marketplace' ? 'Seller Position' : 'Client Position'}</h3>
+            <h3 class="text-sm font-medium text-base-content/70 mb-3">{selectedModel === 'marketplace' ? 'Seller Position' : 'Client Position'}</h3>
             <div class="space-y-2">
-              <div class="flex justify-between items-center p-2 bg-secondary-light rounded">
-                <span class="text-sm text-secondary">ROI Multiplier</span>
-                <span class="font-semibold text-foreground">{results.buyerROI.toFixed(2)}x</span>
+              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
+                <span class="text-sm text-base-content/70">ROI Multiplier</span>
+                <span class="font-semibold text-base-content">{results.buyerROI.toFixed(2)}x</span>
               </div>
-              <div class="flex justify-between items-center p-2 bg-secondary-light rounded">
-                <span class="text-sm text-secondary">Maximum Price They'll Pay</span>
-                <span class="font-semibold text-foreground">{selectedModel === 'marketplace' ? formatPercent(results.maximumPrice) : formatCurrency(results.maximumPrice)}</span>
+              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
+                <span class="text-sm text-base-content/70">Maximum Price They'll Pay</span>
+                <span class="font-semibold text-base-content">{selectedModel === 'marketplace' ? formatPercent(results.maximumPrice) : formatCurrency(results.maximumPrice)}</span>
               </div>
-              <div class="flex justify-between items-center p-2 bg-secondary-light rounded">
-                <span class="text-sm text-secondary">Annual Savings</span>
-                <span class="font-semibold text-foreground">{formatCurrency(results.buyerAnnualSavings)}</span>
+              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
+                <span class="text-sm text-base-content/70">Annual Savings</span>
+                <span class="font-semibold text-base-content">{formatCurrency(results.buyerAnnualSavings)}</span>
               </div>
               {#if results.buyerPaybackMonths !== undefined}
-                <div class="flex justify-between items-center p-2 bg-secondary-light rounded">
-                  <span class="text-sm text-secondary">Payback Period</span>
-                  <span class="font-semibold text-foreground">
+                <div class="flex justify-between items-center p-2 bg-base-300 rounded">
+                  <span class="text-sm text-base-content/70">Payback Period</span>
+                  <span class="font-semibold text-base-content">
                     {results.buyerPaybackMonths === Infinity ? '∞' : `${results.buyerPaybackMonths.toFixed(1)} months`}
                   </span>
                 </div>
               {/if}
               {#if results.avgTransactionsPerSeller !== undefined}
-                <div class="flex justify-between items-center p-2 bg-secondary-light rounded">
-                  <span class="text-sm text-secondary">Avg Transactions per Seller</span>
-                  <span class="font-semibold text-foreground">{results.avgTransactionsPerSeller.toFixed(1)}</span>
+                <div class="flex justify-between items-center p-2 bg-base-300 rounded">
+                  <span class="text-sm text-base-content/70">Avg Transactions per Seller</span>
+                  <span class="font-semibold text-base-content">{results.avgTransactionsPerSeller.toFixed(1)}</span>
                 </div>
               {/if}
             </div>

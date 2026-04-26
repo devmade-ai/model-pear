@@ -271,8 +271,8 @@
       <div class="flex items-center space-x-3">
         <span class="text-3xl">{config.model.icon}</span>
         <div>
-          <h1 class="text-3xl font-bold text-foreground">{config.model.name}</h1>
-          <p class="text-secondary mt-1">{config.model.description}</p>
+          <h1 class="text-3xl font-bold text-base-content">{config.model.name}</h1>
+          <p class="text-base-content/70 mt-1">{config.model.description}</p>
         </div>
       </div>
     </div>
@@ -281,7 +281,7 @@
       <!-- Input Form -->
       <div class="lg:col-span-1">
         <div class="card p-6 sticky top-4">
-          <h2 class="text-lg font-semibold text-foreground mb-4">Inputs</h2>
+          <h2 class="text-lg font-semibold text-base-content mb-4">Inputs</h2>
 
           <!-- Essential Inputs -->
           <div class="space-y-4">
@@ -304,9 +304,9 @@
 
           <!-- Advanced Inputs (Collapsed) -->
           {#if advancedFields.length > 0}
-            <div class="mt-6 pt-4 border-t border-border">
+            <div class="mt-6 pt-4 border-t border-base-300">
               <button
-                class="flex items-center justify-between w-full text-sm font-medium text-secondary hover:text-foreground"
+                class="flex items-center justify-between w-full text-sm font-medium text-base-content/70 hover:text-base-content"
                 on:click={() => showAdvancedInputs = !showAdvancedInputs}
               >
                 <span>Advanced Options ({advancedFields.length})</span>
@@ -361,7 +361,7 @@
             Save as PDF
           </button>
           {#if savedCount > 0}
-            <span class="text-sm text-secondary border-l border-border pl-3">
+            <span class="text-sm text-base-content/70 border-l border-base-300 pl-3">
               {savedCount} option{savedCount !== 1 ? 's' : ''} saved
             </span>
           {/if}
@@ -385,8 +385,8 @@
             <div class="flex items-center space-x-3">
               <span class="text-xl">⚖️</span>
               <div>
-                <h3 class="font-semibold text-foreground">Transfer Pricing Assessment</h3>
-                <p class="text-sm text-secondary">Related party compliance details</p>
+                <h3 class="font-semibold text-base-content">Transfer Pricing Assessment</h3>
+                <p class="text-sm text-base-content/70">Related party compliance details</p>
               </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -394,7 +394,7 @@
                 {result.transferPricing.riskLevel.toUpperCase()} RISK
               </span>
               <svg
-                class="w-5 h-5 text-secondary transition-transform {showTransferPricing ? 'rotate-180' : ''}"
+                class="w-5 h-5 text-base-content/70 transition-transform {showTransferPricing ? 'rotate-180' : ''}"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -421,12 +421,12 @@
             <div class="flex items-center space-x-3">
               <span class="text-xl">📊</span>
               <div>
-                <h3 class="font-semibold text-foreground">Advanced Analysis</h3>
-                <p class="text-sm text-secondary">Sensitivity, projections, and detailed metrics</p>
+                <h3 class="font-semibold text-base-content">Advanced Analysis</h3>
+                <p class="text-sm text-base-content/70">Sensitivity, projections, and detailed metrics</p>
               </div>
             </div>
             <svg
-              class="w-5 h-5 text-secondary transition-transform {showAdvancedAnalysis ? 'rotate-180' : ''}"
+              class="w-5 h-5 text-base-content/70 transition-transform {showAdvancedAnalysis ? 'rotate-180' : ''}"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -437,7 +437,7 @@
           {#if showAdvancedAnalysis}
             <div class="p-4 pt-0 space-y-6">
               <div>
-                <h4 class="text-sm font-medium text-secondary mb-3">Sensitivity Analysis</h4>
+                <h4 class="text-sm font-medium text-base-content/70 mb-3">Sensitivity Analysis</h4>
                 <SensitivityPanel
                   {inputs}
                   {result}
@@ -445,7 +445,7 @@
                 />
               </div>
               <div>
-                <h4 class="text-sm font-medium text-secondary mb-3">Growth Projections</h4>
+                <h4 class="text-sm font-medium text-base-content/70 mb-3">Growth Projections</h4>
                 <ProjectionsPanel {result} />
               </div>
             </div>
@@ -458,7 +458,7 @@
         </div>
 
         <!-- Metadata -->
-        <div class="text-xs text-secondary/60 text-right">
+        <div class="text-xs text-base-content/70/60 text-right">
           Model: {result.metadata.modelName} ({result.metadata.variantId}: {result.metadata.variantName})
         </div>
       </div>
@@ -467,12 +467,12 @@
 
   <!-- Save Modal — backdrop (z-40) and modal (z-60) are adjacent per glow-props Z_INDEX_SCALE -->
   {#if showSaveModal}
-    <div class="fixed inset-0 bg-background/90 z-40"></div>
+    <div class="fixed inset-0 bg-base-100/90 z-40"></div>
     <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
-      <div class="bg-card rounded-xl border border-border shadow-xl max-w-md w-full p-6 pointer-events-auto">
-        <h3 class="text-lg font-semibold text-foreground mb-4">Save Option</h3>
+      <div class="bg-base-200 rounded-xl border border-base-300 shadow-xl max-w-md w-full p-6 pointer-events-auto">
+        <h3 class="text-lg font-semibold text-base-content mb-4">Save Option</h3>
         <div class="mb-4">
-          <label for="saveName" class="block text-sm font-medium text-secondary mb-1">
+          <label for="saveName" class="block text-sm font-medium text-base-content/70 mb-1">
             Option Name
           </label>
           <input
@@ -501,8 +501,8 @@
 {:else}
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center">
-      <h1 class="text-2xl font-bold text-foreground mb-4">Model Not Found</h1>
-      <p class="text-secondary mb-4">The requested model "{modelId}" was not found.</p>
+      <h1 class="text-2xl font-bold text-base-content mb-4">Model Not Found</h1>
+      <p class="text-base-content/70 mb-4">The requested model "{modelId}" was not found.</p>
       <a href="{base}/structuring" class="text-primary hover:text-primary/80">
         ← Back to Model Selection
       </a>

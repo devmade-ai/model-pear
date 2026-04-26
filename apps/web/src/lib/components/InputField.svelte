@@ -37,7 +37,7 @@
 
 <div>
   <div class="flex items-center justify-between mb-1">
-    <label for={id} class="block text-sm font-medium text-foreground/80">
+    <label for={id} class="block text-sm font-medium text-base-content/80">
       {label}
     </label>
     {#if benchmark}
@@ -69,6 +69,6 @@
   {/if}
 
   {#if hint}
-    <p class="text-xs text-muted-foreground mt-1">{hint}</p>
+    <p class="text-xs text-base-content/70 mt-1">{hint}</p>
   {/if}
 </div>
