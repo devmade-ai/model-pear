@@ -1,65 +1,26 @@
 @import "tailwindcss";
 
-/* ============================================================
-   DaisyUI v5 — registers two themes:
-     emerald (light)  — default
-     dim (dark)       — auto-activates when prefers-color-scheme: dark
-   Components use both DaisyUI's semantic classes (bg-base-100, etc.)
-   AND the legacy bridge classes (bg-background, etc.) wired up in
-   @theme below. The bridge gets torn out in 3d-strip after components
-   migrate to DaisyUI semantics in 3d-migrate.
-   ============================================================ */
+/* DaisyUI v5: emerald (light, default) + dim (dark, --prefersdark). */
 @plugin "daisyui" {
   themes: emerald --default, dim --prefersdark;
 }
 
 /* Tailwind dark-mode variant aligned with DaisyUI's data-theme system.
-   `dark:` utilities now key on a `.dark` class anywhere in the ancestor
-   chain. The bootstrap script in Chunk 3e sets BOTH `.dark` AND
+   `dark:` utilities key on a `.dark` class anywhere in the ancestor chain.
+   The bootstrap script in Chunk 3e sets BOTH `.dark` AND
    `data-theme="dim|emerald"` in lockstep. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Border-radius scale base. Used by --radius-{lg,md,sm} in @theme. */
+/* Border-radius scale base. */
 :root {
   --radius: 0.5rem;
 }
 
-/* ============================================================
-   Theme tokens (Tailwind v4 CSS-first config).
-   This block ALIASES legacy color names (bg-background, bg-card,
-   text-foreground, text-muted-foreground, etc.) to DaisyUI's
-   semantic tokens so components keep working unchanged through
-   3d-migrate. The bridge gets torn out in 3d-strip.
-
-   Tokens DaisyUI provides natively (--color-primary, --color-secondary,
-   --color-success, --color-warning, --color-error and their -content
-   variants) are intentionally NOT redefined here — DaisyUI's per-theme
-   values flow through directly.
-   ============================================================ */
+/* CSS-first theme tokens — only what isn't covered by DaisyUI's emit. */
 @theme {
-  /* Bridge: surfaces and content */
-  --color-background: var(--color-base-100);
-  --color-foreground: var(--color-base-content);
-  --color-card: var(--color-base-200);
-  --color-card-foreground: var(--color-base-content);
-  --color-muted: var(--color-base-200);
-  --color-muted-foreground: color-mix(in srgb, var(--color-base-content) 70%, transparent);
-  --color-border: var(--color-base-300);
-  --color-ring: var(--color-primary);
-
-  /* Bridge: -foreground aliases for DaisyUI's -content tokens */
-  --color-primary-foreground: var(--color-primary-content);
-  --color-secondary-foreground: var(--color-secondary-content);
-  --color-success-foreground: var(--color-success-content);
-  --color-error-foreground: var(--color-error-content);
-  --color-warning-foreground: var(--color-warning-content);
-
-  /* Static brand greys used by .table-dark sub-rules.
-     Not theme-dependent — fixed brand tones. */
-  --color-secondary-light: #222222;
-  --color-secondary-dark: #333333;
-
-  /* Brand model identifiers for transaction-model UI accents and charts */
+  /* Brand model identifiers for transaction-model UI accents and charts.
+     Per-model fixed hues (not theme-dependent) used for visual model
+     identification: bg-model-1, text-model-2, etc. */
   --color-model-1: #3B82F6;
   --color-model-2: #8B5CF6;
   --color-model-3: #10B981;
@@ -67,7 +28,9 @@
   --color-model-5: #EF4444;
   --color-model-6: #06B6D4;
 
-  /* Typography */
+  /* Typography. Sans stack mirrors Tailwind v3's defaultTheme.fontFamily.sans
+     with Figtree prepended; emoji fonts kept so cross-platform glyph
+     fallbacks match the v3 baseline. */
   --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: "JetBrains Mono", "Consolas", monospace;
 
@@ -77,9 +40,10 @@
   --radius-sm: calc(var(--radius) - 4px);
 }
 
-/* Custom base styles */
 @layer base {
-  /* Dual-layer color-scheme: light by default, dark when .dark is on <html> */
+  /* Dual-layer color-scheme: light by default, dark when .dark on <html>.
+     Drives native form controls, scrollbars, and canvas background to
+     match whichever theme is active. */
   html {
     color-scheme: light;
   }
@@ -95,130 +59,45 @@
     @apply min-h-screen font-sans;
   }
 
-  /* Focus styles for accessibility */
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-primary;
   }
 
-  /* Typography defaults */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
 }
 
-/* Custom utility kept because .result-value-positive/.result-value-negative
-   @apply it. Both are migrated inline in 3d-migrate; this @utility and its
-   .result-value-positive/negative siblings get dropped in 3d-strip. */
-@utility result-value {
-  @apply font-medium text-foreground;
-}
-
-/* Component classes still referenced by components.
-   All four blocks below are migrated inline in 3d-migrate, then deleted
-   in 3d-strip. They live here transitionally so 3d-prep (this commit)
-   doesn't break the build. */
-@layer components {
-  .card-hover {
-    @apply card transition-all duration-200;
-  }
-
-  .card-hover:hover {
-    @apply border-primary/50;
-    background-color: color-mix(in srgb, var(--color-base-200) 80%, transparent);
-  }
-
-  /* Legacy badge alias — 4 component callers, migrated to .badge-primary in 3d-migrate */
-  .badge-blue {
-    @apply badge-primary;
-  }
-
-  /* Result panel cluster — migrated inline in 3d-migrate */
-  .result-panel {
-    @apply card p-6 space-y-4;
-  }
-
-  .result-row {
-    @apply flex justify-between items-center py-1.5 px-2 rounded;
-  }
-
-  .result-row:hover {
-    background-color: color-mix(in srgb, var(--color-base-content) 5%, transparent);
-  }
-
-  .result-label {
-    @apply text-sm text-secondary;
-  }
-
-  .result-value-positive {
-    @apply result-value text-success;
-  }
-
-  .result-value-negative {
-    @apply result-value text-error;
-  }
-
-  /* Single-use custom table — migrated to DaisyUI .table in 3d-migrate */
-  .table-dark {
-    @apply w-full border-collapse;
-  }
-
-  .table-dark thead {
-    @apply bg-secondary-light;
-  }
-
-  .table-dark th {
-    @apply px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide;
-  }
-
-  .table-dark tbody {
-    @apply divide-y divide-border;
-  }
-
-  .table-dark td {
-    @apply px-4 py-3 text-sm text-foreground;
-  }
-
-  .table-dark tbody tr:hover {
-    background-color: color-mix(in srgb, var(--color-base-content) 5%, transparent);
-  }
-}
-
-/* Genuinely custom utility — paired with the @media print block below.
-   .print-only elements are hidden on screen, shown in print. */
 @layer utilities {
+  /* Hidden on screen, shown in print. Paired with @media print below. */
   .print-only {
     display: none;
   }
 }
 
 /* Print styles for PDF export via window.print().
-   Approach: override DaisyUI's semantic tokens at the same specificity
-   level DaisyUI uses for theme rules (:root and [data-theme=*]). Both
-   the legacy bridge utilities (bg-background, text-foreground, ...)
-   AND DaisyUI utilities (bg-base-100, text-base-content, ...) read
-   through these tokens, so a single override block reaches every
-   themed surface.
+   Override DaisyUI's semantic tokens at the same selector specificity
+   level DaisyUI uses for its theme rules (:root and [data-theme=*]).
+   Every utility (bg-base-100, text-base-content, bg-primary, etc.)
+   reads through these tokens, so a single override block reaches
+   every themed surface in print.
    See glow-props docs/implementations/DOWNLOAD_PDF.md for the
    canonical pattern. */
 @media print {
   :root,
   [data-theme="emerald"],
   [data-theme="dim"] {
-    /* Surfaces -> white */
     --color-base-100: #ffffff;
     --color-base-200: #ffffff;
-    --color-base-300: #cccccc;        /* light gray for borders */
-    --color-base-content: #111111;    /* near-black body text */
+    --color-base-300: #cccccc;
+    --color-base-content: #111111;
 
-    /* Brand primary readable on white */
     --color-primary: #2D68FF;
     --color-primary-content: #ffffff;
 
-    /* Secondary -> dark gray on white */
     --color-secondary: #555555;
     --color-secondary-content: #ffffff;
 
-    /* Status colors darkened for paper readability */
     --color-success: #166534;
     --color-success-content: #ffffff;
     --color-warning: #92400e;
@@ -230,21 +109,18 @@
   }
 
   /* Hide navigation and interactive elements.
-     - .no-print: semantic class for elements that should never appear in PDF
-     - button:not(.print-include): hides all buttons unless explicitly marked
-     - .btn / .btn-primary / .btn-secondary: target <a> elements styled as buttons */
+     `button:not(.print-include)` preserves explicitly-marked buttons.
+     `.btn` / `.btn-primary` also targets <a> elements styled as buttons. */
   nav,
   header,
   footer,
   .no-print,
   button:not(.print-include),
   .btn,
-  .btn-primary,
-  .btn-secondary {
+  .btn-primary {
     display: none !important;
   }
 
-  /* Reset background for printing */
   body {
     background: white !important;
     color: black !important;
@@ -252,34 +128,23 @@
     print-color-adjust: exact !important;
   }
 
-  /* Override hardcoded brand greys (secondary-light/dark) for print readability */
-  .bg-secondary-light {
-    background-color: #f5f5f5 !important;
-  }
-
-  .bg-secondary-dark {
-    background-color: #e5e5e5 !important;
-  }
-
-  /* Links lose their hover state in print — underlines make them identifiable */
   a {
     color: black !important;
     text-decoration: underline !important;
   }
 
-  /* Sticky elements overlap content in print. Override to normal flow. */
   .sticky {
     position: static !important;
   }
 
-  /* Full width for print content */
   .print-container {
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  /* Ensure comparison modal prints properly. */
+  /* Comparison modal: backdrop (z-40) and modal (z-[60]) are adjacent
+     siblings. Both match this selector — the backdrop collapses harmlessly. */
   .fixed.inset-0 {
     position: relative !important;
     background: white !important;
@@ -291,12 +156,11 @@
     box-shadow: none !important;
   }
 
-  /* Show print-only elements */
   .print-only {
     display: block !important;
   }
 
-  /* Collapsible section toggle buttons with print-include */
+  /* Collapsible section toggle buttons: keep heading visible, hide chevron. */
   button.print-include {
     display: flex !important;
     cursor: default;
@@ -306,7 +170,7 @@
     display: none !important;
   }
 
-  /* Preserve background colors for badges and status indicators */
+  /* Preserve background colors for status badges. */
   .badge-success,
   .badge-warning,
   .badge-error,
@@ -315,7 +179,6 @@
     print-color-adjust: exact !important;
   }
 
-  /* Table styling for print */
   table {
     width: 100% !important;
     border-collapse: collapse;
@@ -328,10 +191,9 @@
     color: black !important;
   }
 
-  /* Prevent content blocks from splitting across pages */
+  /* Prevent content blocks from splitting across pages. */
   section,
-  .card,
-  .result-panel {
+  .card {
     break-inside: avoid;
     page-break-inside: avoid;
   }
