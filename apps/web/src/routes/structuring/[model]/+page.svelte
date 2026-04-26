@@ -468,7 +468,7 @@
   <!-- Save Modal — backdrop (z-40) and modal (z-60) are adjacent per glow-props Z_INDEX_SCALE -->
   {#if showSaveModal}
     <div class="fixed inset-0 bg-background/90 z-40"></div>
-    <div class="fixed inset-0 z-60 flex items-center justify-center p-4 pointer-events-none">
+    <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
       <div class="bg-card rounded-xl border border-border shadow-xl max-w-md w-full p-6 pointer-events-auto">
         <h3 class="text-lg font-semibold text-foreground mb-4">Save Option</h3>
         <div class="mb-4">

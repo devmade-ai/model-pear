@@ -4,10 +4,10 @@
    DaisyUI v5 — registers two themes:
      emerald (light)  — default
      dim (dark)       — auto-activates when prefers-color-scheme: dark
-   The bridge in Chunk 3c will alias the legacy --background/--card/etc.
-   CSS vars to DaisyUI's --color-base-100/--color-base-content tokens,
-   so existing components (bg-background, text-foreground, ...) keep
-   working through the migration.
+   Components use both DaisyUI's semantic classes (bg-base-100, etc.)
+   AND legacy bridge classes (bg-background, etc.). The legacy
+   classes are aliased through @theme (below) and will be deleted
+   in 3d-v after components fully migrate to DaisyUI semantics.
    ============================================================ */
 @plugin "daisyui" {
   themes: emerald --default, dim --prefersdark;
@@ -20,61 +20,48 @@
    in sync. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Dark Theme - CSS Variables.
-   Defined before @theme so the @theme block's `hsl(var(--background))`
-   indirections have a defined source even during a strict-resolution
-   build. The @media print block at the bottom of this file overrides
-   these to a light-mode palette in one place. */
+/* Border-radius scale base. Used by --radius-{lg,md,sm} in @theme. */
 :root {
-  /* Colors - HSL values for Tailwind compatibility */
-  --background: 0 0% 11%;           /* #1B1B1B */
-  --foreground: 0 0% 100%;          /* #FFFFFF */
-  --card: 0 0% 16%;                 /* #2a2a2a */
-  --card-foreground: 0 0% 100%;
-  --primary: 222 100% 59%;          /* #2D68FF */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 46%;            /* #767676 */
-  --secondary-foreground: 0 0% 100%;
-  --muted: 0 0% 16%;
-  --muted-foreground: 0 0% 46%;
-  --border: 0 0% 20%;               /* #333333 */
-  --ring: 222 100% 59%;             /* #2D68FF */
-
-  /* Spacing */
   --radius: 0.5rem;
 }
 
 /* ============================================================
-   Theme tokens (Tailwind v4 CSS-first config)
-   Replaces apps/web/tailwind.config.js (deleted in 3a-iii).
+   Theme tokens (Tailwind v4 CSS-first config).
+   This block ALIASES legacy color names (bg-background, bg-card,
+   text-foreground, text-muted-foreground, etc.) to DaisyUI's
+   semantic tokens. Components keep working unchanged through 3d-i..iv;
+   the bridge gets torn out in 3d-v.
+
+   Tokens DaisyUI provides natively (--color-primary, --color-secondary,
+   --color-success, --color-warning, --color-error and their -content
+   variants) are intentionally NOT redefined here — DaisyUI's per-theme
+   values flow through to bg-primary, text-success, etc. directly.
    ============================================================ */
 @theme {
-  /* Brand / semantic colors mapped from CSS variables.
-     The HSL var indirection lets the @media print block at the bottom
-     override every color in one place. The 3c bridge will redefine
-     --background/--card/--foreground to point at DaisyUI tokens. */
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  /* Surface and content colors */
+  --color-background: var(--color-base-100);
+  --color-foreground: var(--color-base-content);
+  --color-card: var(--color-base-200);
+  --color-card-foreground: var(--color-base-content);
+  --color-muted: var(--color-base-200);
+  /* Muted text stays dimmer than regular foreground via opacity mix.
+     Theme-aware: tracks whatever color base-content is for the active theme. */
+  --color-muted-foreground: color-mix(in srgb, var(--color-base-content) 70%, transparent);
+  --color-border: var(--color-base-300);
+  --color-ring: var(--color-primary);
+
+  /* Legacy -foreground aliases for DaisyUI's -content tokens.
+     Lets `text-primary-foreground` etc. continue to resolve through 3d. */
+  --color-primary-foreground: var(--color-primary-content);
+  --color-secondary-foreground: var(--color-secondary-content);
+  --color-success-foreground: var(--color-success-content);
+  --color-error-foreground: var(--color-error-content);
+  --color-warning-foreground: var(--color-warning-content);
+
+  /* Static brand greys used by .btn-secondary / .table-dark / etc.
+     Not theme-dependent — these are fixed brand tones. */
   --color-secondary-light: #222222;
   --color-secondary-dark: #333333;
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-border: hsl(var(--border));
-  --color-ring: hsl(var(--ring));
-
-  /* Status colors */
-  --color-success: #16A34A;
-  --color-success-foreground: #FFFFFF;
-  --color-error: #EF4444;
-  --color-error-foreground: #FFFFFF;
-  --color-warning: #EAB308;
-  --color-warning-foreground: #000000;
 
   /* Brand model identifiers for transaction-model UI accents and charts */
   --color-model-1: #3B82F6;
@@ -171,7 +158,7 @@
   @apply p-4 rounded-lg border;
 }
 
-/* Component classes - Dark Theme */
+/* Component classes */
 @layer components {
   .card-hover {
     @apply card transition-all duration-200;
@@ -179,7 +166,8 @@
 
   .card-hover:hover {
     @apply border-primary/50;
-    background-color: hsl(var(--card) / 0.8);
+    /* 80%-opacity DaisyUI base-200 for the hover tint */
+    background-color: color-mix(in srgb, var(--color-base-200) 80%, transparent);
   }
 
   /* Input styles */
@@ -249,7 +237,8 @@
   }
 
   .result-row:hover {
-    background-color: hsl(var(--foreground) / 0.05);
+    /* 5%-opacity base-content for the row hover wash */
+    background-color: color-mix(in srgb, var(--color-base-content) 5%, transparent);
   }
 
   .result-label {
@@ -277,7 +266,7 @@
     @apply alert bg-error/10 border-error/30 text-error;
   }
 
-  /* Table styles for dark theme */
+  /* Table styles */
   .table-dark {
     @apply w-full border-collapse;
   }
@@ -299,7 +288,8 @@
   }
 
   .table-dark tbody tr:hover {
-    background-color: hsl(var(--foreground) / 0.05);
+    /* Same 5% wash as result-row */
+    background-color: color-mix(in srgb, var(--color-base-content) 5%, transparent);
   }
 }
 
@@ -330,46 +320,55 @@
     padding-right: env(safe-area-inset-right);
   }
 
-  /* Print visibility utilities:
-     - .no-print: hidden in print, visible on screen (defined in @media print block)
-     - .print-only: hidden on screen, visible in print */
+  /* Print visibility utilities */
   .print-only {
     display: none;
   }
 
-  /* Text colors using CSS variables */
+  /* Direct color helpers for inline styles / SVG fills */
   .text-primary-color {
-    color: hsl(var(--primary));
+    color: var(--color-primary);
   }
 
   .text-secondary-color {
-    color: hsl(var(--secondary));
+    color: var(--color-secondary);
   }
 }
 
-/* Print styles for PDF export via window.print()
-   Approach: Override dark theme CSS variables to light values so all Tailwind
-   utility classes (text-foreground, bg-card, etc.) automatically resolve to
-   print-friendly colors. This is cleaner than overriding individual classes.
-   See glow-props docs/implementations/DOWNLOAD_PDF.md for the canonical pattern. */
+/* Print styles for PDF export via window.print().
+   Approach: override DaisyUI's semantic tokens at the same specificity
+   level DaisyUI uses for theme rules (:root and [data-theme=*]). Both
+   the legacy bridge utilities (bg-background, text-foreground, ...)
+   AND DaisyUI utilities (bg-base-100, text-base-content, ...) read
+   through these tokens, so a single override block reaches every
+   themed surface.
+   See glow-props docs/implementations/DOWNLOAD_PDF.md for the
+   canonical pattern. */
 @media print {
-  /* Override dark theme CSS variables with light-theme values for print.
-     Without this, text-foreground resolves to white (invisible on white paper)
-     and bg-card resolves to dark gray. Overriding at :root fixes all
-     Tailwind utility classes that reference these variables. */
-  :root {
-    --background: 0 0% 100%;         /* white */
-    --foreground: 0 0% 7%;           /* near-black */
-    --card: 0 0% 100%;               /* white */
-    --card-foreground: 0 0% 7%;      /* near-black */
-    --primary: 222 100% 40%;         /* darker blue for readability on white */
-    --primary-foreground: 0 0% 100%; /* white (for badges on primary bg) */
-    --secondary: 0 0% 35%;           /* dark gray — readable as secondary text */
-    --secondary-foreground: 0 0% 7%;
-    --muted: 0 0% 96%;               /* very light gray */
-    --muted-foreground: 0 0% 35%;    /* dark gray */
-    --border: 0 0% 80%;              /* light gray border */
-    --ring: 222 100% 40%;
+  :root,
+  [data-theme="emerald"],
+  [data-theme="dim"] {
+    /* Surfaces -> white */
+    --color-base-100: #ffffff;
+    --color-base-200: #ffffff;
+    --color-base-300: #cccccc;        /* light gray for borders */
+    --color-base-content: #111111;    /* near-black body text */
+
+    /* Brand primary readable on white */
+    --color-primary: #2D68FF;
+    --color-primary-content: #ffffff;
+
+    /* Secondary -> dark gray on white */
+    --color-secondary: #555555;
+    --color-secondary-content: #ffffff;
+
+    /* Status colors darkened for paper readability */
+    --color-success: #166534;
+    --color-success-content: #ffffff;
+    --color-warning: #92400e;
+    --color-warning-content: #ffffff;
+    --color-error: #991b1b;
+    --color-error-content: #ffffff;
 
     color-scheme: light;
   }
@@ -400,9 +399,9 @@
     print-color-adjust: exact !important;
   }
 
-  /* Override hardcoded dark colors that aren't CSS-variable-based.
-     Tailwind config defines secondary-light (#222222) and secondary-dark (#333333)
-     as static hex values. These need explicit overrides for print. */
+  /* Override hardcoded brand greys (secondary-light/dark) for print readability.
+     These are static --color-secondary-{light,dark} hex values in @theme,
+     not DaisyUI tokens, so they need their own print overrides. */
   .bg-secondary-light {
     background-color: #f5f5f5 !important;
   }
