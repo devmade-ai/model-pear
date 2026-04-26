@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+/* ============================================================
+   DaisyUI v5 — registers two themes:
+     emerald (light)  — default
+     dim (dark)       — auto-activates when prefers-color-scheme: dark
+   The bridge in Chunk 3c will alias the legacy --background/--card/etc.
+   CSS vars to DaisyUI's --color-base-100/--color-base-content tokens,
+   so existing components (bg-background, text-foreground, ...) keep
+   working through the migration.
+   ============================================================ */
+@plugin "daisyui" {
+  themes: emerald --default, dim --prefersdark;
+}
+
+/* Tailwind dark-mode variant aligned with DaisyUI's data-theme system.
+   `dark:` utilities now key on a `.dark` class anywhere in the ancestor
+   chain. The bootstrap script in Chunk 3e sets BOTH `.dark` AND
+   `data-theme="dim|emerald"` in lockstep, keeping the two layers
+   in sync. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Dark Theme - CSS Variables.
    Defined before @theme so the @theme block's `hsl(var(--background))`
    indirections have a defined source even during a strict-resolution
@@ -22,9 +42,6 @@
 
   /* Spacing */
   --radius: 0.5rem;
-
-  /* Color scheme */
-  color-scheme: dark;
 }
 
 /* ============================================================
@@ -81,6 +98,17 @@
 
 /* Custom base styles */
 @layer base {
+  /* Dual-layer color-scheme: light mode by default, dark mode when the
+     `.dark` class is present on <html>. Tells the browser to use the
+     correct shade for built-in form controls, scrollbars, and the
+     canvas background, matching whichever theme is active. */
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
   html {
     @apply scroll-smooth;
   }
