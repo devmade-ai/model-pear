@@ -1,14 +1,70 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark" data-theme="dim">
   <head>
     <meta charset="utf-8" />
+
+    <!--
+      Theme bootstrap. Runs synchronously before paint so first render
+      uses the correct theme — no flash on reload.
+
+      Resolution order:
+        1. localStorage `darkMode` (set by the theme module in apps/web/src/lib/theme.ts)
+        2. prefers-color-scheme media query (OS preference)
+        3. default dark (matches the JS-disabled fallback above)
+
+      Sets both layers in lockstep:
+        - `.dark` class on <html> -> Tailwind's `dark:` variant (via @custom-variant in app.css)
+        - `data-theme="dim"|"emerald"` -> DaisyUI's theme switch
+      Keeps Tailwind's dark mode and DaisyUI's theme aligned.
+
+      MUST be a classic <script> (not type=module) so it runs sync
+      and blocks paint. MUST precede the SvelteKit head injection
+      and the debug-pill inline script.
+    -->
+    <script>
+      (function () {
+        var darkMode;
+        try {
+          var stored = localStorage.getItem('darkMode');
+          if (stored === 'true') darkMode = true;
+          else if (stored === 'false') darkMode = false;
+        } catch (e) {
+          // localStorage blocked (private mode etc.); fall through to OS preference.
+        }
+
+        if (darkMode === undefined) {
+          try {
+            darkMode = !window.matchMedia('(prefers-color-scheme: light)').matches;
+          } catch (e) {
+            darkMode = true;
+          }
+        }
+
+        var html = document.documentElement;
+        html.classList.toggle('dark', darkMode);
+        html.setAttribute('data-theme', darkMode ? 'dim' : 'emerald');
+      })();
+    </script>
+
     <link rel="icon" type="image/png" sizes="48x48" href="%sveltekit.assets%/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="%sveltekit.assets%/apple-touch-icon.png" />
     <link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Software Transaction Structuring Tool - Find the best deal structure for both you and your client" />
-    <meta name="theme-color" content="#2D68FF" />
-    <meta name="color-scheme" content="dark" />
+
+    <!--
+      Theme-color hints for mobile browser chrome (URL bar, splash).
+      Browsers that support media-bound theme-color (Chrome, Safari)
+      will pick the matching tag for the OS preference. The theme
+      module updates `content` dynamically on toggle in Chunk 3f.
+
+      Values approximate the active theme's --color-base-100:
+        emerald base-100 ≈ #ffffff
+        dim base-100     ≈ #2a323c
+    -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2a323c" />
+
     <title>Model Pear - Software Transaction Structuring</title>
     <!-- Figtree font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +72,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
     %sveltekit.head%
   </head>
-  <body data-sveltekit-preload-data="hover" class="bg-background text-foreground antialiased">
+  <body data-sveltekit-preload-data="hover" class="bg-base-100 text-base-content antialiased">
     <div style="display: contents">%sveltekit.body%</div>
 
     <!-- Debug pill root — separate from SvelteKit tree so it survives app crashes -->
