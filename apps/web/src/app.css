@@ -18,16 +18,6 @@
 
 /* CSS-first theme tokens — only what isn't covered by DaisyUI's emit. */
 @theme {
-  /* Brand model identifiers for transaction-model UI accents and charts.
-     Per-model fixed hues (not theme-dependent) used for visual model
-     identification: bg-model-1, text-model-2, etc. */
-  --color-model-1: #3B82F6;
-  --color-model-2: #8B5CF6;
-  --color-model-3: #10B981;
-  --color-model-4: #F59E0B;
-  --color-model-5: #EF4444;
-  --color-model-6: #06B6D4;
-
   /* Typography. Sans stack mirrors Tailwind v3's defaultTheme.fontFamily.sans
      with Figtree prepended; emoji fonts kept so cross-platform glyph
      fallbacks match the v3 baseline. */

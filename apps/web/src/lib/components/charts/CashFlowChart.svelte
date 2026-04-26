@@ -2,6 +2,7 @@
   import BaseChart from './BaseChart.svelte';
   import type { YearlyProjection } from '@model-pear/calculator';
   import { formatCurrency } from '$lib/utils';
+  import { themeRev, getThemeColor } from '$lib/theme';
 
   export let developerData: YearlyProjection[];
   export let buyerData: YearlyProjection[];
@@ -10,7 +11,9 @@
 
   $: years = developerData.map((d) => `Year ${d.year}`);
 
-  $: options = {
+  // `$themeRev` dependency rebuilds options on theme toggle so
+  // getThemeColor() reads fresh DaisyUI tokens.
+  $: options = ($themeRev, {
     chart: {
       type: 'bar' as const,
       stacked: false,
@@ -34,49 +37,22 @@
         borderRadius: 4,
       },
     },
-    colors: ['#3b82f6', '#10b981'], // blue for developer, green for buyer
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent'],
-    },
-    xaxis: {
-      categories: years,
-    },
+    colors: [getThemeColor('--color-primary'), getThemeColor('--color-secondary')],
+    dataLabels: { enabled: false },
+    stroke: { show: true, width: 2, colors: ['transparent'] },
+    xaxis: { categories: years },
     yaxis: {
-      title: {
-        text: 'Cash Flow (ZAR)',
-      },
-      labels: {
-        formatter: (val: number) => formatCurrency(val, true),
-      },
+      title: { text: 'Cash Flow (ZAR)' },
+      labels: { formatter: (val: number) => formatCurrency(val, true) },
     },
-    fill: {
-      opacity: 1,
-    },
-    tooltip: {
-      y: {
-        formatter: (val: number) => formatCurrency(val),
-      },
-    },
-    legend: {
-      position: 'top' as const,
-      horizontalAlign: 'center' as const,
-    },
+    fill: { opacity: 1 },
+    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
+    legend: { position: 'top' as const, horizontalAlign: 'center' as const },
     series: [
-      {
-        name: 'Developer',
-        data: developerData.map((d) => d.cashFlow),
-      },
-      {
-        name: 'Buyer',
-        data: buyerData.map((d) => d.cashFlow),
-      },
+      { name: 'Developer', data: developerData.map((d) => d.cashFlow) },
+      { name: 'Buyer', data: buyerData.map((d) => d.cashFlow) },
     ],
-  };
+  });
 </script>
 
 <div class="card p-4">

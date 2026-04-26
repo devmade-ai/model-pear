@@ -96,10 +96,10 @@
   function getMatchColorClass(color: string) {
     // Dark-theme compatible semantic colors
     const colorMap: Record<string, string> = {
-      green: 'text-green-400 bg-green-500/10 border-green-500/30',
-      blue: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
-      yellow: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30',
-      red: 'text-red-400 bg-red-500/10 border-red-500/30',
+      green: 'text-success bg-success/10 border-success/30',
+      blue: 'text-info bg-info/10 border-info/30',
+      yellow: 'text-warning bg-warning/10 border-warning/30',
+      red: 'text-error bg-error/10 border-error/30',
     };
     return colorMap[color] || colorMap.blue;
   }
@@ -132,12 +132,12 @@
     <!-- RESULTS VIEW -->
     <div class="space-y-6">
       <!-- Top Recommendation -->
-      <div class="bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-lg p-6 border border-green-500/30">
+      <div class="bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-lg p-6 border border-success/30">
         <div class="flex items-center gap-3 mb-4">
           <span class="text-3xl">{topRecommendation.icon}</span>
           <div>
-            <h3 class="text-xl font-semibold text-green-400">Recommended: {topRecommendation.name}</h3>
-            <p class="text-sm text-green-400/80">
+            <h3 class="text-xl font-semibold text-success">Recommended: {topRecommendation.name}</h3>
+            <p class="text-sm text-success/80">
               {topRecommendation.matchLevel.label} ({topRecommendation.normalizedScore}% match)
             </p>
           </div>
@@ -169,8 +169,8 @@
             {#if selectedVariantPreference}
               {@const variantRec = getVariantRecommendation(topRecommendation.modelId, selectedVariantPreference)}
               {#if variantRec}
-                <div class="mt-3 bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
-                  <p class="text-sm text-blue-400">
+                <div class="mt-3 bg-info/10 border border-info/30 rounded-lg p-3">
+                  <p class="text-sm text-info">
                     <span class="font-medium">Recommended variant:</span>
                     {variantRec.variants.join(', ')}
                   </p>
@@ -212,7 +212,7 @@
 
               {#if rec.strengths.length > 0}
                 <p class="text-xs text-base-content/70 mb-3">
-                  <span class="text-green-400">✓</span>
+                  <span class="text-success">✓</span>
                   {rec.strengths.slice(0, 2).map((s) => s.reason).join(', ')}
                 </p>
               {/if}
@@ -260,7 +260,7 @@
                      {isCurrent
                 ? 'bg-primary text-primary-content ring-2 ring-primary/50'
                 : isAnswered
-                  ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                  ? 'bg-success/20 text-success hover:bg-success/30'
                   : isAccessible
                     ? 'bg-base-200 text-base-content/70 hover:bg-base-200/80'
                     : 'bg-base-200/50 text-base-content/70/50 cursor-not-allowed'}"

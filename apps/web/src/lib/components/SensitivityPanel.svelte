@@ -78,8 +78,8 @@
             <div class="flex items-center space-x-2">
               <span
                 class="w-2 h-2 rounded-full {influencer.direction === 'positive'
-                  ? 'bg-green-400'
-                  : 'bg-red-400'}"
+                  ? 'bg-success'
+                  : 'bg-error'}"
               ></span>
               <span class="text-sm font-medium text-base-content/80">{influencer.label}</span>
             </div>
@@ -89,8 +89,8 @@
               </span>
               <span
                 class="text-sm font-semibold {influencer.percentChange > 0
-                  ? 'text-green-400'
-                  : 'text-red-400'}"
+                  ? 'text-success'
+                  : 'text-error'}"
               >
                 ±{Math.abs(influencer.percentChange).toFixed(1)}%
               </span>

@@ -10,16 +10,16 @@
   // Dark-theme compatible color classes
   const colorClasses = {
     blue: {
-      bg: 'bg-blue-500/10',
-      border: 'border-blue-500/30',
-      icon: 'text-blue-400',
-      badge: 'bg-blue-500/20 text-blue-400',
+      bg: 'bg-info/10',
+      border: 'border-info/30',
+      icon: 'text-info',
+      badge: 'bg-info/20 text-info',
     },
     green: {
-      bg: 'bg-green-500/10',
-      border: 'border-green-500/30',
-      icon: 'text-green-400',
-      badge: 'bg-green-500/20 text-green-400',
+      bg: 'bg-success/10',
+      border: 'border-success/30',
+      icon: 'text-success',
+      badge: 'bg-success/20 text-success',
     },
   };
 
@@ -28,10 +28,10 @@
   function getAssessmentColor(color: InvestmentAssessment['color']) {
     // Dark-theme compatible assessment colors
     const colorMap = {
-      green: 'bg-green-500/20 text-green-400',
-      blue: 'bg-blue-500/20 text-blue-400',
-      yellow: 'bg-yellow-500/20 text-yellow-400',
-      red: 'bg-red-500/20 text-red-400',
+      green: 'bg-success/20 text-success',
+      blue: 'bg-info/20 text-info',
+      yellow: 'bg-warning/20 text-warning',
+      red: 'bg-error/20 text-error',
     };
     return colorMap[color] || colorMap.blue;
   }
@@ -49,7 +49,7 @@
     <!-- NPV -->
     <div>
       <p class="text-sm text-base-content/70">Net Present Value</p>
-      <p class="text-xl font-bold {metrics.npv >= 0 ? 'text-green-400' : 'text-red-400'}">
+      <p class="text-xl font-bold {metrics.npv >= 0 ? 'text-success' : 'text-error'}">
         {formatCurrency(metrics.npv)}
       </p>
     </div>
@@ -57,7 +57,7 @@
     <!-- IRR -->
     <div>
       <p class="text-sm text-base-content/70">Internal Rate of Return</p>
-      <p class="text-xl font-bold {metrics.irr >= 0 ? 'text-green-400' : 'text-red-400'}">
+      <p class="text-xl font-bold {metrics.irr >= 0 ? 'text-success' : 'text-error'}">
         {formatPercent(metrics.irr)}
       </p>
     </div>

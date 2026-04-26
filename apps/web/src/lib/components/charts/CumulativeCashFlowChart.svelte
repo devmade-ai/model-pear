@@ -2,6 +2,7 @@
   import BaseChart from './BaseChart.svelte';
   import type { YearlyProjection } from '@model-pear/calculator';
   import { formatCurrency } from '$lib/utils';
+  import { themeRev, getThemeColor } from '$lib/theme';
 
   export let developerData: YearlyProjection[];
   export let buyerData: YearlyProjection[];
@@ -10,34 +11,15 @@
 
   $: years = developerData.map((d) => `Year ${d.year}`);
 
-  $: options = {
-    chart: {
-      type: 'line' as const,
-      toolbar: {
-        show: false,
-      },
-    },
-    colors: ['#3b82f6', '#10b981'], // blue for developer, green for buyer
-    stroke: {
-      curve: 'smooth' as const,
-      width: 3,
-    },
-    markers: {
-      size: 5,
-      hover: {
-        size: 7,
-      },
-    },
-    xaxis: {
-      categories: years,
-    },
+  $: options = ($themeRev, {
+    chart: { type: 'line' as const, toolbar: { show: false } },
+    colors: [getThemeColor('--color-primary'), getThemeColor('--color-secondary')],
+    stroke: { curve: 'smooth' as const, width: 3 },
+    markers: { size: 5, hover: { size: 7 } },
+    xaxis: { categories: years },
     yaxis: {
-      title: {
-        text: 'Cumulative Cash Flow (ZAR)',
-      },
-      labels: {
-        formatter: (val: number) => formatCurrency(val, true),
-      },
+      title: { text: 'Cumulative Cash Flow (ZAR)' },
+      labels: { formatter: (val: number) => formatCurrency(val, true) },
     },
     fill: {
       type: 'gradient',
@@ -48,42 +30,29 @@
         stops: [0, 100],
       },
     },
-    tooltip: {
-      y: {
-        formatter: (val: number) => formatCurrency(val),
-      },
-    },
-    legend: {
-      position: 'top' as const,
-      horizontalAlign: 'center' as const,
-    },
+    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
+    legend: { position: 'top' as const, horizontalAlign: 'center' as const },
     annotations: {
       yaxis: [
         {
           y: 0,
-          borderColor: '#64748b',
+          borderColor: getThemeColor('--color-base-content'),
           strokeDashArray: 4,
           label: {
             text: 'Break-even',
             style: {
-              color: '#64748b',
-              background: '#f1f5f9',
+              color: getThemeColor('--color-base-content'),
+              background: getThemeColor('--color-base-300'),
             },
           },
         },
       ],
     },
     series: [
-      {
-        name: 'Developer',
-        data: developerData.map((d) => d.cumulativeCashFlow),
-      },
-      {
-        name: 'Buyer',
-        data: buyerData.map((d) => d.cumulativeCashFlow),
-      },
+      { name: 'Developer', data: developerData.map((d) => d.cumulativeCashFlow) },
+      { name: 'Buyer', data: buyerData.map((d) => d.cumulativeCashFlow) },
     ],
-  };
+  });
 </script>
 
 <div class="card p-4">

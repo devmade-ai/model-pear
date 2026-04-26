@@ -1,6 +1,7 @@
 <script lang="ts">
   import BaseChart from './BaseChart.svelte';
   import { formatCurrency } from '$lib/utils';
+  import { themeRev, getThemeColor } from '$lib/theme';
 
   export let baseValue: number;
   export let bestValue: number;
@@ -8,13 +9,8 @@
   export let title = 'Scenario Analysis';
   export let height: number | string = 280;
 
-  $: options = {
-    chart: {
-      type: 'bar' as const,
-      toolbar: {
-        show: false,
-      },
-    },
+  $: options = ($themeRev, {
+    chart: { type: 'bar' as const, toolbar: { show: false } },
     plotOptions: {
       bar: {
         horizontal: false,
@@ -23,48 +19,30 @@
         distributed: true,
       },
     },
-    colors: ['#ef4444', '#64748b', '#22c55e'], // red, gray, green
+    // Worst -> error (red), Base -> neutral (gray), Best -> success (green).
+    // The semantic mapping carries meaning that pure brand colors wouldn't.
+    colors: [
+      getThemeColor('--color-error'),
+      getThemeColor('--color-neutral'),
+      getThemeColor('--color-success'),
+    ],
     dataLabels: {
       enabled: true,
       formatter: (val: number) => formatCurrency(val, true),
-      style: {
-        fontSize: '11px',
-        fontWeight: 'bold',
-      },
+      style: { fontSize: '11px', fontWeight: 'bold' },
       offsetY: -20,
     },
-    stroke: {
-      show: false,
-    },
-    xaxis: {
-      categories: ['Worst Case', 'Base Case', 'Best Case'],
-    },
+    stroke: { show: false },
+    xaxis: { categories: ['Worst Case', 'Base Case', 'Best Case'] },
     yaxis: {
-      title: {
-        text: 'Developer Profit (ZAR)',
-      },
-      labels: {
-        formatter: (val: number) => formatCurrency(val, true),
-      },
+      title: { text: 'Developer Profit (ZAR)' },
+      labels: { formatter: (val: number) => formatCurrency(val, true) },
     },
-    fill: {
-      opacity: 1,
-    },
-    tooltip: {
-      y: {
-        formatter: (val: number) => formatCurrency(val),
-      },
-    },
-    legend: {
-      show: false,
-    },
-    series: [
-      {
-        name: 'Profit',
-        data: [worstValue, baseValue, bestValue],
-      },
-    ],
-  };
+    fill: { opacity: 1 },
+    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
+    legend: { show: false },
+    series: [{ name: 'Profit', data: [worstValue, baseValue, bestValue] }],
+  });
 
   $: range = bestValue - worstValue;
   $: volatility = baseValue !== 0 ? (range / Math.abs(baseValue)) * 100 : 0;
@@ -89,7 +67,7 @@
     </div>
     <div>
       <p class="text-xs text-base-content/70">Upside</p>
-      <p class="text-sm font-semibold text-green-400">+{formatCurrency(bestValue - baseValue)}</p>
+      <p class="text-sm font-semibold text-success">+{formatCurrency(bestValue - baseValue)}</p>
     </div>
   </div>
 </div>

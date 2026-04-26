@@ -45,10 +45,10 @@
     <!-- Mode 2: Transaction Structuring -->
     <a href="{base}/structuring" class="card bg-base-200 border border-base-300 transition-all duration-200 hover:border-primary/50 hover:bg-base-200/80 p-8 group">
       <div class="flex items-center space-x-4 mb-4">
-        <div class="w-12 h-12 bg-model-2/20 rounded-lg flex items-center justify-center">
+        <div class="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center">
           <span class="text-2xl">📊</span>
         </div>
-        <h2 class="text-2xl font-semibold text-base-content group-hover:text-model-2 transition-colors">
+        <h2 class="text-2xl font-semibold text-base-content group-hover:text-secondary transition-colors">
           Transaction Structuring
         </h2>
       </div>
@@ -56,7 +56,7 @@
         Compare structures to find the best deal for both parties.
         Analyse 6 models across financial, tax, accounting, and compliance dimensions.
       </p>
-      <div class="flex items-center text-model-2 font-medium">
+      <div class="flex items-center text-secondary font-medium">
         Explore models
         <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -100,7 +100,7 @@
         <p class="text-xs text-base-content/70">Transfer pricing</p>
       </div>
       <div class="text-center p-4">
-        <div class="w-10 h-10 bg-model-2/20 rounded-full flex items-center justify-center mx-auto mb-2">
+        <div class="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center mx-auto mb-2">
           <span>📈</span>
         </div>
         <p class="text-sm font-medium text-base-content">Long-term Value</p>

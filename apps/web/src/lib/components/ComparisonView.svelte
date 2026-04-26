@@ -58,10 +58,10 @@
     }
 
     if (value === max) {
-      return { arrow: '▲', class: 'text-green-400' };
+      return { arrow: '▲', class: 'text-success' };
     }
     if (value === min) {
-      return { arrow: '▼', class: 'text-red-400' };
+      return { arrow: '▼', class: 'text-error' };
     }
     return { arrow: '', class: '' };
   }
@@ -243,7 +243,7 @@
             <div class="bg-base-200 rounded-lg p-3 shadow-sm border border-base-300/50">
               <div class="font-medium text-base-content text-sm">{summary.name}</div>
               {#if summary.wins.length > 0}
-                <div class="text-xs text-green-400 mt-1">
+                <div class="text-xs text-success mt-1">
                   {getSummaryText(summary)}
                 </div>
               {:else}
@@ -296,12 +296,12 @@
                     values.filter(v => v === values[i]).length === 1}
                   <td
                     class="p-3 text-center tabular-nums {isBest
-                      ? 'bg-green-500/10 font-semibold text-green-400'
+                      ? 'bg-success/10 font-semibold text-success'
                       : 'text-base-content'}"
                   >
                     {#if isBest}
                       <span class="inline-flex items-center">
-                        <span class="text-green-400 mr-1">★</span>
+                        <span class="text-success mr-1">★</span>
                         {row.format(row.getValue(option))}
                       </span>
                     {:else}
@@ -331,10 +331,10 @@
               <td class="p-3 text-center">
                 <span
                   class="px-2 py-1 rounded text-xs font-medium {level === 'low'
-                    ? 'bg-green-500/20 text-green-400'
+                    ? 'bg-success/20 text-success'
                     : level === 'medium'
-                      ? 'bg-amber-500/20 text-amber-400'
-                      : 'bg-red-500/20 text-red-400'}"
+                      ? 'bg-warning/20 text-warning'
+                      : 'bg-error/20 text-error'}"
                 >
                   {level.toUpperCase()}
                 </span>

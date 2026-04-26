@@ -204,7 +204,7 @@
                   ✏️
                 </button>
                 <button
-                  class="p-1 text-base-content/70 hover:text-red-400"
+                  class="p-1 text-base-content/70 hover:text-error"
                   title="Delete"
                   on:click={() => comparisonStore.delete(option.id)}
                 >
@@ -226,7 +226,7 @@
             </button>
           </div>
           <button
-            class="text-sm text-red-400 hover:text-red-300"
+            class="text-sm text-error hover:text-error"
             on:click={() => {
               if (confirm('Delete all saved options?')) {
                 comparisonStore.clearAll();

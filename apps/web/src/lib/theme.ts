@@ -8,6 +8,9 @@
  *   - Sync across browser tabs via `storage` events.
  *   - Follow OS preference (`matchMedia('prefers-color-scheme')`) when the
  *     user has no stored choice.
+ *   - Expose `themeRev` store and `getThemeColor()` helper so components
+ *     (mainly ApexCharts) can read live DaisyUI token values and re-render
+ *     when the theme flips.
  *
  * The bootstrap script in `apps/web/src/app.html` applies the initial theme
  * synchronously before paint; this module takes over for runtime changes.
@@ -19,11 +22,39 @@
  * load — required for cross-tab sync to work even if the user never opens
  * the burger menu.
  */
+import { writable } from 'svelte/store';
 
 const STORAGE_KEY = 'darkMode';
 
 function isClient(): boolean {
   return typeof window !== 'undefined' && typeof document !== 'undefined';
+}
+
+/**
+ * Reactive revision counter, incremented on every applyTheme() call.
+ * Components that read DaisyUI tokens via `getThemeColor()` should mark a
+ * dependency on `$themeRev` so their reactive blocks re-evaluate when the
+ * theme flips. Used primarily by chart components.
+ */
+export const themeRev = writable(0);
+
+/**
+ * Read a CSS custom property from `:root` and return the resolved value.
+ *
+ * Used to feed live DaisyUI token values into ApexCharts options (which
+ * expect static color strings, not CSS var references). Pair it with a
+ * `$themeRev` dependency so the surrounding reactive block re-runs on
+ * theme change.
+ *
+ * @param token    CSS variable name including the leading `--`.
+ * @param fallback returned during SSR or when the variable is unset.
+ */
+export function getThemeColor(token: string, fallback = '#888888'): string {
+  if (!isClient()) return fallback;
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(token)
+    .trim();
+  return value || fallback;
 }
 
 /**
@@ -48,6 +79,9 @@ export function applyTheme(dark: boolean, { skipPersist = false } = {}): void {
   }
   // Notify subscribers (charts, modals, etc.) that the theme changed.
   // ApexCharts in BaseChart listens for this and switches its theme.mode.
+  // Components that resolve DaisyUI tokens via getThemeColor() depend on
+  // `$themeRev` so their reactive blocks re-run with fresh values.
+  themeRev.update((n) => n + 1);
   try {
     window.dispatchEvent(new CustomEvent<{ dark: boolean }>('theme:change', { detail: { dark } }));
   } catch {
