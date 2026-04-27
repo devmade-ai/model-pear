@@ -28,7 +28,11 @@
   $: chartMin = Math.max(0, Math.min(minimumPrice, maximumPrice, currentPrice) * 0.8);
   $: chartMax = Math.max(minimumPrice, maximumPrice, currentPrice) * 1.2;
 
-  $: options = ($themeRev, {
+  // Theme reactivity: see CashFlowChart.svelte for the pattern explanation.
+  let themeKey = 0;
+  $: themeKey = $themeRev;
+
+  $: options = (themeKey, {
     chart: {
       type: 'rangeBar' as const,
       toolbar: { show: false },

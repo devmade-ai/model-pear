@@ -11,7 +11,11 @@
 
   $: years = developerData.map((d) => `Year ${d.year}`);
 
-  $: options = ($themeRev, {
+  // Theme reactivity: see CashFlowChart.svelte for the pattern explanation.
+  let themeKey = 0;
+  $: themeKey = $themeRev;
+
+  $: options = (themeKey, {
     chart: { type: 'line' as const, toolbar: { show: false } },
     colors: [getThemeColor('--color-primary'), getThemeColor('--color-secondary')],
     stroke: { curve: 'smooth' as const, width: 3 },

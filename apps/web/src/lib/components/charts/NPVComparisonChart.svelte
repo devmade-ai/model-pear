@@ -8,7 +8,11 @@
   export let title = 'NPV Comparison';
   export let height: number | string = 280;
 
-  $: options = ($themeRev, {
+  // Theme reactivity: see CashFlowChart.svelte for the pattern explanation.
+  let themeKey = 0;
+  $: themeKey = $themeRev;
+
+  $: options = (themeKey, {
     chart: { type: 'bar' as const, toolbar: { show: false } },
     plotOptions: {
       bar: {

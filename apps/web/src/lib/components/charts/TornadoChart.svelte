@@ -20,7 +20,11 @@
   $: lowDeltas = sortedData.map((s) => s.lowOutput - baseValue);
   $: highDeltas = sortedData.map((s) => s.highOutput - baseValue);
 
-  $: options = ($themeRev, {
+  // Theme reactivity: see CashFlowChart.svelte for the pattern explanation.
+  let themeKey = 0;
+  $: themeKey = $themeRev;
+
+  $: options = (themeKey, {
     chart: { type: 'bar' as const, stacked: false, toolbar: { show: false } },
     plotOptions: {
       bar: {

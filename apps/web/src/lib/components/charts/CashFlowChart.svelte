@@ -11,9 +11,14 @@
 
   $: years = developerData.map((d) => `Year ${d.year}`);
 
-  // `$themeRev` dependency rebuilds options on theme toggle so
-  // getThemeColor() reads fresh DaisyUI tokens.
-  $: options = ($themeRev, {
+  // Theme reactivity: extract `$themeRev` into a plain variable so Svelte's
+  // compiler unambiguously tracks the dependency, then reference it in the
+  // options block via the comma operator. Re-runs `getThemeColor()` calls
+  // with fresh DaisyUI tokens on every theme toggle.
+  let themeKey = 0;
+  $: themeKey = $themeRev;
+
+  $: options = (themeKey, {
     chart: {
       type: 'bar' as const,
       stacked: false,

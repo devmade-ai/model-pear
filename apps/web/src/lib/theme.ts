@@ -46,15 +46,45 @@ export const themeRev = writable(0);
  * `$themeRev` dependency so the surrounding reactive block re-runs on
  * theme change.
  *
+ * DaisyUI v5 emits theme tokens as `oklch(...)` strings. Modern browsers
+ * render OKLCH natively in SVG fill/stroke, but ApexCharts does internal
+ * colour math (lighten on hover, gradient stops, alpha) by string-
+ * concatenation that breaks on OKLCH. To stay compatible, when an OKLCH/
+ * Oklab/lab/lch/color()/color-mix value comes back, resolve it to `rgb()`
+ * via a probe element — getComputedStyle of a `color` property always
+ * serialises to `rgb()` regardless of the source colour space.
+ *
  * @param token    CSS variable name including the leading `--`.
  * @param fallback returned during SSR or when the variable is unset.
  */
 export function getThemeColor(token: string, fallback = '#888888'): string {
   if (!isClient()) return fallback;
-  const value = getComputedStyle(document.documentElement)
+  const raw = getComputedStyle(document.documentElement)
     .getPropertyValue(token)
     .trim();
-  return value || fallback;
+  if (!raw) return fallback;
+
+  // Cheap RGB/hex check — no resolution needed.
+  if (/^#|^rgb/i.test(raw)) return raw;
+
+  // OKLCH/Oklab/lab/lch/color()/color-mix → resolve via probe to rgb().
+  // The probe round-trip costs one DOM mutation per call but only fires
+  // for colour-space functions ApexCharts can't parse on its own.
+  if (/oklch|oklab|lab\(|lch\(|color-mix|^color\(/i.test(raw)) {
+    try {
+      const probe = document.createElement('span');
+      probe.style.color = raw;
+      probe.style.display = 'none';
+      document.body.appendChild(probe);
+      const resolved = getComputedStyle(probe).color;
+      document.body.removeChild(probe);
+      return resolved || raw;
+    } catch {
+      return raw;
+    }
+  }
+
+  return raw;
 }
 
 /**

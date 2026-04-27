@@ -99,13 +99,21 @@
     }
   }
 
-  // Source → color mapping (inline style values)
+  // Source → color mapping (inline style values).
+  //
+  // These 9 categories need 9 visually distinct hues for fast at-a-glance
+  // log filtering. DaisyUI's 8 semantic tokens (primary/secondary/accent/
+  // neutral/info/success/warning/error) carry meaning that conflicts with
+  // dev-log categorisation (mapping `auth` -> `success` would mislead).
+  // The categories that DO map cleanly (`global` -> error, `api` -> primary)
+  // use DaisyUI tokens. The rest stay as fixed hex — functional category
+  // labels in a dev-only tool, not brand colours.
   const SOURCE_COLORS: Record<string, string> = {
     boot: '#f59e0b',
     pwa: '#06b6d4',
     render: '#8b5cf6',
-    global: '#ef4444',
-    api: '#3b82f6',
+    global: 'var(--color-error)',
+    api: 'var(--color-primary)',
     auth: '#ec4899',
     db: '#10b981',
     form: '#f97316',
@@ -113,16 +121,16 @@
   };
 
   function sourceColor(source: string): string {
-    return SOURCE_COLORS[source] || '#9ca3af';
+    return SOURCE_COLORS[source] || 'color-mix(in srgb, var(--color-base-content) 60%, transparent)';
   }
 
   // Severity → color mapping
   function severityColor(severity: string): string {
     switch (severity) {
-      case 'error': return '#ef4444';
-      case 'warn': return '#eab308';
-      case 'success': return '#16a34a';
-      default: return '#9ca3af';
+      case 'error': return 'var(--color-error)';
+      case 'warn': return 'var(--color-warning)';
+      case 'success': return 'var(--color-success)';
+      default: return 'color-mix(in srgb, var(--color-base-content) 60%, transparent)';
     }
   }
 
@@ -250,8 +258,8 @@
       align-items: center;
       gap: 6px;
       padding: 6px 12px;
-      background: #1e1e1e;
-      color: #9ca3af;
+      background: var(--color-base-200);
+      color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
       border: 1px solid #333;
       border-radius: 9999px;
       font-family: monospace;
@@ -263,10 +271,10 @@
     title="Open debug panel"
   >
     <span>dbg</span>
-    <span style="color: #6b7280;">{entries.length}</span>
+    <span style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent);">{entries.length}</span>
     {#if errorCount > 0}
       <span style="
-        background: #ef4444;
+        background: var(--color-error);
         color: #fff;
         border-radius: 9999px;
         padding: 0 5px;
@@ -277,7 +285,7 @@
     {/if}
     {#if warnCount > 0}
       <span style="
-        background: #eab308;
+        background: var(--color-warning);
         color: #000;
         border-radius: 9999px;
         padding: 0 5px;
@@ -302,8 +310,8 @@
       max-height: 480px;
       display: flex;
       flex-direction: column;
-      background: #1a1a1a;
-      color: #d4d4d4;
+      background: var(--color-base-100);
+      color: var(--color-base-content);
       border: 1px solid #333;
       border-radius: 8px;
       font-family: monospace;
@@ -323,16 +331,16 @@
       flex-shrink: 0;
     ">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-weight: 600; color: #e5e5e5;">Debug</span>
-        <span style="color: #6b7280;">{entries.length} entries</span>
+        <span style="font-weight: 600; color: var(--color-base-content);">Debug</span>
+        <span style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent);">{entries.length} entries</span>
       </div>
       <div style="display: flex; align-items: center; gap: 4px;">
         <button
           on:click={handleCopy}
           style="
             padding: 3px 8px;
-            background: {copyStatus === 'copied' ? '#16a34a' : copyStatus === 'failed' ? '#ef4444' : '#333'};
-            color: #d4d4d4;
+            background: {copyStatus === 'copied' ? 'var(--color-success)' : copyStatus === 'failed' ? 'var(--color-error)' : 'var(--color-base-300)'};
+            color: var(--color-base-content);
             border: 1px solid #444;
             border-radius: 4px;
             cursor: pointer;
@@ -348,7 +356,7 @@
           style="
             padding: 3px 8px;
             background: #333;
-            color: #d4d4d4;
+            color: var(--color-base-content);
             border: 1px solid #444;
             border-radius: 4px;
             cursor: pointer;
@@ -362,7 +370,7 @@
           style="
             padding: 3px 8px;
             background: #333;
-            color: #d4d4d4;
+            color: var(--color-base-content);
             border: 1px solid #444;
             border-radius: 4px;
             cursor: pointer;
@@ -379,18 +387,18 @@
     {#if copyFallbackText}
       <div style="
         padding: 8px 12px;
-        background: #262626;
+        background: var(--color-base-300);
         border-bottom: 1px solid #333;
         flex-shrink: 0;
       ">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="color: #eab308; font-size: 11px;">Copy failed — select text below and copy manually</span>
+          <span style="color: var(--color-warning); font-size: 11px;">Copy failed — select text below and copy manually</span>
           <button
             on:click={() => { copyFallbackText = ''; copyStatus = 'idle'; }}
             style="
               padding: 2px 6px;
               background: #333;
-              color: #d4d4d4;
+              color: var(--color-base-content);
               border: 1px solid #444;
               border-radius: 4px;
               cursor: pointer;
@@ -405,8 +413,8 @@
           style="
             width: 100%;
             height: 80px;
-            background: #1a1a1a;
-            color: #d4d4d4;
+            background: var(--color-base-100);
+            color: var(--color-base-content);
             border: 1px solid #444;
             border-radius: 4px;
             font-family: monospace;
@@ -423,7 +431,7 @@
     <div style="
       display: flex;
       border-bottom: 1px solid #333;
-      background: #1e1e1e;
+      background: var(--color-base-200);
       flex-shrink: 0;
     ">
       {#each TABS as tab}
@@ -435,10 +443,10 @@
           style="
             flex: 1;
             padding: 6px 8px;
-            background: {activeTab === tab.key ? '#2a2a2a' : 'transparent'};
-            color: {activeTab === tab.key ? '#e5e5e5' : '#6b7280'};
+            background: {activeTab === tab.key ? 'var(--color-base-300)' : 'transparent'};
+            color: {activeTab === tab.key ? 'var(--color-base-content)' : 'color-mix(in srgb, var(--color-base-content) 50%, transparent)'};
             border: none;
-            border-bottom: {activeTab === tab.key ? '2px solid #3b82f6' : '2px solid transparent'};
+            border-bottom: {activeTab === tab.key ? '2px solid var(--color-primary)' : '2px solid transparent'};
             cursor: pointer;
             font-family: monospace;
             font-size: 11px;
@@ -454,16 +462,16 @@
       {#if activeTab === 'log'}
         <div bind:this={logContainer} style="padding: 4px 0; overflow-y: auto; height: 100%;">
           {#if entries.length === 0}
-            <div style="padding: 16px; color: #6b7280; text-align: center;">No log entries yet</div>
+            <div style="padding: 16px; color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center;">No log entries yet</div>
           {:else}
             {#each entries as entry (entry.id)}
               <div style="
                 padding: 3px 10px;
-                border-bottom: 1px solid #262626;
+                border-bottom: 1px solid var(--color-base-300);
                 line-height: 1.4;
               ">
                 <div style="display: flex; gap: 6px; align-items: baseline;">
-                  <span style="color: #6b7280; flex-shrink: 0;">{formatDebugTimestamp(entry.timestamp)}</span>
+                  <span style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent); flex-shrink: 0;">{formatDebugTimestamp(entry.timestamp)}</span>
                   <span style="
                     color: {severityColor(entry.severity)};
                     flex-shrink: 0;
@@ -476,11 +484,11 @@
                     flex-shrink: 0;
                     font-size: 10px;
                   ">[{entry.source}]</span>
-                  <span style="color: #d4d4d4; word-break: break-word;">{entry.event}</span>
+                  <span style="color: var(--color-base-content); word-break: break-word;">{entry.event}</span>
                 </div>
                 {#if entry.details}
                   <div style="
-                    color: #6b7280;
+                    color: color-mix(in srgb, var(--color-base-content) 50%, transparent);
                     font-size: 10px;
                     margin-top: 1px;
                     margin-left: 82px;
@@ -501,11 +509,11 @@
               display: flex;
               justify-content: space-between;
               padding: 4px 0;
-              border-bottom: 1px solid #262626;
+              border-bottom: 1px solid var(--color-base-300);
               gap: 12px;
             ">
-              <span style="color: #9ca3af; flex-shrink: 0;">{item.label}</span>
-              <span style="color: #d4d4d4; text-align: right; word-break: break-all; max-width: 280px;">{item.value}</span>
+              <span style="color: color-mix(in srgb, var(--color-base-content) 60%, transparent); flex-shrink: 0;">{item.label}</span>
+              <span style="color: var(--color-base-content); text-align: right; word-break: break-all; max-width: 280px;">{item.value}</span>
             </div>
           {/each}
         </div>
@@ -520,7 +528,7 @@
               margin-bottom: 8px;
               padding: 4px 10px;
               background: #333;
-              color: #d4d4d4;
+              color: var(--color-base-content);
               border: 1px solid #444;
               border-radius: 4px;
               cursor: pointer;
@@ -529,7 +537,7 @@
             "
           >Re-run diagnostics</button>
           {#if diagnostics.length === 0}
-            <div style="color: #6b7280; text-align: center; padding: 16px;">Click "Re-run diagnostics" to check PWA status</div>
+            <div style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center; padding: 16px;">Click "Re-run diagnostics" to check PWA status</div>
           {:else}
             {#each diagnostics as diag}
               <div style="
@@ -537,11 +545,11 @@
                 align-items: center;
                 gap: 8px;
                 padding: 4px 0;
-                border-bottom: 1px solid #262626;
+                border-bottom: 1px solid var(--color-base-300);
               ">
                 <span style="flex-shrink: 0; font-size: 14px;">{diagnosticStatusIcon(diag.status)}</span>
-                <span style="color: #9ca3af; flex-shrink: 0; min-width: 90px;">{diag.label}</span>
-                <span style="color: #d4d4d4; word-break: break-word;">{diag.detail}</span>
+                <span style="color: color-mix(in srgb, var(--color-base-content) 60%, transparent); flex-shrink: 0; min-width: 90px;">{diag.label}</span>
+                <span style="color: var(--color-base-content); word-break: break-word;">{diag.detail}</span>
               </div>
             {/each}
           {/if}
