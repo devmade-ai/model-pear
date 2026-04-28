@@ -177,10 +177,17 @@
       detail: 'serviceWorker' in navigator ? 'Supported' : 'Not supported',
     });
 
-    // Async: Service Worker state
+    // Async: Service Worker state. 5s timeout so a pathological SW
+    // hanging on activation doesn't leave the diagnostic stuck on
+    // "Running…" indefinitely.
     if ('serviceWorker' in navigator) {
       try {
-        const reg = await navigator.serviceWorker.getRegistration('/');
+        const reg = await Promise.race([
+          navigator.serviceWorker.getRegistration('/'),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('timeout (5s)')), 5000),
+          ),
+        ]);
         if (runId !== diagnosticRunId) return;
         const state = reg?.active ? 'active' : reg?.waiting ? 'waiting' : reg?.installing ? 'installing' : 'none';
         results.push({ label: 'SW State', status: reg ? 'pass' : 'warn', detail: state });

@@ -53,7 +53,10 @@ interface BeforeInstallPromptEvent extends Event {
 interface PWAGlobals {
   triggerInstall(): void;
   dismissInstall(): void;
-  applyUpdate(): void;
+  /** Apply the waiting SW. Returns a promise that rejects if the update
+      fails to download or skip-waiting throws — the banner awaits it
+      and surfaces an error state on rejection. */
+  applyUpdate(): Promise<void>;
   /** Suppress update-banner re-emit for 30s. Called by the banner's
       "Later" button so the banner doesn't immediately reappear if the
       SW emits another onNeedRefresh shortly after. */
@@ -214,14 +217,30 @@ function triggerInstall(): void {
   if (!w) return;
   const evt = w.__pwaInstallPromptEvent;
   if (evt) {
-    // Native flow (Chromium).
-    void evt.prompt();
-    void evt.userChoice.finally(() => {
-      // Clear the stashed event regardless of outcome — beforeinstallprompt
-      // only fires once per session, accepted or dismissed.
+    // Native flow (Chromium). prompt() can throw or reject if the
+    // prompt has already been shown this session, on iframes with
+    // SecurityError, or when the browser silently refuses. Catch +
+    // surface so a click-with-no-response is at least diagnosable.
+    void evt.prompt().catch((err: unknown) => {
+      if (typeof console !== 'undefined') {
+        console.error('[pwa] install prompt failed:', err);
+      }
+    });
+    // userChoice should always be a Promise per spec, but defend
+    // against polyfill gaps: if it's missing or non-thenable, clear
+    // the stashed event immediately to avoid a stale-state lock-in.
+    const choice = evt.userChoice;
+    if (choice && typeof choice.finally === 'function') {
+      void choice.finally(() => {
+        // Clear the stashed event regardless of outcome — beforeinstallprompt
+        // only fires once per session, accepted or dismissed.
+        if (w) w.__pwaInstallPromptEvent = null;
+        updateInstallMenuVisibility();
+      });
+    } else {
       if (w) w.__pwaInstallPromptEvent = null;
       updateInstallMenuVisibility();
-    });
+    }
     return;
   }
 
@@ -250,10 +269,20 @@ function dismissInstall(): void {
 // Update flow
 // ---------------------------------------------------------------------------
 
-function applyUpdate(): void {
+function applyUpdate(): Promise<void> {
   // Trigger the SW update; the controllerchange listener handles the reload.
+  // Returns the underlying promise so the UpdateBanner can await it and
+  // surface failures (download failure, network drop) instead of just
+  // silently doing nothing.
   pendingUpdate = false;
-  void updateSW?.();
+  if (!updateSW) return Promise.resolve();
+  return updateSW().catch((err: unknown) => {
+    if (typeof console !== 'undefined') {
+      console.error('[pwa] applyUpdate failed:', err);
+    }
+    // Re-throw so the banner's await/catch can react.
+    throw err;
+  });
 }
 
 function suppressUpdateBanner(): void {
@@ -353,6 +382,14 @@ if (w && 'serviceWorker' in navigator) {
       // Nothing to do; the offline-ready state is informational. Future:
       // surface a small toast if desired.
     },
+    onRegisterError: (err) => {
+      // SW registration failures are otherwise silent. Surface to the
+      // console so the DebugPill (which captures `error` events) and
+      // dev tools can see what happened.
+      if (typeof console !== 'undefined') {
+        console.error('[pwa] SW registration failed:', err);
+      }
+    },
     onRegisteredSW: (_swUrl, registration) => {
       if (!registration) return;
       // Hourly poll for SW updates. Safari deprioritises backgrounded
@@ -360,7 +397,11 @@ if (w && 'serviceWorker' in navigator) {
       // open for days never sees a new version. Tracked for HMR
       // teardown so the interval is released on hot reload.
       const intervalId = window.setInterval(() => {
-        void registration.update();
+        registration.update().catch((err: unknown) => {
+          if (typeof console !== 'undefined') {
+            console.warn('[pwa] hourly update poll failed:', err);
+          }
+        });
       }, 60 * 60 * 1000);
       cleanups.push(() => window.clearInterval(intervalId));
     },

@@ -19,9 +19,21 @@
   import { onMount, onDestroy } from 'svelte';
 
   let visible = false;
+  // States during/after the update click. `busy` disables the buttons +
+  // shows "Updating…" while the SW is taking over. `errorMsg` surfaces a
+  // human-readable failure when applyUpdate rejects or the controllerchange
+  // never fires within the timeout window.
+  let busy = false;
+  let errorMsg: string | null = null;
+
+  /** Max time to wait for controllerchange after applyUpdate resolves.
+      If this elapses without a reload, the SW download likely failed
+      silently or there was nothing waiting after all — re-show the
+      banner with an error state. */
+  const POST_UPDATE_RELOAD_TIMEOUT_MS = 10_000;
 
   type PWAGlobals = {
-    applyUpdate: () => void;
+    applyUpdate: () => Promise<void>;
     suppressUpdateBanner: () => void;
     setUpdateBannerCallback: (cb: (() => void) | null) => void;
   };
@@ -29,16 +41,44 @@
 
   function show(): void {
     visible = true;
+    busy = false;
+    errorMsg = null;
   }
 
-  function update(): void {
-    visible = false;
+  async function update(): Promise<void> {
+    busy = true;
+    errorMsg = null;
     const w = window as W;
-    w.__pwa?.applyUpdate();
+    if (!w.__pwa) {
+      busy = false;
+      errorMsg = 'Update unavailable — refresh the page manually.';
+      return;
+    }
+    try {
+      await w.__pwa.applyUpdate();
+      // controllerchange in $lib/pwa.ts triggers window.location.reload()
+      // when the new SW takes control. If that hasn't happened within
+      // POST_UPDATE_RELOAD_TIMEOUT_MS, the update silently failed (no SW
+      // was actually waiting, or the new SW didn't activate) — surface
+      // a recoverable error so the user can retry.
+      const id = window.setTimeout(() => {
+        if (!visible) return; // already reloaded; banner unmounted
+        busy = false;
+        errorMsg = "Update didn't complete. Try refreshing the page.";
+      }, POST_UPDATE_RELOAD_TIMEOUT_MS);
+      // No cleanup needed — if the page reloads, the timer dies with it.
+      void id;
+    } catch {
+      // applyUpdate already logged via console.error in pwa.ts.
+      busy = false;
+      errorMsg = 'Update failed. Try refreshing the page.';
+    }
   }
 
   function later(): void {
     visible = false;
+    busy = false;
+    errorMsg = null;
     // Tell the PWA module to suppress re-emit for 30s. Without this,
     // if the SW fires onNeedRefresh again shortly after (e.g. another
     // hourly update poll succeeds), the banner pops up immediately
@@ -67,21 +107,33 @@
     aria-live="polite"
   >
     <div class="flex items-start gap-3">
-      <svg class="h-5 w-5 flex-shrink-0 text-info mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+      {#if errorMsg}
+        <svg class="h-5 w-5 flex-shrink-0 text-error mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      {:else}
+        <svg class="h-5 w-5 flex-shrink-0 text-info mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      {/if}
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium text-base-content">A new version is available.</p>
-        <p class="text-xs text-base-content/70 mt-0.5">Update now to load the latest features and fixes.</p>
+        {#if errorMsg}
+          <p class="text-sm font-medium text-base-content">{errorMsg}</p>
+        {:else}
+          <p class="text-sm font-medium text-base-content">A new version is available.</p>
+          <p class="text-xs text-base-content/70 mt-0.5">Update now to load the latest features and fixes.</p>
+        {/if}
         <div class="flex gap-2 mt-3">
           <button
             type="button"
             class="btn btn-primary btn-sm"
+            disabled={busy}
             on:click={update}
-          >Update</button>
+          >{busy ? 'Updating…' : errorMsg ? 'Retry' : 'Update'}</button>
           <button
             type="button"
             class="btn btn-ghost btn-sm"
+            disabled={busy}
             on:click={later}
           >Later</button>
         </div>
