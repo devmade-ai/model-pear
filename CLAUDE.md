@@ -664,6 +664,26 @@ The tool helps you optimise across multiple dimensions:
 
 ## Architecture
 
+### Frontend stack
+
+- **SvelteKit 2.x** + adapter-static (SPA fallback to `/200.html`).
+- **Tailwind CSS v4** (CSS-first config: `@import "tailwindcss"` + inline `@theme`; no `tailwind.config.js`).
+- **DaisyUI v5** with `emerald --default` (light) and `dim --prefersdark` (dark). **The themes are the brand** — no custom colour palette, no `--color-model-*` tokens, no hardcoded Tailwind colour utilities like `text-green-400`. Components use DaisyUI semantic classes (`bg-base-100`, `text-base-content`, `border-base-300`, status `text-success`/`error`/`warning`, brand `bg-primary`/`secondary`/`accent`) and DaisyUI components (`.card`, `.btn`, `.btn-primary`, `.input`, `.badge`, `.alert`, `.table`).
+- **Theme switching** is dual-layer: a `.dark` class on `<html>` (drives Tailwind's `dark:` variant via `@custom-variant`) PLUS `data-theme="dim|emerald"` (drives DaisyUI). Both move in lockstep — see `apps/web/src/lib/theme.ts`.
+- **PWA** via `vite-plugin-pwa` + `workbox-window`. `registerType: 'prompt'` means the user controls when an updated SW activates. `navigateFallback: '/200.html'` aligns with the SPA fallback. SW + manifest are generated at build time; the static `manifest.webmanifest` was deleted in favour of the VitePWA-generated one.
+- **Charts** use ApexCharts. `BaseChart.svelte` listens for the `theme:change` custom event and calls `chart.updateOptions({ theme: { mode } })`; per-chart components read live colours from DaisyUI tokens via `getThemeColor()` so series re-colour on theme flip.
+
+### Runtime singletons (`window` globals)
+
+Set by side-effect imports in `+layout.svelte`. Consumers (burger menu, banner, modal) read them via `window.__theme` / `window.__pwa`. Types live in `apps/web/src/app.d.ts`.
+
+| Global | Source | Purpose |
+|---|---|---|
+| `window.__theme` | `apps/web/src/lib/theme.ts` | `applyTheme(dark)`, `isDark()`, `toggle()`, `dispose()` |
+| `window.__pwa` | `apps/web/src/lib/pwa.ts` | `triggerInstall()`, `applyUpdate()`, `suppressUpdateBanner()`, `setUpdateBannerCallback()`, `setInstallModalCallback()`, `updateInstallMenuVisibility()`, `detectBrowser()` |
+| `window.__pwaInstallPromptEvent` | `apps/web/src/app.html` early-capture script | Stashes the `beforeinstallprompt` event on first fire so cached-SW repeat visits don't lose it before the framework loads |
+| `window.__themeAttached` / `window.__pwaModuleAttached` | guard flags | HMR-safe idempotency for the listener wiring |
+
 ### File Structure
 
 ```
@@ -671,9 +691,12 @@ model-pear/
 ├── apps/
 │   └── web/                    # SvelteKit web application
 │       ├── src/
+│       │   ├── app.html                        # Pre-paint theme bootstrap + early beforeinstallprompt capture
+│       │   ├── app.css                         # @plugin daisyui + @theme + base + print CSS
+│       │   ├── app.d.ts                        # Global Window/Navigator type augmentation
 │       │   ├── routes/
 │       │   │   ├── +page.svelte                # Home page
-│       │   │   ├── +layout.svelte              # Global layout with header/footer
+│       │   │   ├── +layout.svelte              # Header + burger disclosure + UpdateBanner + InstallModal
 │       │   │   ├── pricing/                    # Mode 1: Pricing Calculator
 │       │   │   │   └── +page.svelte            # 5 pricing models (subscription, usage, seat, one-time, marketplace)
 │       │   │   └── structuring/                # Mode 2: Transaction Structuring
@@ -682,10 +705,15 @@ model-pear/
 │       │   │           └── +page.svelte        # Model calculator with variants
 │       │   └── lib/
 │       │       ├── components/                 # Reusable UI components
+│       │       │   ├── UpdateBanner.svelte     # PWA update prompt (z-70)
+│       │       │   ├── InstallModal.svelte     # Per-browser install instructions (z-60/z-80)
 │       │       │   └── DebugPill.svelte        # Floating debug pill (inline styles, 3 tabs)
 │       │       ├── stores/                     # Svelte stores
 │       │       ├── config/                     # Configuration
-│       │       ├── utils/                      # Utilities
+│       │       ├── utils/
+│       │       │   └── trackListener.ts        # Shared addEventListener cleanup helper
+│       │       ├── theme.ts                    # Runtime theme management (window.__theme)
+│       │       ├── pwa.ts                      # Service-worker + install + update (window.__pwa)
 │       │       ├── debugLog.ts                 # In-memory debug log (circular buffer, pub/sub)
 │       │       └── clipboardUtils.ts           # Clipboard copy with multiple fallbacks
 │       ├── static/                             # Static assets (served at root)
@@ -693,9 +721,10 @@ model-pear/
 │       │   ├── apple-touch-icon.png            # 180x180 iOS home screen
 │       │   ├── icon-192.png                    # PWA manifest (any)
 │       │   ├── icon-512.png                    # PWA manifest (any)
-│       │   ├── icon-1024.png                   # PWA manifest (maskable)
-│       │   └── manifest.webmanifest            # PWA manifest
+│       │   └── icon-1024.png                   # PWA manifest (maskable)
 │       ├── svelte.config.js                    # SvelteKit config (adapter-static for Vercel)
+│       ├── vite.config.ts                      # VitePWA plugin config (manifest, workbox, navigateFallback)
+│       ├── postcss.config.js                   # @tailwindcss/postcss
 │       └── package.json
 │
 ├── packages/

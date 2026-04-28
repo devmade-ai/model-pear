@@ -11,6 +11,7 @@
   import '$lib/pwa';
   import { base } from '$app/paths';
   import { onMount, tick } from 'svelte';
+  import { createListenerTracker } from '$lib/utils/trackListener';
   import UpdateBanner from '$lib/components/UpdateBanner.svelte';
   import InstallModal from '$lib/components/InstallModal.svelte';
 
@@ -41,32 +42,13 @@
   // event dispatched by applyTheme() in $lib/theme.
   let isDark = true;
 
-  /* trackListener — collects cleanup callbacks so a single dispose()
-     releases everything on unmount / HMR. Pattern from glow-props
-     TIMER_LEAKS.md: "every setTimeout/setInterval/addEventListener
-     /subscribe needs a matching cleanup". */
-  let cleanups: Array<() => void> = [];
-  function track<K extends keyof WindowEventMap>(
-    target: Window,
-    event: K,
-    handler: (e: WindowEventMap[K]) => void,
-    options?: AddEventListenerOptions | boolean
-  ): void;
-  function track<K extends keyof DocumentEventMap>(
-    target: Document,
-    event: K,
-    handler: (e: DocumentEventMap[K]) => void,
-    options?: AddEventListenerOptions | boolean
-  ): void;
-  function track(
-    target: EventTarget,
-    event: string,
-    handler: EventListenerOrEventListenerObject,
-    options?: AddEventListenerOptions | boolean
-  ): void {
-    target.addEventListener(event, handler, options);
-    cleanups.push(() => target.removeEventListener(event, handler, options));
-  }
+  /* Listener tracking — collects cleanup callbacks so a single
+     disposeListeners() releases everything on unmount/HMR. The shared
+     helper in $lib/utils/trackListener replaces the per-file overload
+     gymnastics with one type-erased target signature. Pattern from
+     glow-props TIMER_LEAKS.md: "every addEventListener / setInterval /
+     subscribe needs a matching cleanup". */
+  const { track, dispose: disposeListeners } = createListenerTracker();
 
   /* Body scroll lock. Setting scrollbarGutter='stable' keeps the page
      from horizontally shifting when overflow:hidden removes the
@@ -224,9 +206,7 @@
     // module-load time, before the burger's #burger-install-item is in
     // the DOM. Re-call after layout mount so Safari/Firefox users see
     // the install slot (no native install event ever fires for them).
-    type PWAGlobals = { updateInstallMenuVisibility?: () => void };
-    type W = Window & { __pwa?: PWAGlobals };
-    (window as W).__pwa?.updateInstallMenuVisibility?.();
+    window.__pwa?.updateInstallMenuVisibility?.();
 
     // Mount DebugPill into a separate #debug-root (outside SvelteKit tree).
     // Dynamic import ensures debugLog.ts module-level code (console
@@ -248,8 +228,7 @@
       destroyed = true;
       if (pill) pill.$destroy();
       // Run all tracked listener cleanups; release any leftover scroll lock.
-      cleanups.forEach((fn) => fn());
-      cleanups = [];
+      disposeListeners();
       unlockBodyScroll();
     };
   });

@@ -181,17 +181,22 @@
     // hanging on activation doesn't leave the diagnostic stuck on
     // "Running…" indefinitely.
     if ('serviceWorker' in navigator) {
+      let swTimeoutId: ReturnType<typeof setTimeout> | null = null;
       try {
         const reg = await Promise.race([
           navigator.serviceWorker.getRegistration('/'),
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('timeout (5s)')), 5000),
-          ),
+          new Promise<never>((_, reject) => {
+            swTimeoutId = setTimeout(() => reject(new Error('timeout (5s)')), 5000);
+          }),
         ]);
+        if (swTimeoutId) clearTimeout(swTimeoutId);
         if (runId !== diagnosticRunId) return;
         const state = reg?.active ? 'active' : reg?.waiting ? 'waiting' : reg?.installing ? 'installing' : 'none';
         results.push({ label: 'SW State', status: reg ? 'pass' : 'warn', detail: state });
       } catch (e) {
+        // clearTimeout even on the timeout-rejection path so the timer
+        // doesn't fire spuriously after we've already moved on.
+        if (swTimeoutId) clearTimeout(swTimeoutId);
         if (runId !== diagnosticRunId) return;
         results.push({ label: 'SW State', status: 'fail', detail: String(e) });
       }

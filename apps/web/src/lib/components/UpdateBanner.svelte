@@ -29,8 +29,13 @@
   /** Max time to wait for controllerchange after applyUpdate resolves.
       If this elapses without a reload, the SW download likely failed
       silently or there was nothing waiting after all — re-show the
-      banner with an error state. */
-  const POST_UPDATE_RELOAD_TIMEOUT_MS = 10_000;
+      banner with an error state.
+
+      15s is generous: warm-cache skipWaiting+activate+controllerchange
+      typically completes in <1s, cold caches in 2-3s. Slow networks
+      may push closer to 10s; the headroom prevents false "didn't
+      complete" alarms during legitimate slow downloads. */
+  const POST_UPDATE_RELOAD_TIMEOUT_MS = 15_000;
 
   type PWAGlobals = {
     applyUpdate: () => Promise<void>;

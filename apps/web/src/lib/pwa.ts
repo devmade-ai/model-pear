@@ -25,65 +25,23 @@
  * HMR-safe via `window.__pwaModuleAttached` guard + import.meta.hot.dispose.
  */
 import { registerSW } from 'virtual:pwa-register';
+import { createListenerTracker } from './utils/trackListener';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
 /** Browser categories used to pick install instructions. */
-export type Browser = 'chrome' | 'edge' | 'brave' | 'safari' | 'firefox' | 'unknown';
+export type Browser = PWABrowser;
 
-export interface InstallStep {
-  text: string;
-  /** Optional inline emoji/icon hint shown next to the step. */
-  icon?: string;
-}
-
-export interface InstallInstruction {
-  browser: Browser;
-  steps: InstallStep[];
-  note?: string;
-}
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
-
-interface PWAGlobals {
-  triggerInstall(): void;
-  dismissInstall(): void;
-  /** Apply the waiting SW. Returns a promise that rejects if the update
-      fails to download or skip-waiting throws — the banner awaits it
-      and surfaces an error state on rejection. */
-  applyUpdate(): Promise<void>;
-  /** Suppress update-banner re-emit for 30s. Called by the banner's
-      "Later" button so the banner doesn't immediately reappear if the
-      SW emits another onNeedRefresh shortly after. */
-  suppressUpdateBanner(): void;
-  setUpdateBannerCallback(cb: (() => void) | null): void;
-  setInstallModalCallback(cb: ((info: InstallInstruction) => void) | null): void;
-  /** Force a re-check of `#burger-install-item` visibility. The layout
-      calls this in onMount because the slot doesn't exist when the
-      module attaches its listeners. Without this, Safari/Firefox users
-      (where no native install event fires) never see the install slot. */
-  updateInstallMenuVisibility(): void;
-  detectBrowser(): Browser;
-  getInstallInstructions(browser: Browser): InstallInstruction;
-}
-
-// `window` typing extensions co-located so each global has a clear owner.
-type PWAWindow = Window & {
-  __pwa?: PWAGlobals;
-  __pwaInstallPromptEvent?: BeforeInstallPromptEvent | null;
-  __pwaModuleAttached?: boolean;
-};
+export type InstallStep = PWAInstallStep;
+export type InstallInstruction = PWAInstallInstruction;
 
 // ---------------------------------------------------------------------------
 // State
 // ---------------------------------------------------------------------------
 
-const w = (typeof window !== 'undefined' ? (window as PWAWindow) : null);
+const w = (typeof window !== 'undefined' ? window : null);
 
 let updateSW: (() => Promise<void>) | null = null;
 let updateBannerCallback: (() => void) | null = null;
@@ -91,11 +49,15 @@ let installModalCallback: ((info: InstallInstruction) => void) | null = null;
 let dismissedAt = 0;
 const SUPPRESS_MS = 30_000;
 
-/** Set when `onNeedRefresh` fires; cleared when the banner is shown OR
-    the user applies/dismisses. Lets the visibility handler re-emit when
-    the user returns to the tab if the banner couldn't show earlier
-    because the document was hidden. */
-let pendingUpdate = false;
+/** Three-state machine for the update banner.
+ *    'idle'    — no update available (initial / after user actioned).
+ *    'pending' — onNeedRefresh has fired; the banner should appear as
+ *                soon as visibility + suppression gates allow.
+ *  Stays 'pending' even while the banner is on screen — the user has to
+ *  click Update or Later to return to 'idle'. The 30s suppression is
+ *  independent: time-based, not state-based. */
+type UpdateState = 'idle' | 'pending';
+let updateState: UpdateState = 'idle';
 
 /** Queued install instruction when triggerInstall fires before the
     InstallModal has registered its callback. Drained when
@@ -108,17 +70,8 @@ let pendingInstallInfo: InstallInstruction | null = null;
 const RELOAD_THROTTLE_KEY = '__pwaReloadedAt';
 const RELOAD_THROTTLE_MS = 5_000;
 
-const cleanups: Array<() => void> = [];
-
-function track(
-  target: EventTarget,
-  event: string,
-  handler: EventListenerOrEventListenerObject,
-  options?: AddEventListenerOptions | boolean,
-): void {
-  target.addEventListener(event, handler, options);
-  cleanups.push(() => target.removeEventListener(event, handler, options));
-}
+const { track, dispose: disposeListeners } = createListenerTracker();
+const intervalCleanups: Array<() => void> = [];
 
 // ---------------------------------------------------------------------------
 // Browser detection + install instructions
@@ -133,7 +86,7 @@ export function detectBrowser(): Browser {
   // Calling isBrave() would require async, so we treat presence as a
   // good-enough signal. Order matters: Brave/Edge UAs both include
   // 'chrome', so Brave check has to come first.
-  const brave = (navigator as Navigator & { brave?: { isBrave?: () => Promise<boolean> } }).brave;
+  const brave = navigator.brave;
   if (brave && typeof brave.isBrave === 'function') return 'brave';
   if (/edg\//i.test(ua)) return 'edge';
   if (/firefox|fxios/i.test(ua)) return 'firefox';
@@ -270,31 +223,34 @@ function dismissInstall(): void {
 // ---------------------------------------------------------------------------
 
 function applyUpdate(): Promise<void> {
-  // Trigger the SW update; the controllerchange listener handles the reload.
-  // Returns the underlying promise so the UpdateBanner can await it and
-  // surface failures (download failure, network drop) instead of just
+  // The user accepted the update; whether or not the SW takes over
+  // successfully, the banner should not re-show for THIS state.
+  // Returns the updateSW() promise so the banner can await + surface
+  // failures (download dropped, skip-waiting threw) instead of
   // silently doing nothing.
-  pendingUpdate = false;
+  updateState = 'idle';
   if (!updateSW) return Promise.resolve();
   return updateSW().catch((err: unknown) => {
     if (typeof console !== 'undefined') {
       console.error('[pwa] applyUpdate failed:', err);
     }
-    // Re-throw so the banner's await/catch can react.
     throw err;
   });
 }
 
 function suppressUpdateBanner(): void {
-  pendingUpdate = false;
+  // User clicked "Later". The state moves to idle (the next emit needs
+  // to come from a fresh onNeedRefresh OR the visibility handler).
+  // dismissedAt powers the 30s suppression so a re-emit during the
+  // grace window is short-circuited.
+  updateState = 'idle';
   dismissedAt = Date.now();
 }
 
 function setUpdateBannerCallback(cb: (() => void) | null): void {
   updateBannerCallback = cb;
-  // If the SW fired onNeedRefresh while no callback was registered,
-  // emit now so the banner shows on its first mount.
-  if (cb && pendingUpdate) emitUpdateBanner();
+  // If onNeedRefresh fired before the banner mounted, emit now.
+  if (cb && updateState === 'pending') maybeEmitUpdateBanner();
 }
 
 function setInstallModalCallback(cb: ((info: InstallInstruction) => void) | null): void {
@@ -304,6 +260,17 @@ function setInstallModalCallback(cb: ((info: InstallInstruction) => void) | null
     cb(pendingInstallInfo);
     pendingInstallInfo = null;
   }
+}
+
+/** Emit if all gates pass. State stays 'pending' regardless — the user
+ *  has to actively dismiss or apply to return to 'idle'. */
+function maybeEmitUpdateBanner(): void {
+  if (typeof document === 'undefined') return;
+  if (updateState !== 'pending') return;
+  if (document.visibilityState !== 'visible') return;
+  if (Date.now() - dismissedAt < SUPPRESS_MS) return;
+  if (!updateBannerCallback) return;
+  updateBannerCallback();
 }
 
 // ---------------------------------------------------------------------------
@@ -349,14 +316,13 @@ function attachListeners(): void {
   }
 
   // Re-emit the update banner when the user returns to a backgrounded
-  // tab. onNeedRefresh fires regardless of visibility; emitUpdateBanner
+  // tab. onNeedRefresh fires regardless of visibility; maybeEmitUpdateBanner
   // suppresses on hidden, so without this re-emit the banner would
   // never appear for users who weren't looking at the tab when the
   // update arrived.
   track(document, 'visibilitychange', () => {
     if (document.visibilityState !== 'visible') return;
-    if (!pendingUpdate) return;
-    emitUpdateBanner();
+    maybeEmitUpdateBanner();
   });
 
   // Initial visibility check — handles the case where beforeinstallprompt
@@ -365,29 +331,33 @@ function attachListeners(): void {
   updateInstallMenuVisibility();
 }
 
-function emitUpdateBanner(): void {
-  if (typeof document === 'undefined') return;
-  pendingUpdate = true;
-  if (document.visibilityState !== 'visible') return;
-  if (Date.now() - dismissedAt < SUPPRESS_MS) return;
-  if (!updateBannerCallback) return;
-  updateBannerCallback();
-  pendingUpdate = false;
-}
-
 if (w && 'serviceWorker' in navigator) {
   updateSW = registerSW({
-    onNeedRefresh: () => emitUpdateBanner(),
+    onNeedRefresh: () => {
+      updateState = 'pending';
+      maybeEmitUpdateBanner();
+    },
     onOfflineReady: () => {
       // Nothing to do; the offline-ready state is informational. Future:
       // surface a small toast if desired.
     },
     onRegisterError: (err) => {
       // SW registration failures are otherwise silent. Surface to the
-      // console so the DebugPill (which captures `error` events) and
-      // dev tools can see what happened.
+      // console AND dispatch a synthetic ErrorEvent so the DebugPill's
+      // `error` listener captures it (console.error doesn't trigger an
+      // ErrorEvent in all browsers).
       if (typeof console !== 'undefined') {
         console.error('[pwa] SW registration failed:', err);
+      }
+      try {
+        window.dispatchEvent(new ErrorEvent('error', {
+          message: '[pwa] Service worker registration failed',
+          error: err instanceof Error ? err : new Error(String(err)),
+          filename: 'apps/web/src/lib/pwa.ts',
+        }));
+      } catch {
+        // Old browsers without ErrorEvent constructor — already
+        // logged via console.error above.
       }
     },
     onRegisteredSW: (_swUrl, registration) => {
@@ -403,7 +373,7 @@ if (w && 'serviceWorker' in navigator) {
           }
         });
       }, 60 * 60 * 1000);
-      cleanups.push(() => window.clearInterval(intervalId));
+      intervalCleanups.push(() => window.clearInterval(intervalId));
     },
   });
 }
@@ -428,8 +398,9 @@ if (w) {
 // can re-attach without duplicates.
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
-    cleanups.forEach((fn) => fn());
-    cleanups.length = 0;
+    disposeListeners();
+    intervalCleanups.forEach((fn) => fn());
+    intervalCleanups.length = 0;
     if (w) {
       w.__pwaModuleAttached = false;
       delete w.__pwa;
