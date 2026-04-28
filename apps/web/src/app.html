@@ -4,6 +4,33 @@
     <meta charset="utf-8" />
 
     <!--
+      Early beforeinstallprompt capture. Browsers (Chrome/Edge/Brave)
+      fire this event ONCE per session, often before the framework
+      bundle finishes loading on repeat visits with a cached SW. If we
+      wait for $lib/pwa.ts to register a listener we miss the event
+      and the install affordance silently disappears.
+
+      The handler stashes the event on `window.__pwaInstallPromptEvent`
+      and prevents the default mini-infobar; the PWA module reads the
+      stashed event when it loads.
+
+      MUST be a classic <script> (not type=module) so it runs sync
+      during head parse, before any module-script defer queue.
+    -->
+    <script>
+      (function () {
+        function capture(e) {
+          e.preventDefault();
+          window.__pwaInstallPromptEvent = e;
+        }
+        window.addEventListener('beforeinstallprompt', capture);
+        window.addEventListener('appinstalled', function () {
+          window.__pwaInstallPromptEvent = null;
+        });
+      })();
+    </script>
+
+    <!--
       Theme bootstrap. Runs synchronously before paint so first render
       uses the correct theme — no flash on reload.
 

@@ -5,8 +5,14 @@
   // run on every page load, not lazily, so cross-tab sync works without
   // UI interaction.
   import '$lib/theme';
+  // Side-effect import: registers the SW, wires the install/update flows,
+  // and exposes `window.__pwa` for the burger menu, update banner, and
+  // install modal to call into.
+  import '$lib/pwa';
   import { base } from '$app/paths';
   import { onMount, tick } from 'svelte';
+  import UpdateBanner from '$lib/components/UpdateBanner.svelte';
+  import InstallModal from '$lib/components/InstallModal.svelte';
 
   /* ===========================================================
      Burger menu — disclosure pattern.
@@ -405,6 +411,11 @@
   <main class="flex-1">
     <slot />
   </main>
+
+  <!-- PWA UI: update banner (z-70) and install modal (z-60/z-80).
+       Mounted from the layout so they're available on every route. -->
+  <UpdateBanner />
+  <InstallModal />
 
   <!-- Footer -->
   <footer class="bg-base-200 border-t border-base-300">
