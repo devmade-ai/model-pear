@@ -6,9 +6,9 @@
 
 ## Current State (April 28, 2026)
 
-**Last completed**: Theme migration to DaisyUI + PWA system + burger menu rebuild + audit-driven hardening
+**Last completed**: Theme migration to DaisyUI + PWA system + burger menu rebuild + audit-driven hardening + branch self-review (Tiers 1-3.5)
 
-**Status**: Branch `claude/create-model-pear-todos-2ixM4` carries the full migration. Build green. Chunks 1, 2, 3 (a-i/ii/iii, b, c, d-prep/migrate/strip, e, f, g, g+, audit), 4, 5, 6 all committed and pushed. Chunk 7 (EVENT_BUS decision) remains pending.
+**Status**: Branch `claude/create-model-pear-todos-2ixM4` carries the full migration. Build green. Chunks 1-7 all committed and pushed. Branch self-review Tiers 1-3.5 complete (mechanical / runtime checks); Tiers 4-8 (browser + deployed) remain as `[USER ACTION]`. Tier 9 (documentation cross-check) in progress.
 
 ### What was done this session
 
@@ -48,10 +48,10 @@ DaisyUI's `dim` and `emerald` themes now drive every colour. Prior dark palette 
 
 ### Open follow-ups for next session
 
-1. **Chunk 7 — EVENT_BUS decision.** Audit whether the app has cross-module unrelated reactions, service-layer pub/sub needs, or typed-payload requirements. If yes, implement per glow-props pattern. If no, document as N/A in `CLAUDE.md` under a "Not Applicable Patterns" section.
-2. **Visual verification in a browser.** Build is green and every audit grep is clean, but no pages have been rendered in a real browser this session. Each chart, the burger menu disclosure, the install modal, and the update banner all need a manual smoke test in dark + light themes. The intermediate-state regression between commits `99a0c3f` and `6a29608` is documented but not retroactively fixable.
-3. **Tests.** No tests added for `$lib/theme`, `$lib/pwa`, the burger menu, or PWA components. CLAUDE.md's testing rules treat infra as optional, but these are critical paths for every user.
-4. **Manual `pnpm approve-builds`.** See `docs/USER_ACTIONS.md`.
+1. **Branch self-review Tiers 4-8 (browser + deployed).** Tiers 1-3.5 are done in this session (mechanical type/manifest/bundle/SSR-shape checks). Remaining: visual walkthrough in dim + emerald, JS-disabled fallback, a11y / keyboard / SR sweep, PWA install + update + offline behaviour (deployed HTTPS), Save-as-PDF preview, Lighthouse, Vercel preview. All require a real browser or deployed instance.
+2. **Tests.** No tests added for `$lib/theme`, `$lib/pwa`, the burger menu, or PWA components. CLAUDE.md's testing rules treat infra as optional, but these are critical paths for every user.
+3. **Manual `pnpm approve-builds`.** See `docs/USER_ACTIONS.md`.
+4. **Intermediate-state regression** between commits `99a0c3f` (3d-strip) and `6a29608` (3e) is documented but not retroactively fixable — the `class="dark"`-without-`data-theme` window meant DaisyUI defaulted to emerald during that span.
 
 ### Pattern items still intentionally omitted
 

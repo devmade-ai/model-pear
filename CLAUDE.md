@@ -694,7 +694,7 @@ Set by side-effect imports in `+layout.svelte`. Consumers (burger menu, banner, 
 | Global | Source | Purpose |
 |---|---|---|
 | `window.__theme` | `apps/web/src/lib/theme.ts` | `applyTheme(dark)`, `isDark()`, `toggle()`, `dispose()` |
-| `window.__pwa` | `apps/web/src/lib/pwa.ts` | `triggerInstall()`, `applyUpdate()`, `suppressUpdateBanner()`, `setUpdateBannerCallback()`, `setInstallModalCallback()`, `updateInstallMenuVisibility()`, `detectBrowser()` |
+| `window.__pwa` | `apps/web/src/lib/pwa.ts` | `triggerInstall()`, `dismissInstall()`, `applyUpdate()`, `suppressUpdateBanner()`, `setUpdateBannerCallback()`, `setInstallModalCallback()`, `updateInstallMenuVisibility()`, `detectBrowser()`, `getInstallInstructions()` |
 | `window.__pwaInstallPromptEvent` | `apps/web/src/app.html` early-capture script | Stashes the `beforeinstallprompt` event on first fire so cached-SW repeat visits don't lose it before the framework loads |
 | `window.__themeAttached` / `window.__pwaModuleAttached` | guard flags | HMR-safe idempotency for the listener wiring |
 
