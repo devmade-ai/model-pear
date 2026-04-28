@@ -93,11 +93,20 @@
   }
 
   onMount(() => {
+    // onMount only runs on the client per Svelte 4 lifecycle, but the
+    // `typeof window` guard is belt-and-braces against future SSR
+    // changes.
+    if (typeof window === 'undefined') return;
     const w = window as W;
     w.__pwa?.setUpdateBannerCallback(show);
   });
 
   onDestroy(() => {
+    // onDestroy DOES run during SSR teardown (Svelte 4 calls it after
+    // the SSR render to clean up). Without this guard, accessing window
+    // here throws ReferenceError on the server and the entire route
+    // 500s.
+    if (typeof window === 'undefined') return;
     const w = window as W;
     w.__pwa?.setUpdateBannerCallback(null);
   });

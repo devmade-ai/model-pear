@@ -80,17 +80,21 @@
   }
 
   onMount(() => {
+    // onMount only runs on the client per Svelte 4 lifecycle, but the
+    // `typeof window` guard is belt-and-braces against future SSR changes.
+    if (typeof window === 'undefined') return;
     const w = window as W;
     w.__pwa?.setInstallModalCallback(open);
     window.addEventListener('keydown', handleKeydown);
   });
 
   onDestroy(() => {
+    // onDestroy DOES run during SSR teardown — guard window access or
+    // the route 500s on render.
+    if (typeof window === 'undefined') return;
     const w = window as W;
     w.__pwa?.setInstallModalCallback(null);
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('keydown', handleKeydown);
-    }
+    window.removeEventListener('keydown', handleKeydown);
   });
 </script>
 
