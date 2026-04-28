@@ -107,6 +107,15 @@ export function applyTheme(dark: boolean, { skipPersist = false } = {}): void {
       // localStorage blocked (private mode) — class/attr still applied.
     }
   }
+  // Mobile browser chrome / OS task switcher preview tracks the active
+  // app theme, not OS preference. Dynamic update of the single
+  // `<meta name="theme-color">` tag means a user on dark-OS who toggles
+  // to light-app gets a light URL bar to match. Hex values match
+  // emerald base-100 (#ffffff) / dim base-100 (#2a323c) — these are
+  // stable theme constants.
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', dark ? '#2a323c' : '#ffffff');
+
   // Notify subscribers (charts, modals, etc.) that the theme changed.
   // ApexCharts in BaseChart listens for this and switches its theme.mode.
   // Components that resolve DaisyUI tokens via getThemeColor() depend on

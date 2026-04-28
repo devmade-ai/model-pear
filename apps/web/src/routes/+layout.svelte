@@ -220,6 +220,14 @@
       isDark = detail.dark;
     }) as EventListener);
 
+    // The PWA module's first updateInstallMenuVisibility() call runs at
+    // module-load time, before the burger's #burger-install-item is in
+    // the DOM. Re-call after layout mount so Safari/Firefox users see
+    // the install slot (no native install event ever fires for them).
+    type PWAGlobals = { updateInstallMenuVisibility?: () => void };
+    type W = Window & { __pwa?: PWAGlobals };
+    (window as W).__pwa?.updateInstallMenuVisibility?.();
+
     // Mount DebugPill into a separate #debug-root (outside SvelteKit tree).
     // Dynamic import ensures debugLog.ts module-level code (console
     // interception, global error listeners) only runs in the browser, not

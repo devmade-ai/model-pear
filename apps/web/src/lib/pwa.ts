@@ -60,6 +60,11 @@ interface PWAGlobals {
   suppressUpdateBanner(): void;
   setUpdateBannerCallback(cb: (() => void) | null): void;
   setInstallModalCallback(cb: ((info: InstallInstruction) => void) | null): void;
+  /** Force a re-check of `#burger-install-item` visibility. The layout
+      calls this in onMount because the slot doesn't exist when the
+      module attaches its listeners. Without this, Safari/Firefox users
+      (where no native install event fires) never see the install slot. */
+  updateInstallMenuVisibility(): void;
   detectBrowser(): Browser;
   getInstallInstructions(browser: Browser): InstallInstruction;
 }
@@ -68,7 +73,6 @@ interface PWAGlobals {
 type PWAWindow = Window & {
   __pwa?: PWAGlobals;
   __pwaInstallPromptEvent?: BeforeInstallPromptEvent | null;
-  __pwaReloadOnce?: boolean;
   __pwaModuleAttached?: boolean;
 };
 
@@ -83,6 +87,23 @@ let updateBannerCallback: (() => void) | null = null;
 let installModalCallback: ((info: InstallInstruction) => void) | null = null;
 let dismissedAt = 0;
 const SUPPRESS_MS = 30_000;
+
+/** Set when `onNeedRefresh` fires; cleared when the banner is shown OR
+    the user applies/dismisses. Lets the visibility handler re-emit when
+    the user returns to the tab if the banner couldn't show earlier
+    because the document was hidden. */
+let pendingUpdate = false;
+
+/** Queued install instruction when triggerInstall fires before the
+    InstallModal has registered its callback. Drained when
+    setInstallModalCallback receives a non-null callback. */
+let pendingInstallInfo: InstallInstruction | null = null;
+
+/** Reload-throttle key. Stored in sessionStorage so it survives the
+    page reload that controllerchange triggers — preventing
+    cascade-reload if multiple SW versions arrive in quick succession. */
+const RELOAD_THROTTLE_KEY = '__pwaReloadedAt';
+const RELOAD_THROTTLE_MS = 5_000;
 
 const cleanups: Array<() => void> = [];
 
@@ -103,8 +124,12 @@ function track(
 export function detectBrowser(): Browser {
   if (typeof navigator === 'undefined') return 'unknown';
   const ua = navigator.userAgent.toLowerCase();
-  // Order matters: brave UAs include 'chrome'; edge UAs include 'chrome'.
-  // navigator.brave?.isBrave() is the canonical Brave check.
+  // Brave heuristic: only Brave ships `navigator.brave.isBrave`. Some
+  // privacy-shim extensions install a stub that returns false from
+  // isBrave(), but the property itself is Brave-exclusive in the wild.
+  // Calling isBrave() would require async, so we treat presence as a
+  // good-enough signal. Order matters: Brave/Edge UAs both include
+  // 'chrome', so Brave check has to come first.
   const brave = (navigator as Navigator & { brave?: { isBrave?: () => Promise<boolean> } }).brave;
   if (brave && typeof brave.isBrave === 'function') return 'brave';
   if (/edg\//i.test(ua)) return 'edge';
@@ -197,11 +222,21 @@ function triggerInstall(): void {
       if (w) w.__pwaInstallPromptEvent = null;
       updateInstallMenuVisibility();
     });
+    return;
+  }
+
+  // Manual instructions (Safari / Firefox / fallback).
+  const info = getInstallInstructions(detectBrowser());
+  if (installModalCallback) {
+    installModalCallback(info);
   } else {
-    // Manual instructions (Safari / Firefox / fallback).
-    const browser = detectBrowser();
-    const info = getInstallInstructions(browser);
-    installModalCallback?.(info);
+    // InstallModal hasn't mounted yet (race window during initial page
+    // load). Queue the request so the next setInstallModalCallback
+    // can flush it.
+    pendingInstallInfo = info;
+    if (typeof console !== 'undefined') {
+      console.warn('[pwa] InstallModal not yet mounted; install request queued.');
+    }
   }
 }
 
@@ -217,19 +252,29 @@ function dismissInstall(): void {
 
 function applyUpdate(): void {
   // Trigger the SW update; the controllerchange listener handles the reload.
+  pendingUpdate = false;
   void updateSW?.();
 }
 
 function suppressUpdateBanner(): void {
+  pendingUpdate = false;
   dismissedAt = Date.now();
 }
 
 function setUpdateBannerCallback(cb: (() => void) | null): void {
   updateBannerCallback = cb;
+  // If the SW fired onNeedRefresh while no callback was registered,
+  // emit now so the banner shows on its first mount.
+  if (cb && pendingUpdate) emitUpdateBanner();
 }
 
 function setInstallModalCallback(cb: ((info: InstallInstruction) => void) | null): void {
   installModalCallback = cb;
+  // Drain any install request that fired before the modal mounted.
+  if (cb && pendingInstallInfo) {
+    cb(pendingInstallInfo);
+    pendingInstallInfo = null;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -256,27 +301,33 @@ function attachListeners(): void {
 
   // controllerchange reload guard. When a new SW takes control of this
   // page (after applyUpdate() runs skipWaiting()), reload exactly once
-  // so the page picks up the new bundles. The flag prevents a reload
-  // loop if controllerchange somehow fires twice.
+  // so the page picks up the new bundles. Persisted via sessionStorage
+  // so the throttle survives the reload itself — without this, two SW
+  // versions arriving in quick succession could double-reload.
   if ('serviceWorker' in navigator) {
     track(navigator.serviceWorker, 'controllerchange', () => {
-      if (!w) return;
-      if (w.__pwaReloadOnce) return;
-      w.__pwaReloadOnce = true;
+      try {
+        const last = Number(sessionStorage.getItem(RELOAD_THROTTLE_KEY) ?? 0);
+        if (Date.now() - last < RELOAD_THROTTLE_MS) return;
+        sessionStorage.setItem(RELOAD_THROTTLE_KEY, String(Date.now()));
+      } catch {
+        // sessionStorage blocked (private mode, sandboxed iframe).
+        // Fall through and reload — better than getting stuck on a
+        // stale SW.
+      }
       window.location.reload();
     });
   }
 
-  // Update banner suppression: if the document was hidden when the SW
-  // update became available, re-emit when the user comes back to the tab.
-  // (onNeedRefresh runs in the SW context which can fire with the tab
-  // backgrounded.)
+  // Re-emit the update banner when the user returns to a backgrounded
+  // tab. onNeedRefresh fires regardless of visibility; emitUpdateBanner
+  // suppresses on hidden, so without this re-emit the banner would
+  // never appear for users who weren't looking at the tab when the
+  // update arrived.
   track(document, 'visibilitychange', () => {
     if (document.visibilityState !== 'visible') return;
-    if (!updateSW) return;
-    if (Date.now() - dismissedAt < SUPPRESS_MS) return;
-    // Only re-emit if there's actually an update waiting; the banner
-    // component's own state guards against showing spuriously.
+    if (!pendingUpdate) return;
+    emitUpdateBanner();
   });
 
   // Initial visibility check — handles the case where beforeinstallprompt
@@ -287,9 +338,12 @@ function attachListeners(): void {
 
 function emitUpdateBanner(): void {
   if (typeof document === 'undefined') return;
+  pendingUpdate = true;
   if (document.visibilityState !== 'visible') return;
   if (Date.now() - dismissedAt < SUPPRESS_MS) return;
-  updateBannerCallback?.();
+  if (!updateBannerCallback) return;
+  updateBannerCallback();
+  pendingUpdate = false;
 }
 
 if (w && 'serviceWorker' in navigator) {
@@ -322,6 +376,7 @@ if (w) {
     suppressUpdateBanner,
     setUpdateBannerCallback,
     setInstallModalCallback,
+    updateInstallMenuVisibility,
     detectBrowser,
     getInstallInstructions,
   };

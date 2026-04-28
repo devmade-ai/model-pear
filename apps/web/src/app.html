@@ -70,6 +70,11 @@
         var html = document.documentElement;
         html.classList.toggle('dark', darkMode);
         html.setAttribute('data-theme', darkMode ? 'dim' : 'emerald');
+
+        // Update the meta theme-color BEFORE first paint so the OS browser
+        // chrome matches the active app theme on initial render.
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', darkMode ? '#2a323c' : '#ffffff');
       })();
     </script>
 
@@ -80,17 +85,14 @@
     <meta name="description" content="Software Transaction Structuring Tool - Find the best deal structure for both you and your client" />
 
     <!--
-      Theme-color hints for mobile browser chrome (URL bar, splash).
-      Browsers that support media-bound theme-color (Chrome, Safari)
-      will pick the matching tag for the OS preference. The theme
-      module updates `content` dynamically on toggle in Chunk 3f.
-
-      Values approximate the active theme's --color-base-100:
-        emerald base-100 ≈ #ffffff
-        dim base-100     ≈ #2a323c
+      Single dynamic theme-color meta tag updated by the bootstrap script
+      above and by applyTheme() at runtime. Tracks app preference, not
+      OS preference — a user on dark-OS who toggles to light-app gets
+      a light URL bar. Initial value is dim base-100; the bootstrap
+      flips it to emerald base-100 (#ffffff) before paint when the
+      stored / OS preference is light.
     -->
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2a323c" />
+    <meta name="theme-color" content="#2a323c" />
 
     <title>Model Pear - Software Transaction Structuring</title>
     <!-- Figtree font from Google Fonts -->
