@@ -393,6 +393,20 @@ All implementation patterns live in the **glow-props** repo and are the single s
 - **Do not hardcode a list of patterns** — scan the source folder to discover what's available
 - The set of patterns grows over time; always check the source for new additions
 
+### Not Applicable Patterns
+
+Patterns evaluated against this repo's actual needs and intentionally **not** implemented. Each entry includes the reasoning so a future contributor doesn't re-evaluate from scratch.
+
+#### EVENT_BUS — N/A
+Evaluated April 28, 2026. The pattern's three triggering criteria — (a) cross-module unrelated reactions to the same domain event, (b) service-layer boundaries where producers don't know consumers, (c) need for typed event payloads enforced at compile time — are all already satisfied by existing primitives:
+
+- **Theme change broadcast** uses a typed `CustomEvent<{ dark: boolean }>` dispatched on `window` from `applyTheme()` in `$lib/theme.ts`. `BaseChart.svelte` listens via `window.addEventListener('theme:change', …)`. DOM CustomEvent fans out to N listeners at zero coupling cost; type safety comes from the generic.
+- **Cross-component state** uses Svelte stores (`themeRev` writable, `comparisonStore` + 5 derived stores in `$lib/stores/comparison.ts`). Reactive auto-subscription, type-checked through Svelte's tooling.
+- **PWA banner / modal handoff** uses single-consumer callback registration (`window.__pwa.setUpdateBannerCallback`, `setInstallModalCallback`). One banner, one modal — fan-out would be over-engineering.
+- **Debug log subscriptions** use scoped pub/sub (`debugSubscribe(fn) → unsubscribe`) inside `$lib/debugLog.ts`. Single domain, single consumer (the DebugPill).
+
+None of those benefit from a generic typed EventBus<M>. Calculator-package code is pure functions with no side-effect publishers. If a future feature needs pub/sub across unrelated modules with a typed payload map, re-evaluate then — but adding one now would be reinventing primitives the app already has.
+
 ---
 
 ## Project-Specific Configuration
