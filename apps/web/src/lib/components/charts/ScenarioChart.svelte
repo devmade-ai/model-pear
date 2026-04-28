@@ -13,7 +13,8 @@
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  $: options = (themeKey, {
+  function makeOptions(_rev: number) {
+    return {
     chart: { type: 'bar' as const, toolbar: { show: false } },
     plotOptions: {
       bar: {
@@ -46,7 +47,9 @@
     tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
     legend: { show: false },
     series: [{ name: 'Profit', data: [worstValue, baseValue, bestValue] }],
-  });
+    };
+  }
+  $: options = makeOptions(themeKey);
 
   $: range = bestValue - worstValue;
   $: volatility = baseValue !== 0 ? (range / Math.abs(baseValue)) * 100 : 0;

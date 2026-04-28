@@ -24,7 +24,11 @@
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  $: options = (themeKey, {
+  function makeOptions(_rev: number): ApexCharts.ApexOptions {
+    // Cast: ApexCharts' label-formatter type signature is `(value: string)`
+    // but for numeric axes it's invoked with a number at runtime. The cast
+    // accepts the type-vs-runtime mismatch ApexCharts itself ships with.
+    return ({
     chart: { type: 'bar' as const, stacked: false, toolbar: { show: false } },
     plotOptions: {
       bar: {
@@ -73,7 +77,9 @@
       { name: 'Low Scenario', data: lowDeltas },
       { name: 'High Scenario', data: highDeltas },
     ],
-  });
+  } as ApexCharts.ApexOptions);
+  }
+  $: options = makeOptions(themeKey);
 </script>
 
 <div class="card p-4">

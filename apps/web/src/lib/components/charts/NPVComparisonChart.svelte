@@ -12,7 +12,8 @@
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  $: options = (themeKey, {
+  function makeOptions(_rev: number) {
+    return {
     chart: { type: 'bar' as const, toolbar: { show: false } },
     plotOptions: {
       bar: {
@@ -39,7 +40,9 @@
     tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
     legend: { show: false },
     series: [{ name: 'NPV', data: [developerNPV, buyerNPV] }],
-  });
+  };
+  }
+  $: options = makeOptions(themeKey);
 </script>
 
 <div class="card p-4">

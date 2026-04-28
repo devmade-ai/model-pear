@@ -32,7 +32,11 @@
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  $: options = (themeKey, {
+  function makeOptions(_rev: number): ApexCharts.ApexOptions {
+    // Cast: ApexCharts' label-formatter type signature is `(value: string)`
+    // but for numeric axes it's invoked with a number at runtime. The cast
+    // accepts the type-vs-runtime mismatch ApexCharts itself ships with.
+    return ({
     chart: {
       type: 'rangeBar' as const,
       toolbar: { show: false },
@@ -129,7 +133,9 @@
         },
       ],
     },
-  });
+  } as ApexCharts.ApexOptions);
+  }
+  $: options = makeOptions(themeKey);
 </script>
 
 <div class="w-full">

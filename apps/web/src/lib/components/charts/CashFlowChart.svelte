@@ -18,7 +18,8 @@
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  $: options = (themeKey, {
+  function makeOptions(_rev: number) {
+    return {
     chart: {
       type: 'bar' as const,
       stacked: false,
@@ -57,7 +58,9 @@
       { name: 'Developer', data: developerData.map((d) => d.cashFlow) },
       { name: 'Buyer', data: buyerData.map((d) => d.cashFlow) },
     ],
-  });
+  };
+  }
+  $: options = makeOptions(themeKey);
 </script>
 
 <div class="card p-4">

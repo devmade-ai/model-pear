@@ -24,6 +24,7 @@
  *
  * HMR-safe via `window.__pwaModuleAttached` guard + import.meta.hot.dispose.
  */
+/// <reference types="vite-plugin-pwa/client" />
 import { registerSW } from 'virtual:pwa-register';
 import { createListenerTracker } from './utils/trackListener';
 
@@ -341,7 +342,7 @@ if (w && 'serviceWorker' in navigator) {
       // Nothing to do; the offline-ready state is informational. Future:
       // surface a small toast if desired.
     },
-    onRegisterError: (err) => {
+    onRegisterError: (err: unknown) => {
       // SW registration failures are otherwise silent. Surface to the
       // console AND dispatch a synthetic ErrorEvent so the DebugPill's
       // `error` listener captures it (console.error doesn't trigger an
@@ -360,7 +361,7 @@ if (w && 'serviceWorker' in navigator) {
         // logged via console.error above.
       }
     },
-    onRegisteredSW: (_swUrl, registration) => {
+    onRegisteredSW: (_swUrl: string, registration: ServiceWorkerRegistration | undefined) => {
       if (!registration) return;
       // Hourly poll for SW updates. Safari deprioritises backgrounded
       // PWAs and won't auto-check; without this, a user with the app

@@ -302,6 +302,7 @@
     bind:this={menuEl}
     id="burger-menu"
     role="menu"
+    tabindex="-1"
     aria-labelledby="burger-trigger"
     class="fixed top-16 right-2 sm:right-4 z-50 w-72 max-w-[calc(100vw-1rem)] origin-top-right bg-base-200 border border-base-300 rounded-lg shadow-2xl transition-all duration-150"
     class:opacity-0={!menuOpen}
