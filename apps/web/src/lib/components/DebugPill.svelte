@@ -260,7 +260,7 @@
       padding: 6px 12px;
       background: var(--color-base-200);
       color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
-      border: 1px solid #333;
+      border: 1px solid var(--color-base-300);
       border-radius: 9999px;
       font-family: monospace;
       font-size: 12px;
@@ -275,7 +275,7 @@
     {#if errorCount > 0}
       <span style="
         background: var(--color-error);
-        color: #fff;
+        color: var(--color-error-content);
         border-radius: 9999px;
         padding: 0 5px;
         font-size: 10px;
@@ -286,7 +286,7 @@
     {#if warnCount > 0}
       <span style="
         background: var(--color-warning);
-        color: #000;
+        color: var(--color-warning-content);
         border-radius: 9999px;
         padding: 0 5px;
         font-size: 10px;
@@ -312,7 +312,7 @@
       flex-direction: column;
       background: var(--color-base-100);
       color: var(--color-base-content);
-      border: 1px solid #333;
+      border: 1px solid var(--color-base-300);
       border-radius: 8px;
       font-family: monospace;
       font-size: 12px;
@@ -326,8 +326,8 @@
       align-items: center;
       justify-content: space-between;
       padding: 8px 12px;
-      background: #222;
-      border-bottom: 1px solid #333;
+      background: var(--color-base-200);
+      border-bottom: 1px solid var(--color-base-300);
       flex-shrink: 0;
     ">
       <div style="display: flex; align-items: center; gap: 8px;">
@@ -341,7 +341,7 @@
             padding: 3px 8px;
             background: {copyStatus === 'copied' ? 'var(--color-success)' : copyStatus === 'failed' ? 'var(--color-error)' : 'var(--color-base-300)'};
             color: var(--color-base-content);
-            border: 1px solid #444;
+            border: 1px solid var(--color-base-300);
             border-radius: 4px;
             cursor: pointer;
             font-family: monospace;
@@ -355,9 +355,9 @@
           on:click={handleClear}
           style="
             padding: 3px 8px;
-            background: #333;
+            background: var(--color-base-300);
             color: var(--color-base-content);
-            border: 1px solid #444;
+            border: 1px solid var(--color-base-300);
             border-radius: 4px;
             cursor: pointer;
             font-family: monospace;
@@ -369,9 +369,9 @@
           on:click={toggleExpanded}
           style="
             padding: 3px 8px;
-            background: #333;
+            background: var(--color-base-300);
             color: var(--color-base-content);
-            border: 1px solid #444;
+            border: 1px solid var(--color-base-300);
             border-radius: 4px;
             cursor: pointer;
             font-family: monospace;
@@ -388,7 +388,7 @@
       <div style="
         padding: 8px 12px;
         background: var(--color-base-300);
-        border-bottom: 1px solid #333;
+        border-bottom: 1px solid var(--color-base-300);
         flex-shrink: 0;
       ">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -397,9 +397,9 @@
             on:click={() => { copyFallbackText = ''; copyStatus = 'idle'; }}
             style="
               padding: 2px 6px;
-              background: #333;
+              background: var(--color-base-300);
               color: var(--color-base-content);
-              border: 1px solid #444;
+              border: 1px solid var(--color-base-300);
               border-radius: 4px;
               cursor: pointer;
               font-family: monospace;
@@ -415,7 +415,7 @@
             height: 80px;
             background: var(--color-base-100);
             color: var(--color-base-content);
-            border: 1px solid #444;
+            border: 1px solid var(--color-base-300);
             border-radius: 4px;
             font-family: monospace;
             font-size: 10px;
@@ -430,7 +430,7 @@
     <!-- Tabs -->
     <div style="
       display: flex;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid var(--color-base-300);
       background: var(--color-base-200);
       flex-shrink: 0;
     ">
@@ -527,9 +527,9 @@
             style="
               margin-bottom: 8px;
               padding: 4px 10px;
-              background: #333;
+              background: var(--color-base-300);
               color: var(--color-base-content);
-              border: 1px solid #444;
+              border: 1px solid var(--color-base-300);
               border-radius: 4px;
               cursor: pointer;
               font-family: monospace;

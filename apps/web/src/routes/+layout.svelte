@@ -69,7 +69,7 @@
         <div class="flex items-center sm:hidden">
           <button
             type="button"
-            class="inline-flex items-center justify-center p-2 rounded text-base-content/70 hover:text-base-content hover:bg-base-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+            class="inline-flex items-center justify-center p-2 rounded text-base-content/70 hover:text-base-content hover:bg-base-300 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-primary"
             aria-expanded={mobileMenuOpen}
             on:click={toggleMobileMenu}
           >
