@@ -39,6 +39,15 @@ function isClient(): boolean {
 export const themeRev = writable(0);
 
 /**
+ * Resolved-token cache. Each chart that mounts can read 5-15 tokens to
+ * configure series/grid/foreColor — without a cache, every call walks the
+ * DOM via getComputedStyle and (for OKLCH) appends a probe element. The
+ * cache is cleared on every applyTheme() call so live values track the
+ * active theme.
+ */
+const themeColorCache = new Map<string, string>();
+
+/**
  * Read a CSS custom property from `:root` and return the resolved value.
  *
  * Used to feed live DaisyUI token values into ApexCharts options (which
@@ -59,17 +68,23 @@ export const themeRev = writable(0);
  */
 export function getThemeColor(token: string, fallback = '#888888'): string {
   if (!isClient()) return fallback;
+  const cached = themeColorCache.get(token);
+  if (cached !== undefined) return cached;
+
   const raw = getComputedStyle(document.documentElement)
     .getPropertyValue(token)
     .trim();
   if (!raw) return fallback;
 
   // Cheap RGB/hex check — no resolution needed.
-  if (/^#|^rgb/i.test(raw)) return raw;
+  if (/^#|^rgb/i.test(raw)) {
+    themeColorCache.set(token, raw);
+    return raw;
+  }
 
   // OKLCH/Oklab/lab/lch/color()/color-mix → resolve via probe to rgb().
-  // The probe round-trip costs one DOM mutation per call but only fires
-  // for colour-space functions ApexCharts can't parse on its own.
+  // The probe round-trip costs one DOM mutation per cold call but only
+  // fires for colour-space functions ApexCharts can't parse on its own.
   if (/oklch|oklab|lab\(|lch\(|color-mix|^color\(/i.test(raw)) {
     try {
       const probe = document.createElement('span');
@@ -78,12 +93,15 @@ export function getThemeColor(token: string, fallback = '#888888'): string {
       document.body.appendChild(probe);
       const resolved = getComputedStyle(probe).color;
       document.body.removeChild(probe);
-      return resolved || raw;
+      const value = resolved || raw;
+      themeColorCache.set(token, value);
+      return value;
     } catch {
       return raw;
     }
   }
 
+  themeColorCache.set(token, raw);
   return raw;
 }
 
@@ -98,6 +116,22 @@ export function getThemeColor(token: string, fallback = '#888888'): string {
 export function applyTheme(dark: boolean, { skipPersist = false } = {}): void {
   if (!isClient()) return;
   const html = document.documentElement;
+  // Idempotency: if class + dataset already match the requested state,
+  // skip the write+event+rev-bump. Avoids redundant subscriber re-runs
+  // when a no-op call comes through (e.g. matchMedia firing while the
+  // user already has a stored choice that happens to match the OS).
+  const alreadyDark = html.classList.contains('dark');
+  const alreadyDim = html.dataset.theme === 'dim';
+  if (alreadyDark === dark && alreadyDim === dark) {
+    if (!skipPersist) {
+      try {
+        localStorage.setItem(STORAGE_KEY, String(dark));
+      } catch {
+        /* localStorage blocked */
+      }
+    }
+    return;
+  }
   html.classList.toggle('dark', dark);
   html.dataset.theme = dark ? 'dim' : 'emerald';
   if (!skipPersist) {
@@ -119,13 +153,11 @@ export function applyTheme(dark: boolean, { skipPersist = false } = {}): void {
   // Notify subscribers (charts, modals, etc.) that the theme changed.
   // ApexCharts in BaseChart listens for this and switches its theme.mode.
   // Components that resolve DaisyUI tokens via getThemeColor() depend on
-  // `$themeRev` so their reactive blocks re-run with fresh values.
+  // `$themeRev` so their reactive blocks re-run with fresh values; clear
+  // the resolved-token cache so they read the new theme's values.
+  themeColorCache.clear();
   themeRev.update((n) => n + 1);
-  try {
-    window.dispatchEvent(new CustomEvent<{ dark: boolean }>('theme:change', { detail: { dark } }));
-  } catch {
-    // Old browsers without CustomEvent constructor — ignore.
-  }
+  window.dispatchEvent(new CustomEvent<{ dark: boolean }>('theme:change', { detail: { dark } }));
 }
 
 /** Whether the dark theme is currently active. */
