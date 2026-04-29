@@ -19,38 +19,38 @@
   // Model cards data
   const models = [
     {
-      id: 'model-1',
       ...MODEL_1_COST_PLUS,
+      id: 'model-1',
       bestFor: ['Development services', 'Custom software', 'Time & materials'],
       keyFeatures: ['Cost transparency', 'TP-safe margins', 'Immediate recognition'],
     },
     {
-      id: 'model-2',
       ...MODEL_2_LICENCE,
+      id: 'model-2',
       bestFor: ['Software products', 'IP licensing', 'Recurring revenue'],
       keyFeatures: ['Royalty streams', 'Perpetual or term', 'Usage-based options'],
     },
     {
-      id: 'model-3',
       ...MODEL_3_JOINT_DEVELOPMENT,
+      id: 'model-3',
       bestFor: ['R&D partnerships', 'Cost sharing', 'Joint ventures'],
       keyFeatures: ['Shared ownership', 'No intercompany profit', 'TP compliant'],
     },
     {
-      id: 'model-4',
       ...MODEL_4_BOT,
+      id: 'model-4',
       bestFor: ['IT outsourcing', 'System migrations', 'Asset transfers'],
       keyFeatures: ['Operating period', 'Deferred transfer', 'Performance-linked'],
     },
     {
-      id: 'model-5',
       ...MODEL_5_SOFTWARE_SALE,
+      id: 'model-5',
       bestFor: ['IP sale', 'Exit strategy', 'One-time deal'],
       keyFeatures: ['Full IP transfer', 'Upfront or deferred', 'Earnout options'],
     },
     {
-      id: 'model-6',
       ...MODEL_6_SAAS,
+      id: 'model-6',
       bestFor: ['Cloud services', 'Subscription model', 'Recurring revenue'],
       keyFeatures: ['Monthly billing', 'Per-user pricing', 'Usage-based'],
     },

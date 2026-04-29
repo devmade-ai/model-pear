@@ -77,7 +77,7 @@
       { name: 'Low Scenario', data: lowDeltas },
       { name: 'High Scenario', data: highDeltas },
     ],
-  } as ApexCharts.ApexOptions);
+  } as unknown as ApexCharts.ApexOptions);
   }
   $: options = makeOptions(themeKey, sensitivities, baseValue);
 </script>

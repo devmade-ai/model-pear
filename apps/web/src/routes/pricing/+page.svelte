@@ -84,7 +84,11 @@
   //     insufficient ROI cushion for buyers to feel they're getting a good deal.
   //   - Dynamic ceiling based on market: Rejected — requires external data we
   //     don't have. The 40% heuristic is a reasonable starting point.
-  function calculateResults() {
+  // Accepts a rest param of dep tokens so the call site at line 62 can
+  // list every reactive variable explicitly — Svelte tracks lexical reads
+  // on the right-hand side, not closure captures, so without the explicit
+  // args this function wouldn't re-run when an input prop changes.
+  function calculateResults(..._deps: unknown[]) {
     if (selectedModel === 'subscription') {
       const monthlyRevenue = sub_monthlyPrice * sub_customers;
       const monthlyCost = sub_costToServe * sub_customers;

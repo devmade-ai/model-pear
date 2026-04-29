@@ -20,12 +20,17 @@
 
   $: inputRanges = createInputRanges(numericInputs);
 
-  // Calculate sensitivity for each input
+  // Calculate sensitivity for each input.
+  // calculateInputSensitivity expects raw numeric inputs (it consults
+  // RANGE_CONFIGS internally) — NOT the InputRange objects produced by
+  // createInputRanges (those are used for best/worst-case generation
+  // below). Earlier the inputRanges value was passed here by mistake;
+  // svelte-check caught the type mismatch.
   $: sensitivities = calculateInputSensitivity(
-    inputRanges,
+    numericInputs,
     (testInputs) => {
       const calcResult = calculateFn({ ...inputs, ...testInputs });
-      return calcResult.developer.profit.netProfit;
+      return calcResult.developer.profit.net;
     }
   );
 
@@ -33,11 +38,11 @@
   $: bestInputs = generateBestCaseInputs(inputRanges);
   $: worstInputs = generateWorstCaseInputs(inputRanges);
 
-  $: baseProfit = result.developer.profit.netProfit;
+  $: baseProfit = result.developer.profit.net;
   $: bestResult = calculateFn({ ...inputs, ...bestInputs });
   $: worstResult = calculateFn({ ...inputs, ...worstInputs });
-  $: bestProfit = bestResult.developer.profit.netProfit;
-  $: worstProfit = worstResult.developer.profit.netProfit;
+  $: bestProfit = bestResult.developer.profit.net;
+  $: worstProfit = worstResult.developer.profit.net;
 </script>
 
 <div class="space-y-6">

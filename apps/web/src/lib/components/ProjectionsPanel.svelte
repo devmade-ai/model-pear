@@ -25,11 +25,11 @@
   let costGrowthRate = 3;
 
   // Generate developer cash flows from result
-  $: developerInitialCost = result.developer.revenue.totalRevenue - result.developer.profit.netProfit;
-  $: developerAnnualProfit = result.developer.profit.netProfit / (projectionYears || 1);
+  $: developerInitialCost = result.developer.revenue.total - result.developer.profit.net;
+  $: developerAnnualProfit = result.developer.profit.net / (projectionYears || 1);
 
   // Generate buyer cash flows (total cost, then ongoing benefits from software)
-  $: buyerInitialCost = result.buyer.accounting?.capitalised || result.buyer.totalCost || 0;
+  $: buyerInitialCost = result.buyer.asset.capitalised || result.buyer.totalCost || 0;
 
   // Generate yearly projections
   $: developerYearlyData = generateYearlyProjections(

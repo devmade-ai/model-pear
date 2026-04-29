@@ -41,8 +41,12 @@
   let showAdvancedAnalysis = false;
   let showTransferPricing = false;
 
-  // Get model ID from URL
-  $: modelId = $page.params.model;
+  // Get model ID from URL. SvelteKit types `params.model` as
+  // `string | undefined` because route matching can fail on edge cases
+  // (e.g. SSR reload during navigation), so coerce to '' for indexing
+  // — the fallback `|| []` then yields the empty fieldConfig and the
+  // "Model Not Found" branch in the template fires.
+  $: modelId = $page.params.model ?? '';
 
   // Get input field configuration for current model
   $: fieldConfig = modelFieldConfigs[modelId] || [];
@@ -197,12 +201,31 @@
   }
 
   // Reactive calculation
-  $: result = config ? (config.calculate as (inputs: Record<string, unknown>) => CalculationResult)(inputs) : null;
+  // The `config.calculate` union (one signature per model) doesn't sufficiently
+  // overlap with `(inputs: Record<string, unknown>) => CalculationResult` for
+  // ts to allow a direct cast. Going through `unknown` is the documented escape
+  // hatch — the runtime contract is "the calculate fn for the active model
+  // accepts the inputs we pass" which only the route URL guarantees.
+  $: result = config ? (config.calculate as unknown as (inputs: Record<string, unknown>) => CalculationResult)(inputs) : null;
 
   // Handle input change from InputField component
   function handleInputChange(event: CustomEvent<{ field: string; value: unknown }>) {
     inputs = { ...inputs, [event.detail.field]: event.detail.value };
   }
+
+  // Coerce the unknown-typed input value into the string|number InputField
+  // expects. Inline `as string | number | undefined` casts inside Svelte's
+  // template-expression parser produce "Unexpected token" — this helper
+  // moves the cast into the script block where it parses cleanly.
+  function fieldValue(id: string): string | number {
+    const v = inputs[id];
+    return typeof v === 'string' || typeof v === 'number' ? v : '';
+  }
+
+  // Erased calculate signature for SensitivityPanel. Same parser issue as
+  // fieldValue — the `as unknown as` chain doesn't survive inline-expression
+  // parsing in the template.
+  $: erasedCalculate = config?.calculate as unknown as (inputs: Record<string, unknown>) => CalculationResult;
 
   // Save current calculation as an option
   let showSaveModal = false;
@@ -224,7 +247,7 @@
   // Quick save with auto-generated name
   function quickSave() {
     if (result) {
-      const savedCount = $comparisonStore.length;
+      const savedCount = $comparisonStore.options.length;
       const autoName = inputs.projectName as string || `${config?.model.shortName} Option ${savedCount + 1}`;
       comparisonStore.save(
         autoName,
@@ -303,7 +326,7 @@
                 id={field.id}
                 label={field.label}
                 type={field.type}
-                value={inputs[field.id] ?? ''}
+                value={fieldValue(field.id)}
                 options={field.options}
                 min={field.min}
                 max={field.max}
@@ -339,7 +362,7 @@
                       id={field.id}
                       label={field.label}
                       type={field.type}
-                      value={inputs[field.id] ?? ''}
+                      value={fieldValue(field.id)}
                       options={field.options}
                       min={field.min}
                       max={field.max}
@@ -454,7 +477,7 @@
                 <SensitivityPanel
                   {inputs}
                   {result}
-                  calculateFn={config.calculate}
+                  calculateFn={erasedCalculate}
                 />
               </div>
               <div>

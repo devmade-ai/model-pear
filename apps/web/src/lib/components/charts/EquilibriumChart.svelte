@@ -133,7 +133,7 @@
         },
       ],
     },
-  } as ApexCharts.ApexOptions);
+  } as unknown as ApexCharts.ApexOptions);
   }
   $: options = makeOptions(themeKey, [minimumPrice, maximumPrice, currentPrice, suggestedPrice, equilibriumExists, isPercentage]);
 </script>
