@@ -24,7 +24,7 @@ These are fundamental OECD CCA mechanics and should be addressed in any joint de
 
 ---
 
-## Variant 3A: Equal Cost Sharing (Fixed Split)
+## Variant 3A: Proportional Cost Sharing (Equal)
 
 ### Description
 50/50 ownership split regardless of actual contribution amounts. Simple, trust-based arrangement where parties choose simplicity over precision.
@@ -92,102 +92,98 @@ Benefit projections must be documented and reasonable. OECD CCA guidelines requi
 
 ---
 
-## Variant 3D: Platform + Application Split (Mutual Development)
+## Variant 3D: Usage Rights Split
 
 ### Description
-Layered IP ownership — one party owns base platform, other owns derivative applications. Each party develops their own IP independently and cross-licenses to the other.
-
-**Note:** This is more accurately characterised as mutual development with reciprocal licensing rather than a Cost Contribution Arrangement in the OECD sense. Each party retains distinct IP ownership.
+Parties hold the same underlying IP but have different usage rights regardless of ownership share — e.g. one party can sub-license to its customers, the other can only use internally; one party gets exclusive rights in a vertical, the other in a different vertical.
 
 ### Best Scenario
-**Modular architecture** where core platform and applications are clearly separable and each party wants independent ownership of their layer.
+**Parties have different commercial exploitation needs.** Ownership share is one decision; the *scope of permitted use* is a separate decision the agreement spells out per party.
 
 ### Real-World Example
-> An infrastructure company and a healthcare provider collaborate on a health data solution. Infrastructure company develops and owns the core data platform (storage, APIs, security). Healthcare provider develops and owns the clinical applications built on top (patient records, scheduling). Each can license their layer independently. Cross-licence ensures both can operate the complete solution.
+> A fintech and a retailer co-fund a fraud-detection engine 60/40. Both own the IP in the same proportions, but their usage rights are asymmetric: the fintech can resell the engine to other banks (its core market), the retailer can only deploy it internally across its own brands. Without a usage-rights split, the retailer's 40% ownership would otherwise grant resale rights it has no commercial interest in (and the fintech doesn't want to compete with).
 
 ### Why 3D Over Other Variants
-- Clear IP boundaries reduce entanglement
-- Each party retains full ownership of their layer
-- Platform owner can attract other application developers
-- Each party can independently commercialise or license their layer
-- Simpler than shared ownership (no allocation disputes)
+- Decouples ownership share from commercial scope — useful when parties value the IP differently for different purposes
+- Avoids forcing a 50/50 ownership compromise just to balance commercial outcomes
+- Documents permitted-use boundaries up front rather than litigating them later
+- Compatible with 3B (contribution-based) or 3C (benefit-based) ownership splits underneath
 
 ### Transfer Pricing Consideration
-Document clear IP boundaries. Cross-licence terms should be arm's length if parties are related. Each party's development costs capitalise to their own IP (no CCA allocation complexity).
+Usage rights have economic value. The agreement must value each party's bundle (ownership share + usage scope) at arm's length — a 50/50 ownership with asymmetric exclusive-resale rights is NOT a 50/50 economic split. Document the rationale and any compensating payments.
 
 ---
 
-## Variant 3E: Development + Commercialisation Split
+## Variant 3E: Platform + Derivatives
 
 ### Description
-One party focuses on development, other on commercialisation. Ongoing revenue share for exploitation.
+Layered IP — both parties co-develop a base platform jointly, then each party builds and owns its own derivative works (modules, plugins, extensions) on top of the shared platform. The base layer is jointly owned; the derivatives are independently owned by their author.
 
 ### Best Scenario
-**Complementary capabilities** — Developer has technical skill, Partner has market access/sales capability.
+**Creating a platform with customizable modules** where the parties want to share the platform investment but expect to differentiate their downstream extensions.
 
 ### Real-World Example
-> A tech startup has brilliant AI algorithms but no sales force. A consulting firm has 500 enterprise clients but no AI capability. They partner: Startup develops the AI platform (contributes 80% of development cost). Consulting firm contributes market intelligence and client relationships (contributes 20% of development cost). Post-launch: Startup gets 60% of net revenue, Consulting firm gets 40%.
->
-> **Commercialisation value calculation:** The 80/20 development split shifts to 60/40 revenue split because the Consulting firm's commercialisation contribution (sales, support, client management) is valued at 20% of ongoing revenue. This should be documented using comparable distribution/sales agent margins or profit split analysis.
+> Two SaaS companies in adjacent verticals (recruitment + HR-payroll) jointly fund a workflow-engine platform. Cost-shared 50/50 — the platform is jointly owned. On top, each builds vertical-specific modules: the recruitment company owns its applicant-tracking modules, the HR company owns its payroll-processing modules. Either can extend or relicense their derivatives independently; the platform layer is jointly governed.
 
 ### Why 3E Over Other Variants
-- Leverages complementary strengths
-- Neither party needs capabilities they lack
-- Ongoing partnership (not just development phase)
-- Developer participates in commercial success
+- Captures the cost-sharing benefit of the foundational layer
+- Preserves competitive differentiation in derivatives
+- Avoids the rights-thicket of 3D when each party's downstream use is distinct
+- Works well when the platform is non-strategic but the verticals are
 
 ### Transfer Pricing Consideration
-Revenue split should reflect arm's length allocation of development vs commercialisation value. Document methodology: comparable distribution margins, profit split analysis, or functional analysis showing each party's contribution to value creation.
+Two layers, two TP analyses. The shared-platform layer is a CCA (apply 3B/3C principles to that contribution). The derivative layer is each party's own development — costs capitalise to their own IP. If the platform layer is licensed to the derivative layer between related parties, that licence must be arm's length.
 
 ---
 
-## Variant 3F: Joint Venture Entity
+## Variant 3F: Buy-In Arrangement
 
 ### Description
-Separate legal entity created to hold IP. Formal governance structure with board and shareholders' agreement.
+A new participant joins an existing CCA after the project has already accumulated value. The newcomer pays a buy-in (capitalising into the asset on their books) reflecting the proportional value of pre-existing IP and contributions, then participates pro-rata in the ongoing arrangement.
 
 ### Best Scenario
-**Formal structure required** — third-party investors possible, governance formality needed, clean exit mechanics desired.
+**A new party joins an ongoing development project** that already has accumulated IP, infrastructure, or customer base. Without a buy-in, the existing parties would be effectively gifting them historical value.
 
 ### Real-World Example
-> Two large telcos form "TelcoAI Ltd" to develop shared network optimisation software. Each telco owns 50% of TelcoAI. The JV has its own board, employees, and P&L. Each telco contributes R10M capital. TelcoAI develops the software, owns the IP, and licenses it back to both parents (and potentially third parties). Clear governance, potential for third-party investment, clean exit via share sale.
+> Two retailers have been jointly developing an e-commerce platform for 18 months — total invested R12M, current asset value R15M. A third retailer wants to join. They pay a R5M buy-in (one-third of the current R15M asset value). From that point forward, the three parties contribute equally to ongoing development and own the platform 1/3 each. The R5M buy-in is recognised by the existing two parties as a partial recovery of their prior investment, and capitalised by the new party as their cost of participation.
 
 ### Why 3F Over Other Variants
-- Legal separation (tax, liability isolation)
-- Can attract third-party investors
-- Formal governance (board oversight)
-- Clean exit mechanics (sell JV shares)
-- Easier consolidated accounting (equity method)
+- Solves the "late entrant" problem — newcomer can join without rewriting the original arrangement
+- Compensates existing parties for the head start in invested capital and accumulated IP
+- Cleaner than retroactively re-allocating past contributions
+- Standard OECD CCA mechanic — well-documented in TP literature
 
 ### Transfer Pricing Consideration
-JV transactions with parents must be arm's length. **Complexity warning:** JV licensing to parents creates circular economics — parents fund JV, JV develops IP, parents license back from JV. This requires careful allocation and robust documentation to avoid recharacterisation. Benchmark licence fees against comparable third-party transactions, and document the commercial rationale for the structure.
+The buy-in must be valued at the pre-existing IP's arm's-length fair market value, not at historical cost. Document the valuation methodology — DCF on expected benefits, comparable transactions, or relief-from-royalty are common approaches. Tax authorities scrutinise late buy-ins because they can be used to shift value across related parties.
 
 ---
 
-## Required Provisions for All Variants
+## Variant 3G: Termination Provisions
 
-The following provisions should be included in **any joint development arrangement** (3A–3F, 3H), not as standalone alternatives but as essential terms within whichever substantive model applies.
+### Description
+The joint-development agreement is structured around explicit termination + exit mechanics from day one — how IP is divided on mutual termination, what happens on unilateral exit, how partial-completion value is calculated, and what triggers (cost overruns, milestone failures, regulatory shifts) entitle a party to walk away.
 
-### Termination Provisions
+### Best Scenario
+**Need clear exit strategy and IP treatment on termination.** Either the project carries material risk (regulatory, technical, market) and one party may need to back out, or the parties' strategic interests may diverge before the work is complete.
 
-Every joint development agreement should define:
-- **Mutual termination**: How IP is divided if parties agree to exit (e.g., each keeps contributed IP + proportional share of joint IP)
-- **Unilateral termination**: Consequences if one party exits (e.g., compensation to other party, IP forfeiture)
-- **Trigger events**: Budget overruns, milestone failures, regulatory changes, strategic shifts
-- **Valuation methodology**: How to value partial-completion IP for buyout purposes
+### Real-World Example
+> A medical-device manufacturer and a software firm jointly develop an FDA-cleared diagnostic. Either party may need to exit if regulatory feedback materially extends the timeline. The agreement sets out: mutual termination → each party keeps contributed IP + proportional share of joint IP; unilateral termination by the device manufacturer → device manufacturer pays the software firm's costs + 10% compensation and forfeits its share of joint IP; unilateral termination by the software firm → software firm forfeits its IP share; trigger events → > 6-month FDA delay, > 25% budget overrun, or strategic divestiture by either party.
 
-**Example clause:** "If terminated by mutual consent, each party retains IP they contributed plus their proportional share of jointly-developed IP. If one party terminates unilaterally, terminating party pays other party's costs + 10% compensation and forfeits their share of joint IP."
+### Why 3G Over Other Variants
+- Front-loads the most contentious questions (who keeps what, who pays whom on exit)
+- Makes the project's risk allocation explicit to both parties — no surprises mid-project
+- Provides a documented exit so the parties can sign with confidence
+- Often layered ON TOP of 3A/3B/3C/3D/3E/3F rather than chosen exclusively — termination provisions are good practice in any joint-development agreement, but this variant elevates them to first-class terms
 
 ### Periodic Review Mechanisms
-
-For benefit-based arrangements (especially 3C), include:
+For benefit-based arrangements (especially 3C), pair the termination terms with periodic review:
 - **Review frequency**: Annual or at major milestones
-- **Adjustment triggers**: Material deviation from benefit projections (e.g., >15% variance)
+- **Adjustment triggers**: Material deviation from benefit projections (e.g., > 15% variance)
 - **True-up mechanism**: Balancing payments or contribution adjustments
 - **Documentation requirements**: Contemporaneous records of actual vs projected benefits
 
 ### Transfer Pricing Consideration
-Termination and adjustment payments should reflect arm's length compensation for actual value. Document valuation methodology upfront to avoid disputes.
+Termination and adjustment payments must reflect arm's-length compensation for actual value transferred. Document valuation methodology upfront — if a unilateral-termination clause forces the exiting party to forfeit IP at less than fair market value, tax authorities may impute deemed proceeds at the arm's-length rate. The same applies to balancing payments under periodic-review mechanisms.
 
 ---
 
@@ -219,15 +215,16 @@ Requires TP expertise in all relevant jurisdictions. Documentation must satisfy 
 
 | Scenario | Best Variant |
 |----------|--------------|
-| Roughly equal contributions, simplicity over precision | **3A** — equal/fixed split |
-| Contributions measurable, precision required | **3B** — contribution-based |
-| Benefits differ between parties, TP compliance critical | **3C** — benefit-based CCA |
-| Modular architecture (platform + apps) | **3D** — mutual development with cross-licensing |
-| Developer builds, Partner commercialises | **3E** — dev + commercialisation split |
-| Need formal structure, investors possible | **3F** — joint venture entity |
-| International partnership, multiple jurisdictions | **3H** — cross-border CCA |
+| Roughly equal contributions, simplicity over precision | **3A** — Proportional Cost Sharing (Equal) |
+| Contributions measurable, precision required | **3B** — Contribution-Based Sharing |
+| Benefits differ between parties, TP compliance critical | **3C** — Benefit-Based Sharing |
+| Same IP, asymmetric commercial scope per party | **3D** — Usage Rights Split |
+| Shared platform layer + party-specific derivative modules | **3E** — Platform + Derivatives |
+| New party joining an arrangement that already has accumulated value | **3F** — Buy-In Arrangement |
+| Risky project where exit terms must be explicit up front | **3G** — Termination Provisions |
+| International partnership, multiple jurisdictions | **3H** — Cross-Border Joint Development |
 
-**Note:** Termination provisions and periodic review mechanisms (see Required Provisions section) apply to **all variants**, not as an alternative choice.
+**Note:** Termination provisions (3G) and periodic review mechanisms apply across most variants — 3G elevates them to the primary structuring choice when exit risk is material, but 3A–3F and 3H all benefit from including these terms.
 
 ---
 
@@ -235,10 +232,11 @@ Requires TP expertise in all relevant jurisdictions. Documentation must satisfy 
 
 1. **Using 3A (equal split) when contributions are materially unequal** — presumptively non-arm's length, likely to be adjusted by tax authorities
 2. **Using 3C without periodic review mechanism** — benefit projections diverge from reality, creating TP exposure
-3. **Omitting termination provisions from any variant** — costly disputes if project fails (see Required Provisions)
+3. **Omitting termination provisions from a project that warrants 3G** — costly disputes if project fails or one party wants out
 4. **Undervaluing non-cash contributions in 3B** — unfair allocation and potential TP adjustment
 5. **Ignoring treaty provisions in 3H** — missed tax planning opportunities
-6. **Treating 3D as a CCA when it's mutual development** — incorrect TP framework applied
+6. **Conflating 3D (Usage Rights Split) with 3E (Platform + Derivatives)** — 3D is the SAME IP with asymmetric usage; 3E is two distinct IP layers (joint platform, separate derivatives). The TP analysis differs.
+7. **Buy-in valuation at historical cost in 3F instead of fair market value** — under-compensates the existing parties and is a common audit trigger.
 
 ---
 

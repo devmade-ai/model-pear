@@ -58,7 +58,7 @@ DaisyUI's `dim` and `emerald` themes now drive every colour. Prior dark palette 
 2. **Phase J — Tests.** No tests added for `$lib/theme`, `$lib/pwa`, the burger menu, or PWA components. CLAUDE.md's testing rules treat infra as optional, but these are critical paths for every user. Optional unit + Playwright E2E coverage flagged but not yet authorised.
 3. **27 baseline `svelte-check` errors.** Pre-existing on `main` (not introduced by this branch). Treated as `baseline` throughout Phase A. Worth a triage pass: some may be real type bugs in calculator inputs / variant typing.
 4. **Manual `pnpm approve-builds`.** See `docs/USER_ACTIONS.md` — verified during Phase E that the action is still pending (`pnpm install` still emits the warning).
-5. **`docs/model-use-cases/model-3-joint-development.md` drift.** Variant headings for 3D-3G describe different concepts than the code variants (e.g., doc says "Joint Venture Entity" for 3F but code says "Buy-In Arrangement"). Untouched on this branch.
+5. **(closed)** Model 3 use-case doc drift was fixed in this run — 3D/3E/3F sections rewritten to match the code's actual variant definitions (Usage Rights Split / Platform + Derivatives / Buy-In Arrangement) and 3G (Termination Provisions) added as a first-class variant section.
 6. **Intermediate-state regression** between commits `99a0c3f` (3d-strip) and `6a29608` (3e) is documented but not retroactively fixable — the `class="dark"`-without-`data-theme` window meant DaisyUI defaulted to emerald during that span.
 7. **Unaudited docs** (Phase E only covered CLAUDE.md / SESSION_NOTES / USER_ACTIONS / AI_MISTAKES / TODO / README / ARCHITECTURE). Could have similar drift to what was found in README / ARCHITECTURE: `BUSINESS_GUIDE.md`, `CALCULATIONS.md`, `NEGOTIATION_MODE.md`, `DISCOVERY_FRAMEWORK.md`, `DISCOVERY_FINDINGS.md`, `UI_UX_GUIDE.md`, `model-use-cases/*.md`.
 
@@ -72,7 +72,7 @@ The debug system is alpha-only. When alpha ends, remove: `debugLog.ts`, `clipboa
 
 ### Known remaining issue (carried forward from prior session)
 
-- **Model 3 model-use-cases doc**: Variant headings for 3D-3G describe different concepts than the code variants (e.g., doc says "Joint Venture Entity" for 3F but code says "Buy-In Arrangement"). Flagged for a future session.
+- _(none — Model 3 doc drift previously flagged here was closed in this session.)_
 
 ---
 
