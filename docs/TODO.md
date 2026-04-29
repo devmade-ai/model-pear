@@ -4,6 +4,31 @@
 
 ---
 
+## High Priority: Infrastructure
+
+### Major-version dependency upgrade epic
+**Priority**: High
+**Effort**: Large
+**Surfaced by**: branch self-review post-validation item 5 (`a973c07`, April 2026)
+
+`pnpm audit` reports **16 remaining vulnerabilities** after closing 14 via in-major bumps. All 16 are pinned by major-version-locked deps and require coordinated bumps:
+
+- `svelte` 4 → 5 — runes migration; biggest single change
+- `vite` 5 → 8 — transitively closes 5 advisories (`rollup`, `esbuild`, `picomatch`, `minimatch`, `serialize-javascript`)
+- `@sveltejs/vite-plugin-svelte` 3 → 7 — required to pair with Svelte 5 / Vite 8
+- `@sveltejs/kit` 2.58 → next major (when published) — for the cookie advisory
+- `vitest` 1 → 4 + `@vitest/coverage-v8` 1 → 4 — usually upgraded together
+- `svelte-check` 3 → 4 — pairs with Svelte 5
+- `apexcharts` 3 → 5 — independent
+- `typescript` 5 → 6 — independent (ts 5→6 is more conservative than 4→5)
+- `zod` 3 → 4 — independent (calculator package only; no runtime usage today)
+
+**Why epic, not chunk**: each bump touches the public API or runtime semantics in ways that require coordinated component updates. Svelte 4 → 5 in particular requires migrating reactive primitives (`$:` declarations) to runes. Best done as a dedicated branch with E2E + visual-regression coverage in place first.
+
+**Verification surface**: after each bump, the existing `pnpm test` + `pnpm -r check` + `pnpm build` + `pnpm lint` flow should catch most regressions. Real risk is in the chart components (ApexCharts 3 → 5 has theme API changes), the chart-reactivity pattern (Svelte 4's `$:` lexical-dep tracking is replaced by runes' `$state` / `$derived`), and the test suite (Vitest 1 → 4 has config-format changes).
+
+---
+
 ## Medium Priority: Feature Ideas
 
 ### Recommendation Summary for Compare Mode

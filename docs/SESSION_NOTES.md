@@ -6,9 +6,9 @@
 
 ## Current State (April 29, 2026)
 
-**Last completed**: Theme migration to DaisyUI + PWA system + burger menu rebuild + audit-driven hardening + branch self-review **Phases A–E complete** (mechanical, audit-grep, module read-through, commit hygiene, doc cross-check)
+**Last completed**: Theme migration to DaisyUI + PWA system + burger menu rebuild + audit-driven hardening + branch self-review **Phases A–E complete** + 6 post-validation cleanup items (svelte-check 0/0, model-3/4 doc realignment, audit 30→16, root scripts dispatch)
 
-**Status**: Branch `claude/create-model-pear-todos-2ixM4` carries the full migration plus a comprehensive validation pass. Build green, lint exits 0, tests 301/301, all 9 routes return 200. Chunks 1-7 + Phases A-E done; Phases F-I (browser / a11y / deployed-PWA / Lighthouse) and Phase J (tests) remain as `[USER ACTION]` / `[USER DECISION]`.
+**Status**: Branch `claude/create-model-pear-todos-2ixM4` carries the full migration plus a comprehensive validation pass. **Build green, lint exits 0, tests 301/301, svelte-check 0 errors / 0 warnings (was: 27 baseline), all 9 routes return 200, 16 vulnerabilities (was: 30).** Chunks 1-7 + Phases A-E + items 1-6 done; Phases F-I (browser / a11y / deployed-PWA / Lighthouse) and Phase J (tests) remain as `[USER ACTION]` / `[USER DECISION]`.
 
 ### What was done this session
 
@@ -25,6 +25,7 @@ Substantial chain — see `git log claude/create-model-pear-todos-2ixM4 --onelin
 9. **Print CSS / DOWNLOAD_PDF (Chunk 6)** — Save-as-PDF wired to `window.print()` in the burger menu (Chunk 4). `@media print` block in `app.css` overrides DaisyUI tokens at the `:root, [data-theme=emerald], [data-theme=dim]` specificity layer so both legacy and DaisyUI utilities resolve to print-friendly values. Comprehensive selectors: hides nav/header/footer/buttons, full-width tables, page-break-avoid for `section`/`.card`, print-only utility, etc.
 10. **Audit-driven hardening (multiple wrap rounds)** — bug trigger surfaced 8 issues; errors trigger surfaced 6 actionable issues; wrap trigger surfaced 15 items including state-machine refactor, ErrorEvent dispatch for SW registration failures, listener-tracker DRY into `$lib/utils/trackListener.ts`, global Window types in `apps/web/src/app.d.ts`, DebugPill SW-getRegistration timer cleanup.
 11. **Branch self-review Phases A–E** — 30 items across 5 phases produced ~25 commits. Real bugs caught: SSR 500 in onDestroy (`3d0faf3`), theme-color meta-tag ordering bug breaking first-paint chrome (`554f494`), 12 buttons missing `.btn` base class (`d3b26c3`), all 6 chart components had a `$:`-reactivity bug where data props weren't tracked deps (`d8a5f99`). Cleanup: 62 a11y label warnings paired (`da323a4`), full ESLint flat config + 58 findings closed (`d343c86` / `fffb98d`), all hardcoded colours purged from `DebugPill.svelte` / `app.html` / `app.css` print block (`7d3fa0e` / `3479a57`), 26 broken-alpha Tailwind classes (`text-base-content/70/60` → `/60`) (`7ee5573`), 3 timer leaks (`d458762`), `debugLog.ts` HMR teardown added (`610ea5c`), `bodyScrollLock` extracted with reference counting and applied to `InstallModal` too (`0e86fd0`), `WindowEventMap['theme:change']` typed via `app.d.ts` augmentation + type-aware `track()` overloads (`1711078`), local `PWAGlobals` dups dropped (`2d5a377`). Documentation refreshed: AI_MISTAKES.md populated with 5 lessons (`97072bc`), README + ARCHITECTURE updated for v4 / DaisyUI / PWA / ESLint reality (`8e7cf0e` / `660645f`), USER_ACTIONS date corrected (`e9caf7e`), CLAUDE.md `window.__pwa` table fixed (`25f1f48`).
+12. **Post-validation cleanup (6 items)** — six follow-ups surfaced by the wrap pass. (1) SESSION_NOTES first refresh (`f51ff8d`). (2) Triaged the 27-error svelte-check baseline that A4 had treated as immutable: every error was either a real bug or a fixable type-system fight. **27 → 0** errors after fixing component-side accessors that had drifted from calculator types (`profit.netProfit` → `.net`, `revenue.totalRevenue` → `.total`, `buyer.accounting?.cap` → `buyer.asset.cap`), id-overwrite spread order in 6 model literals, calc-fn casts via `as unknown as`, ApexOptions casts via `as unknown as`, missing rest param on `calculateResults`, ComparisonState.length → .options.length, fieldValue helper for unknown-typed inputs. Fixed in `9f37e94`. (3) Model 3 use-case doc drift: 3D/3E/3F sections rewritten to match the code's actual variant names (Usage Rights Split / Platform + Derivatives / Buy-In Arrangement) and 3G "Termination Provisions" section added (`3b2d66e`). (4) Audit of remaining docs: model-4 had similar drift (4D/4F headings + missing 4G "Transfer with Warranty") fixed in `76cd69a`; UI_UX_GUIDE design-system rewritten for DaisyUI v5 reality in `d07b618`; CALCULATIONS / DISCOVERY / NEGOTIATION / models 1/2/5/6 audited clean. (5) `pnpm audit` ran: bumped `@sveltejs/kit` 2.49→2.58, `postcss` to 8.5.12, `@playwright/test` to 1.59.1 — closes 14 advisories (transitively bumps `devalue` to 5.6.4+). **30 → 16** vulnerabilities. Remaining 16 require Svelte 4→5 / Vite 5→8 major-version bumps (separate epic, see Open Follow-ups). Fixed in `a973c07`. (6) Config audit: `.gitignore` / `tsconfig*` / `pnpm-workspace.yaml` clean; root `package.json` was missing dispatch scripts that downstream docs reference (`pnpm test:e2e`, `pnpm preview`, `pnpm check`). Added in `3d47ab0`.
 
 ### Architecture additions / new modules
 
@@ -46,7 +47,8 @@ Substantial chain — see `git log claude/create-model-pear-todos-2ixM4 --onelin
 | Layout JS chunk | n/a | ~30 kB |
 | Calculator tests | 301 | 301 (still green) |
 | ESLint | not configured | 0 errors / 0 warnings |
-| svelte-check | 27 errors / 0 warnings | 27 errors / 0 warnings (baseline pre-existing on `main` — see open follow-up) |
+| svelte-check | 27 errors / 0 warnings | **0 errors / 0 warnings** (closed in post-validation item 2) |
+| `pnpm audit` | 30 (5 low / 14 mod / 11 high) | **16** (1 low / 9 mod / 6 high) — remaining need major-version bumps |
 
 ### Visual regressions accepted
 
@@ -54,13 +56,16 @@ DaisyUI's `dim` and `emerald` themes now drive every colour. Prior dark palette 
 
 ### Open follow-ups for next session
 
-1. **Branch self-review Phases F-I (browser + deployed).** Phases A-E done this session. Remaining: visual walkthrough in dim + emerald, JS-disabled fallback, a11y / keyboard / SR sweep, PWA install + update + offline behaviour (deployed HTTPS), Save-as-PDF preview, Lighthouse, Vercel preview. All require a real browser or deployed instance.
+1. **Branch self-review Phases F-I (browser + deployed).** Phases A-E + post-validation items 1-6 done this session. Remaining: visual walkthrough in dim + emerald, JS-disabled fallback, a11y / keyboard / SR sweep, PWA install + update + offline behaviour (deployed HTTPS), Save-as-PDF preview, Lighthouse, Vercel preview. All require a real browser or deployed instance.
 2. **Phase J — Tests.** No tests added for `$lib/theme`, `$lib/pwa`, the burger menu, or PWA components. CLAUDE.md's testing rules treat infra as optional, but these are critical paths for every user. Optional unit + Playwright E2E coverage flagged but not yet authorised.
-3. **27 baseline `svelte-check` errors.** Pre-existing on `main` (not introduced by this branch). Treated as `baseline` throughout Phase A. Worth a triage pass: some may be real type bugs in calculator inputs / variant typing.
+3. **Major-version dependency upgrade epic.** `pnpm audit` after the in-major bumps (item 5) shows **16 remaining vulnerabilities**, all in deps that need major-version moves: `svelte` 4→5 (runes migration), `vite` 5→8 (transitively closes `rollup` / `esbuild` / `picomatch` / `minimatch` / `serialize-javascript`), `@vitest/coverage-v8` 1→4, `vitest` 1→4, `apexcharts` 3→5, `typescript` 5→6, `zod` 3→4. Out of scope for this branch's "within-major hygiene" framing. See `docs/TODO.md`.
 4. **Manual `pnpm approve-builds`.** See `docs/USER_ACTIONS.md` — verified during Phase E that the action is still pending (`pnpm install` still emits the warning).
-5. **(closed)** Model 3 use-case doc drift was fixed in this run — 3D/3E/3F sections rewritten to match the code's actual variant definitions (Usage Rights Split / Platform + Derivatives / Buy-In Arrangement) and 3G (Termination Provisions) added as a first-class variant section.
-6. **Intermediate-state regression** between commits `99a0c3f` (3d-strip) and `6a29608` (3e) is documented but not retroactively fixable — the `class="dark"`-without-`data-theme` window meant DaisyUI defaulted to emerald during that span.
-7. **Unaudited docs** (Phase E only covered CLAUDE.md / SESSION_NOTES / USER_ACTIONS / AI_MISTAKES / TODO / README / ARCHITECTURE). Could have similar drift to what was found in README / ARCHITECTURE: `BUSINESS_GUIDE.md`, `CALCULATIONS.md`, `NEGOTIATION_MODE.md`, `DISCOVERY_FRAMEWORK.md`, `DISCOVERY_FINDINGS.md`, `UI_UX_GUIDE.md`, `model-use-cases/*.md`.
+5. **Intermediate-state regression** between commits `99a0c3f` (3d-strip) and `6a29608` (3e) is documented but not retroactively fixable — the `class="dark"`-without-`data-theme` window meant DaisyUI defaulted to emerald during that span.
+
+**Verified visually unaudited (browser-bound):**
+- **Chart reactivity fix (`d8a5f99`)** — static-analysis-driven; should observe a real chart re-render on data-prop change in F1/F4.
+- **InstallModal scroll-lock composition (`0e86fd0`)** — burger → install → close ref-counted unlock should be exercised once.
+- **Model-3 / model-4 use-case doc rewrites** — content drafted from code's `description`/`scenario` fields without domain-expert review. Sanity-check from a finance/TP person recommended.
 
 ### Pattern items still intentionally omitted
 
@@ -69,10 +74,6 @@ DaisyUI's `dim` and `emerald` themes now drive every colour. Prior dark palette 
 ### Removal note (carried forward)
 
 The debug system is alpha-only. When alpha ends, remove: `debugLog.ts`, `clipboardUtils.ts`, `DebugPill.svelte`, `#debug-root` + inline `<script>` + inline pill in `app.html`, dynamic import in `+layout.svelte`. The z-80 layer becomes unused.
-
-### Known remaining issue (carried forward from prior session)
-
-- _(none — Model 3 doc drift previously flagged here was closed in this session.)_
 
 ---
 

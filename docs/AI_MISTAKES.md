@@ -57,3 +57,13 @@ When an AI assistant makes a mistake during a session, document it here so futur
 **Root cause**: Pattern was extracted to satisfy an earlier svelte-check error about comma-operator unused-LHS. The function-call pattern silenced the check but inadvertently broke reactivity. No one caught it because the workflow always involved theme toggle / reload.
 **Prevention**: For Svelte 4 reactive blocks where the right-hand side is a function call, every reactive dependency MUST appear in the call expression itself (not inside the function body). Pattern: `$: result = compute(dep1, dep2, dep3);` even if `compute` reads them via closure — Svelte tracks lexical reads on the RHS, not closure captures.
 
+### Svelte 4 template-expression parser rejects inline `as` casts
+**Date**: 2026-04-29
+**Impact**: medium
+**What happened**: While closing the 27-error svelte-check baseline, two template attributes needed TS casts: `value={(inputs[field.id] as string | number | undefined) ?? ''}` and `calculateFn={config.calculate as unknown as (inputs: Record<string, unknown>) => CalculationResult}`. Both produced `Error: Unexpected token` at the cast position when svelte-check ran, then `Parsing error: Expected }` at lint time. The build itself silently dropped or mis-parsed the expressions.
+**Root cause**: Svelte 4's template-expression parser is not a full TS parser — it accepts a subset. Multi-token TS constructs like `as Type | OtherType` and `as unknown as Fn` confuse it (looks like multiple expressions where it expects one).
+**Prevention**: Move TS casts of any non-trivial complexity OUT of template attributes. Two clean patterns from the fix:
+  1. **Helper function**: `function fieldValue(id: string): string | number { ... }` then `value={fieldValue(field.id)}`. Lets typeof checks and unions live in plain TS.
+  2. **Reactive var**: `$: erasedCalculate = config?.calculate as unknown as (inputs: Record<string, unknown>) => CalculationResult;` then `calculateFn={erasedCalculate}`. Cast happens in the script block where the parser is full TS.
+Inline `as Foo` (single token) usually works; `as Foo | Bar` and `as unknown as Foo` are the boundary cases. When in doubt, hoist.
+
