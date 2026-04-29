@@ -15,13 +15,21 @@
            which produces the lens-shaped intersection.
        Editable by hand without bezier tooling.
 
-       Colours: aligned with the dim DaisyUI theme.
-         #2a323c  dim base-100 — matches the manifest theme_color so
-                  the icon visually integrates with the splash screen
-                  and the OS task-switcher chrome.
-         #9FE88D  dim primary  — left party (Your Company / Seller).
-         #7CD4FD  dim accent   — right party (Client / Buyer).
-         #fbbd23  dim warning  — equilibrium zone (the sweet spot).
+       Colours: literal sRGB hex computed from the dim DaisyUI theme's
+       OKLCH tokens (`node_modules/daisyui/theme/dim.css`). PNG icons
+       are static artefacts produced by Sharp/libvips at build time
+       and can't reference live CSS variables, so the values are baked
+       in. Each line below carries the OKLCH source so future edits
+       can re-derive the hex if dim's tokens shift.
+
+         #2A303C  base-100   oklch(30.857% 0.023 264.149)  — background
+         #9FE88D  primary    oklch(86.133% 0.141 139.549)  — left party
+         #C792E9  accent     oklch(74.229% 0.133 311.379)  — right party
+         #EFD057  warning    oklch(86.163% 0.142  94.818)  — equilibrium
+
+       (Conversion done with the standard OKLCH→OKLab→LMS→linear sRGB→
+       gamma-companded sRGB pipeline; if dim.css changes, regenerate
+       the hex with the snippet in commit 794dd36's session log.)
 
        Maskable safe zone: all three circles fit inside the inner
        80% (102-922 px). Background fills the full 1024x1024 canvas
@@ -34,20 +42,20 @@
   </defs>
 
   <!-- Background — dim base-100 -->
-  <rect width="1024" height="1024" fill="#2a323c"/>
+  <rect width="1024" height="1024" fill="#2A303C"/>
 
-  <!-- Left party circle — Your Company / Seller -->
+  <!-- Left party circle — Your Company / Seller (dim primary) -->
   <circle cx="412" cy="512" r="240" fill="#9FE88D"/>
 
-  <!-- Right party circle — Client / Buyer.
+  <!-- Right party circle — Client / Buyer (dim accent).
        Drawn second so it overwrites the left circle in the overlap
        region (otherwise the right would be obscured by the left's
        fill in the lens area). -->
-  <circle cx="612" cy="512" r="240" fill="#7CD4FD"/>
+  <circle cx="612" cy="512" r="240" fill="#C792E9"/>
 
-  <!-- Equilibrium zone — the lens-shaped intersection.
+  <!-- Equilibrium zone — the lens-shaped intersection (dim warning).
        Source shape is the RIGHT circle, clipped to the LEFT circle's
        region: the result is exactly the two-circle intersection. -->
-  <circle cx="612" cy="512" r="240" fill="#fbbd23"
+  <circle cx="612" cy="512" r="240" fill="#EFD057"
           clip-path="url(#left-party)"/>
 </svg>

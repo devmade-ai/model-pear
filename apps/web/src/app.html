@@ -17,7 +17,7 @@
       script runs first and the querySelector returns null, leaving
       the OS browser chrome stuck at dim on first paint.
     -->
-    <meta name="theme-color" content="#2a323c" />
+    <meta name="theme-color" content="#2A303C" />
 
     <!--
       Early beforeinstallprompt capture. Browsers (Chrome/Edge/Brave)
@@ -91,7 +91,7 @@
         // chrome matches the active app theme on initial render. The meta
         // tag is declared above so it's already in the DOM when this runs.
         var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', darkMode ? '#2a323c' : '#ffffff');
+        if (meta) meta.setAttribute('content', darkMode ? '#2A303C' : '#ffffff');
       })();
     </script>
 
