@@ -12,6 +12,7 @@
   import { resolve } from '$app/paths';
   import { onMount, tick } from 'svelte';
   import { createListenerTracker } from '$lib/utils/trackListener';
+  import { lockBodyScroll, unlockBodyScroll } from '$lib/utils/bodyScrollLock';
   import UpdateBanner from '$lib/components/UpdateBanner.svelte';
   import InstallModal from '$lib/components/InstallModal.svelte';
 
@@ -50,24 +51,8 @@
      subscribe needs a matching cleanup". */
   const { track, dispose: disposeListeners } = createListenerTracker();
 
-  /* Body scroll lock. Setting scrollbarGutter='stable' keeps the page
-     from horizontally shifting when overflow:hidden removes the
-     vertical scrollbar (Chrome/Edge/Firefox; Safari falls back
-     gracefully — slight shift acceptable). */
-  let savedOverflow = '';
-  let savedGutter = '';
-  function lockBodyScroll(): void {
-    if (typeof document === 'undefined') return;
-    savedOverflow = document.body.style.overflow;
-    savedGutter = (document.body.style as CSSStyleDeclaration & { scrollbarGutter?: string }).scrollbarGutter ?? '';
-    (document.body.style as CSSStyleDeclaration & { scrollbarGutter?: string }).scrollbarGutter = 'stable';
-    document.body.style.overflow = 'hidden';
-  }
-  function unlockBodyScroll(): void {
-    if (typeof document === 'undefined') return;
-    document.body.style.overflow = savedOverflow;
-    (document.body.style as CSSStyleDeclaration & { scrollbarGutter?: string }).scrollbarGutter = savedGutter;
-  }
+  /* Body scroll lock — extracted to $lib/utils/bodyScrollLock so the install
+     modal can compose with this lock via reference counting. */
 
   /* Find the focusable items inside the menu in tab order. Re-queried on
      each call so dynamic items (e.g. the hidden install slot once Chunk 5

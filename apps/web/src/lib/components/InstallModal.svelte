@@ -17,21 +17,20 @@
    */
   import { onMount, onDestroy, tick } from 'svelte';
   import type { InstallInstruction } from '$lib/pwa';
+  import { lockBodyScroll, unlockBodyScroll } from '$lib/utils/bodyScrollLock';
 
   let visible = false;
   let info: InstallInstruction | null = null;
   let modalEl: HTMLDivElement | null = null;
   let prevActive: HTMLElement | null = null;
 
-  type PWAGlobals = {
-    setInstallModalCallback: (cb: ((info: InstallInstruction) => void) | null) => void;
-  };
-  type W = Window & { __pwa?: PWAGlobals };
-
   function open(next: InstallInstruction): void {
     info = next;
     visible = true;
     prevActive = (typeof document !== 'undefined' ? document.activeElement : null) as HTMLElement | null;
+    // Lock body scroll so the page doesn't scroll behind the modal.
+    // Reference-counted so it composes with the burger-menu lock.
+    lockBodyScroll();
     // Focus first focusable inside the modal once Svelte's render flushes.
     tick().then(() => {
       requestAnimationFrame(() => {
@@ -44,8 +43,10 @@
   }
 
   function close(): void {
+    if (!visible) return;
     visible = false;
     info = null;
+    unlockBodyScroll();
     requestAnimationFrame(() => prevActive?.focus());
   }
 
@@ -83,8 +84,7 @@
     // onMount only runs on the client per Svelte 4 lifecycle, but the
     // `typeof window` guard is belt-and-braces against future SSR changes.
     if (typeof window === 'undefined') return;
-    const w = window as W;
-    w.__pwa?.setInstallModalCallback(open);
+    window.__pwa?.setInstallModalCallback(open);
     window.addEventListener('keydown', handleKeydown);
   });
 
@@ -92,8 +92,10 @@
     // onDestroy DOES run during SSR teardown — guard window access or
     // the route 500s on render.
     if (typeof window === 'undefined') return;
-    const w = window as W;
-    w.__pwa?.setInstallModalCallback(null);
+    // If unmounting while open, release the scroll lock so the next
+    // navigation doesn't inherit a stuck overflow:hidden.
+    if (visible) unlockBodyScroll();
+    window.__pwa?.setInstallModalCallback(null);
     window.removeEventListener('keydown', handleKeydown);
   });
 </script>
