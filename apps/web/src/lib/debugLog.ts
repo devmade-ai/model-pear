@@ -135,7 +135,7 @@ if (typeof window !== 'undefined') {
   // calls console.error/warn during a debugAdd callback chain.
   let intercepting = false
 
-  console.error = (...args: unknown[]) => {
+  const patchedError = (...args: unknown[]) => {
     originalError.apply(console, args)
     if (!intercepting) {
       intercepting = true
@@ -144,7 +144,7 @@ if (typeof window !== 'undefined') {
     }
   }
 
-  console.warn = (...args: unknown[]) => {
+  const patchedWarn = (...args: unknown[]) => {
     originalWarn.apply(console, args)
     if (!intercepting) {
       intercepting = true
@@ -153,23 +153,30 @@ if (typeof window !== 'undefined') {
     }
   }
 
+  console.error = patchedError
+  console.warn = patchedWarn
+
   // --- Global error capture ---
-  // Installed at module load time — captures crashes before SvelteKit mounts.
-  // HMR guard prevents duplicate listeners during development.
+  // Named handlers (not arrow-inline) so import.meta.hot.dispose can remove
+  // them on HMR. Without removal, every save accumulates an orphan listener
+  // pointing at a stale module instance — eventually leaking memory and
+  // duplicating debug entries.
+  const errorHandler = (e: ErrorEvent) => {
+    debugAdd('global', 'error', e.message || 'Unknown error', {
+      filename: e.filename,
+      lineno: e.lineno,
+      colno: e.colno,
+    })
+  }
+
+  const rejectionHandler = (e: PromiseRejectionEvent) => {
+    debugAdd('global', 'error', `Unhandled rejection: ${e.reason}`)
+  }
+
   if (!window.__debugLogListenersAttached) {
     window.__debugLogListenersAttached = true
-
-    window.addEventListener('error', (e) => {
-      debugAdd('global', 'error', e.message || 'Unknown error', {
-        filename: e.filename,
-        lineno: e.lineno,
-        colno: e.colno,
-      })
-    })
-
-    window.addEventListener('unhandledrejection', (e) => {
-      debugAdd('global', 'error', `Unhandled rejection: ${e.reason}`)
-    })
+    window.addEventListener('error', errorHandler)
+    window.addEventListener('unhandledrejection', rejectionHandler)
   }
 
   // --- Bridge pre-framework errors into the structured log ---
@@ -195,4 +202,22 @@ if (typeof window !== 'undefined') {
   }
 
   debugAdd('boot', 'info', 'Debug log module initialised')
+
+  // --- HMR teardown ---
+  // Without this, every dev save would accumulate orphan error/rejection
+  // listeners and re-patch console — the patched-version-of-the-patched-version
+  // chain causes duplicate log entries and prevents the next module instance
+  // from re-attaching cleanly.
+  if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+      if (typeof window === 'undefined') return
+      window.removeEventListener('error', errorHandler)
+      window.removeEventListener('unhandledrejection', rejectionHandler)
+      // Restore originals so the next instance re-patches from a clean baseline.
+      // The cached __debugOriginalConsoleError persists on window for that re-patch.
+      console.error = originalError
+      console.warn = originalWarn
+      window.__debugLogListenersAttached = false
+    })
+  }
 }
