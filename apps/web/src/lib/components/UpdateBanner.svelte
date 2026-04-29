@@ -37,13 +37,6 @@
       complete" alarms during legitimate slow downloads. */
   const POST_UPDATE_RELOAD_TIMEOUT_MS = 15_000;
 
-  type PWAGlobals = {
-    applyUpdate: () => Promise<void>;
-    suppressUpdateBanner: () => void;
-    setUpdateBannerCallback: (cb: (() => void) | null) => void;
-  };
-  type W = Window & { __pwa?: PWAGlobals };
-
   function show(): void {
     // Idempotent: pwa.ts can re-emit on visibilitychange while the banner
     // is already showing (visibility flicker, multiple onNeedRefresh).
@@ -58,14 +51,13 @@
   async function update(): Promise<void> {
     busy = true;
     errorMsg = null;
-    const w = window as W;
-    if (!w.__pwa) {
+    if (!window.__pwa) {
       busy = false;
       errorMsg = 'Update unavailable — refresh the page manually.';
       return;
     }
     try {
-      await w.__pwa.applyUpdate();
+      await window.__pwa.applyUpdate();
       // controllerchange in $lib/pwa.ts triggers window.location.reload()
       // when the new SW takes control. If that hasn't happened within
       // POST_UPDATE_RELOAD_TIMEOUT_MS, the update silently failed (no SW
@@ -93,8 +85,7 @@
     // if the SW fires onNeedRefresh again shortly after (e.g. another
     // hourly update poll succeeds), the banner pops up immediately
     // and the user's "Later" choice is ignored.
-    const w = window as W;
-    w.__pwa?.suppressUpdateBanner();
+    window.__pwa?.suppressUpdateBanner();
   }
 
   onMount(() => {
@@ -102,8 +93,7 @@
     // `typeof window` guard is belt-and-braces against future SSR
     // changes.
     if (typeof window === 'undefined') return;
-    const w = window as W;
-    w.__pwa?.setUpdateBannerCallback(show);
+    window.__pwa?.setUpdateBannerCallback(show);
   });
 
   onDestroy(() => {
@@ -112,8 +102,7 @@
     // here throws ReferenceError on the server and the entire route
     // 500s.
     if (typeof window === 'undefined') return;
-    const w = window as W;
-    w.__pwa?.setUpdateBannerCallback(null);
+    window.__pwa?.setUpdateBannerCallback(null);
   });
 </script>
 
