@@ -55,7 +55,6 @@ DaisyUI's `dim` and `emerald` themes now drive every colour. Prior dark palette 
 
 ### Pattern items still intentionally omitted
 
-- **DebugPill SOURCE_COLORS** (boot/pwa/render/auth/db/form/engine) keep fixed hex codes; documented in `DebugPill.svelte` as "functional log-filter labels in a dev-only tool, not brand colours." Categories that map cleanly (`global` → error, `api` → primary) use DaisyUI tokens.
 - **App-level error boundary.** Svelte 4 has no built-in error boundary; SvelteKit's `+error.svelte` only handles navigation errors. The DebugPill captures global `error` events as a partial substitute.
 
 ### Removal note (carried forward)

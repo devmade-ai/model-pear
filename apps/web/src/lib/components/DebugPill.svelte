@@ -103,31 +103,6 @@
     }
   }
 
-  // Source → color mapping (inline style values).
-  //
-  // These 9 categories need 9 visually distinct hues for fast at-a-glance
-  // log filtering. DaisyUI's 8 semantic tokens (primary/secondary/accent/
-  // neutral/info/success/warning/error) carry meaning that conflicts with
-  // dev-log categorisation (mapping `auth` -> `success` would mislead).
-  // The categories that DO map cleanly (`global` -> error, `api` -> primary)
-  // use DaisyUI tokens. The rest stay as fixed hex — functional category
-  // labels in a dev-only tool, not brand colours.
-  const SOURCE_COLORS: Record<string, string> = {
-    boot: '#f59e0b',
-    pwa: '#06b6d4',
-    render: '#8b5cf6',
-    global: 'var(--color-error)',
-    api: 'var(--color-primary)',
-    auth: '#ec4899',
-    db: '#10b981',
-    form: '#f97316',
-    engine: '#6366f1',
-  };
-
-  function sourceColor(source: string): string {
-    return SOURCE_COLORS[source] || 'color-mix(in srgb, var(--color-base-content) 60%, transparent)';
-  }
-
   // Severity → color mapping
   function severityColor(severity: string): string {
     switch (severity) {
@@ -281,7 +256,6 @@
       font-family: monospace;
       font-size: 12px;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       user-select: none;
     "
     title="Open debug panel"
@@ -332,7 +306,6 @@
       border-radius: 8px;
       font-family: monospace;
       font-size: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
       overflow: hidden;
     "
   >
@@ -496,7 +469,7 @@
                     min-width: 36px;
                   ">{entry.severity}</span>
                   <span style="
-                    color: {sourceColor(entry.source)};
+                    color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
                     flex-shrink: 0;
                     font-size: 10px;
                   ">[{entry.source}]</span>
