@@ -101,12 +101,10 @@
     if (target.hasAttribute('data-close')) closeMenu();
   }
 
-  /* Wired to `window.__theme.toggle()` exposed by Chunk 3f's theme module.
-     Falls back to direct DOM toggle if the module hasn't loaded yet (rare:
-     the module imports from this layout at the top). */
+  /* Wired to `window.__theme.toggle()` exposed by $lib/theme. Window is
+     globally typed via app.d.ts so no local cast is needed. */
   function toggleTheme(): void {
-    const w = window as Window & { __theme?: { toggle: () => void } };
-    if (w.__theme?.toggle) w.__theme.toggle();
+    window.__theme?.toggle();
   }
 
   /* Save-as-PDF placeholder. Chunk 6 audits and tightens the print CSS;
@@ -119,12 +117,12 @@
     requestAnimationFrame(() => window.print());
   }
 
-  /* Triggers the PWA install prompt via window.__pwa exposed by Chunk 5.
-     No-op until that chunk lands; the menu item itself stays hidden via
-     the `hidden` class until __pwa.updateInstallMenuVisibility() reveals it. */
+  /* Triggers the PWA install prompt via window.__pwa exposed by $lib/pwa.
+     The menu item stays hidden via the `hidden` class until
+     __pwa.updateInstallMenuVisibility() reveals it (Safari/Firefox always;
+     Chromium only when beforeinstallprompt is queued). */
   function triggerInstall(): void {
-    const w = window as Window & { __pwa?: { triggerInstall: () => void } };
-    w.__pwa?.triggerInstall();
+    window.__pwa?.triggerInstall();
     closeMenu();
   }
 
@@ -245,6 +243,7 @@
         <div class="flex items-center sm:ml-4">
           <button
             bind:this={triggerEl}
+            id="burger-trigger"
             type="button"
             class="inline-flex items-center justify-center min-h-11 min-w-11 rounded text-base-content/70 hover:text-base-content hover:bg-base-300 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-primary"
             aria-haspopup="menu"
@@ -397,7 +396,7 @@
         <p class="text-sm text-base-content/70 text-center sm:text-left">
           Software Transaction Structuring Tool
         </p>
-        <p class="text-sm text-base-content/70/60">
+        <p class="text-sm text-base-content/60">
           v2.0.0 - TypeScript + SvelteKit
         </p>
       </div>

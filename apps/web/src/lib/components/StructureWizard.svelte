@@ -264,7 +264,7 @@
                   ? 'bg-success/20 text-success hover:bg-success/30'
                   : isAccessible
                     ? 'bg-base-200 text-base-content/70 hover:bg-base-200/80'
-                    : 'bg-base-200/50 text-base-content/70/50 cursor-not-allowed'}"
+                    : 'bg-base-200/50 text-base-content/50 cursor-not-allowed'}"
               on:click={() => goToQuestion(idx)}
               disabled={!isAccessible}
               title="Question {idx + 1}{isAnswered ? ' (answered)' : ''}"
@@ -326,7 +326,7 @@
           class="px-4 py-2 text-sm font-medium rounded-lg transition-colors
                  {canGoBack
             ? 'text-base-content/80 bg-base-200 hover:bg-base-200/80'
-            : 'text-base-content/70/50 bg-base-200/50 cursor-not-allowed'}"
+            : 'text-base-content/50 bg-base-200/50 cursor-not-allowed'}"
           on:click={handleBack}
           disabled={!canGoBack}
         >

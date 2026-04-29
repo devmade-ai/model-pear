@@ -471,7 +471,7 @@
         </div>
 
         <!-- Metadata -->
-        <div class="text-xs text-base-content/70/60 text-right">
+        <div class="text-xs text-base-content/60 text-right">
           Model: {result.metadata.modelName} ({result.metadata.variantId}: {result.metadata.variantName})
         </div>
       </div>
