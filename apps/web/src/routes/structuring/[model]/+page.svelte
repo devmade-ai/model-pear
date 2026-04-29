@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
   import { page } from '$app/stores';
   import { resolve } from '$app/paths';
   import {
@@ -207,6 +208,18 @@
   let showSaveModal = false;
   let saveName = '';
   let saveConfirmation = '';
+  let saveConfirmationTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // Clear the 2s save-confirmation timeout if the user navigates away
+  // before it fires — prevents a setState onto the destroyed component.
+  onDestroy(() => {
+    if (saveConfirmationTimer) clearTimeout(saveConfirmationTimer);
+  });
+
+  function scheduleConfirmationClear() {
+    if (saveConfirmationTimer) clearTimeout(saveConfirmationTimer);
+    saveConfirmationTimer = setTimeout(() => saveConfirmation = '', 2000);
+  }
 
   // Quick save with auto-generated name
   function quickSave() {
@@ -221,7 +234,7 @@
         result
       );
       saveConfirmation = `Saved as "${autoName}"`;
-      setTimeout(() => saveConfirmation = '', 2000);
+      scheduleConfirmationClear();
     }
   }
 
@@ -242,7 +255,7 @@
       showSaveModal = false;
       saveName = '';
       saveConfirmation = `Saved as "${saveName}"`;
-      setTimeout(() => saveConfirmation = '', 2000);
+      scheduleConfirmationClear();
     }
   }
 

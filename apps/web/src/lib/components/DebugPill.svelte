@@ -58,6 +58,7 @@
   }
 
   let unsubscribe: (() => void) | null = null;
+  let copyResetTimer: ReturnType<typeof setTimeout> | null = null;
 
   onMount(() => {
     // debugSubscribe delivers all existing entries immediately on subscribe,
@@ -77,6 +78,7 @@
 
   onDestroy(() => {
     if (unsubscribe) unsubscribe();
+    if (copyResetTimer) clearTimeout(copyResetTimer);
   });
 
   function toggleExpanded() {
@@ -94,7 +96,10 @@
     if (success) {
       copyStatus = 'copied';
       copyFallbackText = '';
-      setTimeout(() => { copyStatus = 'idle'; }, 2000);
+      // Cleared in onDestroy so unmount during the 2s window doesn't
+      // leak a setState onto a destroyed component.
+      if (copyResetTimer) clearTimeout(copyResetTimer);
+      copyResetTimer = setTimeout(() => { copyStatus = 'idle'; }, 2000);
     } else {
       // Clipboard API failed in all 3 tiers — show visible textarea so users
       // can manually select and copy (pattern: textarea with onFocus auto-select).
