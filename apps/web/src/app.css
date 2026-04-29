@@ -112,14 +112,14 @@
   }
 
   body {
-    background: white !important;
-    color: black !important;
+    background: var(--color-base-100) !important;
+    color: var(--color-base-content) !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
   a {
-    color: black !important;
+    color: var(--color-base-content) !important;
     text-decoration: underline !important;
   }
 
@@ -137,7 +137,7 @@
      siblings. Both match this selector — the backdrop collapses harmlessly. */
   .fixed.inset-0 {
     position: relative !important;
-    background: white !important;
+    background: var(--color-base-100) !important;
   }
 
   .fixed.inset-0 > div {
@@ -176,9 +176,9 @@
 
   th,
   td {
-    border: 1px solid #333 !important;
+    border: 1px solid var(--color-base-content) !important;
     padding: 8px !important;
-    color: black !important;
+    color: var(--color-base-content) !important;
   }
 
   /* Prevent content blocks from splitting across pages. */
