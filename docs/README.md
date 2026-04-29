@@ -47,6 +47,8 @@ Find the **sweet spot** in pricing by showing you:
 - **South African Tax**: Section 11(e), deferred tax, CGT calculations
 - **Transfer Pricing**: Risk scoring for related party transactions
 - **Export**: JSON, CSV, and PDF export of results and comparisons
+- **Installable PWA**: Add to home screen on Chrome/Edge/Brave/Safari/Firefox; service-worker caching keeps the app usable offline.
+- **Light & Dark themes**: DaisyUI's `emerald` (light) and `dim` (dark) follow the OS preference by default; manual toggle persists across tabs.
 
 ## Quick Start
 
@@ -74,11 +76,13 @@ pnpm test:e2e
 | Layer | Technology |
 |-------|------------|
 | Language | TypeScript |
-| Framework | SvelteKit 2.x |
-| Styling | Tailwind CSS |
+| Framework | SvelteKit 2.x (adapter-static) |
+| Styling | Tailwind CSS v4 + DaisyUI v5 (`emerald` / `dim` themes) |
 | Charts | ApexCharts |
+| PWA | vite-plugin-pwa + workbox-window (`registerType: 'prompt'`) |
 | Build | Vite |
 | Testing | Vitest + Playwright |
+| Linting | ESLint v10 (flat config) + typescript-eslint + eslint-plugin-svelte |
 | Package Manager | pnpm |
 | Hosting | Vercel |
 
