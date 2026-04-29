@@ -27,9 +27,9 @@
          #C792E9  accent     oklch(74.229% 0.133 311.379)  — right party
          #EFD057  warning    oklch(86.163% 0.142  94.818)  — equilibrium
 
-       (Conversion done with the standard OKLCH→OKLab→LMS→linear sRGB→
-       gamma-companded sRGB pipeline; if dim.css changes, regenerate
-       the hex with the snippet in commit 794dd36's session log.)
+       To regenerate the hex values from current dim.css (e.g. after
+       a DaisyUI bump), run:
+         node scripts/oklch-to-hex.mjs --dim
 
        Maskable safe zone: all three circles fit inside the inner
        80% (102-922 px). Background fills the full 1024x1024 canvas
