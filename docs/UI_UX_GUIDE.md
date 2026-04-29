@@ -143,7 +143,7 @@ On mobile devices, the calculate button stays visible at the bottom of the scree
 
 ### Structure Selection Wizard
 
-The Inter-Company tool uses a progressive disclosure wizard for model selection:
+The Transaction Structuring tool uses a progressive disclosure wizard for model selection:
 
 #### Auto-Advancing Flow
 - Questions are revealed one at a time as you answer
@@ -243,17 +243,23 @@ Enhanced empty state with:
 
 #### Default State
 ```html
-<button class="bg-blue-600 hover:bg-blue-700">
+<button class="btn btn-primary">
     Calculate Equilibrium
 </button>
 ```
 
 #### Loading State
 ```html
-<button disabled class="opacity-75 cursor-not-allowed">
-    <svg class="animate-spin"><!-- Loading spinner --></svg>
+<button class="btn btn-primary" disabled>
+    <span class="loading loading-spinner"></span>
+    Calculating…
 </button>
 ```
+
+DaisyUI's `loading loading-spinner` utility renders an inline spinner that
+matches the active theme. The disabled state is handled natively by the
+button element — no custom `opacity-75 cursor-not-allowed` needed (the
+`.btn` class applies appropriate disabled styling automatically).
 
 ### Loading Flow
 
@@ -314,126 +320,132 @@ Example:
 
 ## Design System
 
-### Color Palette
+The project uses **Tailwind CSS v4 + DaisyUI v5** with the `emerald` (light)
+and `dim` (dark) themes. There is no custom colour palette — the active
+DaisyUI theme IS the brand. Components use DaisyUI semantic classes directly;
+hardcoded hex codes are not permitted (the only documented exception is the
+debug-pill warning fallback in `app.html`, which renders pre-framework).
 
-#### Semantic Colors
-- **Blue** (#3B82F6): Primary actions, selected states, focus indicators
-- **Green** (#10B981): Success, positive metrics
-- **Yellow** (#F59E0B): Warnings, calculated fields
-- **Red** (#EF4444): Errors, negative metrics
-- **Purple** (#8B5CF6): Secondary/tertiary information
+### Color Tokens
 
-#### Background Colors
-- **Gray-900** (#111827): Page background
-- **Gray-800** (#1F2937): Card backgrounds
-- **Gray-750** (#2d3748): Nested cards
-- **Gray-700** (#374151): Input backgrounds
+DaisyUI exposes every theme colour as a CSS custom property, accessible via
+Tailwind utilities:
+
+#### Surfaces
+- `bg-base-100` — primary page background
+- `bg-base-200` — card / panel surface (one step elevated)
+- `bg-base-300` — input fields, hover states, dividers
+
+#### Text
+- `text-base-content` — primary text (full opacity)
+- `text-base-content/70` — secondary / muted text
+- `text-base-content/60` — even more muted (hints, footer)
+
+#### Brand
+- `bg-primary` / `text-primary` / `border-primary` — primary actions, links, focus rings
+- `bg-secondary` — secondary accent
+- `bg-accent` — tertiary accent
+
+#### Status
+- `text-success` / `bg-success` — positive metrics, completion
+- `text-warning` / `bg-warning` — warnings, calculated/auto fields
+- `text-error` / `bg-error` — errors, negative metrics, validation failures
+- `text-info` / `bg-info` — informational messages, tooltips
+
+Each token resolves to the active theme's value at runtime. Switching themes
+flips every token in lockstep — no per-component changes needed.
 
 ### Typography
 
 #### Font Family
-```css
-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+Set via `--font-sans` in `app.css` (`@theme` block):
+
+```
+"Figtree", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+"Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"
 ```
 
+Figtree is the brand display face (loaded from Google Fonts via `app.html`);
+the rest is the conventional system-font fallback chain.
+
 #### Scale
-- **H1**: 3xl (1.875rem / 30px) - Page title
-- **H2**: 2xl (1.5rem / 24px) - Section headings
-- **H3**: lg (1.125rem / 18px) - Subsection headings
-- **Body**: sm (0.875rem / 14px) - Regular text
-- **Hint**: xs (0.75rem / 12px) - Helper text
+- **H1**: `text-3xl` (1.875rem / 30px) — page title
+- **H2**: `text-2xl` (1.5rem / 24px) — section heading
+- **H3**: `text-lg` (1.125rem / 18px) — subsection heading
+- **Body**: `text-sm` (0.875rem / 14px) — regular text
+- **Hint**: `text-xs` (0.75rem / 12px) — helper text
+
+All headings get `font-semibold tracking-tight` from the `@layer base` block
+in `app.css`.
 
 ### Spacing
 
-Consistent spacing scale using Tailwind's spacing system:
-- **xs**: 0.25rem (4px)
-- **sm**: 0.5rem (8px)
-- **md**: 1rem (16px)
-- **lg**: 1.5rem (24px)
-- **xl**: 2rem (32px)
-
-### Animations
-
-#### Slide-In (Validation Warnings)
-```css
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-```
-
-#### Fade-In (Results)
-```css
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-```
-
-#### Slide-In-Right (Toasts)
-```css
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-```
+Standard Tailwind spacing scale — no overrides:
+- **xs**: 0.25rem (4px) — `p-1` / `gap-1`
+- **sm**: 0.5rem (8px) — `p-2` / `gap-2`
+- **md**: 1rem (16px) — `p-4` / `gap-4`
+- **lg**: 1.5rem (24px) — `p-6` / `gap-6`
+- **xl**: 2rem (32px) — `p-8` / `gap-8`
 
 ### Component Patterns
 
+The project uses DaisyUI's component classes — do NOT introduce custom
+`.button-primary` / `.card` CSS. Every styling primitive below is a stock
+DaisyUI utility that picks up the active theme automatically.
+
 #### Cards
-```css
-.card {
-    background: #1F2937;
-    border: 1px solid #374151;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-}
+```html
+<div class="card bg-base-200 border border-base-300 p-6 space-y-4">
+  <!-- content -->
+</div>
 ```
+
+`card` is DaisyUI's base; `bg-base-200 border border-base-300 p-6` is the
+project's standard elevated-surface pattern. Use `space-y-4` for vertical
+rhythm between children.
 
 #### Buttons
-```css
-.button-primary {
-    background: #3B82F6;  /* blue-600 */
-    color: white;
-    padding: 0.75rem 1rem;
-    border-radius: 0.375rem;
-    font-weight: 600;
-    transition: background-color 0.2s;
-}
+```html
+<!-- Primary -->
+<button class="btn btn-primary">Calculate</button>
 
-.button-primary:hover {
-    background: #2563EB;  /* blue-700 */
-}
+<!-- Secondary / outlined -->
+<button class="btn btn-outline">Cancel</button>
+
+<!-- Ghost / inline -->
+<button class="btn btn-ghost btn-sm">Close</button>
 ```
+
+Important: `btn-primary` / `btn-outline` are MODIFIERS — they require the
+`.btn` base class for proper sizing, padding, and border-radius. Using
+`btn-primary` alone (without `btn`) produces a primary-coloured but otherwise
+unstyled element. svelte-check / ESLint won't catch this, but it's the most
+common DaisyUI mistake — see the `branch-self-review` commit history for
+12 instances that had to be retroactively fixed.
 
 #### Inputs
-```css
-.input {
-    background: #374151;
-    border: 1px solid #4B5563;
-    color: #F3F4F6;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.375rem;
-}
-
-.input:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-}
+```html
+<input type="number" class="input" />
+<select class="input">…</select>
 ```
+
+DaisyUI's `.input` already inherits theme tokens — no custom background /
+border / focus styles needed. Pair with `<label for="…">` to satisfy the
+a11y rule (`svelte/a11y` flags unpaired labels).
+
+### Animations
+
+Single-property transitions are handled by Tailwind utilities (`transition-all
+duration-200`, `transition-opacity`, etc.). The few keyframe animations
+defined in the project live in component-scoped `<style>` blocks rather than
+in global CSS — keeps each component self-contained.
+
+The only global keyframe is DaisyUI's own (loading spinner, etc.). The
+project itself does not register custom `@keyframes` in `app.css`.
+
+`prefers-reduced-motion` is respected by Tailwind's transition utilities
+automatically — no separate handling needed.
 
 ---
 
