@@ -45,6 +45,11 @@
   type W = Window & { __pwa?: PWAGlobals };
 
   function show(): void {
+    // Idempotent: pwa.ts can re-emit on visibilitychange while the banner
+    // is already showing (visibility flicker, multiple onNeedRefresh).
+    // Without this guard, an in-progress update (busy=true) would get its
+    // state reset out from under the user.
+    if (visible) return;
     visible = true;
     busy = false;
     errorMsg = null;

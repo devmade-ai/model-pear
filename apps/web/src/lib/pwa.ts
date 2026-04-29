@@ -180,21 +180,12 @@ function triggerInstall(): void {
         console.error('[pwa] install prompt failed:', err);
       }
     });
-    // userChoice should always be a Promise per spec, but defend
-    // against polyfill gaps: if it's missing or non-thenable, clear
-    // the stashed event immediately to avoid a stale-state lock-in.
-    const choice = evt.userChoice;
-    if (choice && typeof choice.finally === 'function') {
-      void choice.finally(() => {
-        // Clear the stashed event regardless of outcome — beforeinstallprompt
-        // only fires once per session, accepted or dismissed.
-        if (w) w.__pwaInstallPromptEvent = null;
-        updateInstallMenuVisibility();
-      });
-    } else {
+    // Clear the stashed event regardless of outcome — beforeinstallprompt
+    // only fires once per session, accepted or dismissed.
+    void evt.userChoice.finally(() => {
       if (w) w.__pwaInstallPromptEvent = null;
       updateInstallMenuVisibility();
-    }
+    });
     return;
   }
 
@@ -350,16 +341,10 @@ if (w && 'serviceWorker' in navigator) {
       if (typeof console !== 'undefined') {
         console.error('[pwa] SW registration failed:', err);
       }
-      try {
-        window.dispatchEvent(new ErrorEvent('error', {
-          message: '[pwa] Service worker registration failed',
-          error: err instanceof Error ? err : new Error(String(err)),
-          filename: 'apps/web/src/lib/pwa.ts',
-        }));
-      } catch {
-        // Old browsers without ErrorEvent constructor — already
-        // logged via console.error above.
-      }
+      window.dispatchEvent(new ErrorEvent('error', {
+        message: '[pwa] Service worker registration failed',
+        error: err instanceof Error ? err : new Error(String(err)),
+      }));
     },
     onRegisteredSW: (_swUrl: string, registration: ServiceWorkerRegistration | undefined) => {
       if (!registration) return;
