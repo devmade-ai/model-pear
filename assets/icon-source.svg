@@ -1,45 +1,56 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" shape-rendering="geometricPrecision">
   <!-- Model Pear app icon
-       Design: White pear silhouette on primary blue (#2D68FF) background
-       Safe zone: Content within inner 80% (102-922px) for maskable crop
-       Legibility: Simple shape, no fine details — works at 48px favicon size -->
 
-  <!-- Background fills entire canvas (no transparency for maskable compatibility) -->
-  <rect width="1024" height="1024" fill="#2D68FF"/>
+       Design: stylised pear on the dim-theme background. Geometry is
+       deliberately built from simple SVG primitives (rect, circle,
+       ellipse) instead of fragile cubic beziers — easier to edit by
+       hand and renders identically across PWA / favicon sizes.
 
-  <!-- Pear shape — centered in safe zone
-       Single cubic bezier path: narrow top, wide bottom = classic pear silhouette
-       Stem and leaf add recognisability at small sizes -->
-  <g transform="translate(512, 530)">
-    <!-- Pear body: teardrop shape using cubic beziers
-         Wider bottom, narrower top — classic pear silhouette -->
-    <path d="
-      M 0,-280
-      C  80,-280  130,-240  150,-180
-      C 180,-100  200, -20  200,  60
-      C 200, 160  180, 240  140, 300
-      C 100, 360   50, 390    0, 390
-      C -50, 390 -100, 360 -140, 300
-      C-180, 240 -200, 160 -200,  60
-      C-200, -20 -180,-100 -150,-180
-      C-130,-240  -80,-280    0,-280
-      Z
-    " fill="#FFFFFF"/>
+       Colours: aligned with the dim DaisyUI theme.
+         #2a323c  dim base-100 (matches the manifest theme_color and
+                  background_color in vite.config.ts, so the icon
+                  visually integrates with the splash screen and the
+                  OS task-switcher chrome).
+         #9FE88D  dim primary  (pear-green; reads as "pear" while
+                  matching the active theme's accent).
+         #a6adba  near dim base-content (muted neutral for the stem).
 
-    <!-- Stem -->
-    <path d="
-      M -6,-280
-      C -6,-310  -4,-340   0,-370
-      C  4,-340   6,-310   6,-280
-      Z
-    " fill="#FFFFFF"/>
+       Maskable safe zone: all content sits inside the inner 80%
+       (102-922 px) so the OS-side maskable crop has solid background
+       at every edge. The rectangular background fills the full
+       1024x1024 canvas. -->
 
-    <!-- Leaf — small, angled to the right for visual balance -->
-    <path d="
-      M 6,-340
-      C  30,-370   70,-380   90,-360
-      C  70,-340   30,-330    6,-340
-      Z
-    " fill="#FFFFFF"/>
-  </g>
+  <!-- Background (full canvas, no transparency, maskable-safe) -->
+  <rect width="1024" height="1024" fill="#2a323c"/>
+
+  <!-- Pear body: single closed path made of 4 symmetric cubic-bezier
+       segments. Each segment uses control points placed at the same
+       y-coordinate as its anchor — that keeps the curves tangent at
+       top, sides, and bottom so the silhouette is one continuous
+       curve with no visible kinks.
+
+       Anchor points:
+         top centre   (512, 220)
+         wide left    (260, 640) — wide point sits ~64% down (pear-shaped)
+         bottom       (512, 880)
+         wide right   (764, 640)
+
+       Control points at (cp1.y == anchor.y) lock the slope to
+       horizontal at top and bottom and vertical at the sides — the
+       curve passes through each anchor smoothly. -->
+  <path d="
+    M 512,220
+    C 340,220 260,420 260,640
+    C 260,830 380,880 512,880
+    C 644,880 764,830 764,640
+    C 764,420 684,220 512,220
+    Z
+  " fill="#9FE88D"/>
+
+  <!-- Stem: rounded rectangle sitting on top of the upper circle. -->
+  <rect x="500" y="220" width="24" height="72" rx="8" fill="#a6adba"/>
+
+  <!-- Leaf: rotated ellipse anchored to the stem, same green as the body. -->
+  <ellipse cx="568" cy="240" rx="50" ry="22" fill="#9FE88D"
+           transform="rotate(-25 568 240)"/>
 </svg>
