@@ -1,7 +1,7 @@
 # User Actions Required
 
 > **Purpose**: Track manual actions the user needs to perform outside the codebase (external dashboards, credentials, configuration, etc.)
-> **Last Updated**: January 2026
+> **Last Updated**: April 2026
 
 This file documents any manual steps that require user intervention. AI assistants should add detailed instructions here when tasks cannot be completed programmatically.
 
