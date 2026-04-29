@@ -1,56 +1,53 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" shape-rendering="geometricPrecision">
   <!-- Model Pear app icon
 
-       Design: stylised pear on the dim-theme background. Geometry is
-       deliberately built from simple SVG primitives (rect, circle,
-       ellipse) instead of fragile cubic beziers — easier to edit by
-       hand and renders identically across PWA / favicon sizes.
+       Concept: a Venn diagram. Two circles representing the two
+       parties in a software transaction (Your Company / Client),
+       with the lens-shaped overlap representing the equilibrium
+       zone — the price/structure range where BOTH parties win.
+       This is the tool's core thesis ("find the best deal for both")
+       rendered as geometry.
+
+       Geometry: just three SVG primitives + a clip-path:
+         - <rect> for the background
+         - two <circle>s for the parties
+         - a third <circle> clipped to the left party's region,
+           which produces the lens-shaped intersection.
+       Editable by hand without bezier tooling.
 
        Colours: aligned with the dim DaisyUI theme.
-         #2a323c  dim base-100 (matches the manifest theme_color and
-                  background_color in vite.config.ts, so the icon
-                  visually integrates with the splash screen and the
-                  OS task-switcher chrome).
-         #9FE88D  dim primary  (pear-green; reads as "pear" while
-                  matching the active theme's accent).
-         #a6adba  near dim base-content (muted neutral for the stem).
+         #2a323c  dim base-100 — matches the manifest theme_color so
+                  the icon visually integrates with the splash screen
+                  and the OS task-switcher chrome.
+         #9FE88D  dim primary  — left party (Your Company / Seller).
+         #7CD4FD  dim accent   — right party (Client / Buyer).
+         #fbbd23  dim warning  — equilibrium zone (the sweet spot).
 
-       Maskable safe zone: all content sits inside the inner 80%
-       (102-922 px) so the OS-side maskable crop has solid background
-       at every edge. The rectangular background fills the full
-       1024x1024 canvas. -->
+       Maskable safe zone: all three circles fit inside the inner
+       80% (102-922 px). Background fills the full 1024x1024 canvas
+       so the maskable crop has solid colour at every edge. -->
 
-  <!-- Background (full canvas, no transparency, maskable-safe) -->
+  <defs>
+    <clipPath id="left-party">
+      <circle cx="412" cy="512" r="240"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background — dim base-100 -->
   <rect width="1024" height="1024" fill="#2a323c"/>
 
-  <!-- Pear body: single closed path made of 4 symmetric cubic-bezier
-       segments. Each segment uses control points placed at the same
-       y-coordinate as its anchor — that keeps the curves tangent at
-       top, sides, and bottom so the silhouette is one continuous
-       curve with no visible kinks.
+  <!-- Left party circle — Your Company / Seller -->
+  <circle cx="412" cy="512" r="240" fill="#9FE88D"/>
 
-       Anchor points:
-         top centre   (512, 220)
-         wide left    (260, 640) — wide point sits ~64% down (pear-shaped)
-         bottom       (512, 880)
-         wide right   (764, 640)
+  <!-- Right party circle — Client / Buyer.
+       Drawn second so it overwrites the left circle in the overlap
+       region (otherwise the right would be obscured by the left's
+       fill in the lens area). -->
+  <circle cx="612" cy="512" r="240" fill="#7CD4FD"/>
 
-       Control points at (cp1.y == anchor.y) lock the slope to
-       horizontal at top and bottom and vertical at the sides — the
-       curve passes through each anchor smoothly. -->
-  <path d="
-    M 512,220
-    C 340,220 260,420 260,640
-    C 260,830 380,880 512,880
-    C 644,880 764,830 764,640
-    C 764,420 684,220 512,220
-    Z
-  " fill="#9FE88D"/>
-
-  <!-- Stem: rounded rectangle sitting on top of the upper circle. -->
-  <rect x="500" y="220" width="24" height="72" rx="8" fill="#a6adba"/>
-
-  <!-- Leaf: rotated ellipse anchored to the stem, same green as the body. -->
-  <ellipse cx="568" cy="240" rx="50" ry="22" fill="#9FE88D"
-           transform="rotate(-25 568 240)"/>
+  <!-- Equilibrium zone — the lens-shaped intersection.
+       Source shape is the RIGHT circle, clipped to the LEFT circle's
+       region: the result is exactly the two-circle intersection. -->
+  <circle cx="612" cy="512" r="240" fill="#fbbd23"
+          clip-path="url(#left-party)"/>
 </svg>
