@@ -357,14 +357,14 @@
     <!-- Footer -->
     <div class="p-4 border-t border-base-300 bg-base-200 flex justify-between">
       <div class="flex space-x-2">
-        <button class="btn-outline no-print" on:click={exportToCSV} title="Export as CSV">
+        <button class="btn btn-outline no-print" on:click={exportToCSV} title="Export as CSV">
           Export CSV
         </button>
-        <button class="btn-outline no-print" on:click={() => window.print()} title="Print or save as PDF">
+        <button class="btn btn-outline no-print" on:click={() => window.print()} title="Print or save as PDF">
           Print / PDF
         </button>
       </div>
-      <button class="btn-primary no-print" on:click={close}> Close </button>
+      <button class="btn btn-primary no-print" on:click={close}> Close </button>
     </div>
   </div>
 </div>

@@ -186,7 +186,7 @@
         {/if}
 
         <button
-          class="btn-primary w-full mt-4"
+          class="btn btn-primary w-full mt-4"
           on:click={() => handleUseModel(topRecommendation.modelId)}
         >
           Use {topRecommendation.shortName} →
@@ -336,7 +336,7 @@
         <div class="flex gap-3">
           {#if isLastQuestion && canGoNext}
             <button
-              class="btn-primary px-6 py-2"
+              class="btn btn-primary px-6 py-2"
               on:click={handleSeeResults}
             >
               See Recommendations →

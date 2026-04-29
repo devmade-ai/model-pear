@@ -360,17 +360,17 @@
       <div class="lg:col-span-2 space-y-6">
         <!-- Action Bar: Save & Compare -->
         <div class="flex flex-wrap items-center gap-3">
-          <button class="btn-primary" on:click={quickSave}>
+          <button class="btn btn-primary" on:click={quickSave}>
             Save Option
           </button>
-          <button class="btn-outline text-sm" on:click={openSaveModal}>
+          <button class="btn btn-outline text-sm" on:click={openSaveModal}>
             Save As...
           </button>
           <!-- Requirement: Let users save results as PDF via the browser's native print dialog.
                Approach: window.print() — zero dependencies, leverages existing @media print CSS in app.css.
                Alternative considered: pdf-lib — rejected because content is text/tables (not canvas),
                so the browser print engine handles it well without extra bundle size. -->
-          <button class="btn-outline text-sm no-print" on:click={() => window.print()} title="Save this page as a PDF using your browser's print dialog">
+          <button class="btn btn-outline text-sm no-print" on:click={() => window.print()} title="Save this page as a PDF using your browser's print dialog">
             Save as PDF
           </button>
           {#if savedCount > 0}
@@ -498,8 +498,8 @@
           />
         </div>
         <div class="flex justify-end space-x-3">
-          <button class="btn-outline" on:click={cancelSave}>Cancel</button>
-          <button class="btn-primary" on:click={saveOption} disabled={!saveName.trim()}>
+          <button class="btn btn-outline" on:click={cancelSave}>Cancel</button>
+          <button class="btn btn-primary" on:click={saveOption} disabled={!saveName.trim()}>
             Save
           </button>
         </div>

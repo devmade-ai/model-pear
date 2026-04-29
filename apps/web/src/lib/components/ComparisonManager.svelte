@@ -139,7 +139,7 @@
               </button>
             {/if}
             <button
-              class="btn-primary text-sm py-1 px-3"
+              class="btn btn-primary text-sm py-1 px-3"
               disabled={!$canCompare}
               on:click={handleCompare}
             >
