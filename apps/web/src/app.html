@@ -4,6 +4,22 @@
     <meta charset="utf-8" />
 
     <!--
+      Single dynamic theme-color meta tag updated by the bootstrap script
+      below and by applyTheme() at runtime. Tracks app preference, not
+      OS preference — a user on dark-OS who toggles to light-app gets
+      a light URL bar. Initial value is dim base-100; the bootstrap
+      flips it to emerald base-100 (#ffffff) before paint when the
+      stored / OS preference is light.
+
+      MUST be declared before the bootstrap script — the bootstrap uses
+      document.querySelector('meta[name="theme-color"]') to find this tag,
+      and HTML parses incrementally. If declared later, the bootstrap
+      script runs first and the querySelector returns null, leaving
+      the OS browser chrome stuck at dim on first paint.
+    -->
+    <meta name="theme-color" content="#2a323c" />
+
+    <!--
       Early beforeinstallprompt capture. Browsers (Chrome/Edge/Brave)
       fire this event ONCE per session, often before the framework
       bundle finishes loading on repeat visits with a cached SW. If we
@@ -72,7 +88,8 @@
         html.setAttribute('data-theme', darkMode ? 'dim' : 'emerald');
 
         // Update the meta theme-color BEFORE first paint so the OS browser
-        // chrome matches the active app theme on initial render.
+        // chrome matches the active app theme on initial render. The meta
+        // tag is declared above so it's already in the DOM when this runs.
         var meta = document.querySelector('meta[name="theme-color"]');
         if (meta) meta.setAttribute('content', darkMode ? '#2a323c' : '#ffffff');
       })();
@@ -83,16 +100,6 @@
     <link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Software Transaction Structuring Tool - Find the best deal structure for both you and your client" />
-
-    <!--
-      Single dynamic theme-color meta tag updated by the bootstrap script
-      above and by applyTheme() at runtime. Tracks app preference, not
-      OS preference — a user on dark-OS who toggles to light-app gets
-      a light URL bar. Initial value is dim base-100; the bootstrap
-      flips it to emerald base-100 (#ffffff) before paint when the
-      stored / OS preference is light.
-    -->
-    <meta name="theme-color" content="#2a323c" />
 
     <title>Model Pear - Software Transaction Structuring</title>
     <!-- Figtree font from Google Fonts -->
