@@ -7,8 +7,12 @@
   "scripts": {
     "dev": "pnpm --filter @model-pear/web dev",
     "build": "pnpm --filter @model-pear/calculator build && pnpm --filter @model-pear/web build",
+    "preview": "pnpm --filter @model-pear/web preview",
     "test": "pnpm --filter @model-pear/calculator test",
     "test:watch": "pnpm --filter @model-pear/calculator test:watch",
+    "test:e2e": "pnpm --filter @model-pear/web test:e2e",
+    "test:e2e:ui": "pnpm --filter @model-pear/web test:e2e:ui",
+    "check": "pnpm -r check",
     "lint": "pnpm -r lint",
     "clean": "pnpm -r clean",
     "generate-icons": "node scripts/generate-icons.mjs"
