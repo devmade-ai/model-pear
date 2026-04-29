@@ -84,6 +84,7 @@ declare global {
 }
 
 // SvelteKit's App namespace — required boilerplate even when empty.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare namespace App {
   // interface Error {}
   // interface Locals {}

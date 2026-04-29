@@ -26,7 +26,7 @@
   export let hint: string = '';
   export let benchmark: string = '';
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ change: { field: string; value: string | number } }>();
 
   function handleInput(e: Event) {
     const target = e.target as HTMLInputElement | HTMLSelectElement;

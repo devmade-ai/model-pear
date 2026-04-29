@@ -45,9 +45,6 @@ test.describe('Pricing Calculator', () => {
   });
 
   test('input changes update results reactively', async ({ page }) => {
-    // Get initial suggested price text
-    const initialText = await page.locator('.text-2xl.font-bold.text-green-900').textContent();
-
     // Change monthly price
     await page.fill('input[type="number"]', '1000');
 
