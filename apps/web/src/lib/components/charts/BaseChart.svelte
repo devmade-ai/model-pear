@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import type ApexCharts from 'apexcharts';
+  import { isDark } from '$lib/theme';
 
   export let options: ApexCharts.ApexOptions;
   export let height: number | string = 350;
@@ -9,11 +10,6 @@
   let chart: ApexCharts | null = null;
   let cleanupThemeListener: (() => void) | null = null;
 
-  function isDarkNow(): boolean {
-    return typeof document !== 'undefined' &&
-      document.documentElement.classList.contains('dark');
-  }
-
   onMount(async () => {
     // Dynamic import to avoid SSR issues (apexcharts uses browser-only APIs).
     const ApexChartsModule = await import('apexcharts');
@@ -21,7 +17,7 @@
 
     // Initial theme matches whatever the bootstrap script set in app.html.
     // Subsequent changes flow through the `theme:change` listener below.
-    const initialDark = isDarkNow();
+    const initialDark = isDark();
 
     chart = new ApexCharts(chartElement, {
       ...options,
