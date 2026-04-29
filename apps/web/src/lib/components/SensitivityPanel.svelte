@@ -73,7 +73,7 @@
     <div class="card p-4">
       <h3 class="text-lg font-semibold text-base-content mb-3">Key Drivers</h3>
       <div class="space-y-2">
-        {#each sensitivities.topInfluencers.slice(0, 5) as influencer}
+        {#each sensitivities.topInfluencers.slice(0, 5) as influencer (influencer.label)}
           <div class="flex items-center justify-between py-2 border-b border-base-300/50 last:border-0">
             <div class="flex items-center space-x-2">
               <span

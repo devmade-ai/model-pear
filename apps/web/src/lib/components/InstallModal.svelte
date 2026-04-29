@@ -134,7 +134,7 @@
       </p>
 
       <ol class="space-y-3 mb-4">
-        {#each info.steps as step, i}
+        {#each info.steps as step, i (i)}
           <li class="flex items-start gap-3">
             <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-semibold flex items-center justify-center">{i + 1}</span>
             <span class="flex-1 text-sm text-base-content">

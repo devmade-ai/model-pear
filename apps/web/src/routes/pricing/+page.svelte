@@ -286,7 +286,7 @@
     <p class="block text-sm font-medium text-base-content/70 mb-3">Pricing Model</p>
     <!-- Mobile: horizontal scroll, Tablet+: grid -->
     <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-3 md:grid-cols-5 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
-      {#each models as model}
+      {#each models as model (model.id)}
         <button
           class="flex-shrink-0 w-28 sm:w-auto p-3 sm:p-4 border-2 rounded-lg transition-all text-left touch-manipulation {selectedModel === model.id
             ? 'border-primary bg-primary/10'

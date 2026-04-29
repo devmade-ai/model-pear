@@ -25,7 +25,8 @@
 
   // Derived state
   $: answeredCount = Object.keys(answers).length;
-  $: totalQuestions = QUESTION_ORDER.length;
+  // QUESTION_ORDER is a const import; once defined, it can't change.
+  const totalQuestions = QUESTION_ORDER.length;
   $: progress = Math.round((answeredCount / totalQuestions) * 100);
   $: allAnswered = answeredCount === totalQuestions;
   $: recommendations = answeredCount > 0 ? getModelRecommendations(answers) : [];
@@ -161,7 +162,7 @@
               class="input w-full"
             >
               <option value="">Select a variant preference...</option>
-              {#each VARIANT_FACTORS[topRecommendation.modelId].factors as factor}
+              {#each VARIANT_FACTORS[topRecommendation.modelId].factors as factor (factor.value)}
                 <option value={factor.value}>{factor.label}</option>
               {/each}
             </select>
@@ -196,7 +197,7 @@
       <div>
         <h4 class="text-lg font-medium text-base-content mb-4">Alternative Options</h4>
         <div class="space-y-3">
-          {#each recommendations.slice(1) as rec}
+          {#each recommendations.slice(1) as rec (rec.modelId)}
             <div class="card p-4 hover:border-base-300 transition-colors">
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
@@ -232,7 +233,7 @@
       <div class="card p-4 bg-base-200">
         <h4 class="text-sm font-medium text-base-content/80 mb-3">Your Answers</h4>
         <div class="space-y-2">
-          {#each QUESTION_ORDER as factorId}
+          {#each QUESTION_ORDER as factorId (factorId)}
             {@const factor = DECISION_FACTORS[factorId]}
             {@const answer = answers[factorId]}
             {@const option = factor.options.find((o) => o.value === answer)}
@@ -251,7 +252,7 @@
       <div>
         <!-- Question Step Indicators -->
         <div class="flex items-center justify-center gap-2 mb-4">
-          {#each QUESTION_ORDER as factorId, idx}
+          {#each QUESTION_ORDER as factorId, idx (factorId)}
             {@const isAnswered = answers[factorId] !== undefined}
             {@const isCurrent = idx === currentQuestionIndex}
             {@const isAccessible = idx <= (QUESTION_ORDER.findIndex((id) => answers[id] === undefined) === -1 ? totalQuestions - 1 : QUESTION_ORDER.findIndex((id) => answers[id] === undefined))}
@@ -295,7 +296,7 @@
         <p class="text-sm text-base-content/70 mb-4">{currentQuestion.description}</p>
 
         <div class="space-y-3">
-          {#each currentQuestion.options as option}
+          {#each currentQuestion.options as option (option.value)}
             <label
               class="flex items-start gap-3 p-4 bg-base-200 rounded-lg border-2 cursor-pointer transition-all
                      {currentAnswer === option.value
@@ -360,7 +361,7 @@
         <div class="pt-6 border-t border-base-300">
           <h4 class="text-sm font-medium text-base-content/70 mb-3">Current Top Recommendations</h4>
           <div class="flex gap-2 flex-wrap">
-            {#each recommendations.slice(0, 3) as rec}
+            {#each recommendations.slice(0, 3) as rec (rec.modelId)}
               <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-base-200 rounded-full text-sm">
                 <span class="text-lg">{rec.icon}</span>
                 <span class="text-base-content/80">{rec.shortName}</span>

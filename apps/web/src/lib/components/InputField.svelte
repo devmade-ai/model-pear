@@ -49,7 +49,7 @@
 
   {#if type === 'select'}
     <select {id} {value} on:change={handleInput} class="input">
-      {#each options as opt}
+      {#each options as opt (opt.value)}
         <option value={opt.value}>{opt.label}</option>
       {/each}
     </select>

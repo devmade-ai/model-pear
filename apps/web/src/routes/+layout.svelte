@@ -9,7 +9,7 @@
   // and exposes `window.__pwa` for the burger menu, update banner, and
   // install modal to call into.
   import '$lib/pwa';
-  import { base } from '$app/paths';
+  import { resolve } from '$app/paths';
   import { onMount, tick } from 'svelte';
   import { createListenerTracker } from '$lib/utils/trackListener';
   import UpdateBanner from '$lib/components/UpdateBanner.svelte';
@@ -240,7 +240,7 @@
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center">
-          <a href="{base}/" class="flex items-center space-x-2" on:click={closeMenu}>
+          <a href={resolve('/')} class="flex items-center space-x-2" on:click={closeMenu}>
             <span class="text-2xl">🍐</span>
             <span class="font-semibold text-xl text-base-content">Model Pear</span>
           </a>
@@ -248,10 +248,10 @@
 
         <!-- Desktop primary nav (also available inside burger as fallback) -->
         <div class="hidden sm:flex items-center space-x-4">
-          <a href="{base}/structuring" class="text-base-content/70 hover:text-base-content px-3 py-2 text-sm font-medium transition-colors">
+          <a href={resolve('/structuring')} class="text-base-content/70 hover:text-base-content px-3 py-2 text-sm font-medium transition-colors">
             Transaction Structuring
           </a>
-          <a href="{base}/pricing" class="text-base-content/70 hover:text-base-content px-3 py-2 text-sm font-medium transition-colors">
+          <a href={resolve('/pricing')} class="text-base-content/70 hover:text-base-content px-3 py-2 text-sm font-medium transition-colors">
             Pricing Calculator
           </a>
         </div>
@@ -315,7 +315,7 @@
     <div class="py-2">
       <!-- Primary nav links -->
       <a
-        href="{base}/structuring"
+        href={resolve('/structuring')}
         data-menu-item
         data-close
         class="block px-4 py-2 text-sm text-base-content hover:bg-base-300 focus:bg-base-300 focus:outline-hidden transition-colors"
@@ -323,7 +323,7 @@
         role="menuitem"
       >Transaction Structuring</a>
       <a
-        href="{base}/pricing"
+        href={resolve('/pricing')}
         data-menu-item
         data-close
         class="block px-4 py-2 text-sm text-base-content hover:bg-base-300 focus:bg-base-300 focus:outline-hidden transition-colors"

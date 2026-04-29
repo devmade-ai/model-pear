@@ -168,8 +168,9 @@
     },
   ];
 
-  // Group rows by section
-  $: sections = comparisonRows.reduce(
+  // Group rows by section. comparisonRows is const, so this only needs to
+  // run once at module load — not a reactive statement.
+  const sections = comparisonRows.reduce(
     (acc, row) => {
       if (!acc[row.section]) acc[row.section] = [];
       acc[row.section].push(row);
@@ -239,7 +240,7 @@
       <div class="p-4 bg-primary/10 border-b border-base-300">
         <h3 class="text-sm font-semibold text-primary mb-2">Quick Summary</h3>
         <div class="grid gap-2 {$selectedOptions.length === 2 ? 'grid-cols-2' : $selectedOptions.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}">
-          {#each optionSummaries as summary, i}
+          {#each optionSummaries as summary, i (i)}
             <div class="bg-base-200 rounded-lg p-3 shadow-sm border border-base-300/50">
               <div class="font-medium text-base-content text-sm">{summary.name}</div>
               {#if summary.wins.length > 0}
@@ -262,7 +263,7 @@
         <thead class="sticky top-0 bg-base-200 z-10">
           <tr>
             <th class="text-left p-3 bg-base-200 font-medium text-base-content/80 w-40">Metric</th>
-            {#each $selectedOptions as option}
+            {#each $selectedOptions as option (option.id)}
               <th class="p-3 bg-base-200 text-center min-w-[160px]">
                 <div class="font-semibold text-base-content">{option.name}</div>
                 <div class="text-xs text-base-content/70 mt-1">
@@ -274,7 +275,7 @@
         </thead>
 
         <tbody>
-          {#each Object.entries(sections) as [sectionName, rows]}
+          {#each Object.entries(sections) as [sectionName, rows] (sectionName)}
             <!-- Section header -->
             <tr class="bg-base-200">
               <td colspan={$selectedOptions.length + 1} class="p-2 font-semibold text-base-content/80">
@@ -283,11 +284,11 @@
             </tr>
 
             <!-- Section rows -->
-            {#each rows as row}
+            {#each rows as row (row.label)}
               {@const values = $selectedOptions.map((o) => row.getValue(o))}
               <tr class="border-b border-base-300/50 hover:bg-base-200/50">
                 <td class="p-3 text-sm text-base-content/70">{row.label}</td>
-                {#each $selectedOptions as option, i}
+                {#each $selectedOptions as option, i (option.id)}
                   {@const diff = getDiff(values, i)}
                   {@const isBest =
                     row.higherIsBetter !== undefined &&
@@ -326,7 +327,7 @@
           </tr>
           <tr class="border-b border-base-300/50">
             <td class="p-3 text-sm text-base-content/70">Risk Level</td>
-            {#each $selectedOptions as option}
+            {#each $selectedOptions as option (option.id)}
               {@const level = option.result.transferPricing.riskLevel}
               <td class="p-3 text-center">
                 <span
@@ -343,7 +344,7 @@
           </tr>
           <tr class="border-b border-base-300/50">
             <td class="p-3 text-sm text-base-content/70">Within Range</td>
-            {#each $selectedOptions as option}
+            {#each $selectedOptions as option (option.id)}
               <td class="p-3 text-center text-base-content">
                 {option.result.transferPricing.withinRange ? '✓ Yes' : '✗ No'}
               </td>

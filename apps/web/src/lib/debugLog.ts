@@ -104,7 +104,7 @@ export function debugGenerateReport(): string {
 export function debugGetEnvironment(): { standalone: boolean; swSupport: boolean } {
   return {
     standalone: window.matchMedia('(display-mode: standalone)').matches
-      || (navigator as any).standalone === true,
+      || navigator.standalone === true,
     swSupport: 'serviceWorker' in navigator,
   }
 }
@@ -123,13 +123,13 @@ if (typeof window !== 'undefined') {
   // HMR guard: Store true originals on window so they survive module re-execution.
   // Without this, each HMR cycle captures the already-patched console.error as
   // "original", creating nested wrappers that produce duplicate log entries.
-  const w = window as any
-  if (!w.__debugOriginalConsoleError) {
-    w.__debugOriginalConsoleError = console.error
-    w.__debugOriginalConsoleWarn = console.warn
+  if (!window.__debugOriginalConsoleError) {
+    window.__debugOriginalConsoleError = console.error
+    window.__debugOriginalConsoleWarn = console.warn
   }
-  const originalError: (...args: unknown[]) => void = w.__debugOriginalConsoleError
-  const originalWarn: (...args: unknown[]) => void = w.__debugOriginalConsoleWarn
+  // Non-null after the guard above sets them.
+  const originalError = window.__debugOriginalConsoleError!
+  const originalWarn = window.__debugOriginalConsoleWarn!
 
   // Re-entrancy guard: prevents infinite recursion if a subscriber or library
   // calls console.error/warn during a debugAdd callback chain.
@@ -156,8 +156,8 @@ if (typeof window !== 'undefined') {
   // --- Global error capture ---
   // Installed at module load time — captures crashes before SvelteKit mounts.
   // HMR guard prevents duplicate listeners during development.
-  if (!(window as any).__debugLogListenersAttached) {
-    (window as any).__debugLogListenersAttached = true
+  if (!window.__debugLogListenersAttached) {
+    window.__debugLogListenersAttached = true
 
     window.addEventListener('error', (e) => {
       debugAdd('global', 'error', e.message || 'Unknown error', {
@@ -176,22 +176,22 @@ if (typeof window !== 'undefined') {
   // The inline <script> in app.html captures errors before JS bundles load and stores
   // them in window.__debugErrors. Import them into the circular buffer, then clean up
   // the inline listeners to prevent double-capture now that the module has taken over.
-  if (Array.isArray((window as any).__debugErrors)) {
-    for (const err of (window as any).__debugErrors) {
+  if (Array.isArray(window.__debugErrors)) {
+    for (const err of window.__debugErrors) {
       debugAdd('boot', 'error', err.msg, err.stack ? { stack: err.stack } : undefined)
     }
     // Clean up: module listeners now handle all future errors.
     // Remove inline listeners (stored as named references on window by app.html)
     // and clear the pre-framework buffer.
-    if (typeof (window as any).__debugInlineErrorHandler === 'function') {
-      window.removeEventListener('error', (window as any).__debugInlineErrorHandler)
-      delete (window as any).__debugInlineErrorHandler
+    if (typeof window.__debugInlineErrorHandler === 'function') {
+      window.removeEventListener('error', window.__debugInlineErrorHandler)
+      delete window.__debugInlineErrorHandler
     }
-    if (typeof (window as any).__debugInlineRejectionHandler === 'function') {
-      window.removeEventListener('unhandledrejection', (window as any).__debugInlineRejectionHandler)
-      delete (window as any).__debugInlineRejectionHandler
+    if (typeof window.__debugInlineRejectionHandler === 'function') {
+      window.removeEventListener('unhandledrejection', window.__debugInlineRejectionHandler)
+      delete window.__debugInlineRejectionHandler
     }
-    (window as any).__debugErrors = []
+    window.__debugErrors = []
   }
 
   debugAdd('boot', 'info', 'Debug log module initialised')

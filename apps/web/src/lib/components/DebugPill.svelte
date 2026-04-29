@@ -47,8 +47,12 @@
 
   // Auto-scroll log to bottom on new entries.
   // tick() waits for Svelte's pending DOM updates to flush before scrolling.
+  // The .scrollTop = .scrollHeight write is inside an async tick().then(),
+  // so it can't trigger a synchronous reactive loop — eslint-plugin-svelte
+  // flags it conservatively but the asynchrony breaks the cycle.
   $: if (logContainer && entries.length) {
     tick().then(() => {
+      // eslint-disable-next-line svelte/infinite-reactive-loop
       if (logContainer) logContainer.scrollTop = logContainer.scrollHeight;
     });
   }
@@ -63,9 +67,9 @@
     });
 
     // Signal to inline pill that the framework has mounted
-    (window as any).__debugSvelteMounted = true;
-    if (typeof (window as any).__debugClearLoadTimer === 'function') {
-      (window as any).__debugClearLoadTimer();
+    window.__debugSvelteMounted = true;
+    if (typeof window.__debugClearLoadTimer === 'function') {
+      window.__debugClearLoadTimer();
     }
 
     debugAdd('boot', 'success', 'SvelteKit mounted, debug pill active');
@@ -226,11 +230,11 @@
 
     // Standalone mode
     const standalone = window.matchMedia('(display-mode: standalone)').matches
-      || (navigator as any).standalone === true;
+      || navigator.standalone === true;
     results.push({ label: 'Standalone', status: standalone ? 'pass' : 'warn', detail: String(standalone) });
 
     // beforeinstallprompt
-    const hasPrompt = !!(window as any).__pwaInstallPromptEvent;
+    const hasPrompt = !!window.__pwaInstallPromptEvent;
     results.push({ label: 'Install Prompt', status: hasPrompt ? 'pass' : 'warn', detail: hasPrompt ? 'Captured' : 'Not received' });
 
     // Final stale-run guard before applying results
@@ -446,7 +450,7 @@
       background: var(--color-base-200);
       flex-shrink: 0;
     ">
-      {#each TABS as tab}
+      {#each TABS as tab (tab.key)}
         <button
           on:click={() => {
             activeTab = tab.key;
@@ -516,7 +520,7 @@
       <!-- Environment tab -->
       {#if activeTab === 'env'}
         <div style="padding: 8px 12px;">
-          {#each getEnvironmentData() as item}
+          {#each getEnvironmentData() as item (item.label)}
             <div style="
               display: flex;
               justify-content: space-between;
@@ -551,7 +555,7 @@
           {#if diagnostics.length === 0}
             <div style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center; padding: 16px;">Click "Re-run diagnostics" to check PWA status</div>
           {:else}
-            {#each diagnostics as diag}
+            {#each diagnostics as diag (diag.label)}
               <div style="
                 display: flex;
                 align-items: center;

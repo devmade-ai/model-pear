@@ -73,6 +73,11 @@ declare global {
     __debugLoadTimer?: ReturnType<typeof setTimeout>;
     __debugInlineErrorHandler?: (e: ErrorEvent) => void;
     __debugInlineRejectionHandler?: (e: PromiseRejectionEvent) => void;
+    /** Originals captured before debugLog patches them (HMR-safe pattern). */
+    __debugOriginalConsoleError?: (...args: unknown[]) => void;
+    __debugOriginalConsoleWarn?: (...args: unknown[]) => void;
+    /** HMR / repeat-import idempotency guard for debugLog listeners. */
+    __debugLogListenersAttached?: boolean;
   }
 
   /** Brave browser detection — only Brave ships this object in the wild. */
@@ -80,6 +85,8 @@ declare global {
     brave?: {
       isBrave?: () => Promise<boolean>;
     };
+    /** Safari-specific PWA standalone-mode flag. */
+    standalone?: boolean;
   }
 }
 

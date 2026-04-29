@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { base } from '$app/paths';
+  import { resolve } from '$app/paths';
   import {
     MODEL_1_COST_PLUS,
     MODEL_2_LICENCE,
@@ -57,12 +57,12 @@
   ];
 
   function selectModel(modelId: string) {
-    goto(`${base}/structuring/${modelId}`);
+    goto(resolve('/structuring/[model]', { model: modelId }));
   }
 
   function handleWizardSelect(event: CustomEvent<{ modelId: ModelId; variantId?: string }>) {
     const { modelId } = event.detail;
-    goto(`${base}/structuring/${modelId}`);
+    goto(resolve('/structuring/[model]', { model: modelId }));
   }
 
   function handleWizardSkip() {
@@ -117,7 +117,7 @@
   {:else}
     <!-- Model Overview Grid -->
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {#each models as model}
+      {#each models as model (model.id)}
         <button
           on:click={() => selectModel(model.id)}
           class="card p-6 text-left hover:border-primary/50 transition-all duration-200 group"
@@ -147,7 +147,7 @@
           <div class="mb-4">
             <p class="text-xs font-medium text-base-content/70 mb-2">Best for:</p>
             <div class="flex flex-wrap gap-1">
-              {#each model.bestFor as tag}
+              {#each model.bestFor as tag (tag)}
                 <span class="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
                   {tag}
                 </span>
@@ -159,7 +159,7 @@
           <div class="mb-4">
             <p class="text-xs font-medium text-base-content/70 mb-2">Key features:</p>
             <ul class="text-xs text-base-content/70 space-y-1">
-              {#each model.keyFeatures as feature}
+              {#each model.keyFeatures as feature (feature)}
                 <li class="flex items-center">
                   <span class="text-success mr-2">✓</span>
                   {feature}

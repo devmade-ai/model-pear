@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { base } from '$app/paths';
+  import { resolve } from '$app/paths';
 </script>
 
 <svelte:head>
@@ -21,7 +21,7 @@
   <!-- Mode selector -->
   <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
     <!-- Mode 1: Pricing Calculator -->
-    <a href="{base}/pricing" class="card bg-base-200 border border-base-300 transition-all duration-200 hover:border-primary/50 hover:bg-base-200/80 p-8 group">
+    <a href={resolve('/pricing')} class="card bg-base-200 border border-base-300 transition-all duration-200 hover:border-primary/50 hover:bg-base-200/80 p-8 group">
       <div class="flex items-center space-x-4 mb-4">
         <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
           <span class="text-2xl">💰</span>
@@ -43,7 +43,7 @@
     </a>
 
     <!-- Mode 2: Transaction Structuring -->
-    <a href="{base}/structuring" class="card bg-base-200 border border-base-300 transition-all duration-200 hover:border-primary/50 hover:bg-base-200/80 p-8 group">
+    <a href={resolve('/structuring')} class="card bg-base-200 border border-base-300 transition-all duration-200 hover:border-primary/50 hover:bg-base-200/80 p-8 group">
       <div class="flex items-center space-x-4 mb-4">
         <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center">
           <span class="text-2xl">📊</span>

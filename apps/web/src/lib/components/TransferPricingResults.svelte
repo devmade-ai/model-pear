@@ -39,7 +39,7 @@
 
       <h3 class="text-sm font-medium text-base-content/70 mb-2">Required Documentation</h3>
       <ul class="text-xs text-base-content/70 space-y-1">
-        {#each transferPricing.documentation as doc}
+        {#each transferPricing.documentation as doc (doc)}
           <li>• {doc}</li>
         {/each}
       </ul>
@@ -74,7 +74,7 @@
 
         <h3 class="text-sm font-medium text-base-content/70 mb-2">Required Documentation</h3>
         <ul class="text-xs text-base-content/70 space-y-1">
-          {#each transferPricing.documentation as doc}
+          {#each transferPricing.documentation as doc (doc)}
             <li>• {doc}</li>
           {/each}
         </ul>
