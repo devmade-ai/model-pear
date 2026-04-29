@@ -86,7 +86,7 @@ Engage reputable independent valuer. Note: independent valuation improves defens
 
 ---
 
-## Variant 4D: Cost Recovery with Gain Sharing
+## Variant 4D: Cost Recovery Plus
 
 ### Description
 Developer recovers all documented costs plus a share of Buyer's measured benefits (e.g., cost savings, revenue uplift). Distinct from standard cost-plus markup — here Developer's upside is tied to Buyer's outcomes, not a fixed percentage on costs.
@@ -132,7 +132,7 @@ KPI definitions must be objective and measurable. Document that adjustments refl
 
 ---
 
-## Variant 4F: Retained Stake (Staged Acquisition)
+## Variant 4F: Retained Stake
 
 ### Description
 Developer retains equity stake post-transfer. Ongoing alignment and shared upside.
@@ -156,40 +156,41 @@ Initial transfer price and retained stake value must be arm's length. Future buy
 
 ---
 
-## Standard Provisions for All BOT Variants
+## Variant 4G: Transfer with Warranty
 
-The following provisions apply to **any BOT arrangement** (4A–4F, 4H), not as standalone alternatives but as essential terms within whichever pricing model applies.
+### Description
+The transfer is structured around explicit performance warranties and a holdback / escrow mechanism that protects the Buyer if the system underperforms post-transfer. Warranty terms (uptime, functional spec, defect-free period) become primary structuring elements rather than boilerplate.
 
-### Warranty and Escrow Provisions
+### Best Scenario
+**Risk mitigation for Buyer is the dominant concern** — typically because the system is mission-critical, the Buyer has no operational track record with this Developer, or the transfer happens before the Operate phase has fully validated the system.
 
-Every BOT transfer should address:
-- **Performance warranties**: System meets specified uptime, functionality, and compliance requirements
-- **Defect remediation**: Developer's obligations if defects discovered post-transfer
-- **Escrow mechanism**: Portion of transfer price held pending warranty period (typically 10–20% for 12–24 months)
-- **Release conditions**: Clear criteria for escrow release or forfeiture
+### Real-World Example
+> A SA bank takes over a digital-banking platform built and operated by a fintech for 18 months. The bank's regulator requires explicit defect-remediation commitments. Structure: R10M transfer price, R2M held in escrow for 18 months. Developer warrants no critical defects, ≥ 99.5% uptime capability, regulatory compliance. Escrow funds any remediation; the unused balance releases to the Developer after the warranty period closes clean.
 
-**Example clause:** "R2M of transfer price held in escrow for 18 months. Developer warrants no critical defects, 99.5% uptime capability, regulatory compliance. Escrow funds remediation costs; balance released after clear warranty period."
+### Why 4G Over Other Variants
+- Front-loads the most contentious post-transfer dispute (defect liability) into clear escrow + release mechanics
+- Lets the Buyer take the system on day-one without absorbing all the operational risk
+- Compatible with any pricing variant underneath — 4A/4B/4C set the headline price, 4G specifies how a warranty holdback applies
+- Standard practice in regulated industries (finance, health, energy) where defect tolerance is low
 
 ### Operation Period Economics
-
-BOT has three phases — the Operate phase economics must be addressed:
-- **Operation fees**: What does Developer earn during operation period? (Service fees, hosting fees, SLA-based payments)
+BOT has three phases — the Operate phase economics interact with warranty design:
+- **Operation fees**: What does Developer earn during operation? (Service fees, hosting fees, SLA-based payments.)
 - **Interaction with transfer price**: Does high operation revenue justify lower transfer price (Developer already compensated) or higher transfer price (proven value)?
-- **Cost allocation**: How are operation costs treated — separate from development costs or bundled?
+- **Cost allocation**: Operation costs treated separately from development costs, or bundled?
 
-**TP implication:** For related parties, profit must be appropriately allocated across all three phases. Document the rationale for operation-phase pricing and its relationship to transfer price.
+**TP implication:** For related parties, profit must be appropriately allocated across all three phases. Document the rationale for operation-phase pricing and its relationship to the transfer price.
 
 ### Transition and Knowledge Transfer
-
-Every BOT should include transition provisions:
-- **Knowledge transfer period**: Typically 3–6 months post-transfer for complex systems
+4G typically pairs with explicit transition provisions (also good practice for any BOT):
+- **Knowledge transfer period**: 3–6 months post-transfer for complex systems
 - **Documentation handover**: Technical docs, source code, operational runbooks
 - **Employee considerations**: Key personnel may transfer with the asset; address employment terms
-- **Data ownership**: Clarify ownership of data generated during operation period
+- **Data ownership**: Clarify ownership of data generated during operation
 - **Ongoing support**: Post-transfer support obligations and pricing
 
 ### Transfer Pricing Consideration
-Warranty escrow, operation fees, and transition costs should all reflect market practice. Document each element's arm's length basis.
+Warranty escrow, operation fees, and transition costs must reflect market practice. The escrow percentage (typically 10–20%) and warranty period (typically 12–24 months) should be benchmarked against comparable third-party BOT arrangements. For related parties, document each element's arm's length basis — tax authorities will probe escrow that looks too generous (may be a disguised price reduction) or too thin (may be undercompensating Buyer for risk).
 
 ---
 
@@ -221,26 +222,28 @@ TP expertise required in both jurisdictions. Document compliance with both count
 
 | Scenario | Best Variant |
 |----------|--------------|
-| Both parties want price certainty (short duration) | **4A** — fixed price |
-| Price should reflect actual performance | **4B** — formula-based |
-| TP defensibility paramount, related parties | **4C** — fair market value |
-| Risk-sharing, Developer needs cost recovery | **4D** — cost recovery with gain sharing |
-| Operational KPIs should affect value | **4E** — performance-based |
-| Developer wants long-term upside, staged transition | **4F** — retained stake |
-| International transaction | **4H** — cross-border |
+| Both parties want price certainty (short duration) | **4A** — Fixed Transfer Price |
+| Price should reflect actual performance | **4B** — Formula-Based Transfer Price |
+| TP defensibility paramount, related parties | **4C** — Fair Market Value at Transfer |
+| Risk-sharing, Developer needs cost recovery | **4D** — Cost Recovery Plus |
+| Operational KPIs should affect value | **4E** — Performance-Based Transfer |
+| Developer wants long-term upside, staged transition | **4F** — Retained Stake |
+| Mission-critical handover, defect risk dominates | **4G** — Transfer with Warranty |
+| International transaction | **4H** — Cross-Border BOT |
 
-**Note:** Warranty/escrow provisions, operation period economics, and transition terms (see Standard Provisions section) apply to **all variants**, not as an alternative choice.
+**Note:** 4G's warranty / escrow / transition provisions apply across most variants — 4G makes them the primary structuring choice when defect-risk mitigation is dominant, but 4A–4F and 4H all benefit from including these terms.
 
 ---
 
 ## Common Mistakes to Avoid
 
 1. **Using 4A (fixed price) for long-duration BOT without adjustment mechanism** — arm's length price at transfer may differ materially from contract price
-2. **Omitting warranty/escrow from any variant** — Buyer absorbs defect risk (see Standard Provisions)
+2. **Omitting warranty/escrow from a defect-sensitive transfer** — Buyer absorbs defect risk; if the project is mission-critical, choose 4G as the primary structure
 3. **Not documenting 4B formula rationale** — TP vulnerability
 4. **Ignoring operation period economics** — profit attribution across BOT phases unclear
 5. **Ignoring treaty provisions in 4H** — suboptimal tax outcome
 6. **Using unrealistic valuation multiples in 4B** — validate against comparable transactions
+7. **Setting 4G escrow too generously or too thinly** — too generous looks like a disguised price reduction; too thin undercompensates the Buyer for risk. Benchmark against comparable third-party BOTs.
 
 ---
 
