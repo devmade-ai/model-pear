@@ -32,7 +32,7 @@
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  function makeOptions(_rev: number): ApexCharts.ApexOptions {
+  function makeOptions(_rev: number, _deps: unknown[]): ApexCharts.ApexOptions {
     // Cast: ApexCharts' label-formatter type signature is `(value: string)`
     // but for numeric axes it's invoked with a number at runtime. The cast
     // accepts the type-vs-runtime mismatch ApexCharts itself ships with.
@@ -135,7 +135,7 @@
     },
   } as ApexCharts.ApexOptions);
   }
-  $: options = makeOptions(themeKey);
+  $: options = makeOptions(themeKey, [minimumPrice, maximumPrice, currentPrice, suggestedPrice, equilibriumExists, isPercentage]);
 </script>
 
 <div class="w-full">

@@ -24,7 +24,7 @@
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  function makeOptions(_rev: number): ApexCharts.ApexOptions {
+  function makeOptions(_rev: number, _sens: unknown, _baseValue: number): ApexCharts.ApexOptions {
     // Cast: ApexCharts' label-formatter type signature is `(value: string)`
     // but for numeric axes it's invoked with a number at runtime. The cast
     // accepts the type-vs-runtime mismatch ApexCharts itself ships with.
@@ -79,7 +79,7 @@
     ],
   } as ApexCharts.ApexOptions);
   }
-  $: options = makeOptions(themeKey);
+  $: options = makeOptions(themeKey, sensitivities, baseValue);
 </script>
 
 <div class="card p-4">

@@ -12,7 +12,7 @@
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  function makeOptions(_rev: number) {
+  function makeOptions(_rev: number, _devNPV: number, _buyerNPV: number) {
     return {
     chart: { type: 'bar' as const, toolbar: { show: false } },
     plotOptions: {
@@ -42,7 +42,7 @@
     series: [{ name: 'NPV', data: [developerNPV, buyerNPV] }],
   };
   }
-  $: options = makeOptions(themeKey);
+  $: options = makeOptions(themeKey, developerNPV, buyerNPV);
 </script>
 
 <div class="card p-4">

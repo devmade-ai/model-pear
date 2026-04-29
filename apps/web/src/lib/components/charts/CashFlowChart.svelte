@@ -12,13 +12,15 @@
   $: years = developerData.map((d) => `Year ${d.year}`);
 
   // Theme reactivity: extract `$themeRev` into a plain variable so Svelte's
-  // compiler unambiguously tracks the dependency, then reference it in the
-  // options block via the comma operator. Re-runs `getThemeColor()` calls
-  // with fresh DaisyUI tokens on every theme toggle.
+  // compiler unambiguously tracks the dependency. The data props are passed
+  // as explicit args too — Svelte's $: dependency analysis is lexical and
+  // only tracks vars read in the call expression, not closures inside the
+  // function. Without these args, options would only update on theme flip,
+  // not when developerData / buyerData change.
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  function makeOptions(_rev: number) {
+  function makeOptions(_rev: number, _devData: unknown, _buyerData: unknown) {
     return {
     chart: {
       type: 'bar' as const,
@@ -60,7 +62,7 @@
     ],
   };
   }
-  $: options = makeOptions(themeKey);
+  $: options = makeOptions(themeKey, developerData, buyerData);
 </script>
 
 <div class="card p-4">

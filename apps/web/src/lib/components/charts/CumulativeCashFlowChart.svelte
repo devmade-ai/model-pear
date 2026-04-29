@@ -15,7 +15,7 @@
   let themeKey = 0;
   $: themeKey = $themeRev;
 
-  function makeOptions(_rev: number) {
+  function makeOptions(_rev: number, _devData: unknown, _buyerData: unknown) {
     return {
     chart: { type: 'line' as const, toolbar: { show: false } },
     colors: [getThemeColor('--color-primary'), getThemeColor('--color-secondary')],
@@ -59,7 +59,7 @@
     ],
   };
   }
-  $: options = makeOptions(themeKey);
+  $: options = makeOptions(themeKey, developerData, buyerData);
 </script>
 
 <div class="card p-4">
