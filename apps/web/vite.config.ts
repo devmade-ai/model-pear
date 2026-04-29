@@ -15,8 +15,11 @@ export default defineConfig({
        - cleanupOutdatedCaches: drop precaches from previous SW
          generations so cache storage doesn't grow unbounded across
          deploys.
-       - manifest: keeps in sync with apps/web/static/manifest.webmanifest;
-         the plugin generates its own merged manifest at build time. */
+       - manifest: VitePWA generates the build-time manifest from the
+         literal below. The static apps/web/static/manifest.webmanifest
+         was removed earlier on this branch to keep it as a single
+         source of truth. theme_color / background_color match dim
+         base-100 because dim is the default theme (see app.html). */
     VitePWA({
       registerType: 'prompt',
       injectRegister: false,  // The pwa.ts module calls registerSW manually.
