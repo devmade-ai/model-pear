@@ -88,6 +88,16 @@ declare global {
     /** Safari-specific PWA standalone-mode flag. */
     standalone?: boolean;
   }
+
+  /**
+   * Custom events dispatched on `window`. Augmenting WindowEventMap means
+   * `window.addEventListener('theme:change', e => e.detail.dark)` gets
+   * `dark` typed as boolean automatically — no per-call `as CustomEvent`
+   * casts.
+   */
+  interface WindowEventMap {
+    'theme:change': CustomEvent<{ dark: boolean }>;
+  }
 }
 
 // SvelteKit's App namespace — required boilerplate even when empty.

@@ -197,10 +197,10 @@
 
     // Listen for theme changes from any source (toggle button, cross-tab
     // storage event, OS-preference flip). Keeps the menu's label in sync.
-    track(window, 'theme:change', ((e: Event) => {
-      const detail = (e as CustomEvent<{ dark: boolean }>).detail;
-      isDark = detail.dark;
-    }) as EventListener);
+    // `theme:change` is typed via WindowEventMap augmentation in app.d.ts.
+    track(window, 'theme:change', (e) => {
+      isDark = e.detail.dark;
+    });
 
     // The PWA module's first updateInstallMenuVisibility() call runs at
     // module-load time, before the burger's #burger-install-item is in

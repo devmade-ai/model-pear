@@ -43,10 +43,10 @@
     // and tooltip styling automatically. Series colors (the hex values in
     // each per-chart `colors` array) are intentional brand choices and
     // stay constant across themes.
-    const onThemeChange = (e: Event) => {
+    // 'theme:change' is typed via WindowEventMap augmentation in app.d.ts.
+    const onThemeChange = (e: WindowEventMap['theme:change']) => {
       if (!chart) return;
-      const detail = (e as CustomEvent<{ dark: boolean }>).detail;
-      chart.updateOptions({ theme: { mode: detail.dark ? 'dark' : 'light' } });
+      chart.updateOptions({ theme: { mode: e.detail.dark ? 'dark' : 'light' } });
     };
     window.addEventListener('theme:change', onThemeChange);
     cleanupThemeListener = () => {
