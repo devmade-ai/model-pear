@@ -241,7 +241,7 @@
         <h3 class="text-sm font-semibold text-primary mb-2">Quick Summary</h3>
         <div class="grid gap-2 {$selectedOptions.length === 2 ? 'grid-cols-2' : $selectedOptions.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}">
           {#each optionSummaries as summary, i (i)}
-            <div class="bg-base-200 rounded-lg p-3 shadow-sm border border-base-300/50">
+            <div class="card p-3 bg-base-200 shadow-sm border border-base-300/50">
               <div class="font-medium text-base-content text-sm">{summary.name}</div>
               {#if summary.wins.length > 0}
                 <div class="text-xs text-success mt-1">
