@@ -170,8 +170,8 @@
             {#if selectedVariantPreference}
               {@const variantRec = getVariantRecommendation(topRecommendation.modelId, selectedVariantPreference)}
               {#if variantRec}
-                <div class="mt-3 bg-info/10 border border-info/30 rounded-lg p-3">
-                  <p class="text-sm text-info">
+                <div class="alert alert-info alert-soft mt-3" role="status">
+                  <p class="text-sm">
                     <span class="font-medium">Recommended variant:</span>
                     {variantRec.variants.join(', ')}
                   </p>

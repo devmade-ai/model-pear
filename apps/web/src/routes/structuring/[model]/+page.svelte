@@ -426,7 +426,7 @@
               </div>
             </div>
             <div class="flex items-center space-x-2">
-              <span class="text-xs px-2 py-1 rounded-full {result.transferPricing.riskLevel === 'low' ? 'bg-success/10 text-success border border-success/30' : result.transferPricing.riskLevel === 'medium' ? 'bg-warning/10 text-warning border border-warning/30' : 'bg-error/10 text-error border border-error/30'}">
+              <span class="badge badge-sm {result.transferPricing.riskLevel === 'low' ? 'badge-success' : result.transferPricing.riskLevel === 'medium' ? 'badge-warning' : 'badge-error'} badge-outline">
                 {result.transferPricing.riskLevel.toUpperCase()} RISK
               </span>
               <svg
