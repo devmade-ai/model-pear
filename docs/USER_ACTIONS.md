@@ -31,6 +31,53 @@ This file documents any manual steps that require user intervention. AI assistan
 
 ---
 
+### DaisyUI migration audit — browser-bound visual checks (N1-N6)
+**Added**: April 30, 2026
+**Priority**: Medium
+**Context**: The DaisyUI migration audit (Phase K + Phase L) found and fixed every code-side issue (M1: tokenised print border, M2: Tailwind `rounded-*` aliased onto DaisyUI radius tokens, M3: global `prefers-reduced-motion` rule). Six remaining checks require a real browser — token-gap visual sweep, theme reactivity, first-paint flash, forced-colors mode, prefers-reduced-motion behaviour, print preview. Run them once on `main` after these branches land, or against the deployed Vercel preview.
+
+#### Steps:
+
+Run `pnpm dev` (or open the deployed preview), then walk through each check:
+
+1. **N1 — Token-gap visual sweep**
+   - Open every route: `/`, `/pricing`, `/structuring`, `/structuring/[1..6]`.
+   - On each, toggle theme via the burger menu and confirm: every surface, border, badge, button, input, table cell, and chart series visibly recolours. Look for any element that stays the same colour across the flip — that's a hardcoded-colour leak we missed.
+   - Cover the comparison modal, debug pill, install modal, update banner, sensitivity panel, projections panel.
+
+2. **N2 — Theme reactivity smoke test**
+   - With DevTools open, toggle the theme 5× rapidly. Watch the Console: no errors. Watch the chart canvases: every series re-colours within ~200ms (BaseChart fires `chart.updateOptions({ theme: { mode } })` on the `theme:change` event).
+   - Confirm `<html>` has BOTH `class="dark"` and `data-theme="dim"` after toggling to dark, and neither/`data-theme="emerald"` after toggling to light.
+
+3. **N3 — First-paint flash (FOUC) check**
+   - In DevTools → Network, throttle to "Slow 3G". Reload `/` with the system theme set to dark. The pre-paint script in `app.html` should set theme BEFORE first paint; you should NOT see a light flash before the dark theme applies.
+   - Repeat with system theme set to light — no dark flash on reload.
+
+4. **N4 — Forced-colors (Windows High Contrast) mode**
+   - In Chrome DevTools: Rendering panel → "Emulate CSS forced-colors: active".
+   - Navigate every route. Confirm: text is readable, focus rings visible, buttons distinguishable from backgrounds, charts still convey data (even if colours flatten to system palette).
+   - We don't override forced-colors anywhere — DaisyUI handles its own components. This check verifies our custom surfaces don't break the OS contrast contract.
+
+5. **N5 — prefers-reduced-motion behaviour**
+   - In Chrome DevTools: Rendering panel → "Emulate CSS prefers-reduced-motion: reduce".
+   - Reload the page. Hover over buttons, toggle theme, open/close the comparison modal, expand/collapse projection panels. Every transition should be instantaneous (no fade, no slide, no rotate). If anything still animates, the M3 universal selector missed it — file a bug.
+   - Switch back to "no-preference"; transitions should resume normally.
+
+6. **N6 — Print preview**
+   - On `/structuring/1` (or any model page), populate inputs and click "Calculate".
+   - Open print preview (Cmd/Ctrl+P).
+   - Confirm: navigation/buttons/footer hidden; page background pure white; text pure black; tables have visible borders (M1 made these tokenised — `var(--border) solid var(--color-base-content)`); status badges retain their backgrounds; charts render in print-safe colours; no orphaned modals/overlays.
+
+#### Verification:
+- All six checks pass without surfacing visible regressions.
+- If any check fails, file a follow-up issue with the route, the action taken, and a screenshot.
+
+#### Notes:
+- These are one-off post-merge checks for the DaisyUI migration audit. They don't need to repeat unless DaisyUI is upgraded again or the theme system is touched.
+- For headless verification, Playwright with `--browser=chromium --media=print` could automate N6, and `prefers-reduced-motion` / `forced-colors` can be set per-test via `page.emulateMedia()` — but the visual-judgement checks (N1, N3) are easier to do by eye.
+
+---
+
 ## Completed Actions
 
 *Actions move here once completed, with date and any relevant notes.*
