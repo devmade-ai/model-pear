@@ -108,7 +108,7 @@
     <div class="flex items-center space-x-2">
       <span class="text-lg">📊</span>
       <h2 class="text-lg font-semibold text-base-content">Saved Options</h2>
-      <span class="badge-primary">{$savedOptions.length}</span>
+      <span class="badge badge-primary">{$savedOptions.length}</span>
     </div>
     <span class="text-base-content/70">{isExpanded ? '▼' : '▶'}</span>
   </button>
@@ -185,7 +185,7 @@
                   </button>
                 {/if}
                 <div class="flex items-center space-x-2 text-xs text-base-content/70 mt-0.5">
-                  <span class="badge-primary text-xs py-0">{getModelLabel(option.modelId)}</span>
+                  <span class="badge badge-primary badge-sm">{getModelLabel(option.modelId)}</span>
                   <span>{option.variantId}</span>
                   <span>•</span>
                   <span>{formatCurrency(option.result.developer.revenue.total)}</span>

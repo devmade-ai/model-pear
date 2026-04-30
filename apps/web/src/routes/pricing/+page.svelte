@@ -602,15 +602,15 @@
 
         {#if results}
           <!-- Equilibrium Status -->
-          <div class="mb-6 p-4 rounded-lg {results.equilibriumExists ? 'bg-success/10 border border-success/30' : 'bg-error/10 border border-error/30'}">
+          <div class="alert {results.equilibriumExists ? 'alert-success' : 'alert-error'} alert-soft mb-6 flex-col items-start" role="status">
             <div class="flex items-center gap-2 mb-2">
               <span class="text-2xl">{results.equilibriumExists ? '✓' : '✗'}</span>
-              <h3 class="font-semibold {results.equilibriumExists ? 'text-success' : 'text-error'}">
+              <h3 class="font-semibold">
                 {results.equilibriumExists ? 'Equilibrium Exists' : 'No Viable Price Range'}
               </h3>
             </div>
             {#if results.equilibriumExists}
-              <p class="text-sm text-success/80">
+              <p class="text-sm">
                 A mutually beneficial price exists between {selectedModel === 'marketplace' ? formatPercent(results.minimumPrice) : formatCurrency(results.minimumPrice)} and {selectedModel === 'marketplace' ? formatPercent(results.maximumPrice) : formatCurrency(results.maximumPrice)}
               </p>
               <div class="mt-3 p-3 bg-base-200 rounded border border-success/30">

@@ -5,7 +5,9 @@
    * @prop icon - Emoji or icon to display
    * @prop title - Section title
    * @prop badge - Optional badge text
-   * @prop badgeClass - Optional badge class (default: badge-primary)
+   * @prop badgeClass - DaisyUI badge variant class (default: badge-primary).
+   *                   The base `badge` class is applied automatically; pass
+   *                   only the variant (e.g. "badge-success badge-outline").
    */
   export let icon: string = '';
   export let title: string;
@@ -20,7 +22,7 @@
     {/if}
     <h2 class="text-lg font-semibold text-base-content">{title}</h2>
     {#if badge}
-      <span class={badgeClass}>{badge}</span>
+      <span class="badge {badgeClass}">{badge}</span>
     {/if}
   </div>
 

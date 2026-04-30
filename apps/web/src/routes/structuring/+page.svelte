@@ -148,7 +148,7 @@
             <p class="text-xs font-medium text-base-content/70 mb-2">Best for:</p>
             <div class="flex flex-wrap gap-1">
               {#each model.bestFor as tag (tag)}
-                <span class="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+                <span class="badge badge-primary badge-soft badge-sm">
                   {tag}
                 </span>
               {/each}
@@ -200,42 +200,42 @@
               <td class="font-medium text-base-content">Cost-Plus</td>
               <td>Buyer</td>
               <td>Project-based</td>
-              <td><span class="badge-success">Low</span></td>
+              <td><span class="badge badge-success">Low</span></td>
               <td>6</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">Licence</td>
               <td>Developer</td>
               <td>Upfront / Royalty</td>
-              <td><span class="badge-warning">Medium</span></td>
+              <td><span class="badge badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">Joint Dev</td>
               <td>Shared</td>
               <td>Cost contribution</td>
-              <td><span class="badge-success">Low</span></td>
+              <td><span class="badge badge-success">Low</span></td>
               <td>8</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">BOT</td>
               <td>Developer → Buyer</td>
               <td>Fees + Transfer</td>
-              <td><span class="badge-warning">Medium</span></td>
+              <td><span class="badge badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">Sale</td>
               <td>Buyer</td>
               <td>Upfront / Earnout</td>
-              <td><span class="badge-warning">Medium</span></td>
+              <td><span class="badge badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">SaaS</td>
               <td>Developer</td>
               <td>Subscription</td>
-              <td><span class="badge-success">Low</span></td>
+              <td><span class="badge badge-success">Low</span></td>
               <td>9</td>
             </tr>
           </tbody>

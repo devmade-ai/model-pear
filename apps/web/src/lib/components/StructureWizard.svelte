@@ -94,13 +94,16 @@
     dispatch('select', { modelId, variantId });
   }
 
-  function getMatchColorClass(color: string) {
-    // Dark-theme compatible semantic colors
+  // Map match-level colour name → DaisyUI badge variant. Used as a
+  // soft-coloured pill on the alternative-options row. Caller wraps with
+  // `badge badge-soft {variant}` so the base + soft modifier apply
+  // alongside the colour variant.
+  function getMatchBadgeVariant(color: string) {
     const colorMap: Record<string, string> = {
-      green: 'text-success bg-success/10 border-success/30',
-      blue: 'text-info bg-info/10 border-info/30',
-      yellow: 'text-warning bg-warning/10 border-warning/30',
-      red: 'text-error bg-error/10 border-error/30',
+      green: 'badge-success',
+      blue: 'badge-info',
+      yellow: 'badge-warning',
+      red: 'badge-error',
     };
     return colorMap[color] || colorMap.blue;
   }
@@ -170,8 +173,8 @@
             {#if selectedVariantPreference}
               {@const variantRec = getVariantRecommendation(topRecommendation.modelId, selectedVariantPreference)}
               {#if variantRec}
-                <div class="mt-3 bg-info/10 border border-info/30 rounded-lg p-3">
-                  <p class="text-sm text-info">
+                <div class="alert alert-info alert-soft mt-3" role="status">
+                  <p class="text-sm">
                     <span class="font-medium">Recommended variant:</span>
                     {variantRec.variants.join(', ')}
                   </p>
@@ -202,7 +205,7 @@
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                   <span class="text-xl">{rec.icon}</span>
-                  <span class="{getMatchColorClass(rec.matchLevel.color)} px-2 py-0.5 rounded text-xs font-medium">
+                  <span class="badge badge-soft badge-sm {getMatchBadgeVariant(rec.matchLevel.color)}">
                     {rec.matchLevel.icon}
                   </span>
                   <h5 class="font-medium text-base-content">{rec.shortName}</h5>

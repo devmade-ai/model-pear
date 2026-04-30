@@ -41,7 +41,7 @@
       {label}
     </label>
     {#if benchmark}
-      <span class="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+      <span class="badge badge-primary badge-soft badge-sm">
         {benchmark}
       </span>
     {/if}

@@ -34,18 +34,26 @@ export function formatPercent(value: number, decimals = 1): string {
 }
 
 /**
- * Get risk level badge class
+ * Get risk-level DaisyUI badge variant class.
+ *
+ * Returns just the variant ("badge-success" / "badge-warning" /
+ * "badge-error" / "badge-info"); ResultPanel applies the base `badge`
+ * class automatically. Earlier values ("badge-green" / "badge-amber" /
+ * "badge-red" / "badge-blue") were stale — those classes don't exist in
+ * DaisyUI v5, so risk badges rendered styleless. After the DaisyUI
+ * semantic-token migration, risk levels use the same palette as the
+ * rest of the app.
  */
 export function getRiskBadgeClass(level: string): string {
   switch (level.toLowerCase()) {
     case 'low':
-      return 'badge-green';
+      return 'badge-success';
     case 'medium':
-      return 'badge-amber';
+      return 'badge-warning';
     case 'high':
-      return 'badge-red';
+      return 'badge-error';
     default:
-      return 'badge-blue';
+      return 'badge-info';
   }
 }
 
