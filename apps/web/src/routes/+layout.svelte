@@ -36,7 +36,7 @@
 
   let menuOpen = false;
   let triggerEl: HTMLButtonElement | null = null;
-  let menuEl: HTMLDivElement | null = null;
+  let menuEl: HTMLUListElement | null = null;
 
   // Mirrors the active theme so the toggle button label stays in sync
   // with cross-tab / OS-preference flips. Updated via the `theme:change`
@@ -239,8 +239,16 @@
           </a>
         </div>
 
-        <!-- Burger trigger — visible at all viewport sizes -->
-        <div class="flex items-center sm:ml-4">
+        <!-- Burger menu — DaisyUI dropdown.
+             Wrapper carries .dropdown-open / .dropdown-close so visibility
+             is fully controlled from `menuOpen` (rather than the default
+             :focus-within auto-show which would pop the menu just by
+             tabbing to the trigger). The custom keyboard nav (Up/Down/
+             Home/End/Esc/Tab-trap), body scroll lock, and HMR-safe
+             listener tracking all stay in the script block. -->
+        <div
+          class="flex items-center sm:ml-4 dropdown dropdown-end {menuOpen ? 'dropdown-open' : 'dropdown-close'}"
+        >
           <button
             bind:this={triggerEl}
             id="burger-trigger"
@@ -262,122 +270,126 @@
               </svg>
             {/if}
           </button>
+
+          <!-- Burger menu panel — DaisyUI .menu inside .dropdown-content.
+               .menu provides padding/hover/focus styling on its <li><a> /
+               <li><button> children. -->
+          <ul
+            bind:this={menuEl}
+            id="burger-menu"
+            role="menu"
+            tabindex="-1"
+            aria-labelledby="burger-trigger"
+            class="menu dropdown-content bg-base-200 border border-base-300 rounded-box shadow-2xl w-72 max-w-[calc(100vw-1rem)] mt-2 p-2"
+            on:keydown={handleMenuKeydown}
+          >
+            <!-- Primary nav links -->
+            <li>
+              <a
+                href={resolve('/structuring')}
+                data-menu-item
+                data-close
+                role="menuitem"
+                on:click={handleItemClick}
+              >Transaction Structuring</a>
+            </li>
+            <li>
+              <a
+                href={resolve('/pricing')}
+                data-menu-item
+                data-close
+                role="menuitem"
+                on:click={handleItemClick}
+              >Pricing Calculator</a>
+            </li>
+
+            <li class="menu-divider"><hr class="border-base-300" /></li>
+
+            <!-- Theme toggle. Stays open after toggle so the user can confirm
+                 the change visually without re-opening the menu. -->
+            <li>
+              <button
+                type="button"
+                data-menu-item
+                role="menuitem"
+                on:click={toggleTheme}
+              >
+                {#if isDark}
+                  <!-- Sun icon — clicking switches TO light -->
+                  <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                  <span>Light mode</span>
+                {:else}
+                  <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                  <span>Dark mode</span>
+                {/if}
+              </button>
+            </li>
+
+            <!-- Install app slot. The <li> stays in the DOM but the inner
+                 <button> is hidden until window.__pwa.updateInstallMenuVisibility()
+                 reveals it (Safari/Firefox always; Chromium when
+                 beforeinstallprompt is queued). The hidden state on the
+                 <button> propagates visually because .menu styles its
+                 child interactive element, and getMenuItems() filters by
+                 :not([hidden]). -->
+            <li>
+              <button
+                id="burger-install-item"
+                type="button"
+                data-menu-item
+                data-close
+                hidden
+                class="hidden"
+                role="menuitem"
+                on:click={triggerInstall}
+              >
+                <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>Install app</span>
+              </button>
+            </li>
+
+            <li class="menu-divider"><hr class="border-base-300" /></li>
+
+            <!-- Save-as-PDF: closes the menu first via savePdf() so the
+                 burger doesn't appear in the printed output. -->
+            <li>
+              <button
+                type="button"
+                data-menu-item
+                role="menuitem"
+                on:click={savePdf}
+              >
+                <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                <span>Save as PDF</span>
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
   </header>
 
-  <!-- Backdrop: clickable surface that captures every outside click and
-       closes the menu. cursor-pointer is required for iOS Safari to
-       register taps; pointer-events route through the backdrop because
-       it's at z-40 (above page content, below the menu at z-50).
-       Pointer-events:none when closed so it doesn't block page clicks. -->
-  <div
-    class="fixed inset-0 z-40 bg-base-100/60 transition-opacity duration-150 cursor-pointer"
-    class:opacity-0={!menuOpen}
-    class:opacity-100={menuOpen}
-    class:pointer-events-none={!menuOpen}
-    aria-hidden="true"
-    on:click={closeMenu}
-  ></div>
-
-  <!-- Burger menu panel -->
-  <div
-    bind:this={menuEl}
-    id="burger-menu"
-    role="menu"
-    tabindex="-1"
-    aria-labelledby="burger-trigger"
-    class="fixed top-16 right-2 sm:right-4 z-50 w-72 max-w-[calc(100vw-1rem)] origin-top-right bg-base-200 border border-base-300 rounded-lg shadow-2xl transition-all duration-150"
-    class:opacity-0={!menuOpen}
-    class:scale-95={!menuOpen}
-    class:pointer-events-none={!menuOpen}
-    class:opacity-100={menuOpen}
-    class:scale-100={menuOpen}
-    on:keydown={handleMenuKeydown}
-  >
-    <div class="py-2">
-      <!-- Primary nav links -->
-      <a
-        href={resolve('/structuring')}
-        data-menu-item
-        data-close
-        class="block px-4 py-2 text-sm text-base-content hover:bg-base-300 focus:bg-base-300 focus:outline-hidden transition-colors"
-        on:click={handleItemClick}
-        role="menuitem"
-      >Transaction Structuring</a>
-      <a
-        href={resolve('/pricing')}
-        data-menu-item
-        data-close
-        class="block px-4 py-2 text-sm text-base-content hover:bg-base-300 focus:bg-base-300 focus:outline-hidden transition-colors"
-        on:click={handleItemClick}
-        role="menuitem"
-      >Pricing Calculator</a>
-
-      <hr class="my-2 border-base-300" />
-
-      <!-- Theme toggle. Stays open after toggle so the user can confirm
-           the change visually without re-opening the menu. -->
-      <button
-        type="button"
-        data-menu-item
-        class="w-full flex items-center gap-3 px-4 py-2 text-sm text-base-content hover:bg-base-300 focus:bg-base-300 focus:outline-hidden transition-colors text-left"
-        on:click={toggleTheme}
-        role="menuitem"
-      >
-        {#if isDark}
-          <!-- Sun icon — clicking switches TO light, so show what the click delivers -->
-          <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-          <span>Light mode</span>
-        {:else}
-          <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-          </svg>
-          <span>Dark mode</span>
-        {/if}
-      </button>
-
-      <!-- Install app slot. Hidden until Chunk 5 wires beforeinstallprompt
-           and toggles the `hidden` class via window.__pwa.updateInstallMenuVisibility().
-           Onclick will call window.__pwa.triggerInstall() once Chunk 5 lands. -->
-      <button
-        id="burger-install-item"
-        type="button"
-        data-menu-item
-        data-close
-        hidden
-        class="hidden w-full flex items-center gap-3 px-4 py-2 text-sm text-base-content hover:bg-base-300 focus:bg-base-300 focus:outline-hidden transition-colors text-left"
-        on:click={triggerInstall}
-        role="menuitem"
-      >
-        <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4 4m0 0l-4-4m4 4V4" />
-        </svg>
-        <span>Install app</span>
-      </button>
-
-      <hr class="my-2 border-base-300" />
-
-      <!-- Save-as-PDF — Chunk 6 polishes the print CSS; the button itself
-           just calls window.print() with the menu closed first so the
-           burger doesn't appear in the printed output. -->
-      <button
-        type="button"
-        data-menu-item
-        class="w-full flex items-center gap-3 px-4 py-2 text-sm text-base-content hover:bg-base-300 focus:bg-base-300 focus:outline-hidden transition-colors text-left"
-        on:click={savePdf}
-        role="menuitem"
-      >
-        <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-        </svg>
-        <span>Save as PDF</span>
-      </button>
-    </div>
-  </div>
+  <!-- Click-outside backdrop. DaisyUI's .dropdown does NOT ship a
+       backdrop — the only auto-close is light dismiss via :focus-within
+       which is unreliable on touch (taps outside don't always blur
+       focused descendants). This explicit backdrop intercepts every
+       outside click/tap and calls closeMenu(). z-40 sits below the
+       dropdown-content (z-999 from DaisyUI) so the menu stays clickable. -->
+  {#if menuOpen}
+    <div
+      class="fixed inset-0 z-40 bg-base-100/60 cursor-pointer"
+      aria-hidden="true"
+      on:click={closeMenu}
+    ></div>
+  {/if}
 
   <!-- Main content -->
   <main class="flex-1">
