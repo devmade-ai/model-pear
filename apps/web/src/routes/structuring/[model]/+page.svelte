@@ -426,7 +426,7 @@
               </div>
             </div>
             <div class="flex items-center space-x-2">
-              <span class="badge badge-sm {result.transferPricing.riskLevel === 'low' ? 'badge-success' : result.transferPricing.riskLevel === 'medium' ? 'badge-warning' : 'badge-error'} badge-outline">
+              <span class="text-xs px-2 py-1 rounded-full {result.transferPricing.riskLevel === 'low' ? 'bg-success/10 text-success border border-success/30' : result.transferPricing.riskLevel === 'medium' ? 'bg-warning/10 text-warning border border-warning/30' : 'bg-error/10 text-error border border-error/30'}">
                 {result.transferPricing.riskLevel.toUpperCase()} RISK
               </span>
               <svg
@@ -505,7 +505,7 @@
   {#if showSaveModal}
     <div class="fixed inset-0 bg-base-100/90 z-40"></div>
     <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
-      <div class="bg-base-200 rounded-xl border border-base-300 shadow-2xl max-w-md w-full p-6 pointer-events-auto">
+      <div class="bg-base-200 rounded-xl border border-base-300 shadow-xl max-w-md w-full p-6 pointer-events-auto">
         <h3 class="text-lg font-semibold text-base-content mb-4">Save Option</h3>
         <div class="mb-4">
           <label for="saveName" class="block text-sm font-medium text-base-content/70 mb-1">

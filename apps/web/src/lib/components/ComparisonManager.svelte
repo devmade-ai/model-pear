@@ -108,7 +108,7 @@
     <div class="flex items-center space-x-2">
       <span class="text-lg">📊</span>
       <h2 class="text-lg font-semibold text-base-content">Saved Options</h2>
-      <span class="badge badge-primary">{$savedOptions.length}</span>
+      <span class="badge-primary">{$savedOptions.length}</span>
     </div>
     <span class="text-base-content/70">{isExpanded ? '▼' : '▶'}</span>
   </button>
@@ -132,14 +132,14 @@
           <div class="flex space-x-2">
             {#if $selectedCount > 0}
               <button
-                class="btn btn-ghost btn-sm"
+                class="text-sm text-base-content/70 hover:text-base-content"
                 on:click={() => comparisonStore.clearSelection()}
               >
                 Clear
               </button>
             {/if}
             <button
-              class="btn btn-primary btn-sm"
+              class="btn btn-primary text-sm py-1 px-3"
               disabled={!$canCompare}
               on:click={handleCompare}
             >
@@ -162,7 +162,7 @@
                 type="checkbox"
                 checked={isSelected}
                 on:change={() => comparisonStore.toggleSelection(option.id)}
-                class="checkbox checkbox-primary checkbox-sm mr-3"
+                class="mr-3 h-4 w-4 text-primary rounded"
               />
 
               <!-- Content -->
@@ -173,7 +173,7 @@
                     bind:value={editName}
                     on:keydown={handleKeydown}
                     on:blur={saveEdit}
-                    class="input input-sm"
+                    class="input text-sm py-1"
                   />
                 {:else}
                   <button
@@ -185,7 +185,7 @@
                   </button>
                 {/if}
                 <div class="flex items-center space-x-2 text-xs text-base-content/70 mt-0.5">
-                  <span class="badge badge-primary badge-sm">{getModelLabel(option.modelId)}</span>
+                  <span class="badge-primary text-xs py-0">{getModelLabel(option.modelId)}</span>
                   <span>{option.variantId}</span>
                   <span>•</span>
                   <span>{formatCurrency(option.result.developer.revenue.total)}</span>
@@ -197,17 +197,15 @@
               <!-- Actions -->
               <div class="flex items-center space-x-1 ml-2">
                 <button
-                  class="btn btn-ghost btn-xs btn-square"
+                  class="p-1 text-base-content/70 hover:text-base-content"
                   title="Rename"
-                  aria-label="Rename"
                   on:click={() => startEdit(option)}
                 >
                   ✏️
                 </button>
                 <button
-                  class="btn btn-ghost btn-xs btn-square hover:text-error"
+                  class="p-1 text-base-content/70 hover:text-error"
                   title="Delete"
-                  aria-label="Delete"
                   on:click={() => comparisonStore.delete(option.id)}
                 >
                   🗑️
@@ -220,15 +218,15 @@
         <!-- Footer actions -->
         <div class="flex justify-between mt-4 pt-4 border-t border-base-300">
           <div class="flex space-x-2">
-            <button class="btn btn-ghost btn-sm" on:click={exportOptions}>
+            <button class="text-sm text-base-content/70 hover:text-base-content" on:click={exportOptions}>
               Export
             </button>
-            <button class="btn btn-ghost btn-sm" on:click={importOptions}>
+            <button class="text-sm text-base-content/70 hover:text-base-content" on:click={importOptions}>
               Import
             </button>
           </div>
           <button
-            class="btn btn-ghost btn-sm text-error hover:text-error"
+            class="text-sm text-error hover:text-error"
             on:click={() => {
               if (confirm('Delete all saved options?')) {
                 comparisonStore.clearAll();

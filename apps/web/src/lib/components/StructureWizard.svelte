@@ -117,12 +117,12 @@
     </div>
     <div class="flex gap-3">
       {#if !isComplete}
-        <button class="btn btn-link btn-sm" on:click={handleSkip}>
+        <button class="text-sm text-base-content/70 hover:text-base-content underline" on:click={handleSkip}>
           Skip wizard
         </button>
       {/if}
       {#if answeredCount > 0}
-        <button class="btn btn-link btn-sm" on:click={handleRestart}>
+        <button class="text-sm text-primary hover:text-primary/80 underline" on:click={handleRestart}>
           Start over
         </button>
       {/if}
@@ -146,7 +146,7 @@
         <p class="text-base-content/80 mb-4">{topRecommendation.description}</p>
 
         <!-- Rationale -->
-        <div class="card p-4 mb-4 bg-base-200/60">
+        <div class="bg-base-200/60 rounded-lg p-4 mb-4">
           <h4 class="text-sm font-medium text-base-content/80 mb-2">Why this model?</h4>
           <div class="text-sm text-base-content/70 whitespace-pre-line">{generateRationale(topRecommendation)}</div>
         </div>
@@ -159,7 +159,7 @@
             </h4>
             <select
               bind:value={selectedVariantPreference}
-              class="select w-full"
+              class="input w-full"
             >
               <option value="">Select a variant preference...</option>
               {#each VARIANT_FACTORS[topRecommendation.modelId].factors as factor (factor.value)}
@@ -170,8 +170,8 @@
             {#if selectedVariantPreference}
               {@const variantRec = getVariantRecommendation(topRecommendation.modelId, selectedVariantPreference)}
               {#if variantRec}
-                <div class="alert alert-info alert-soft mt-3" role="status">
-                  <p class="text-sm">
+                <div class="mt-3 bg-info/10 border border-info/30 rounded-lg p-3">
+                  <p class="text-sm text-info">
                     <span class="font-medium">Recommended variant:</span>
                     {variantRec.variants.join(', ')}
                   </p>
@@ -219,7 +219,7 @@
               {/if}
 
               <button
-                class="btn btn-link btn-sm px-0"
+                class="text-sm text-primary hover:text-primary/80"
                 on:click={() => handleUseModel(rec.modelId)}
               >
                 Use this model →
@@ -257,12 +257,14 @@
             {@const isCurrent = idx === currentQuestionIndex}
             {@const isAccessible = idx <= (QUESTION_ORDER.findIndex((id) => answers[id] === undefined) === -1 ? totalQuestions - 1 : QUESTION_ORDER.findIndex((id) => answers[id] === undefined))}
             <button
-              class="btn btn-circle btn-xs transition-all
+              class="w-8 h-8 rounded-full text-xs font-medium transition-all
                      {isCurrent
-                ? 'btn-primary ring-2 ring-primary/50'
+                ? 'bg-primary text-primary-content ring-2 ring-primary/50'
                 : isAnswered
-                  ? 'btn-success btn-outline'
-                  : 'btn-ghost'}"
+                  ? 'bg-success/20 text-success hover:bg-success/30'
+                  : isAccessible
+                    ? 'bg-base-200 text-base-content/70 hover:bg-base-200/80'
+                    : 'bg-base-200/50 text-base-content/50 cursor-not-allowed'}"
               on:click={() => goToQuestion(idx)}
               disabled={!isAccessible}
               title="Question {idx + 1}{isAnswered ? ' (answered)' : ''}"
@@ -280,7 +282,7 @@
           <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
           <span>{answeredCount} answered</span>
         </div>
-        <div class="h-2 bg-base-300 rounded-full overflow-hidden">
+        <div class="h-2 bg-border rounded-full overflow-hidden">
           <div class="h-full bg-primary transition-all duration-300" style="width: {((currentQuestionIndex + 1) / totalQuestions) * 100}%"></div>
         </div>
       </div>
@@ -307,7 +309,7 @@
                 value={option.value}
                 checked={currentAnswer === option.value}
                 on:change={() => handleAnswer(currentFactorId, option.value)}
-                class="radio radio-primary mt-1"
+                class="mt-1 w-4 h-4 text-primary"
               />
               <div class="flex-1">
                 <span class="font-medium text-base-content">{option.label}</span>
@@ -321,7 +323,10 @@
       <!-- Navigation Buttons -->
       <div class="flex items-center justify-between pt-4">
         <button
-          class="btn btn-ghost btn-sm"
+          class="px-4 py-2 text-sm font-medium rounded-lg transition-colors
+                 {canGoBack
+            ? 'text-base-content/80 bg-base-200 hover:bg-base-200/80'
+            : 'text-base-content/50 bg-base-200/50 cursor-not-allowed'}"
           on:click={handleBack}
           disabled={!canGoBack}
         >
@@ -331,14 +336,17 @@
         <div class="flex gap-3">
           {#if isLastQuestion && canGoNext}
             <button
-              class="btn btn-primary btn-sm"
+              class="btn btn-primary px-6 py-2"
               on:click={handleSeeResults}
             >
               See Recommendations →
             </button>
           {:else}
             <button
-              class="btn btn-primary btn-sm"
+              class="px-6 py-2 text-sm font-medium rounded-lg transition-colors
+                     {canGoNext
+                ? 'bg-primary text-primary-content hover:bg-primary/90'
+                : 'bg-base-200 text-base-content/70 cursor-not-allowed'}"
               on:click={handleNext}
               disabled={!canGoNext}
             >

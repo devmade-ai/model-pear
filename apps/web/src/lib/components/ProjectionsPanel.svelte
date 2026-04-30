@@ -156,7 +156,7 @@
     <div class="flex items-center space-x-4 text-sm">
       <label class="flex items-center space-x-2">
         <span class="text-base-content/70">Years:</span>
-        <select bind:value={projectionYears} class="select select-sm w-16">
+        <select bind:value={projectionYears} class="input py-1 px-2 w-16">
           <option value={3}>3</option>
           <option value={5}>5</option>
           <option value={7}>7</option>

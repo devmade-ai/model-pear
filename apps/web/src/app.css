@@ -126,18 +126,6 @@
     --color-secondary: #555555;
     --color-secondary-content: #ffffff;
 
-    /* `info` and `accent` are referenced by ProjectionMetrics, StructureWizard,
-       UpdateBanner, and the home page (`bg-info/10`, `text-info`,
-       `bg-accent/20`, `text-accent`). Without these overrides, DaisyUI's
-       screen OKLCH values bleed into print where ink contrast and
-       cross-printer reproducibility aren't guaranteed. Pinning to deep,
-       desaturated sRGB values keeps results panels readable on paper.
-       `neutral` is intentionally omitted — currently 0 refs. */
-    --color-info: #1e3a8a;
-    --color-info-content: #ffffff;
-    --color-accent: #6b21a8;
-    --color-accent-content: #ffffff;
-
     --color-success: #166534;
     --color-success-content: #ffffff;
     --color-warning: #92400e;

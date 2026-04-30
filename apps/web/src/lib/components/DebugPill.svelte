@@ -256,7 +256,7 @@
       padding: 6px 12px;
       background: var(--color-base-200);
       color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
-      border: var(--border) solid var(--color-base-300);
+      border: 1px solid var(--color-base-300);
       border-radius: 9999px;
       font-family: monospace;
       font-size: 12px;
@@ -307,8 +307,8 @@
       flex-direction: column;
       background: var(--color-base-100);
       color: var(--color-base-content);
-      border: var(--border) solid var(--color-base-300);
-      border-radius: var(--radius-field);
+      border: 1px solid var(--color-base-300);
+      border-radius: 8px;
       font-family: monospace;
       font-size: 12px;
       overflow: hidden;
@@ -335,7 +335,7 @@
             padding: 3px 8px;
             background: {copyStatus === 'copied' ? 'var(--color-success)' : copyStatus === 'failed' ? 'var(--color-error)' : 'var(--color-base-300)'};
             color: var(--color-base-content);
-            border: var(--border) solid var(--color-base-300);
+            border: 1px solid var(--color-base-300);
             border-radius: 4px;
             cursor: pointer;
             font-family: monospace;
@@ -351,7 +351,7 @@
             padding: 3px 8px;
             background: var(--color-base-300);
             color: var(--color-base-content);
-            border: var(--border) solid var(--color-base-300);
+            border: 1px solid var(--color-base-300);
             border-radius: 4px;
             cursor: pointer;
             font-family: monospace;
@@ -365,7 +365,7 @@
             padding: 3px 8px;
             background: var(--color-base-300);
             color: var(--color-base-content);
-            border: var(--border) solid var(--color-base-300);
+            border: 1px solid var(--color-base-300);
             border-radius: 4px;
             cursor: pointer;
             font-family: monospace;
@@ -393,7 +393,7 @@
               padding: 2px 6px;
               background: var(--color-base-300);
               color: var(--color-base-content);
-              border: var(--border) solid var(--color-base-300);
+              border: 1px solid var(--color-base-300);
               border-radius: 4px;
               cursor: pointer;
               font-family: monospace;
@@ -409,7 +409,7 @@
             height: 80px;
             background: var(--color-base-100);
             color: var(--color-base-content);
-            border: var(--border) solid var(--color-base-300);
+            border: 1px solid var(--color-base-300);
             border-radius: 4px;
             font-family: monospace;
             font-size: 10px;
@@ -523,7 +523,7 @@
               padding: 4px 10px;
               background: var(--color-base-300);
               color: var(--color-base-content);
-              border: var(--border) solid var(--color-base-300);
+              border: 1px solid var(--color-base-300);
               border-radius: 4px;
               cursor: pointer;
               font-family: monospace;

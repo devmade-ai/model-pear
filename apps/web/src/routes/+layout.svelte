@@ -245,7 +245,7 @@
             bind:this={triggerEl}
             id="burger-trigger"
             type="button"
-            class="btn btn-ghost btn-square"
+            class="inline-flex items-center justify-center min-h-11 min-w-11 rounded text-base-content/70 hover:text-base-content hover:bg-base-300 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-primary"
             aria-haspopup="menu"
             aria-expanded={menuOpen}
             aria-controls="burger-menu"

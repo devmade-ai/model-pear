@@ -86,22 +86,22 @@
   </div>
 
   <!-- View Mode Toggle -->
-  <div role="tablist" class="tabs tabs-box justify-center mb-8 w-fit mx-auto">
+  <div class="flex items-center justify-center gap-4 mb-8">
     <button
-      role="tab"
-      type="button"
-      aria-selected={viewMode === 'wizard'}
-      class="tab {viewMode === 'wizard' ? 'tab-active' : ''}"
+      class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+             {viewMode === 'wizard'
+        ? 'bg-primary/20 text-primary border border-primary/30'
+        : 'text-base-content/70 hover:bg-base-200'}"
       on:click={() => (viewMode = 'wizard')}
     >
       <span class="mr-2">🧙</span>
       Guided Wizard
     </button>
     <button
-      role="tab"
-      type="button"
-      aria-selected={viewMode === 'overview'}
-      class="tab {viewMode === 'overview' ? 'tab-active' : ''}"
+      class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+             {viewMode === 'overview'
+        ? 'bg-primary/20 text-primary border border-primary/30'
+        : 'text-base-content/70 hover:bg-base-200'}"
       on:click={() => (viewMode = 'overview')}
     >
       <span class="mr-2">📋</span>
@@ -200,42 +200,42 @@
               <td class="font-medium text-base-content">Cost-Plus</td>
               <td>Buyer</td>
               <td>Project-based</td>
-              <td><span class="badge badge-success">Low</span></td>
+              <td><span class="badge-success">Low</span></td>
               <td>6</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">Licence</td>
               <td>Developer</td>
               <td>Upfront / Royalty</td>
-              <td><span class="badge badge-warning">Medium</span></td>
+              <td><span class="badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">Joint Dev</td>
               <td>Shared</td>
               <td>Cost contribution</td>
-              <td><span class="badge badge-success">Low</span></td>
+              <td><span class="badge-success">Low</span></td>
               <td>8</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">BOT</td>
               <td>Developer → Buyer</td>
               <td>Fees + Transfer</td>
-              <td><span class="badge badge-warning">Medium</span></td>
+              <td><span class="badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">Sale</td>
               <td>Buyer</td>
               <td>Upfront / Earnout</td>
-              <td><span class="badge badge-warning">Medium</span></td>
+              <td><span class="badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
               <td class="font-medium text-base-content">SaaS</td>
               <td>Developer</td>
               <td>Subscription</td>
-              <td><span class="badge badge-success">Low</span></td>
+              <td><span class="badge-success">Low</span></td>
               <td>9</td>
             </tr>
           </tbody>

@@ -232,7 +232,7 @@
         <h2 class="text-xl font-bold text-base-content">Comparison View</h2>
         <span class="text-sm text-base-content/70">({$selectedOptions.length} options)</span>
       </div>
-      <button class="btn btn-ghost btn-sm btn-square" on:click={close} title="Close" aria-label="Close"> ✕ </button>
+      <button class="p-2 hover:bg-base-200 rounded-lg text-base-content" on:click={close} title="Close"> ✕ </button>
     </div>
 
     <!-- Summary Section -->
@@ -241,7 +241,7 @@
         <h3 class="text-sm font-semibold text-primary mb-2">Quick Summary</h3>
         <div class="grid gap-2 {$selectedOptions.length === 2 ? 'grid-cols-2' : $selectedOptions.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}">
           {#each optionSummaries as summary, i (i)}
-            <div class="card p-3 bg-base-200 shadow-sm border border-base-300/50">
+            <div class="bg-base-200 rounded-lg p-3 shadow-sm border border-base-300/50">
               <div class="font-medium text-base-content text-sm">{summary.name}</div>
               {#if summary.wins.length > 0}
                 <div class="text-xs text-success mt-1">
