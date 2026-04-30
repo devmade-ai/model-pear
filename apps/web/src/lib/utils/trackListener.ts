@@ -22,7 +22,7 @@
  * back to the generic EventTarget signature for everything else
  * (navigator.serviceWorker, custom emitters).
  */
-export interface TrackFn {
+interface TrackFn {
   <K extends keyof WindowEventMap>(
     target: Window,
     event: K,

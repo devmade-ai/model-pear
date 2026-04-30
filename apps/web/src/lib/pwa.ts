@@ -35,7 +35,6 @@ import { createListenerTracker } from './utils/trackListener';
 /** Browser categories used to pick install instructions. */
 export type Browser = PWABrowser;
 
-export type InstallStep = PWAInstallStep;
 export type InstallInstruction = PWAInstallInstruction;
 
 // ---------------------------------------------------------------------------

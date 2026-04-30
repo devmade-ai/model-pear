@@ -34,16 +34,6 @@ export function formatPercent(value: number, decimals = 1): string {
 }
 
 /**
- * Format a number with thousands separators
- */
-export function formatNumber(value: number, decimals = 0): string {
-  return new Intl.NumberFormat('en-ZA', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  }).format(value);
-}
-
-/**
  * Get risk level badge class
  */
 export function getRiskBadgeClass(level: string): string {

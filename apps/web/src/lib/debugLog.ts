@@ -22,7 +22,7 @@ export interface DebugEntry {
   details?: Record<string, unknown>
 }
 
-export const MAX_ENTRIES = 200
+const MAX_ENTRIES = 200
 let nextId = 0
 const entries: DebugEntry[] = []
 const subscribers = new Set<(entry: DebugEntry) => void>()
