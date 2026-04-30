@@ -126,6 +126,25 @@
     --color-secondary: #555555;
     --color-secondary-content: #ffffff;
 
+    /* DaisyUI's remaining three semantic colour pairs. info and accent are
+       referenced today by ProjectionMetrics, StructureWizard, UpdateBanner,
+       and the home page (`bg-info/10`, `text-info`, `bg-accent/20`,
+       `text-accent`). neutral has zero refs at the moment but is overridden
+       for completeness — DaisyUI emits all 10 pairs, and any future use of
+       a neutral token would otherwise bleed the screen OKLCH value into
+       ink. Pinning to deep, desaturated sRGB values keeps every themed
+       surface readable on paper.
+
+       Order matches DaisyUI's canonical primary → secondary → accent →
+       neutral → info → success → warning → error sequence (with base at
+       the top, kept first since it's the conceptual surface family). */
+    --color-accent: #6b21a8;
+    --color-accent-content: #ffffff;
+    --color-neutral: #404040;
+    --color-neutral-content: #ffffff;
+    --color-info: #1e3a8a;
+    --color-info-content: #ffffff;
+
     --color-success: #166534;
     --color-success-content: #ffffff;
     --color-warning: #92400e;
