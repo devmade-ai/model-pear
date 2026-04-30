@@ -34,7 +34,15 @@
      inputs, badges. `--radius-box` (= 1rem) drives cards / modals.
      If DaisyUI bumps either token, our `rounded-*` utilities follow
      so corners stay consistent across DaisyUI components and
-     custom surfaces. */
+     custom surfaces.
+
+     Tokens NOT aliased here:
+       --radius-selector  (used by DaisyUI checkbox/radio internally)
+       --size-{selector,field}  (drive DaisyUI's component heights)
+       --depth, --noise  (both 0 in dim and emerald; no-op to alias)
+     If a future feature builds a custom checkbox-style surface, use
+     var(--radius-selector) + var(--size-selector) directly so it
+     matches DaisyUI's selectors. */
   --radius-sm: calc(var(--radius-field) - 4px);
   --radius-md: calc(var(--radius-field) - 2px);
   --radius-lg: var(--radius-field);
