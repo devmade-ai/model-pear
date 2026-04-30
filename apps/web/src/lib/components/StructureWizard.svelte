@@ -133,7 +133,7 @@
     <!-- RESULTS VIEW -->
     <div class="space-y-6">
       <!-- Top Recommendation -->
-      <div class="bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-lg p-6 border border-success/30">
+      <div class="bg-gradient-to-br from-success/10 to-info/10 rounded-lg p-6 border border-success/30">
         <div class="flex items-center gap-3 mb-4">
           <span class="text-3xl">{topRecommendation.icon}</span>
           <div>
