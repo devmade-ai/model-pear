@@ -245,49 +245,16 @@
 {#if !expanded}
   <button
     on:click={toggleExpanded}
-    style="
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      z-index: 80;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: var(--color-base-200);
-      color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
-      border: var(--border) solid var(--color-base-300);
-      border-radius: 9999px;
-      font-family: monospace;
-      font-size: 12px;
-      cursor: pointer;
-      user-select: none;
-    "
+    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300"
     title="Open debug panel"
   >
     <span>dbg</span>
-    <span style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent);">{entries.length}</span>
+    <span class="opacity-60">{entries.length}</span>
     {#if errorCount > 0}
-      <span style="
-        background: var(--color-error);
-        color: var(--color-error-content);
-        border-radius: 9999px;
-        padding: 0 5px;
-        font-size: 10px;
-        min-width: 16px;
-        text-align: center;
-      ">{errorCount}</span>
+      <span class="badge badge-error badge-xs">{errorCount}</span>
     {/if}
     {#if warnCount > 0}
-      <span style="
-        background: var(--color-warning);
-        color: var(--color-warning-content);
-        border-radius: 9999px;
-        padding: 0 5px;
-        font-size: 10px;
-        min-width: 16px;
-        text-align: center;
-      ">{warnCount}</span>
+      <span class="badge badge-warning badge-xs">{warnCount}</span>
     {/if}
   </button>
 {/if}
@@ -331,48 +298,21 @@
       <div style="display: flex; align-items: center; gap: 4px;">
         <button
           on:click={handleCopy}
-          style="
-            padding: 3px 8px;
-            background: {copyStatus === 'copied' ? 'var(--color-success)' : copyStatus === 'failed' ? 'var(--color-error)' : 'var(--color-base-300)'};
-            color: var(--color-base-content);
-            border: var(--border) solid var(--color-base-300);
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 11px;
-          "
+          class="btn btn-xs font-mono {copyStatus === 'copied' ? 'btn-success' : copyStatus === 'failed' ? 'btn-error' : ''}"
           title="Copy debug report to clipboard"
         >
           {copyStatus === 'copied' ? 'Copied!' : copyStatus === 'failed' ? 'Failed' : 'Copy'}
         </button>
         <button
           on:click={handleClear}
-          style="
-            padding: 3px 8px;
-            background: var(--color-base-300);
-            color: var(--color-base-content);
-            border: var(--border) solid var(--color-base-300);
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 11px;
-          "
+          class="btn btn-xs font-mono"
           title="Clear all log entries"
         >Clear</button>
         <button
           on:click={toggleExpanded}
-          style="
-            padding: 3px 8px;
-            background: var(--color-base-300);
-            color: var(--color-base-content);
-            border: var(--border) solid var(--color-base-300);
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 14px;
-            line-height: 1;
-          "
+          class="btn btn-xs btn-square btn-ghost font-mono"
           title="Close debug panel"
+          aria-label="Close debug panel"
         >&times;</button>
       </div>
     </div>
@@ -389,16 +329,7 @@
           <span style="color: var(--color-warning); font-size: 11px;">Copy failed — select text below and copy manually</span>
           <button
             on:click={() => { copyFallbackText = ''; copyStatus = 'idle'; }}
-            style="
-              padding: 2px 6px;
-              background: var(--color-base-300);
-              color: var(--color-base-content);
-              border: var(--border) solid var(--color-base-300);
-              border-radius: 4px;
-              cursor: pointer;
-              font-family: monospace;
-              font-size: 10px;
-            "
+            class="btn btn-xs btn-ghost font-mono"
           >Dismiss</button>
         </div>
         <textarea
@@ -421,31 +352,19 @@
       </div>
     {/if}
 
-    <!-- Tabs -->
-    <div style="
-      display: flex;
-      border-bottom: 1px solid var(--color-base-300);
-      background: var(--color-base-200);
-      flex-shrink: 0;
-    ">
+    <!-- Tabs — DaisyUI .tabs.tabs-border keeps the bottom-border indicator
+         the original styling used; .tab-active marks the current tab. -->
+    <div role="tablist" class="tabs tabs-border bg-base-200 flex-shrink-0">
       {#each TABS as tab (tab.key)}
         <button
+          role="tab"
+          type="button"
+          class="tab font-mono text-xs flex-1 {activeTab === tab.key ? 'tab-active' : ''}"
+          aria-selected={activeTab === tab.key}
           on:click={() => {
             activeTab = tab.key;
             if (tab.key === 'pwa') runDiagnostics();
           }}
-          style="
-            flex: 1;
-            padding: 6px 8px;
-            background: {activeTab === tab.key ? 'var(--color-base-300)' : 'transparent'};
-            color: {activeTab === tab.key ? 'var(--color-base-content)' : 'color-mix(in srgb, var(--color-base-content) 50%, transparent)'};
-            border: none;
-            border-bottom: {activeTab === tab.key ? '2px solid var(--color-primary)' : '2px solid transparent'};
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 11px;
-            transition: color 0.15s;
-          "
         >{tab.label}</button>
       {/each}
     </div>
@@ -518,17 +437,7 @@
         <div style="padding: 8px 12px;">
           <button
             on:click={runDiagnostics}
-            style="
-              margin-bottom: 8px;
-              padding: 4px 10px;
-              background: var(--color-base-300);
-              color: var(--color-base-content);
-              border: var(--border) solid var(--color-base-300);
-              border-radius: 4px;
-              cursor: pointer;
-              font-family: monospace;
-              font-size: 11px;
-            "
+            class="btn btn-xs font-mono mb-2"
           >Re-run diagnostics</button>
           {#if diagnostics.length === 0}
             <div style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center; padding: 16px;">Click "Re-run diagnostics" to check PWA status</div>
