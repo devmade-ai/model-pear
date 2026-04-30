@@ -419,6 +419,13 @@ Token-level DaisyUI alignment IS in place: the synthetic overlays consume `var(-
 
 If a future change needs DaisyUI's animations or :starting-style transitions for modals, re-evaluate the trade-off — but it would require giving up the explicit z-layer scale.
 
+#### Theme-meta build-pipeline (`gen:theme-meta` + `META_COLORS_BY_THEME` + GEN markers) — N/A
+Evaluated April 30, 2026 as part of the DaisyUI-completion audit (chunks #15–#17). The build-integrity chunks of the audit checklist presuppose three pieces of infrastructure: a `gen:theme-meta` pnpm script that generates theme metadata into source, a `META_COLORS_BY_THEME` export map that lists every theme's colour tokens, and `<!-- GEN-START -->` / `<!-- GEN-END -->` markers in `app.html` delimiting machine-generated regions. None exist in this repo (verified by grep — zero matches anywhere).
+
+The four hardcoded hex sites that mirror DaisyUI tokens (`app.html` meta theme-color, `vite.config.ts` PWA manifest theme_color and background_color, `theme.ts` runtime meta update, `assets/icon-source.svg`) are checked by the on-demand `scripts/oklch-to-hex.mjs` helper (added `656f984`), which converts current `dim.css` / `emerald.css` OKLCH values to sRGB hex and prints them alongside the hardcoded values for visual diff.
+
+Deliberately not CI-wired: the four sites only drift on a major DaisyUI bump, which is a coordinated event already gated by manual review. Adding a CI assertion that auto-runs `oklch-to-hex.mjs` on every build would be over-engineering for a 4-site, major-bump-only concern. Run the script manually after bumping DaisyUI; the in-script comment block lists every site to update.
+
 ---
 
 ## Project-Specific Configuration
