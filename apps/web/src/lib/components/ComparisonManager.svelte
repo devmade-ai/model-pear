@@ -132,14 +132,14 @@
           <div class="flex space-x-2">
             {#if $selectedCount > 0}
               <button
-                class="text-sm text-base-content/70 hover:text-base-content"
+                class="btn btn-ghost btn-sm"
                 on:click={() => comparisonStore.clearSelection()}
               >
                 Clear
               </button>
             {/if}
             <button
-              class="btn btn-primary text-sm py-1 px-3"
+              class="btn btn-primary btn-sm"
               disabled={!$canCompare}
               on:click={handleCompare}
             >
@@ -197,15 +197,17 @@
               <!-- Actions -->
               <div class="flex items-center space-x-1 ml-2">
                 <button
-                  class="p-1 text-base-content/70 hover:text-base-content"
+                  class="btn btn-ghost btn-xs btn-square"
                   title="Rename"
+                  aria-label="Rename"
                   on:click={() => startEdit(option)}
                 >
                   ✏️
                 </button>
                 <button
-                  class="p-1 text-base-content/70 hover:text-error"
+                  class="btn btn-ghost btn-xs btn-square hover:text-error"
                   title="Delete"
+                  aria-label="Delete"
                   on:click={() => comparisonStore.delete(option.id)}
                 >
                   🗑️
@@ -218,15 +220,15 @@
         <!-- Footer actions -->
         <div class="flex justify-between mt-4 pt-4 border-t border-base-300">
           <div class="flex space-x-2">
-            <button class="text-sm text-base-content/70 hover:text-base-content" on:click={exportOptions}>
+            <button class="btn btn-ghost btn-sm" on:click={exportOptions}>
               Export
             </button>
-            <button class="text-sm text-base-content/70 hover:text-base-content" on:click={importOptions}>
+            <button class="btn btn-ghost btn-sm" on:click={importOptions}>
               Import
             </button>
           </div>
           <button
-            class="text-sm text-error hover:text-error"
+            class="btn btn-ghost btn-sm text-error hover:text-error"
             on:click={() => {
               if (confirm('Delete all saved options?')) {
                 comparisonStore.clearAll();

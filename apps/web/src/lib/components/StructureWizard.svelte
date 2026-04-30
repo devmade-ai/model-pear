@@ -117,12 +117,12 @@
     </div>
     <div class="flex gap-3">
       {#if !isComplete}
-        <button class="text-sm text-base-content/70 hover:text-base-content underline" on:click={handleSkip}>
+        <button class="btn btn-link btn-sm" on:click={handleSkip}>
           Skip wizard
         </button>
       {/if}
       {#if answeredCount > 0}
-        <button class="text-sm text-primary hover:text-primary/80 underline" on:click={handleRestart}>
+        <button class="btn btn-link btn-sm" on:click={handleRestart}>
           Start over
         </button>
       {/if}
@@ -219,7 +219,7 @@
               {/if}
 
               <button
-                class="text-sm text-primary hover:text-primary/80"
+                class="btn btn-link btn-sm px-0"
                 on:click={() => handleUseModel(rec.modelId)}
               >
                 Use this model →
@@ -257,14 +257,12 @@
             {@const isCurrent = idx === currentQuestionIndex}
             {@const isAccessible = idx <= (QUESTION_ORDER.findIndex((id) => answers[id] === undefined) === -1 ? totalQuestions - 1 : QUESTION_ORDER.findIndex((id) => answers[id] === undefined))}
             <button
-              class="w-8 h-8 rounded-full text-xs font-medium transition-all
+              class="btn btn-circle btn-xs transition-all
                      {isCurrent
-                ? 'bg-primary text-primary-content ring-2 ring-primary/50'
+                ? 'btn-primary ring-2 ring-primary/50'
                 : isAnswered
-                  ? 'bg-success/20 text-success hover:bg-success/30'
-                  : isAccessible
-                    ? 'bg-base-200 text-base-content/70 hover:bg-base-200/80'
-                    : 'bg-base-200/50 text-base-content/50 cursor-not-allowed'}"
+                  ? 'btn-success btn-outline'
+                  : 'btn-ghost'}"
               on:click={() => goToQuestion(idx)}
               disabled={!isAccessible}
               title="Question {idx + 1}{isAnswered ? ' (answered)' : ''}"
@@ -323,10 +321,7 @@
       <!-- Navigation Buttons -->
       <div class="flex items-center justify-between pt-4">
         <button
-          class="px-4 py-2 text-sm font-medium rounded-lg transition-colors
-                 {canGoBack
-            ? 'text-base-content/80 bg-base-200 hover:bg-base-200/80'
-            : 'text-base-content/50 bg-base-200/50 cursor-not-allowed'}"
+          class="btn btn-ghost btn-sm"
           on:click={handleBack}
           disabled={!canGoBack}
         >
@@ -336,17 +331,14 @@
         <div class="flex gap-3">
           {#if isLastQuestion && canGoNext}
             <button
-              class="btn btn-primary px-6 py-2"
+              class="btn btn-primary btn-sm"
               on:click={handleSeeResults}
             >
               See Recommendations →
             </button>
           {:else}
             <button
-              class="px-6 py-2 text-sm font-medium rounded-lg transition-colors
-                     {canGoNext
-                ? 'bg-primary text-primary-content hover:bg-primary/90'
-                : 'bg-base-200 text-base-content/70 cursor-not-allowed'}"
+              class="btn btn-primary btn-sm"
               on:click={handleNext}
               disabled={!canGoNext}
             >

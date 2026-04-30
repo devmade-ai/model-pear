@@ -232,7 +232,7 @@
         <h2 class="text-xl font-bold text-base-content">Comparison View</h2>
         <span class="text-sm text-base-content/70">({$selectedOptions.length} options)</span>
       </div>
-      <button class="p-2 hover:bg-base-200 rounded-lg text-base-content" on:click={close} title="Close"> ✕ </button>
+      <button class="btn btn-ghost btn-sm btn-square" on:click={close} title="Close" aria-label="Close"> ✕ </button>
     </div>
 
     <!-- Summary Section -->
