@@ -229,9 +229,18 @@
 
   // Save current calculation as an option
   let showSaveModal = false;
+  let saveDialog: HTMLDialogElement;
   let saveName = '';
   let saveConfirmation = '';
   let saveConfirmationTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // Sync the synthetic showSaveModal flag with <dialog>'s native
+  // open/close state. Reactive block fires whenever showSaveModal
+  // toggles AND on initial mount (once saveDialog is bound).
+  $: if (saveDialog) {
+    if (showSaveModal && !saveDialog.open) saveDialog.showModal();
+    else if (!showSaveModal && saveDialog.open) saveDialog.close();
+  }
 
   // Clear the 2s save-confirmation timeout if the user navigates away
   // before it fires — prevents a setState onto the destroyed component.
@@ -501,34 +510,39 @@
     </div>
   </div>
 
-  <!-- Save Modal — backdrop (z-40) and modal (z-60) are adjacent per glow-props Z_INDEX_SCALE -->
-  {#if showSaveModal}
-    <div class="fixed inset-0 bg-base-100/90 z-40"></div>
-    <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
-      <div class="bg-base-200 rounded-xl border border-base-300 shadow-xl max-w-md w-full p-6 pointer-events-auto">
-        <h3 class="text-lg font-semibold text-base-content mb-4">Save Option</h3>
-        <div class="mb-4">
-          <label for="saveName" class="block text-sm font-medium text-base-content/70 mb-1">
-            Option Name
-          </label>
-          <input
-            type="text"
-            id="saveName"
-            bind:value={saveName}
-            class="input"
-            placeholder="Enter a name for this option"
-            on:keydown={(e) => e.key === 'Enter' && saveOption()}
-          />
-        </div>
-        <div class="flex justify-end space-x-3">
-          <button class="btn btn-outline" on:click={cancelSave}>Cancel</button>
-          <button class="btn btn-primary" on:click={saveOption} disabled={!saveName.trim()}>
-            Save
-          </button>
-        </div>
+  <!-- Save Modal — DaisyUI <dialog class="modal"> with native top-layer rendering -->
+  <dialog
+    bind:this={saveDialog}
+    class="modal"
+    on:close={() => (showSaveModal = false)}
+  >
+    <div class="modal-box">
+      <h3 class="text-lg font-semibold text-base-content mb-4">Save Option</h3>
+      <div class="mb-4">
+        <label for="saveName" class="block text-sm font-medium text-base-content/70 mb-1">
+          Option Name
+        </label>
+        <input
+          type="text"
+          id="saveName"
+          bind:value={saveName}
+          class="input w-full"
+          placeholder="Enter a name for this option"
+          on:keydown={(e) => e.key === 'Enter' && saveOption()}
+        />
+      </div>
+      <div class="modal-action">
+        <button class="btn btn-outline" on:click={cancelSave}>Cancel</button>
+        <button class="btn btn-primary" on:click={saveOption} disabled={!saveName.trim()}>
+          Save
+        </button>
       </div>
     </div>
-  {/if}
+    <!-- Backdrop click closes the dialog via native form-method-dialog -->
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 
   <!-- Comparison View -->
   {#if $isComparing}
