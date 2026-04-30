@@ -407,6 +407,18 @@ Evaluated April 28, 2026. The pattern's three triggering criteria — (a) cross-
 
 None of those benefit from a generic typed EventBus<M>. Calculator-package code is pure functions with no side-effect publishers. If a future feature needs pub/sub across unrelated modules with a typed payload map, re-evaluate then — but adding one now would be reinventing primitives the app already has.
 
+#### DaisyUI `<dialog class="modal">` and `<details class="dropdown">` — N/A
+Evaluated April 30, 2026 as part of the DaisyUI-completion audit (chunk #9). Three synthetic modals (`InstallModal.svelte`, `ComparisonView.svelte`, save-as-PDF prompt at `structuring/[model]/+page.svelte:506-508`) and one synthetic dropdown (burger menu in `+layout.svelte:276-291`) plus the synthetic `UpdateBanner` toast were considered for migration to DaisyUI's native components. Retained as synthetic for these specific reasons:
+
+- **z-index conflict.** DaisyUI's `.modal` hardcodes `z-index: 999`, which collides with our explicit Z_INDEX_SCALE (z-40 backdrop, z-50 burger panel, z-60 modal content, z-70 update banner, z-80 debug pill). Migrating to `.modal` flattens the layer ordering so banners can no longer sit above the burger panel, and the debug pill can no longer sit above active modals.
+- **Multi-modal stacking.** ComparisonView can have the Save-as-PDF prompt opened on top. DaisyUI's `<dialog showModal()>` model creates a single top-layer dialog; stacking two requires careful coordination that the synthetic z-layer pattern handles cleanly.
+- **Svelte-reactive open state.** Synthetic overlays integrate cleanly with `{#if visible}` and store-driven state. `<dialog>` requires imperative `dialogEl.showModal()` / `.close()` calls with effect-tracking to keep state in sync.
+- **Bespoke keyboard nav (burger menu).** The burger uses Up/Down/Home/End/Esc with Tab-trap and focus return on close. DaisyUI's dropdown / menu components don't supply that nav model — migration would lose it.
+
+Token-level DaisyUI alignment IS in place: the synthetic overlays consume `var(--radius-box)` via the `rounded-xl` alias, `var(--color-base-X)` for surfaces, and `var(--border)` for borders (verified in chunks #1–#3). What's NOT used is DaisyUI's structural `.modal` / `.modal-box` / `.dropdown` / `.menu` classes, by deliberate choice.
+
+If a future change needs DaisyUI's animations or `:starting-style` transitions for modals, re-evaluate the trade-off — but it would require giving up the explicit z-layer scale.
+
 ---
 
 ## Project-Specific Configuration
