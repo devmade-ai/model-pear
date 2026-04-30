@@ -61,7 +61,9 @@ Run `pnpm dev` (or open the deployed preview), then walk through each check:
 5. **N5 — prefers-reduced-motion behaviour**
    - In Chrome DevTools: Rendering panel → "Emulate CSS prefers-reduced-motion: reduce".
    - Reload the page. Hover over buttons, toggle theme, open/close the comparison modal, expand/collapse projection panels. Every transition should be instantaneous (no fade, no slide, no rotate). If anything still animates, the M3 universal selector missed it — file a bug.
-   - Switch back to "no-preference"; transitions should resume normally.
+   - Navigate to a page with charts (`/structuring/[1..6]` results, sensitivity panel, projections panel). Trigger a recalc that updates chart data. Bars/lines should snap to new values without the draw/morph animation. `BaseChart.svelte` reads `matchMedia('(prefers-reduced-motion: reduce)')` and disables ApexCharts' JS-driven animations — CSS alone can't reach canvas/SVG draws.
+   - Toggle the emulation OFF and ON without reloading. Charts should pick up the change live (BaseChart subscribes to the media-query `change` event).
+   - Switch back to "no-preference"; transitions and chart animations should resume normally.
 
 6. **N6 — Print preview**
    - On `/structuring/1` (or any model page), populate inputs and click "Calculate".
