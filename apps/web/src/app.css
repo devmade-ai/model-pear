@@ -197,17 +197,41 @@
     padding: 0 !important;
   }
 
-  /* Comparison modal: backdrop (z-40) and modal (z-[60]) are adjacent
-     siblings. Both match this selector — the backdrop collapses harmlessly. */
-  .fixed.inset-0 {
-    position: relative !important;
-    background: var(--color-base-100) !important;
+  /* DaisyUI <dialog class="modal"> overrides for print.
+     Native <dialog showModal()> renders in the top-layer with a
+     ::backdrop pseudo-element and DaisyUI fixes the modal to inset:0.
+     For print we need it to flow inline with page content so
+     comparison tables and option summaries print at full page width.
+     - Lift it out of the top-layer feel by neutralising fixed
+       positioning and the backdrop pseudo.
+     - Strip the modal-box's max-width / max-height / shadow / radius
+       / padding so the content takes the full page. */
+  dialog.modal {
+    position: static !important;
+    display: block !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    background: transparent !important;
+    z-index: auto !important;
+    overflow: visible !important;
   }
-
-  .fixed.inset-0 > div {
+  dialog.modal::backdrop {
+    display: none !important;
+  }
+  dialog.modal .modal-box {
     max-width: 100% !important;
     max-height: none !important;
     box-shadow: none !important;
+    background: var(--color-base-100) !important;
+    overflow: visible !important;
+  }
+  /* The native modal-backdrop close button (form method="dialog") is
+     visible in print otherwise — hide it. */
+  dialog.modal .modal-backdrop {
+    display: none !important;
   }
 
   .print-only {

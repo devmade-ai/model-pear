@@ -3,11 +3,25 @@
    * ComparisonView - Side-by-side comparison of saved options
    *
    * Shows 2-4 options in columns with difference highlighting.
-   * Supports print and CSV export.
+   * Supports print and CSV export. Renders as a DaisyUI
+   * <dialog class="modal">; the parent route mounts this component
+   * only while a comparison is active, so onMount opens the dialog
+   * and the on:close event triggers comparisonStore.closeComparison()
+   * which unmounts.
    */
+  import { onMount } from 'svelte';
   import { selectedOptions, comparisonStore } from '$lib/stores';
   import type { SavedOption } from '$lib/stores';
   import { formatCurrency, formatPercent } from '$lib/utils/formatters';
+
+  let dialogEl: HTMLDialogElement;
+
+  onMount(() => {
+    // Component is mounted only while $isComparing — open the dialog
+    // immediately via the native showModal() call to engage the
+    // browser's top-layer rendering, focus trap, and Escape handling.
+    if (dialogEl) dialogEl.showModal();
+  });
 
   // Export to CSV
   function exportToCSV() {
@@ -221,10 +235,19 @@
   }
 </script>
 
-<!-- Backdrop (z-40) and modal (z-60) are adjacent per glow-props Z_INDEX_SCALE -->
-<div class="fixed inset-0 bg-base-100/80 z-40"></div>
-<div class="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
-  <div class="bg-base-200 rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden border border-base-300 pointer-events-auto">
+<dialog
+  bind:this={dialogEl}
+  class="modal"
+  on:close={close}
+  aria-label="Comparison view"
+>
+  <!--
+    modal-box defaults to max-width:32rem; override with !max-w-6xl so
+    the comparison table has room. !p-0 because the existing layout
+    handles padding internally per section (header / summary / table /
+    footer).
+  -->
+  <div class="modal-box !max-w-6xl !p-0 max-h-[90vh] overflow-hidden">
     <!-- Header -->
     <div class="flex items-center justify-between p-4 border-b border-base-300">
       <div class="flex items-center space-x-2">
@@ -367,4 +390,8 @@
       <button class="btn btn-primary no-print" on:click={close}> Close </button>
     </div>
   </div>
-</div>
+  <!-- Native backdrop click → close -->
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
