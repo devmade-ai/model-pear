@@ -146,7 +146,7 @@
         <p class="text-base-content/80 mb-4">{topRecommendation.description}</p>
 
         <!-- Rationale -->
-        <div class="bg-base-200/60 rounded-lg p-4 mb-4">
+        <div class="card p-4 mb-4 bg-base-200/60">
           <h4 class="text-sm font-medium text-base-content/80 mb-2">Why this model?</h4>
           <div class="text-sm text-base-content/70 whitespace-pre-line">{generateRationale(topRecommendation)}</div>
         </div>
