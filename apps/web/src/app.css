@@ -176,7 +176,7 @@
 
   th,
   td {
-    border: 1px solid var(--color-base-content) !important;
+    border: var(--border) solid var(--color-base-content) !important;
     padding: 8px !important;
     color: var(--color-base-content) !important;
   }
