@@ -48,7 +48,7 @@
   </div>
 
   {#if type === 'select'}
-    <select {id} {value} on:change={handleInput} class="input">
+    <select {id} {value} on:change={handleInput} class="select">
       {#each options as opt (opt.value)}
         <option value={opt.value}>{opt.label}</option>
       {/each}

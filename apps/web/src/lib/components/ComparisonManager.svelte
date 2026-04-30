@@ -162,7 +162,7 @@
                 type="checkbox"
                 checked={isSelected}
                 on:change={() => comparisonStore.toggleSelection(option.id)}
-                class="mr-3 h-4 w-4 text-primary rounded"
+                class="checkbox checkbox-primary checkbox-sm mr-3"
               />
 
               <!-- Content -->
@@ -173,7 +173,7 @@
                     bind:value={editName}
                     on:keydown={handleKeydown}
                     on:blur={saveEdit}
-                    class="input text-sm py-1"
+                    class="input input-sm"
                   />
                 {:else}
                   <button

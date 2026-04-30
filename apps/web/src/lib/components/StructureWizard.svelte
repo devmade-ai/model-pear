@@ -159,7 +159,7 @@
             </h4>
             <select
               bind:value={selectedVariantPreference}
-              class="input w-full"
+              class="select w-full"
             >
               <option value="">Select a variant preference...</option>
               {#each VARIANT_FACTORS[topRecommendation.modelId].factors as factor (factor.value)}
@@ -307,7 +307,7 @@
                 value={option.value}
                 checked={currentAnswer === option.value}
                 on:change={() => handleAnswer(currentFactorId, option.value)}
-                class="mt-1 w-4 h-4 text-primary"
+                class="radio radio-primary mt-1"
               />
               <div class="flex-1">
                 <span class="font-medium text-base-content">{option.label}</span>
