@@ -65,34 +65,51 @@
       and the debug-pill inline script.
     -->
     <script>
-      (function () {
-        var darkMode;
-        try {
-          var stored = localStorage.getItem('darkMode');
-          if (stored === 'true') darkMode = true;
-          else if (stored === 'false') darkMode = false;
-        } catch (e) {
-          // localStorage blocked (private mode etc.); fall through to OS preference.
-        }
-
-        if (darkMode === undefined) {
+      // Outer try-catch: the inner try blocks already handle the expected
+      // failure modes (localStorage blocked in private mode, matchMedia
+      // unavailable). The outer guard is for unexpected failures —
+      // sandboxed iframes can throw on document.documentElement access,
+      // exotic polyfill conflicts can break querySelector. Without it,
+      // any thrown exception during head parse aborts the script and
+      // leaves the JS-disabled fallback (.dark + data-theme="dim" on
+      // <html>) — a safe default that surfaces nothing to the console.
+      try {
+        (function () {
+          var darkMode;
           try {
-            darkMode = !window.matchMedia('(prefers-color-scheme: light)').matches;
+            var stored = localStorage.getItem('darkMode');
+            if (stored === 'true') darkMode = true;
+            else if (stored === 'false') darkMode = false;
           } catch (e) {
-            darkMode = true;
+            // localStorage blocked (private mode etc.); fall through to OS preference.
           }
+
+          if (darkMode === undefined) {
+            try {
+              darkMode = !window.matchMedia('(prefers-color-scheme: light)').matches;
+            } catch (e) {
+              darkMode = true;
+            }
+          }
+
+          var html = document.documentElement;
+          html.classList.toggle('dark', darkMode);
+          html.setAttribute('data-theme', darkMode ? 'dim' : 'emerald');
+
+          // Update the meta theme-color BEFORE first paint so the OS browser
+          // chrome matches the active app theme on initial render. The meta
+          // tag is declared above so it's already in the DOM when this runs.
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', darkMode ? '#2A303C' : '#ffffff');
+        })();
+      } catch (e) {
+        // Surface to the console so we don't lose visibility on the
+        // exotic-environment failure mode. The .dark/dim fallback on
+        // <html> remains active.
+        if (typeof console !== 'undefined' && console.warn) {
+          console.warn('[theme-bootstrap] init failed; using fallback dark theme', e);
         }
-
-        var html = document.documentElement;
-        html.classList.toggle('dark', darkMode);
-        html.setAttribute('data-theme', darkMode ? 'dim' : 'emerald');
-
-        // Update the meta theme-color BEFORE first paint so the OS browser
-        // chrome matches the active app theme on initial render. The meta
-        // tag is declared above so it's already in the DOM when this runs.
-        var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', darkMode ? '#2A303C' : '#ffffff');
-      })();
+      }
     </script>
 
     <link rel="icon" type="image/png" sizes="48x48" href="%sveltekit.assets%/favicon.png" />

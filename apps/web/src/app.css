@@ -133,6 +133,13 @@
     --color-error: #991b1b;
     --color-error-content: #ffffff;
 
+    /* Pin --border explicitly so the table-cell rule below
+       (`border: var(--border) solid var(--color-base-content)`) renders
+       a visible 1px line even if a future DaisyUI version stops emitting
+       the token in this selector chain. Currently DaisyUI sets it to 1px
+       on [data-theme=*]; this is a defensive belt-and-braces guarantee. */
+    --border: 1px;
+
     color-scheme: light;
   }
 

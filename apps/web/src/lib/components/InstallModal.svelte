@@ -86,6 +86,18 @@
     if (typeof window === 'undefined') return;
     window.__pwa?.setInstallModalCallback(open);
     window.addEventListener('keydown', handleKeydown);
+
+    // HMR safety: if Vite hot-replaces this component without calling
+    // onDestroy (rare but possible mid-replace), the global keydown
+    // listener would orphan and the old handler would keep firing on a
+    // GC'd component scope. import.meta.hot.dispose runs on every hot
+    // update, releasing the listener before the new instance mounts.
+    if (import.meta.hot) {
+      import.meta.hot.dispose(() => {
+        window.removeEventListener('keydown', handleKeydown);
+        window.__pwa?.setInstallModalCallback(null);
+      });
+    }
   });
 
   onDestroy(() => {

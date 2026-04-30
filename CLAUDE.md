@@ -725,7 +725,8 @@ model-pear/
 │       │       ├── stores/                     # Svelte stores
 │       │       ├── config/                     # Configuration
 │       │       ├── utils/
-│       │       │   └── trackListener.ts        # Shared addEventListener cleanup helper
+│       │       │   ├── trackListener.ts        # Shared addEventListener cleanup helper
+│       │       │   └── bodyScrollLock.ts       # Reference-counted body scroll lock for nested overlays
 │       │       ├── theme.ts                    # Runtime theme management (window.__theme)
 │       │       ├── pwa.ts                      # Service-worker + install + update (window.__pwa)
 │       │       ├── debugLog.ts                 # In-memory debug log (circular buffer, pub/sub)
@@ -771,7 +772,7 @@ model-pear/
     ├── BUSINESS_GUIDE.md       # Comprehensive user guide with tutorials
     ├── CALCULATIONS.md         # Formula explanations and economic theory
     ├── ARCHITECTURE.md         # Technical architecture (TypeScript monorepo)
-    ├── SESSION_NOTES.md        # Build commands and architecture reference
+    ├── SESSION_NOTES.md        # Compact session-continuity snapshot (rewritten each session)
     ├── TODO.md                 # Feature ideas and backlog
     ├── USER_ACTIONS.md         # Manual user action instructions (when needed)
     ├── AI_MISTAKES.md          # AI mistake log (prevent repeat errors across sessions)

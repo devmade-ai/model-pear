@@ -87,8 +87,11 @@ export function detectBrowser(): Browser {
   // Calling isBrave() would require async, so we treat presence as a
   // good-enough signal. Order matters: Brave/Edge UAs both include
   // 'chrome', so Brave check has to come first.
+  // The `typeof brave === 'object'` guard rejects extensions that set
+  // navigator.brave to a non-object truthy value (e.g. "true") — without
+  // it, the `brave.isBrave` access would throw on a string.
   const brave = navigator.brave;
-  if (brave && typeof brave.isBrave === 'function') return 'brave';
+  if (brave && typeof brave === 'object' && typeof brave.isBrave === 'function') return 'brave';
   if (/edg\//i.test(ua)) return 'edge';
   if (/firefox|fxios/i.test(ua)) return 'firefox';
   if (/chrome|chromium|crios/i.test(ua)) return 'chrome';

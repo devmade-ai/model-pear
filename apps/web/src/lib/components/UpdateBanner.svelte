@@ -37,6 +37,12 @@
       complete" alarms during legitimate slow downloads. */
   const POST_UPDATE_RELOAD_TIMEOUT_MS = 15_000;
 
+  /** Tracks the post-update reload watchdog so onDestroy can clear it.
+      Without this, navigating away during the 15s window leaves the
+      timer alive and it fires on a destroyed component, triggering
+      reactive writes the framework no longer expects. */
+  let reloadWatchdogId: ReturnType<typeof setTimeout> | null = null;
+
   function show(): void {
     // Idempotent: pwa.ts can re-emit on visibilitychange while the banner
     // is already showing (visibility flicker, multiple onNeedRefresh).
@@ -63,13 +69,13 @@
       // POST_UPDATE_RELOAD_TIMEOUT_MS, the update silently failed (no SW
       // was actually waiting, or the new SW didn't activate) — surface
       // a recoverable error so the user can retry.
-      const id = window.setTimeout(() => {
+      if (reloadWatchdogId) clearTimeout(reloadWatchdogId);
+      reloadWatchdogId = setTimeout(() => {
+        reloadWatchdogId = null;
         if (!visible) return; // already reloaded; banner unmounted
         busy = false;
         errorMsg = "Update didn't complete. Try refreshing the page.";
       }, POST_UPDATE_RELOAD_TIMEOUT_MS);
-      // No cleanup needed — if the page reloads, the timer dies with it.
-      void id;
     } catch {
       // applyUpdate already logged via console.error in pwa.ts.
       busy = false;
@@ -102,6 +108,10 @@
     // here throws ReferenceError on the server and the entire route
     // 500s.
     if (typeof window === 'undefined') return;
+    if (reloadWatchdogId) {
+      clearTimeout(reloadWatchdogId);
+      reloadWatchdogId = null;
+    }
     window.__pwa?.setUpdateBannerCallback(null);
   });
 </script>
