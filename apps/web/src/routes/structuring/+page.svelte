@@ -86,22 +86,22 @@
   </div>
 
   <!-- View Mode Toggle -->
-  <div class="flex items-center justify-center gap-4 mb-8">
+  <div role="tablist" class="tabs tabs-box justify-center mb-8 w-fit mx-auto">
     <button
-      class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
-             {viewMode === 'wizard'
-        ? 'bg-primary/20 text-primary border border-primary/30'
-        : 'text-base-content/70 hover:bg-base-200'}"
+      role="tab"
+      type="button"
+      aria-selected={viewMode === 'wizard'}
+      class="tab {viewMode === 'wizard' ? 'tab-active' : ''}"
       on:click={() => (viewMode = 'wizard')}
     >
       <span class="mr-2">🧙</span>
       Guided Wizard
     </button>
     <button
-      class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
-             {viewMode === 'overview'
-        ? 'bg-primary/20 text-primary border border-primary/30'
-        : 'text-base-content/70 hover:bg-base-200'}"
+      role="tab"
+      type="button"
+      aria-selected={viewMode === 'overview'}
+      class="tab {viewMode === 'overview' ? 'tab-active' : ''}"
       on:click={() => (viewMode = 'overview')}
     >
       <span class="mr-2">📋</span>
