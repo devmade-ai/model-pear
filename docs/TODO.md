@@ -87,3 +87,9 @@
 - Buyer: Amortisation period
 
 **Why low priority**: Users can already see accounting treatment in individual results. Compare Mode covers the most impactful metrics. This would be a nice-to-have for detailed accounting analysis.
+
+---
+
+## Low Priority: Naming
+
+- [ ] Rename `intercompany` model category to `transactions` — the category id was set when the tool was scoped to intercompany transactions only; current scope is "any client (related or unrelated)" and the category name no longer reflects reality. Touches the model registry and any branching on `category === 'intercompany'`.
