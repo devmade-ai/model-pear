@@ -48,7 +48,13 @@
   </div>
 
   {#if type === 'select'}
-    <select {id} {value} on:change={handleInput} class="select">
+    <select
+      {id}
+      {value}
+      on:change={handleInput}
+      class="select"
+      aria-describedby={hint ? `${id}-hint` : undefined}
+    >
       {#each options as opt (opt.value)}
         <option value={opt.value}>{opt.label}</option>
       {/each}
@@ -63,12 +69,20 @@
       {step}
       on:input={handleInput}
       class="input tabular-nums"
+      aria-describedby={hint ? `${id}-hint` : undefined}
     />
   {:else}
-    <input {id} type="text" {value} on:input={handleInput} class="input" />
+    <input
+      {id}
+      type="text"
+      {value}
+      on:input={handleInput}
+      class="input"
+      aria-describedby={hint ? `${id}-hint` : undefined}
+    />
   {/if}
 
   {#if hint}
-    <p class="text-xs text-base-content/70 mt-1">{hint}</p>
+    <p id={`${id}-hint`} class="text-xs text-base-content/70 mt-1">{hint}</p>
   {/if}
 </div>
