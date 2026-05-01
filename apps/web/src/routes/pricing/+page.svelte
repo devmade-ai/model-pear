@@ -647,83 +647,100 @@
             </div>
           </div>
 
-          <!-- Financial Metrics -->
+          <!-- Financial Metrics — DaisyUI .stats/.stat for the
+               title-above-value tile pattern. Each tile is its own
+               .stats wrapper (single .stat) so they grid to 2x2. -->
           <div class="mb-6">
             <h3 class="text-sm font-medium text-base-content/70 mb-3">Financial Performance</h3>
             <div class="grid grid-cols-2 gap-3">
-              <div class="p-3 bg-base-300 rounded">
-                <div class="text-xs text-base-content/70">Monthly Revenue</div>
-                <div class="font-semibold text-base-content">{formatCurrency(results.monthlyRevenue)}</div>
+              <div class="stats bg-base-300 rounded-box">
+                <div class="stat">
+                  <div class="stat-title">Monthly Revenue</div>
+                  <div class="stat-value text-base">{formatCurrency(results.monthlyRevenue)}</div>
+                </div>
               </div>
-              <div class="p-3 bg-base-300 rounded">
-                <div class="text-xs text-base-content/70">Monthly Profit</div>
-                <div class="font-semibold text-base-content">{formatCurrency(results.monthlyProfit)}</div>
+              <div class="stats bg-base-300 rounded-box">
+                <div class="stat">
+                  <div class="stat-title">Monthly Profit</div>
+                  <div class="stat-value text-base">{formatCurrency(results.monthlyProfit)}</div>
+                </div>
               </div>
-              <div class="p-3 bg-base-300 rounded">
-                <div class="text-xs text-base-content/70">Annual Revenue</div>
-                <div class="font-semibold text-base-content">{formatCurrency(results.annualRevenue)}</div>
+              <div class="stats bg-base-300 rounded-box">
+                <div class="stat">
+                  <div class="stat-title">Annual Revenue</div>
+                  <div class="stat-value text-base">{formatCurrency(results.annualRevenue)}</div>
+                </div>
               </div>
-              <div class="p-3 bg-base-300 rounded">
-                <div class="text-xs text-base-content/70">Annual Profit</div>
-                <div class="font-semibold text-base-content">{formatCurrency(results.annualProfit)}</div>
+              <div class="stats bg-base-300 rounded-box">
+                <div class="stat">
+                  <div class="stat-title">Annual Profit</div>
+                  <div class="stat-value text-base">{formatCurrency(results.annualProfit)}</div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Seller Perspective -->
+          <!-- Seller Perspective — DaisyUI .table.table-sm for the
+               horizontal label/value row pattern. .stat lays content
+               vertically (title above value); for label-left/value-
+               right rows the table primitive is the correct fit. -->
           <div class="mb-6">
             <h3 class="text-sm font-medium text-base-content/70 mb-3">Your Position</h3>
-            <div class="space-y-2">
-              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
-                <span class="text-sm text-base-content/70">Actual Margin</span>
-                <span class="font-semibold {results.sellerMeetsTarget ? 'text-success' : 'text-error'}">
-                  {formatPercent(results.actualMargin)}
-                </span>
-              </div>
-              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
-                <span class="text-sm text-base-content/70">Minimum Price Needed</span>
-                <span class="font-semibold text-base-content">{selectedModel === 'marketplace' ? formatPercent(results.minimumPrice) : formatCurrency(results.minimumPrice)}</span>
-              </div>
-              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
-                <span class="text-sm text-base-content/70">Meets Target?</span>
-                <span class="font-semibold {results.sellerMeetsTarget ? 'text-success' : 'text-error'}">
-                  {results.sellerMeetsTarget ? 'Yes' : 'No'}
-                </span>
-              </div>
-            </div>
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td class="text-base-content/70">Actual Margin</td>
+                  <td class="text-right font-semibold {results.sellerMeetsTarget ? 'text-success' : 'text-error'}">
+                    {formatPercent(results.actualMargin)}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-base-content/70">Minimum Price Needed</td>
+                  <td class="text-right font-semibold text-base-content">{selectedModel === 'marketplace' ? formatPercent(results.minimumPrice) : formatCurrency(results.minimumPrice)}</td>
+                </tr>
+                <tr>
+                  <td class="text-base-content/70">Meets Target?</td>
+                  <td class="text-right font-semibold {results.sellerMeetsTarget ? 'text-success' : 'text-error'}">
+                    {results.sellerMeetsTarget ? 'Yes' : 'No'}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <!-- Buyer Perspective -->
+          <!-- Buyer Perspective — same .table.table-sm pattern. -->
           <div>
             <h3 class="text-sm font-medium text-base-content/70 mb-3">{selectedModel === 'marketplace' ? 'Seller Position' : 'Client Position'}</h3>
-            <div class="space-y-2">
-              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
-                <span class="text-sm text-base-content/70">ROI Multiplier</span>
-                <span class="font-semibold text-base-content">{results.buyerROI.toFixed(2)}x</span>
-              </div>
-              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
-                <span class="text-sm text-base-content/70">Maximum Price They'll Pay</span>
-                <span class="font-semibold text-base-content">{selectedModel === 'marketplace' ? formatPercent(results.maximumPrice) : formatCurrency(results.maximumPrice)}</span>
-              </div>
-              <div class="flex justify-between items-center p-2 bg-base-300 rounded">
-                <span class="text-sm text-base-content/70">Annual Savings</span>
-                <span class="font-semibold text-base-content">{formatCurrency(results.buyerAnnualSavings)}</span>
-              </div>
-              {#if results.buyerPaybackMonths !== undefined}
-                <div class="flex justify-between items-center p-2 bg-base-300 rounded">
-                  <span class="text-sm text-base-content/70">Payback Period</span>
-                  <span class="font-semibold text-base-content">
-                    {results.buyerPaybackMonths === Infinity ? '∞' : `${results.buyerPaybackMonths.toFixed(1)} months`}
-                  </span>
-                </div>
-              {/if}
-              {#if results.avgTransactionsPerSeller !== undefined}
-                <div class="flex justify-between items-center p-2 bg-base-300 rounded">
-                  <span class="text-sm text-base-content/70">Avg Transactions per Seller</span>
-                  <span class="font-semibold text-base-content">{results.avgTransactionsPerSeller.toFixed(1)}</span>
-                </div>
-              {/if}
-            </div>
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td class="text-base-content/70">ROI Multiplier</td>
+                  <td class="text-right font-semibold text-base-content">{results.buyerROI.toFixed(2)}x</td>
+                </tr>
+                <tr>
+                  <td class="text-base-content/70">Maximum Price They'll Pay</td>
+                  <td class="text-right font-semibold text-base-content">{selectedModel === 'marketplace' ? formatPercent(results.maximumPrice) : formatCurrency(results.maximumPrice)}</td>
+                </tr>
+                <tr>
+                  <td class="text-base-content/70">Annual Savings</td>
+                  <td class="text-right font-semibold text-base-content">{formatCurrency(results.buyerAnnualSavings)}</td>
+                </tr>
+                {#if results.buyerPaybackMonths !== undefined}
+                  <tr>
+                    <td class="text-base-content/70">Payback Period</td>
+                    <td class="text-right font-semibold text-base-content">
+                      {results.buyerPaybackMonths === Infinity ? '∞' : `${results.buyerPaybackMonths.toFixed(1)} months`}
+                    </td>
+                  </tr>
+                {/if}
+                {#if results.avgTransactionsPerSeller !== undefined}
+                  <tr>
+                    <td class="text-base-content/70">Avg Transactions per Seller</td>
+                    <td class="text-right font-semibold text-base-content">{results.avgTransactionsPerSeller.toFixed(1)}</td>
+                  </tr>
+                {/if}
+              </tbody>
+            </table>
           </div>
         {/if}
       </div>
