@@ -354,11 +354,11 @@
               {@const level = option.result.transferPricing.riskLevel}
               <td class="p-3 text-center">
                 <span
-                  class="px-2 py-1 rounded text-xs font-medium {level === 'low'
-                    ? 'bg-success/20 text-success'
+                  class="badge badge-soft badge-sm {level === 'low'
+                    ? 'badge-success'
                     : level === 'medium'
-                      ? 'bg-warning/20 text-warning'
-                      : 'bg-error/20 text-error'}"
+                      ? 'badge-warning'
+                      : 'badge-error'}"
                 >
                   {level.toUpperCase()}
                 </span>
