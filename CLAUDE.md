@@ -811,11 +811,11 @@ model-pear/
     ├── TODO.md                 # Feature ideas and backlog
     ├── USER_ACTIONS.md         # Manual user action instructions (when needed)
     ├── AI_MISTAKES.md          # AI mistake log (prevent repeat errors across sessions)
-    ├── DISCOVERY_FINDINGS.md   # Discovery research findings
-    ├── DISCOVERY_FRAMEWORK.md  # Discovery research framework
-    ├── NEGOTIATION_MODE.md     # Negotiation mode design notes
     ├── UI_UX_GUIDE.md          # UI/UX design guidelines
     ├── working/                # Plans, notes, and scratch files
+    │   ├── DISCOVERY_FINDINGS.md   # Discovery research findings (Jan 2026, complete)
+    │   ├── DISCOVERY_FRAMEWORK.md  # Discovery research methodology
+    │   └── NEGOTIATION_MODE.md     # Negotiation-mode design draft (unimplemented)
     └── model-use-cases/        # When to use each model variant
         ├── README.md           # Model selection guide
         ├── model-1-development-services.md
@@ -1103,11 +1103,9 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 | **docs/TODO.md** | Feature ideas and backlog | Add ideas to persist between sessions |
 | **docs/USER_ACTIONS.md** | Manual user action instructions | When user needs to do something outside the tool |
 | **docs/AI_MISTAKES.md** | AI assistant mistake log to prevent repeat errors | When an AI makes a mistake during a session |
-| **docs/DISCOVERY_FINDINGS.md** | Discovery research findings | Discovery phase findings change |
-| **docs/DISCOVERY_FRAMEWORK.md** | Discovery research framework | Discovery methodology changes |
-| **docs/NEGOTIATION_MODE.md** | Negotiation mode design notes | Negotiation feature changes |
 | **docs/UI_UX_GUIDE.md** | UI/UX design guidelines | UI patterns or design decisions change |
 | **docs/model-use-cases/** | When to use each model variant, TP considerations | Model logic or variant definitions change |
+| **docs/working/** | Plans, design drafts, completed-research artifacts (Discovery, Negotiation-mode draft) | When a new plan or research artifact is captured; promote out of `working/` only when the content becomes living documentation |
 
 ## Troubleshooting
 
