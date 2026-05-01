@@ -154,7 +154,16 @@
           class="btn btn-primary btn-sm"
           disabled={busy}
           on:click={update}
-        >{busy ? 'Updating…' : errorMsg ? 'Retry' : 'Update'}</button>
+        >
+          {#if busy}
+            <span class="loading loading-spinner loading-xs" aria-hidden="true"></span>
+            Updating…
+          {:else if errorMsg}
+            Retry
+          {:else}
+            Update
+          {/if}
+        </button>
         <button
           type="button"
           class="btn btn-ghost btn-sm"
