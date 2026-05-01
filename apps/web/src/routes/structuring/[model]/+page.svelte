@@ -416,7 +416,7 @@
             </span>
           {/if}
           {#if saveConfirmation}
-            <span class="text-sm text-success animate-pulse">{saveConfirmation}</span>
+            <span class="text-sm text-success animate-pulse" role="status" aria-live="polite">{saveConfirmation}</span>
           {/if}
         </div>
 
