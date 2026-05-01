@@ -10,9 +10,17 @@ A dual-mode tool for South African B2B software companies to find optimal pricin
 ## Quick Start
 
 ```bash
-pnpm install
-pnpm dev
+pnpm install        # install workspace dependencies
+pnpm dev            # run dev server (apps/web)
+pnpm test           # 301 calculator unit tests
+pnpm check          # typecheck + theme-token drift assertion
+pnpm lint           # ESLint across both workspaces
+pnpm build          # production build (calculator → web)
+pnpm test:e2e       # Playwright E2E tests
 ```
+
+`pnpm check` and `pnpm lint` must pass before opening a PR — see
+[`docs/README.md`](docs/README.md) for full development workflow.
 
 ## Documentation
 
