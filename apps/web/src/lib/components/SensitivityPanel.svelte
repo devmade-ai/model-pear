@@ -90,7 +90,7 @@
             </div>
             <div class="flex items-center space-x-4">
               <span class="text-xs text-base-content/70">
-                {influencer.lowValue.toLocaleString()} - {influencer.highValue.toLocaleString()}
+                {influencer.lowValue.toLocaleString('en-ZA')} - {influencer.highValue.toLocaleString('en-ZA')}
               </span>
               <span
                 class="text-sm font-semibold {influencer.percentChange > 0
