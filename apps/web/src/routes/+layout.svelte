@@ -10,6 +10,7 @@
   // install modal to call into.
   import '$lib/pwa';
   import { resolve } from '$app/paths';
+  import { page } from '$app/stores';
   import { onMount, tick } from 'svelte';
   import { createListenerTracker } from '$lib/utils/trackListener';
   import { lockBodyScroll, unlockBodyScroll } from '$lib/utils/bodyScrollLock';
@@ -283,13 +284,17 @@
             class="menu dropdown-content bg-base-200 border border-base-300 rounded-box shadow-2xl w-72 max-w-[calc(100vw-1rem)] mt-2 p-2"
             on:keydown={handleMenuKeydown}
           >
-            <!-- Primary nav links -->
+            <!-- Primary nav links — aria-current="page" tells screen readers
+                 which destination is the active route. Match by pathname
+                 prefix so /structuring/[model] still highlights the
+                 Transaction Structuring entry. -->
             <li>
               <a
                 href={resolve('/structuring')}
                 data-menu-item
                 data-close
                 role="menuitem"
+                aria-current={$page.url.pathname.startsWith('/structuring') ? 'page' : undefined}
                 on:click={handleItemClick}
               >Transaction Structuring</a>
             </li>
@@ -299,6 +304,7 @@
                 data-menu-item
                 data-close
                 role="menuitem"
+                aria-current={$page.url.pathname.startsWith('/pricing') ? 'page' : undefined}
                 on:click={handleItemClick}
               >Pricing Calculator</a>
             </li>

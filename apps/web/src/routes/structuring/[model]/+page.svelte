@@ -520,9 +520,10 @@
     bind:this={saveDialog}
     class="modal"
     on:close={() => (showSaveModal = false)}
+    aria-labelledby="save-modal-title"
   >
     <div class="modal-box">
-      <h3 class="text-lg font-semibold text-base-content mb-4">Save Option</h3>
+      <h3 id="save-modal-title" class="text-lg font-semibold text-base-content mb-4">Save Option</h3>
       <div class="mb-4">
         <label for="saveName" class="block text-sm font-medium text-base-content/70 mb-1">
           Option Name
