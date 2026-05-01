@@ -108,13 +108,16 @@
     window.__theme?.toggle();
   }
 
-  /* Save-as-PDF placeholder. Chunk 6 audits and tightens the print CSS;
-     the button itself just calls window.print(). data-close runs first
-     (closing the menu) so the menu doesn't appear in the printed PDF. */
+  /* Save-as-PDF defers to the browser's native print → "Save as PDF"
+     dialog. The print stylesheet (app.css @media print) hides the
+     header / nav / buttons, expands tables, and rewrites DaisyUI
+     tokens to print-friendly values; calling window.print() here is
+     the final implementation, not a placeholder. closeMenu() runs
+     synchronously first so the menu doesn't appear in the printed
+     output; the rAF wrapper lets the close transition complete
+     before the dialog steals focus. */
   function savePdf(): void {
     closeMenu();
-    // Defer to next frame so the close transition completes before
-    // the print dialog steals focus.
     requestAnimationFrame(() => window.print());
   }
 
