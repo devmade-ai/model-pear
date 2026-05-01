@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
   import { page } from '$app/stores';
-  import { base } from '$app/paths';
+  import { resolve } from '$app/paths';
   import {
     calculateCostPlus,
     calculateLicence,
@@ -40,8 +41,12 @@
   let showAdvancedAnalysis = false;
   let showTransferPricing = false;
 
-  // Get model ID from URL
-  $: modelId = $page.params.model;
+  // Get model ID from URL. SvelteKit types `params.model` as
+  // `string | undefined` because route matching can fail on edge cases
+  // (e.g. SSR reload during navigation), so coerce to '' for indexing
+  // — the fallback `|| []` then yields the empty fieldConfig and the
+  // "Model Not Found" branch in the template fires.
+  $: modelId = $page.params.model ?? '';
 
   // Get input field configuration for current model
   $: fieldConfig = modelFieldConfigs[modelId] || [];
@@ -196,22 +201,62 @@
   }
 
   // Reactive calculation
-  $: result = config ? (config.calculate as (inputs: Record<string, unknown>) => CalculationResult)(inputs) : null;
+  // The `config.calculate` union (one signature per model) doesn't sufficiently
+  // overlap with `(inputs: Record<string, unknown>) => CalculationResult` for
+  // ts to allow a direct cast. Going through `unknown` is the documented escape
+  // hatch — the runtime contract is "the calculate fn for the active model
+  // accepts the inputs we pass" which only the route URL guarantees.
+  $: result = config ? (config.calculate as unknown as (inputs: Record<string, unknown>) => CalculationResult)(inputs) : null;
 
   // Handle input change from InputField component
   function handleInputChange(event: CustomEvent<{ field: string; value: unknown }>) {
     inputs = { ...inputs, [event.detail.field]: event.detail.value };
   }
 
+  // Coerce the unknown-typed input value into the string|number InputField
+  // expects. Inline `as string | number | undefined` casts inside Svelte's
+  // template-expression parser produce "Unexpected token" — this helper
+  // moves the cast into the script block where it parses cleanly.
+  function fieldValue(id: string): string | number {
+    const v = inputs[id];
+    return typeof v === 'string' || typeof v === 'number' ? v : '';
+  }
+
+  // Erased calculate signature for SensitivityPanel. Same parser issue as
+  // fieldValue — the `as unknown as` chain doesn't survive inline-expression
+  // parsing in the template.
+  $: erasedCalculate = config?.calculate as unknown as (inputs: Record<string, unknown>) => CalculationResult;
+
   // Save current calculation as an option
   let showSaveModal = false;
+  let saveDialog: HTMLDialogElement;
   let saveName = '';
   let saveConfirmation = '';
+  let saveConfirmationTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // Sync the synthetic showSaveModal flag with <dialog>'s native
+  // open/close state. Reactive block fires whenever showSaveModal
+  // toggles AND on initial mount (once saveDialog is bound).
+  $: if (saveDialog) {
+    if (showSaveModal && !saveDialog.open) saveDialog.showModal();
+    else if (!showSaveModal && saveDialog.open) saveDialog.close();
+  }
+
+  // Clear the 2s save-confirmation timeout if the user navigates away
+  // before it fires — prevents a setState onto the destroyed component.
+  onDestroy(() => {
+    if (saveConfirmationTimer) clearTimeout(saveConfirmationTimer);
+  });
+
+  function scheduleConfirmationClear() {
+    if (saveConfirmationTimer) clearTimeout(saveConfirmationTimer);
+    saveConfirmationTimer = setTimeout(() => saveConfirmation = '', 2000);
+  }
 
   // Quick save with auto-generated name
   function quickSave() {
     if (result) {
-      const savedCount = $comparisonStore.length;
+      const savedCount = $comparisonStore.options.length;
       const autoName = inputs.projectName as string || `${config?.model.shortName} Option ${savedCount + 1}`;
       comparisonStore.save(
         autoName,
@@ -221,7 +266,7 @@
         result
       );
       saveConfirmation = `Saved as "${autoName}"`;
-      setTimeout(() => saveConfirmation = '', 2000);
+      scheduleConfirmationClear();
     }
   }
 
@@ -232,8 +277,13 @@
 
   function saveOption() {
     if (result && saveName.trim()) {
+      // Capture trimmed name BEFORE clearing — the confirmation message
+      // shows what was just saved, but `saveName = ''` runs before the
+      // template literal would evaluate it, so reading saveName at that
+      // point returned the empty string and the toast read `Saved as ""`.
+      const savedName = saveName.trim();
       comparisonStore.save(
-        saveName.trim(),
+        savedName,
         modelId,
         result.metadata.variantId,
         inputs,
@@ -241,8 +291,8 @@
       );
       showSaveModal = false;
       saveName = '';
-      saveConfirmation = `Saved as "${saveName}"`;
-      setTimeout(() => saveConfirmation = '', 2000);
+      saveConfirmation = `Saved as "${savedName}"`;
+      scheduleConfirmationClear();
     }
   }
 
@@ -264,15 +314,15 @@
     <!-- Page header -->
     <div class="mb-8">
       <div class="flex items-center space-x-2 mb-2">
-        <a href="{base}/structuring" class="text-primary hover:text-primary/80 text-sm">
+        <a href={resolve('/structuring')} class="text-primary hover:text-primary/80 text-sm">
           ← All Models
         </a>
       </div>
       <div class="flex items-center space-x-3">
         <span class="text-3xl">{config.model.icon}</span>
         <div>
-          <h1 class="text-3xl font-bold text-foreground">{config.model.name}</h1>
-          <p class="text-secondary mt-1">{config.model.description}</p>
+          <h1 class="text-3xl font-bold text-base-content">{config.model.name}</h1>
+          <p class="text-base-content/70 mt-1">{config.model.description}</p>
         </div>
       </div>
     </div>
@@ -281,7 +331,7 @@
       <!-- Input Form -->
       <div class="lg:col-span-1">
         <div class="card p-6 sticky top-4">
-          <h2 class="text-lg font-semibold text-foreground mb-4">Inputs</h2>
+          <h2 class="text-lg font-semibold text-base-content mb-4">Inputs</h2>
 
           <!-- Essential Inputs -->
           <div class="space-y-4">
@@ -290,7 +340,7 @@
                 id={field.id}
                 label={field.label}
                 type={field.type}
-                value={inputs[field.id] ?? ''}
+                value={fieldValue(field.id)}
                 options={field.options}
                 min={field.min}
                 max={field.max}
@@ -304,9 +354,9 @@
 
           <!-- Advanced Inputs (Collapsed) -->
           {#if advancedFields.length > 0}
-            <div class="mt-6 pt-4 border-t border-border">
+            <div class="mt-6 pt-4 border-t border-base-300">
               <button
-                class="flex items-center justify-between w-full text-sm font-medium text-secondary hover:text-foreground"
+                class="flex items-center justify-between w-full text-sm font-medium text-base-content/70 hover:text-base-content"
                 on:click={() => showAdvancedInputs = !showAdvancedInputs}
               >
                 <span>Advanced Options ({advancedFields.length})</span>
@@ -326,7 +376,7 @@
                       id={field.id}
                       label={field.label}
                       type={field.type}
-                      value={inputs[field.id] ?? ''}
+                      value={fieldValue(field.id)}
                       options={field.options}
                       min={field.min}
                       max={field.max}
@@ -347,26 +397,26 @@
       <div class="lg:col-span-2 space-y-6">
         <!-- Action Bar: Save & Compare -->
         <div class="flex flex-wrap items-center gap-3">
-          <button class="btn-primary" on:click={quickSave}>
+          <button class="btn btn-primary" on:click={quickSave}>
             Save Option
           </button>
-          <button class="btn-outline text-sm" on:click={openSaveModal}>
+          <button class="btn btn-outline text-sm" on:click={openSaveModal}>
             Save As...
           </button>
           <!-- Requirement: Let users save results as PDF via the browser's native print dialog.
                Approach: window.print() — zero dependencies, leverages existing @media print CSS in app.css.
                Alternative considered: pdf-lib — rejected because content is text/tables (not canvas),
                so the browser print engine handles it well without extra bundle size. -->
-          <button class="btn-outline text-sm no-print" on:click={() => window.print()} title="Save this page as a PDF using your browser's print dialog">
+          <button class="btn btn-outline text-sm no-print tooltip tooltip-bottom" on:click={() => window.print()} data-tip="Save this page as a PDF using your browser's print dialog">
             Save as PDF
           </button>
           {#if savedCount > 0}
-            <span class="text-sm text-secondary border-l border-border pl-3">
+            <span class="text-sm text-base-content/70 border-l border-base-300 pl-3">
               {savedCount} option{savedCount !== 1 ? 's' : ''} saved
             </span>
           {/if}
           {#if saveConfirmation}
-            <span class="text-sm text-success animate-pulse">{saveConfirmation}</span>
+            <span class="text-sm text-success animate-pulse" role="status" aria-live="polite">{saveConfirmation}</span>
           {/if}
         </div>
 
@@ -385,16 +435,16 @@
             <div class="flex items-center space-x-3">
               <span class="text-xl">⚖️</span>
               <div>
-                <h3 class="font-semibold text-foreground">Transfer Pricing Assessment</h3>
-                <p class="text-sm text-secondary">Related party compliance details</p>
+                <h3 class="font-semibold text-base-content">Transfer Pricing Assessment</h3>
+                <p class="text-sm text-base-content/70">Related party compliance details</p>
               </div>
             </div>
             <div class="flex items-center space-x-2">
-              <span class="text-xs px-2 py-1 rounded-full {result.transferPricing.riskLevel === 'low' ? 'bg-success/10 text-success border border-success/30' : result.transferPricing.riskLevel === 'medium' ? 'bg-warning/10 text-warning border border-warning/30' : 'bg-error/10 text-error border border-error/30'}">
+              <span class="badge badge-soft badge-sm {result.transferPricing.riskLevel === 'low' ? 'badge-success' : result.transferPricing.riskLevel === 'medium' ? 'badge-warning' : 'badge-error'}">
                 {result.transferPricing.riskLevel.toUpperCase()} RISK
               </span>
               <svg
-                class="w-5 h-5 text-secondary transition-transform {showTransferPricing ? 'rotate-180' : ''}"
+                class="w-5 h-5 text-base-content/70 transition-transform {showTransferPricing ? 'rotate-180' : ''}"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -421,12 +471,12 @@
             <div class="flex items-center space-x-3">
               <span class="text-xl">📊</span>
               <div>
-                <h3 class="font-semibold text-foreground">Advanced Analysis</h3>
-                <p class="text-sm text-secondary">Sensitivity, projections, and detailed metrics</p>
+                <h3 class="font-semibold text-base-content">Advanced Analysis</h3>
+                <p class="text-sm text-base-content/70">Sensitivity, projections, and detailed metrics</p>
               </div>
             </div>
             <svg
-              class="w-5 h-5 text-secondary transition-transform {showAdvancedAnalysis ? 'rotate-180' : ''}"
+              class="w-5 h-5 text-base-content/70 transition-transform {showAdvancedAnalysis ? 'rotate-180' : ''}"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -437,15 +487,15 @@
           {#if showAdvancedAnalysis}
             <div class="p-4 pt-0 space-y-6">
               <div>
-                <h4 class="text-sm font-medium text-secondary mb-3">Sensitivity Analysis</h4>
+                <h4 class="text-sm font-medium text-base-content/70 mb-3">Sensitivity Analysis</h4>
                 <SensitivityPanel
                   {inputs}
                   {result}
-                  calculateFn={config.calculate}
+                  calculateFn={erasedCalculate}
                 />
               </div>
               <div>
-                <h4 class="text-sm font-medium text-secondary mb-3">Growth Projections</h4>
+                <h4 class="text-sm font-medium text-base-content/70 mb-3">Growth Projections</h4>
                 <ProjectionsPanel {result} />
               </div>
             </div>
@@ -458,41 +508,47 @@
         </div>
 
         <!-- Metadata -->
-        <div class="text-xs text-secondary/60 text-right">
+        <div class="text-xs text-base-content/60 text-right">
           Model: {result.metadata.modelName} ({result.metadata.variantId}: {result.metadata.variantName})
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Save Modal — backdrop (z-40) and modal (z-60) are adjacent per glow-props Z_INDEX_SCALE -->
-  {#if showSaveModal}
-    <div class="fixed inset-0 bg-background/90 z-40"></div>
-    <div class="fixed inset-0 z-60 flex items-center justify-center p-4 pointer-events-none">
-      <div class="bg-card rounded-xl border border-border shadow-xl max-w-md w-full p-6 pointer-events-auto">
-        <h3 class="text-lg font-semibold text-foreground mb-4">Save Option</h3>
-        <div class="mb-4">
-          <label for="saveName" class="block text-sm font-medium text-secondary mb-1">
-            Option Name
-          </label>
-          <input
-            type="text"
-            id="saveName"
-            bind:value={saveName}
-            class="input"
-            placeholder="Enter a name for this option"
-            on:keydown={(e) => e.key === 'Enter' && saveOption()}
-          />
-        </div>
-        <div class="flex justify-end space-x-3">
-          <button class="btn-outline" on:click={cancelSave}>Cancel</button>
-          <button class="btn-primary" on:click={saveOption} disabled={!saveName.trim()}>
-            Save
-          </button>
-        </div>
+  <!-- Save Modal — DaisyUI <dialog class="modal"> with native top-layer rendering -->
+  <dialog
+    bind:this={saveDialog}
+    class="modal"
+    on:close={() => (showSaveModal = false)}
+    aria-labelledby="save-modal-title"
+  >
+    <div class="modal-box">
+      <h3 id="save-modal-title" class="text-lg font-semibold text-base-content mb-4">Save Option</h3>
+      <div class="mb-4">
+        <label for="saveName" class="block text-sm font-medium text-base-content/70 mb-1">
+          Option Name
+        </label>
+        <input
+          type="text"
+          id="saveName"
+          bind:value={saveName}
+          class="input w-full"
+          placeholder="Enter a name for this option"
+          on:keydown={(e) => e.key === 'Enter' && saveOption()}
+        />
+      </div>
+      <div class="modal-action">
+        <button class="btn btn-outline" on:click={cancelSave}>Cancel</button>
+        <button class="btn btn-primary" on:click={saveOption} disabled={!saveName.trim()}>
+          Save
+        </button>
       </div>
     </div>
-  {/if}
+    <!-- Backdrop click closes the dialog via native form-method-dialog -->
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 
   <!-- Comparison View -->
   {#if $isComparing}
@@ -501,9 +557,9 @@
 {:else}
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center">
-      <h1 class="text-2xl font-bold text-foreground mb-4">Model Not Found</h1>
-      <p class="text-secondary mb-4">The requested model "{modelId}" was not found.</p>
-      <a href="{base}/structuring" class="text-primary hover:text-primary/80">
+      <h1 class="text-2xl font-bold text-base-content mb-4">Model Not Found</h1>
+      <p class="text-base-content/70 mb-4">The requested model "{modelId}" was not found.</p>
+      <a href={resolve('/structuring')} class="text-primary hover:text-primary/80">
         ← Back to Model Selection
       </a>
     </div>

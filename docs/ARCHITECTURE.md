@@ -101,15 +101,16 @@
 | Layer | Technology | Why |
 |-------|------------|-----|
 | **Language** | TypeScript 5.x | Type safety for financial calculations |
-| **Framework** | SvelteKit 2.x | Small bundles, built-in reactivity, static export |
-| **Styling** | Tailwind CSS 3.x | Keep familiar styling, but bundled properly |
-| **Charts** | ApexCharts | Keep familiar API, bundle only what's used |
+| **Framework** | SvelteKit 2.x + adapter-static | Small bundles, built-in reactivity, SPA fallback to `/200.html` |
+| **Styling** | Tailwind CSS v4 (CSS-first config) + DaisyUI v5 | `emerald` (light) + `dim` (dark) themes; `@import "tailwindcss"` + inline `@theme`; no `tailwind.config.js` |
+| **Charts** | ApexCharts | Keep familiar API, bundle only what's used; theme-aware via `theme:change` event |
+| **PWA** | vite-plugin-pwa + workbox-window | `registerType: 'prompt'` for user-controlled SW updates; `navigateFallback: '/200.html'` aligns with adapter-static |
 | **Build** | Vite 5.x | Fast dev server, optimized production builds |
+| **Linting** | ESLint v10 (flat config) + typescript-eslint + eslint-plugin-svelte | Catches a11y, navigation-resolve, each-key, immutable-reactive issues |
 | **Testing** | Vitest | Fast, native ESM support, works with TypeScript |
 | **E2E Testing** | Playwright | Cross-browser testing for critical flows |
 | **Package Manager** | pnpm | Fast, disk-efficient, good monorepo support |
 | **Monorepo** | pnpm workspaces | Simple, no extra tooling needed |
-| **Validation** | Zod | Runtime validation of financial inputs |
 | **Hosting** | Vercel | Static hosting with SPA rewrites, auto-deploy on push |
 
 ---
@@ -119,113 +120,96 @@
 ```
 model-pear/
 ├── packages/
-│   └── calculator/                 # Pure TypeScript calculation engine
-│       ├── package.json
-│       ├── tsconfig.json
-│       ├── vitest.config.ts
+│   └── calculator/                       # Pure TypeScript calculation engine
 │       ├── src/
-│       │   ├── index.ts            # Public API exports
-│       │   ├── types/
-│       │   │   ├── index.ts        # Re-exports all types
-│       │   │   ├── common.ts       # Shared types (Currency, Percentage, etc.)
-│       │   │   ├── entities.ts     # Entity configuration types
-│       │   │   └── results.ts      # Calculation result types
-│       │   ├── models/
-│       │   │   ├── index.ts        # Model registry
+│       │   ├── models/                   # 6 transaction models (47 variants)
+│       │   │   ├── index.ts              # Model registry + re-exports
 │       │   │   ├── model-1-cost-plus.ts
 │       │   │   ├── model-2-licence.ts
 │       │   │   ├── model-3-joint-development.ts
 │       │   │   ├── model-4-bot.ts
 │       │   │   ├── model-5-software-sale.ts
 │       │   │   └── model-6-saas.ts
-│       │   ├── projections/
-│       │   │   ├── npv.ts          # Net Present Value
-│       │   │   ├── irr.ts          # Internal Rate of Return
-│       │   │   ├── payback.ts      # Payback period calculations
-│       │   │   └── sensitivity.ts  # Sensitivity analysis
-│       │   ├── compliance/
-│       │   │   └── transfer-pricing.ts
-│       │   └── utils/
-│       │       ├── currency.ts     # Currency formatting
-│       │       ├── tax.ts          # SA tax calculations
-│       │       └── validation.ts   # Input validation with Zod
-│       └── tests/
-│           ├── models/
-│           │   ├── model-1-cost-plus.test.ts
-│           │   └── ...
-│           └── projections/
-│               ├── npv.test.ts
-│               └── irr.test.ts
+│       │   ├── projections/              # NPV / IRR / payback (in calculations.ts)
+│       │   │   ├── calculations.ts
+│       │   │   ├── types.ts
+│       │   │   └── index.ts
+│       │   ├── sensitivity/              # Ranges / scenarios / Monte Carlo
+│       │   │   ├── calculations.ts
+│       │   │   ├── types.ts
+│       │   │   └── index.ts
+│       │   └── types/                    # Shared interfaces
+│       │       ├── common.ts
+│       │       ├── entities.ts
+│       │       ├── results.ts
+│       │       └── index.ts
+│       └── tests/                        # 301 unit tests (8 files)
 │
 ├── apps/
-│   └── web/                        # SvelteKit application
-│       ├── package.json
+│   └── web/                              # SvelteKit application
+│       ├── eslint.config.js              # ESLint flat config (TS + Svelte)
+│       ├── postcss.config.js             # @tailwindcss/postcss only (no v3 plugins)
 │       ├── svelte.config.js
-│       ├── vite.config.ts
-│       ├── tailwind.config.js
+│       ├── vite.config.ts                # SvelteKit + VitePWA plugin
 │       ├── src/
-│       │   ├── app.html
-│       │   ├── app.css             # Tailwind imports
-│       │   ├── routes/
-│       │   │   ├── +layout.svelte  # Root layout
-│       │   │   ├── +page.svelte    # Landing / mode selector
-│       │   │   ├── pricing/
-│       │   │   │   └── +page.svelte
-│       │   │   └── structuring/
-│       │   │       ├── +page.svelte
-│       │   │       └── [model]/
-│       │   │           └── +page.svelte
+│       │   ├── app.css                   # @import tailwindcss + @plugin daisyui + @theme + @media print
+│       │   ├── app.d.ts                  # Global Window / Navigator augmentation
+│       │   ├── app.html                  # Pre-paint theme bootstrap + early beforeinstallprompt capture
 │       │   ├── lib/
+│       │   │   ├── theme.ts              # Runtime theme management (window.__theme)
+│       │   │   ├── pwa.ts                # SW + install + update (window.__pwa)
+│       │   │   ├── debugLog.ts           # Alpha-only in-memory debug log
+│       │   │   ├── clipboardUtils.ts     # Three-tier clipboard fallback
 │       │   │   ├── components/
-│       │   │   │   ├── ui/         # Reusable UI components
-│       │   │   │   │   ├── Button.svelte
-│       │   │   │   │   ├── Input.svelte
-│       │   │   │   │   ├── Card.svelte
-│       │   │   │   │   └── ...
-│       │   │   │   ├── forms/      # Form components
-│       │   │   │   │   ├── ModelInputForm.svelte
-│       │   │   │   │   └── EntityConfigForm.svelte
-│       │   │   │   ├── results/    # Results display
-│       │   │   │   │   ├── DeveloperResults.svelte
-│       │   │   │   │   ├── BuyerResults.svelte
-│       │   │   │   │   └── ComparisonTable.svelte
-│       │   │   │   └── charts/     # Chart wrappers
-│       │   │   │       ├── TornadoChart.svelte
-│       │   │   │       └── CashFlowChart.svelte
+│       │   │   │   ├── UpdateBanner.svelte    # PWA update prompt (z-70)
+│       │   │   │   ├── InstallModal.svelte    # Browser-specific install instructions
+│       │   │   │   ├── DebugPill.svelte       # Floating debug pill (alpha)
+│       │   │   │   ├── DeveloperResults.svelte / BuyerResults.svelte
+│       │   │   │   ├── ComparisonManager.svelte / ComparisonView.svelte
+│       │   │   │   ├── StructureWizard.svelte
+│       │   │   │   ├── SensitivityPanel.svelte / ProjectionsPanel.svelte
+│       │   │   │   ├── TransferPricingResults.svelte
+│       │   │   │   ├── InputField.svelte
+│       │   │   │   ├── Result{Panel,Row,Section}.svelte
+│       │   │   │   └── charts/                # ApexCharts wrappers (BaseChart + 6 charts)
 │       │   │   ├── stores/
-│       │   │   │   ├── calculation.ts   # Calculation state
-│       │   │   │   ├── comparison.ts    # Saved comparisons
-│       │   │   │   └── ui.ts            # UI state
-│       │   │   └── utils/
-│       │   │       └── formatting.ts
-│       ├── static/                     # Static assets (served at root URL)
-│       │   ├── favicon.png             # 48px browser tab icon
-│       │   ├── apple-touch-icon.png    # 180px iOS home screen
-│       │   ├── icon-192.png            # PWA manifest (any)
-│       │   ├── icon-512.png            # PWA manifest (any)
-│       │   ├── icon-1024.png           # PWA manifest (maskable)
-│       │   └── manifest.webmanifest    # PWA web app manifest
-│       └── tests/
-│           └── e2e/
-│               └── calculation-flow.test.ts
+│       │   │   │   ├── comparison.ts          # Saved options (the only store currently)
+│       │   │   │   └── comparison.types.ts
+│       │   │   ├── config/                    # Wizard + input field configs
+│       │   │   ├── utils/
+│       │   │   │   ├── trackListener.ts       # Type-aware event-listener tracker
+│       │   │   │   ├── bodyScrollLock.ts      # Reference-counted scroll lock
+│       │   │   │   └── formatters.ts
+│       │   │   └── components/index.ts        # Barrel export
+│       │   └── routes/
+│       │       ├── +layout.svelte             # Burger menu + UpdateBanner + InstallModal mount
+│       │       ├── +page.svelte               # Landing / mode selector
+│       │       ├── pricing/+page.svelte       # Mode 1: 5 pricing models
+│       │       └── structuring/
+│       │           ├── +page.svelte           # Options Overview + Wizard
+│       │           └── [model]/+page.svelte   # Model 1-6 calculator
+│       ├── static/                            # Served at root URL
+│       │   ├── favicon.png                    # 48×48 tab icon
+│       │   ├── apple-touch-icon.png           # 180×180 iOS home screen
+│       │   ├── icon-192.png / icon-512.png    # PWA manifest (purpose: any)
+│       │   └── icon-1024.png                  # PWA manifest (purpose: maskable)
+│       └── tests/e2e/                         # Playwright (comparison, mobile, navigation, pricing, structuring)
 │
-├── assets/
-│   └── icon-source.svg             # SVG source — edit this, run pnpm generate-icons
+├── assets/icon-source.svg                # Edit this, run `pnpm generate-icons`
+├── scripts/generate-icons.mjs            # Sharp: SVG → PNG icons
 │
-├── scripts/
-│   └── generate-icons.mjs          # Sharp: SVG → PNG icons at 400 DPI
+├── docs/                                 # Documentation (shared)
+│   ├── README.md
+│   ├── BUSINESS_GUIDE.md / CALCULATIONS.md / ARCHITECTURE.md (this)
+│   ├── SESSION_NOTES.md / TODO.md / USER_ACTIONS.md / AI_MISTAKES.md
+│   └── model-use-cases/                  # Per-model when-to-use guides
 │
-├── docs/                           # Documentation (shared)
-│   ├── ARCHITECTURE.md             # This file
-│   ├── BUSINESS_GUIDE.md
-│   ├── CALCULATIONS.md
-│   └── ...
-│
-├── pnpm-workspace.yaml             # Monorepo configuration
-├── package.json                    # Root package.json
-├── tsconfig.base.json              # Shared TypeScript config
-└── CLAUDE.md                       # AI assistant context
+├── CLAUDE.md                             # AI assistant context (root)
+├── pnpm-workspace.yaml                   # Monorepo config
+└── package.json                          # Root package
 ```
+
+> The PWA manifest used to live at `apps/web/static/manifest.webmanifest`; it was removed once VitePWA started generating one at build time so there's a single source of truth (the `manifest:` block in `vite.config.ts`).
 
 ---
 
@@ -414,7 +398,7 @@ export { TAX_RATES, BENCHMARK_RANGES } from './constants';
 
 **Design Decisions**:
 
-1. **No dependencies** except Zod for validation
+1. **Zero runtime dependencies**: Pure TypeScript, no validation library or formatter — type checks happen at the boundary in `apps/web` before calling into the calculator
 2. **Tree-shakeable**: Only import what you use
 3. **Platform-agnostic**: Works in browser, Node, Deno, etc.
 4. **Versioned**: Follows semver for API stability
@@ -425,19 +409,21 @@ export { TAX_RATES, BENCHMARK_RANGES } from './constants';
 
 **Key Dependencies**:
 - `@model-pear/calculator` (local package)
-- `svelte` + `@sveltejs/kit`
-- `tailwindcss`
+- `svelte` 4.x + `@sveltejs/kit` 2.x + `@sveltejs/adapter-static`
+- `tailwindcss` v4 + `@tailwindcss/postcss` + `daisyui` v5
 - `apexcharts`
+- `vite-plugin-pwa` + `workbox-window`
 
 **Routing**:
 
 | Route | Description |
 |-------|-------------|
 | `/` | Landing page with mode selector |
-| `/pricing` | Mode 1: Pricing Calculator |
-| `/structuring` | Mode 2: Transaction Structuring overview |
-| `/structuring/[model]` | Specific model calculator |
-| `/structuring/compare` | Side-by-side comparison |
+| `/pricing` | Mode 1: Pricing Calculator (5 pricing models) |
+| `/structuring` | Mode 2: Options Overview + Structure Selector wizard |
+| `/structuring/[model]` | Specific transaction model calculator (model 1-6) |
+
+Side-by-side comparison is rendered in-place on `/structuring/[model]` via `ComparisonView` — there is no `/structuring/compare` route.
 
 ---
 

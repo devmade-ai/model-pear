@@ -2,6 +2,7 @@
   import BaseChart from './BaseChart.svelte';
   import type { InputSensitivity } from '@model-pear/calculator';
   import { formatCurrency } from '$lib/utils';
+  import { themeRev, getThemeColor } from '$lib/theme';
 
   export let sensitivities: InputSensitivity[];
   export let baseValue: number;
@@ -19,14 +20,16 @@
   $: lowDeltas = sortedData.map((s) => s.lowOutput - baseValue);
   $: highDeltas = sortedData.map((s) => s.highOutput - baseValue);
 
-  $: options = {
-    chart: {
-      type: 'bar' as const,
-      stacked: false,
-      toolbar: {
-        show: false,
-      },
-    },
+  // Theme reactivity: see CashFlowChart.svelte for the pattern explanation.
+  let themeKey = 0;
+  $: themeKey = $themeRev;
+
+  function makeOptions(_rev: number, _sens: unknown, _baseValue: number): ApexCharts.ApexOptions {
+    // Cast: ApexCharts' label-formatter type signature is `(value: string)`
+    // but for numeric axes it's invoked with a number at runtime. The cast
+    // accepts the type-vs-runtime mismatch ApexCharts itself ships with.
+    return ({
+    chart: { type: 'bar' as const, stacked: false, toolbar: { show: false } },
     plotOptions: {
       bar: {
         horizontal: true,
@@ -34,86 +37,59 @@
         borderRadius: 4,
       },
     },
-    colors: ['#ef4444', '#22c55e'], // red for low, green for high
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 1,
-      colors: ['#fff'],
-    },
-    grid: {
-      xaxis: {
-        lines: {
-          show: true,
-        },
-      },
-    },
+    // Low scenario = downside (error), high scenario = upside (success)
+    colors: [getThemeColor('--color-error'), getThemeColor('--color-success')],
+    dataLabels: { enabled: false },
+    stroke: { width: 1, colors: [getThemeColor('--color-base-100')] },
+    grid: { xaxis: { lines: { show: true } } },
     xaxis: {
       categories,
-      labels: {
-        formatter: (val: number) => formatCurrency(val, true),
-      },
-      title: {
-        text: 'Impact on Output',
-      },
+      labels: { formatter: (val: number) => formatCurrency(val, true) },
+      title: { text: 'Impact on Output' },
     },
     yaxis: {
-      title: {
-        text: undefined,
-      },
-      labels: {
-        maxWidth: 180,
-      },
+      title: { text: undefined },
+      labels: { maxWidth: 180 },
     },
     tooltip: {
       shared: true,
       intersect: false,
-      y: {
-        formatter: (val: number) => formatCurrency(val),
-      },
+      y: { formatter: (val: number) => formatCurrency(val) },
     },
-    legend: {
-      position: 'top' as const,
-      horizontalAlign: 'center' as const,
-    },
+    legend: { position: 'top' as const, horizontalAlign: 'center' as const },
     annotations: {
       xaxis: [
         {
           x: 0,
-          borderColor: '#64748b',
+          borderColor: getThemeColor('--color-base-content'),
           strokeDashArray: 0,
           label: {
             text: 'Base',
             style: {
-              color: '#64748b',
-              background: '#f1f5f9',
+              color: getThemeColor('--color-base-content'),
+              background: getThemeColor('--color-base-300'),
             },
           },
         },
       ],
     },
     series: [
-      {
-        name: 'Low Scenario',
-        data: lowDeltas,
-      },
-      {
-        name: 'High Scenario',
-        data: highDeltas,
-      },
+      { name: 'Low Scenario', data: lowDeltas },
+      { name: 'High Scenario', data: highDeltas },
     ],
-  };
+  } as unknown as ApexCharts.ApexOptions);
+  }
+  $: options = makeOptions(themeKey, sensitivities, baseValue);
 </script>
 
 <div class="card p-4">
-  <h3 class="text-lg font-semibold text-foreground mb-2">{title}</h3>
-  <p class="text-sm text-muted-foreground mb-4">
+  <h3 class="text-lg font-semibold text-base-content mb-2">{title}</h3>
+  <p class="text-sm text-base-content/70 mb-4">
     Shows how changes in each input affect the output. Longer bars = higher sensitivity.
   </p>
   {#if sortedData.length > 0}
     <BaseChart {options} {height} />
   {:else}
-    <p class="text-muted-foreground text-center py-8">No sensitivity data available</p>
+    <p class="text-base-content/70 text-center py-8">No sensitivity data available</p>
   {/if}
 </div>

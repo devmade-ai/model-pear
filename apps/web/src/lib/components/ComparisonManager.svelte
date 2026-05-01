@@ -5,6 +5,7 @@
    * Shows list of saved options, allows selection for comparison,
    * rename, delete, and export/import functionality.
    */
+  import { onDestroy } from 'svelte';
   import {
     comparisonStore,
     savedOptions,
@@ -19,6 +20,37 @@
   let isExpanded = true;
   let editingId: string | null = null;
   let editName = '';
+
+  // DaisyUI <dialog> for the destructive "Clear All" confirmation.
+  // Replaces the native confirm() which couldn't be styled and broke
+  // the otherwise-DaisyUI overlay surface.
+  let confirmClearOpen = false;
+  let confirmDialog: HTMLDialogElement;
+  $: if (confirmDialog) {
+    if (confirmClearOpen && !confirmDialog.open) confirmDialog.showModal();
+    else if (!confirmClearOpen && confirmDialog.open) confirmDialog.close();
+  }
+
+  // Inline status surface for import results — replaces the two
+  // native alert() calls. role="status" + aria-live announces to
+  // screen readers; auto-clears after 4s.
+  let importStatus: 'idle' | 'success' | 'error' = 'idle';
+  let importMessage = '';
+  let importStatusTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function showImportStatus(level: 'success' | 'error', message: string): void {
+    importStatus = level;
+    importMessage = message;
+    if (importStatusTimer) clearTimeout(importStatusTimer);
+    importStatusTimer = setTimeout(() => {
+      importStatus = 'idle';
+      importMessage = '';
+    }, 4000);
+  }
+
+  onDestroy(() => {
+    if (importStatusTimer) clearTimeout(importStatusTimer);
+  });
 
   function startEdit(option: SavedOption) {
     editingId = option.id;
@@ -69,9 +101,9 @@
         const text = await file.text();
         const count = comparisonStore.importJSON(text);
         if (count > 0) {
-          alert(`Imported ${count} option(s)`);
+          showImportStatus('success', `Imported ${count} ${count === 1 ? 'option' : 'options'}`);
         } else {
-          alert('No valid options found in file');
+          showImportStatus('error', 'No valid options found in file');
         }
       }
     };
@@ -107,22 +139,22 @@
   >
     <div class="flex items-center space-x-2">
       <span class="text-lg">📊</span>
-      <h2 class="text-lg font-semibold text-foreground">Saved Options</h2>
-      <span class="badge-blue">{$savedOptions.length}</span>
+      <h2 class="text-lg font-semibold text-base-content">Saved Options</h2>
+      <span class="badge badge-primary">{$savedOptions.length}</span>
     </div>
-    <span class="text-muted-foreground">{isExpanded ? '▼' : '▶'}</span>
+    <span class="text-base-content/70">{isExpanded ? '▼' : '▶'}</span>
   </button>
 
   {#if isExpanded}
-    <div class="border-t border-border p-4">
+    <div class="border-t border-base-300 p-4">
       {#if $savedOptions.length === 0}
-        <p class="text-sm text-muted-foreground text-center py-4">
+        <p class="text-sm text-base-content/70 text-center py-4">
           No saved options yet. Calculate a model and click "Save Option" to start comparing.
         </p>
       {:else}
         <!-- Selection info -->
         <div class="flex items-center justify-between mb-4">
-          <p class="text-sm text-muted-foreground">
+          <p class="text-sm text-base-content/70">
             {#if $selectedCount > 0}
               {$selectedCount} selected for comparison
             {:else}
@@ -132,14 +164,14 @@
           <div class="flex space-x-2">
             {#if $selectedCount > 0}
               <button
-                class="text-sm text-muted-foreground hover:text-foreground"
+                class="btn btn-ghost btn-sm"
                 on:click={() => comparisonStore.clearSelection()}
               >
                 Clear
               </button>
             {/if}
             <button
-              class="btn-primary text-sm py-1 px-3"
+              class="btn btn-primary text-sm py-1 px-3"
               disabled={!$canCompare}
               on:click={handleCompare}
             >
@@ -155,14 +187,14 @@
             <div
               class="flex items-center p-3 rounded-lg border transition-colors {isSelected
                 ? 'border-primary/50 bg-primary/10'
-                : 'border-border hover:border-border/80'}"
+                : 'border-base-300 hover:border-base-300/80'}"
             >
               <!-- Checkbox -->
               <input
                 type="checkbox"
                 checked={isSelected}
                 on:change={() => comparisonStore.toggleSelection(option.id)}
-                class="mr-3 h-4 w-4 text-primary rounded"
+                class="checkbox checkbox-primary checkbox-sm mr-3"
               />
 
               <!-- Content -->
@@ -173,19 +205,19 @@
                     bind:value={editName}
                     on:keydown={handleKeydown}
                     on:blur={saveEdit}
-                    class="input text-sm py-1"
+                    class="input input-sm"
                   />
                 {:else}
                   <button
-                    class="font-medium text-foreground truncate block text-left w-full"
+                    class="font-medium text-base-content truncate block text-left w-full tooltip"
                     on:dblclick={() => startEdit(option)}
-                    title="Double-click to rename"
+                    data-tip="Double-click to rename"
                   >
                     {option.name}
                   </button>
                 {/if}
-                <div class="flex items-center space-x-2 text-xs text-muted-foreground mt-0.5">
-                  <span class="badge-blue text-xs py-0">{getModelLabel(option.modelId)}</span>
+                <div class="flex items-center space-x-2 text-xs text-base-content/70 mt-0.5">
+                  <span class="badge badge-primary badge-sm">{getModelLabel(option.modelId)}</span>
                   <span>{option.variantId}</span>
                   <span>•</span>
                   <span>{formatCurrency(option.result.developer.revenue.total)}</span>
@@ -197,15 +229,17 @@
               <!-- Actions -->
               <div class="flex items-center space-x-1 ml-2">
                 <button
-                  class="p-1 text-muted-foreground hover:text-foreground"
-                  title="Rename"
+                  class="btn btn-ghost btn-sm btn-square tooltip"
+                  data-tip="Rename"
+                  aria-label="Rename"
                   on:click={() => startEdit(option)}
                 >
                   ✏️
                 </button>
                 <button
-                  class="p-1 text-muted-foreground hover:text-red-400"
-                  title="Delete"
+                  class="btn btn-ghost btn-sm btn-square hover:text-error tooltip"
+                  data-tip="Delete"
+                  aria-label="Delete"
                   on:click={() => comparisonStore.delete(option.id)}
                 >
                   🗑️
@@ -216,27 +250,65 @@
         </div>
 
         <!-- Footer actions -->
-        <div class="flex justify-between mt-4 pt-4 border-t border-border">
+        <div class="flex justify-between mt-4 pt-4 border-t border-base-300">
           <div class="flex space-x-2">
-            <button class="text-sm text-muted-foreground hover:text-foreground" on:click={exportOptions}>
+            <button class="btn btn-ghost btn-sm" on:click={exportOptions}>
               Export
             </button>
-            <button class="text-sm text-muted-foreground hover:text-foreground" on:click={importOptions}>
+            <button class="btn btn-ghost btn-sm" on:click={importOptions}>
               Import
             </button>
           </div>
           <button
-            class="text-sm text-red-400 hover:text-red-300"
-            on:click={() => {
-              if (confirm('Delete all saved options?')) {
-                comparisonStore.clearAll();
-              }
-            }}
+            class="btn btn-ghost btn-sm text-error hover:text-error"
+            on:click={() => (confirmClearOpen = true)}
           >
             Clear All
           </button>
         </div>
+
+        {#if importStatus !== 'idle'}
+          <div
+            class="alert {importStatus === 'success' ? 'alert-success' : 'alert-error'} alert-soft mt-3"
+            role="status"
+            aria-live="polite"
+          >
+            <span class="text-sm">{importMessage}</span>
+          </div>
+        {/if}
       {/if}
     </div>
   {/if}
 </div>
+
+<!-- "Clear All" confirmation — DaisyUI <dialog class="modal">
+     replaces the native confirm() so the destructive flow uses the
+     same overlay surface as the rest of the app. The body explains
+     consequences explicitly per CLAUDE.md UX rule "confirm
+     destructive actions with clear consequences explained". -->
+<dialog
+  bind:this={confirmDialog}
+  class="modal"
+  on:close={() => (confirmClearOpen = false)}
+  aria-labelledby="confirm-clear-title"
+>
+  <div class="modal-box">
+    <h3 id="confirm-clear-title" class="text-lg font-semibold text-base-content">Delete all saved options?</h3>
+    <p class="text-sm text-base-content/70 mt-2">
+      This permanently removes every option you've saved for comparison. You can't undo this.
+    </p>
+    <div class="modal-action">
+      <button class="btn btn-outline" on:click={() => (confirmClearOpen = false)}>Cancel</button>
+      <button
+        class="btn btn-error"
+        on:click={() => {
+          comparisonStore.clearAll();
+          confirmClearOpen = false;
+        }}
+      >Delete all</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

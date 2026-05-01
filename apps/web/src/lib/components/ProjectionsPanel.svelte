@@ -25,11 +25,11 @@
   let costGrowthRate = 3;
 
   // Generate developer cash flows from result
-  $: developerInitialCost = result.developer.revenue.totalRevenue - result.developer.profit.netProfit;
-  $: developerAnnualProfit = result.developer.profit.netProfit / (projectionYears || 1);
+  $: developerInitialCost = result.developer.revenue.total - result.developer.profit.net;
+  $: developerAnnualProfit = result.developer.profit.net / (projectionYears || 1);
 
   // Generate buyer cash flows (total cost, then ongoing benefits from software)
-  $: buyerInitialCost = result.buyer.accounting?.capitalised || result.buyer.totalCost || 0;
+  $: buyerInitialCost = result.buyer.asset.capitalised || result.buyer.totalCost || 0;
 
   // Generate yearly projections
   $: developerYearlyData = generateYearlyProjections(
@@ -149,14 +149,14 @@
   <div class="flex items-center justify-between mb-4">
     <div class="flex items-center space-x-2">
       <span class="text-2xl">📈</span>
-      <h2 class="text-xl font-bold text-foreground">Growth Projections</h2>
+      <h2 class="text-xl font-bold text-base-content">Growth Projections</h2>
     </div>
 
     <!-- Parameter Controls -->
     <div class="flex items-center space-x-4 text-sm">
       <label class="flex items-center space-x-2">
-        <span class="text-muted-foreground">Years:</span>
-        <select bind:value={projectionYears} class="input py-1 px-2 w-16">
+        <span class="text-base-content/70">Years:</span>
+        <select bind:value={projectionYears} class="select select-sm w-16">
           <option value={3}>3</option>
           <option value={5}>5</option>
           <option value={7}>7</option>
@@ -164,7 +164,7 @@
         </select>
       </label>
       <label class="flex items-center space-x-2">
-        <span class="text-muted-foreground">Discount:</span>
+        <span class="text-base-content/70">Discount:</span>
         <input
           type="number"
           bind:value={discountRate}
@@ -172,12 +172,12 @@
           max="50"
           class="input py-1 px-2 w-16"
         />
-        <span class="text-muted-foreground">%</span>
+        <span class="text-base-content/70">%</span>
       </label>
     </div>
   </div>
 
-  <p class="text-muted-foreground text-sm">
+  <p class="text-base-content/70 text-sm">
     Financial projections over {projectionYears} years at a {discountRate}% discount rate.
     These help evaluate the long-term value of the transaction structure.
   </p>
@@ -221,26 +221,26 @@
   />
 
   <!-- Summary -->
-  <div class="card p-4 bg-muted">
-    <h3 class="text-lg font-semibold text-foreground mb-3">Summary</h3>
+  <div class="card p-4 bg-base-200">
+    <h3 class="text-lg font-semibold text-base-content mb-3">Summary</h3>
     <div class="grid md:grid-cols-2 gap-4 text-sm">
       <div>
-        <p class="text-muted-foreground mb-1">
-          <strong class="text-foreground">Developer:</strong>
+        <p class="text-base-content/70 mb-1">
+          <strong class="text-base-content">Developer:</strong>
           {developerAssessment.description}
         </p>
-        <p class="text-muted-foreground">
+        <p class="text-base-content/70">
           {developerPayback === Infinity
             ? 'Payback not achieved within projection period'
             : `Expected payback in ${developerPayback.toFixed(1)} years`}
         </p>
       </div>
       <div>
-        <p class="text-muted-foreground mb-1">
-          <strong class="text-foreground">Buyer:</strong>
+        <p class="text-base-content/70 mb-1">
+          <strong class="text-base-content">Buyer:</strong>
           {buyerAssessment.description}
         </p>
-        <p class="text-muted-foreground">
+        <p class="text-base-content/70">
           {buyerPayback === Infinity
             ? 'Payback not achieved within projection period'
             : `Expected payback in ${buyerPayback.toFixed(1)} years`}

@@ -1,7 +1,7 @@
 # Business User Guide
 # Software Transaction Structuring Tool
 
-> **Last Updated**: March 2026
+> **Last Updated**: April 2026
 > **Target Audience**: CFOs, Finance Directors, Business Owners, Software Company Leaders
 
 ## Table of Contents
@@ -1167,6 +1167,6 @@ Ensure JavaScript is enabled. The tool does not require installation.
 
 ---
 
-**Last Updated**: January 2026
+**Last Updated**: April 2026
 
-**Version**: 3.0 (Comprehensive Inter-Company Transaction Tool)
+**Version**: 3.0 (Software Transaction Structuring Tool — supports any client, related or unrelated)

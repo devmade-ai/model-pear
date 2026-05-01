@@ -1,4 +1,4 @@
-# READ AND FOLLOW THE PROCESS, PRINCIPLES, CODE STANDARDS, DOCUMENTATION, AI NOTES, TRIGGERS, AND PROHIBITIONS EVERY TIME
+# READ AND FOLLOW THE PROCESS, PRINCIPLES, COMMUNICATION, CODE STANDARDS, DOCUMENTATION, AI NOTES, TRIGGERS, AND PROHIBITIONS EVERY TIME
 
 ## Process
 
@@ -8,7 +8,43 @@
 
 ### REMINDER: READ AND FOLLOW THE PROCESS EVERY TIME
 
-## HARD RULES
+## Principles
+
+1. **User-first design** - Align with how real people will use the tool (top priority)
+2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
+3. **Document WHY** - Explain decisions and how they align with tool goals
+4. **Testability** - Ensure correctness and alignment with usage goals can be verified
+5. **Know the purpose** - Always be aware of what the tool is for
+6. **Follow conventions** - Best practices and consistent patterns
+7. **Repeatable process** - Follow consistent steps to ensure all the above
+8. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
+9. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
+10. **Document user actions** - When manual user action is required (external dashboards, credentials, etc.), add detailed instructions to docs/USER_ACTIONS.md
+
+### REMINDER: READ AND FOLLOW THE PRINCIPLES EVERY TIME
+
+---
+
+## Communication
+
+Respond as if talking to yourself. Peer-to-peer, no servility.
+
+- **Direct.** No filler, no preamble, no conversational padding. State facts and actions.
+- **No sycophancy.** No "great question", "you're absolutely right", "excellent point". Acknowledge errors briefly and move on.
+- **No hedging.** Commit to a position. "I think" / "perhaps" only when genuinely uncertain.
+- **Proper solutions only.** Always suggest the right fix, not a quick hack. If the proper solution is complex, explain why the shortcut is wrong and lay out the real approach.
+- **Work, not process.** Only discuss work that can be done and work that is done. Never opine on branching, pull requests, git history editing, commit granularity, development process, or code review flow — those are the user's domain and must never influence how you execute a task. If you notice a process concern, keep it to yourself and get on with the work.
+- **Ask before assuming.** When a user reports a bug or makes a request, ask clarifying questions until you are certain you understand the requirement. Don't guess the cause and build a fix on an assumption — one wrong assumption wastes multiple commits.
+- **Always ask at least one question before starting work.** This is the minimum bar. Even when the request seems clear, verify scope, constraints, or intent before writing code.
+- **Concrete options.** When clarification is needed, list numbered options — never open-ended questions.
+- **Assume competence.** The reader is a developer. Don't over-explain basics.
+- **Push back.** Disagree when warranted. State your view first, then ask if they want to proceed differently.
+
+### REMINDER: READ AND FOLLOW THE COMMUNICATION RULES EVERY TIME
+
+---
+
+## Code Standards
 
 These rules are non-negotiable. Stop and ask before proceeding if any rule would be violated.
 
@@ -86,7 +122,7 @@ Good: "Please enter your phone number as 10 digits, like 0821234567"
 - [ ] Use CSS variables for theming (colors, spacing, typography)
 - [ ] Separate component styles into individual files when component is created
 
-### Documentation
+### Where Documentation Lives
 
 - [ ] Update relevant documentation with every code change
 - [ ] All documentation lives in `/docs` directory
@@ -102,6 +138,14 @@ Good: "Please enter your phone number as 10 digits, like 0821234567"
 - [ ] Clean up console.log/print statements before marking work complete
 - [ ] Clean up completed or obsolete docs/files and remove references to them
 
+### Timer and Subscription Cleanup
+
+- Every `setTimeout`/`setInterval`/`addEventListener`/`subscribe` needs a matching cleanup (`clearTimeout`/`clearInterval`/`removeEventListener`/unsubscribe handle).
+- Store timer ids in a scope the cleanup can reach. Nested timeouts → array; single-shot → local const or ref.
+- In Svelte components: return cleanup from `onMount`, or use `onDestroy`. In plain modules: export a `dispose()` or use `AbortController`.
+- HMR-safe: guard global listener attachment behind a `window.__<featureName>Attached` flag so hot-reload doesn't double-subscribe. For Vite, also release listeners via `import.meta.hot.dispose()`.
+- See [`docs/implementations/TIMER_LEAKS.md`](docs/implementations/TIMER_LEAKS.md) in glow-props for concrete patterns (nested-timeout array, AbortController, per-effect dispose, HMR guard).
+
 ### Quality Checks
 
 During every change, actively scan for:
@@ -115,33 +159,11 @@ During every change, actively scan for:
 
 Report findings even if not directly related to current task.
 
-### REMINDER: READ AND FOLLOW THE CODE STANDARDS EVERY TIME
-
----
-
-## AI SESSION MANAGEMENT
-
-### Principles
-
-1. **User-first design** - Align with how real people will use the tool (top priority)
-2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
-3. **Document WHY** - Explain decisions and how they align with tool goals
-4. **Testability** - Ensure correctness and alignment with usage goals can be verified
-5. **Know the purpose** - Always be aware of what the tool is for
-6. **Follow conventions** - Best practices and consistent patterns
-7. **Repeatable process** - Follow consistent steps to ensure all the above
-8. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
-9. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
-10. **Document user actions** - When manual user action is required (external dashboards, credentials, etc.), add detailed instructions to docs/USER_ACTIONS.md
-
 ### After Each Significant Task
 
 - [ ] Update SESSION_NOTES.md with current state
 - [ ] Update relevant docs (CALCULATIONS.md, BUSINESS_GUIDE.md, etc.)
-- [ ] Add entry to HISTORY.md if code/docs changed
 - [ ] Commit changes (code + docs together)
-
-### REMINDER: READ AND FOLLOW THE SESSION MANAGEMENT EVERY TIME
 
 ### Commit Message Format
 
@@ -176,7 +198,6 @@ These footers are required on every commit. No exceptions.
 ### Before Each Commit
 
 - [ ] Relevant docs updated for changes in this commit
-- [ ] HISTORY.md entry added (if significant change)
 - [ ] SESSION_NOTES.md reflects current state
 - [ ] Commit message is clear and descriptive
 
@@ -195,7 +216,11 @@ These footers are required on every commit. No exceptions.
   - Any decisions or blockers?
   - Key details that shouldn't be lost in the summary
 
-### AI Notes
+### REMINDER: READ AND FOLLOW THE CODE STANDARDS EVERY TIME
+
+---
+
+## AI Notes
 
 <!-- Reminders and learnings for AI assistants - add to this as needed -->
 
@@ -203,10 +228,9 @@ These footers are required on every commit. No exceptions.
 - Check for existing patterns in the codebase before creating new ones
 - Commit and push changes before ending a session
 - Clean up completed or obsolete docs/files and remove references to them
-- **ASK before assuming.** When a user reports a bug, ask clarifying questions (which mode? what inputs? what do you see?) BEFORE writing code. Don't guess the cause and build a fix on an assumption — wrong assumptions lead to wrong commits. One clarifying question saves multiple wrong commits.
 - **Always read files before editing.** Use the Read tool on every file before attempting to Edit it. Editing without reading first will fail.
 - Check docs/AI_MISTAKES.md at session start and log new mistakes as they occur
-- **Communication style:** Direct, concise responses. No filler phrases or conversational padding. State facts and actions. Ask specific questions with concrete options when clarification is needed.
+- **Trigger name vs. local identifier collisions.** Several single-word triggers in `## Triggers` collide with local names in this repo: `clean` (npm script `pnpm clean`), `tests` (folder `packages/calculator/tests`), `docs` (folder `docs/`), `config` (folder `apps/web/src/lib/config/`), `types` (folder `packages/calculator/src/types`). When the user types one of these as a bare command at the start of a turn, treat it as a trigger invocation. When the same word appears as part of a shell command, file path, or sentence, treat it literally. If genuinely ambiguous, ask which is meant.
 - **Claude Code mobile/web — accessing sibling repos:**
   - Use `GITHUB_ALL_REPO_TOKEN` with the GitHub API (`api.github.com/repos/devmade-ai/{repo}/contents/{path}`) to read files from other devmade-ai repos
   - Use `$(printenv GITHUB_ALL_REPO_TOKEN)` not `$GITHUB_ALL_REPO_TOKEN` to avoid shell expansion issues
@@ -221,6 +245,8 @@ These footers are required on every commit. No exceptions.
 ## Documentation
 
 **AI assistants automatically maintain these documents.** Update them as you work — don't wait for the user to ask. This ensures context is always current for the next session.
+
+**Git log is the changelog.** Don't create or maintain a separate `CHANGELOG.md` / `HISTORY.md`. To answer "when did X land / why was Y done that way", use `git log -S '<symbol>'`, `git log -- <path>`, or `git log --all --oneline | grep`.
 
 ### `CLAUDE.md`
 
@@ -255,28 +281,16 @@ These footers are required on every commit. No exceptions.
 
 **Purpose:** AI-managed backlog of ideas and potential improvements.
 **When to read:** When looking for work to do, or when the user asks about pending tasks.
-**When to update:** When noticing potential improvements. Move completed items to HISTORY.md.
+**When to update:** When noticing potential improvements. Delete completed items (git history tracks them).
 **What to include:**
 
 - Group by category (Features, UX, Technical, etc.)
-- Use `- [ ]` for pending items only
+- Short items: `- [ ]` checkbox bullet
+- Larger items (those needing problem/solution context, rationale, mock-ups): `### Heading` followed by `**Priority**: …` and a body
 - Brief description of what and why
-- When complete, move to HISTORY.md (don't keep in TODO)
+- When complete, delete (git history tracks what was done)
 
 **Why:** User reviews this to prioritize work. Keeps TODO focused on pending items only.
-
-### `docs/HISTORY.md`
-
-**Purpose:** Changelog and record of completed work.
-**When to read:** When you need historical context about why something was built a certain way.
-**When to update:** When completing TODO items or making significant changes.
-**What to include:**
-
-- Completed TODO items (organized by category)
-- Bug fixes and changes (organized by date)
-- Brief description of what was done
-
-**Why:** Historical context separate from active TODO. Tracks what's been accomplished.
 
 ### `docs/USER_ACTIONS.md`
 
@@ -353,7 +367,7 @@ These footers are required on every commit. No exceptions.
 
 ---
 
-## TESTING
+## Testing
 
 - Write tests for critical paths and core business logic
 - Test error handling and edge cases for critical functions
@@ -379,9 +393,23 @@ All implementation patterns live in the **glow-props** repo and are the single s
 - **Do not hardcode a list of patterns** — scan the source folder to discover what's available
 - The set of patterns grows over time; always check the source for new additions
 
+### Not Applicable Patterns
+
+Patterns evaluated against this repo's actual needs and intentionally **not** implemented. Each entry includes the reasoning so a future contributor doesn't re-evaluate from scratch.
+
+#### EVENT_BUS — N/A
+Evaluated April 28, 2026. The pattern's three triggering criteria — (a) cross-module unrelated reactions to the same domain event, (b) service-layer boundaries where producers don't know consumers, (c) need for typed event payloads enforced at compile time — are all already satisfied by existing primitives:
+
+- **Theme change broadcast** uses a typed `CustomEvent<{ dark: boolean }>` dispatched on `window` from `applyTheme()` in `$lib/theme.ts`. `BaseChart.svelte` listens via `window.addEventListener('theme:change', …)`. DOM CustomEvent fans out to N listeners at zero coupling cost; type safety comes from the generic.
+- **Cross-component state** uses Svelte stores (`themeRev` writable, `comparisonStore` + 5 derived stores in `$lib/stores/comparison.ts`). Reactive auto-subscription, type-checked through Svelte's tooling.
+- **PWA banner / modal handoff** uses single-consumer callback registration (`window.__pwa.setUpdateBannerCallback`, `setInstallModalCallback`). One banner, one modal — fan-out would be over-engineering.
+- **Debug log subscriptions** use scoped pub/sub (`debugSubscribe(fn) → unsubscribe`) inside `$lib/debugLog.ts`. Single domain, single consumer (the DebugPill).
+
+None of those benefit from a generic typed EventBus<M>. Calculator-package code is pure functions with no side-effect publishers. If a future feature needs pub/sub across unrelated modules with a typed payload map, re-evaluate then — but adding one now would be reinventing primitives the app already has.
+
 ---
 
-## PROJECT-SPECIFIC CONFIGURATION
+## Project-Specific Configuration
 
 ### Paths
 ```
@@ -419,24 +447,27 @@ pnpm build            # Build all packages
 pnpm dev              # Start dev server (apps/web)
 pnpm test:e2e         # Run Playwright E2E tests
 pnpm test:e2e:ui      # Run Playwright with UI
+pnpm check            # Theme-hex drift check + svelte-check (typecheck)
+pnpm check:theme-hex  # Standalone: hardcoded hex sites match DaisyUI tokens
+pnpm lint             # ESLint across workspaces
 pnpm generate-icons   # Regenerate PNGs from assets/icon-source.svg
 ```
 
 ---
 
-## WORKFLOW
+## Workflow
 
 1. **Receive task** - Ask clarifying questions if needed
 2. **Gather context** - Read CLAUDE.md, SESSION_NOTES.md, TODO.md, relevant code
 3. **Plan** - Write plan to `/docs/working` if task is non-trivial
 4. **Implement** - Follow all hard rules above
 5. **Verify** - Run tests, check for errors, review cleanup
-6. **Document** - Update all affected documentation (SESSION_NOTES.md, HISTORY.md, etc.)
+6. **Document** - Update all affected documentation (SESSION_NOTES.md, etc.)
 7. **Report** - Summarize changes and any issues found
 
 ---
 
-## PROHIBITIONS
+## Prohibitions
 
 Never:
 - Start implementation without understanding full scope
@@ -460,42 +491,154 @@ Never:
 
 ## Triggers
 
-Single-word commands that invoke focused analysis passes. Each trigger has a short alias. Type the word or alias to activate.
+Commands that invoke focused analysis passes. Each trigger is a single perspective — what you'd notice that the others wouldn't.
 
-| # | Trigger | Alias | What it does |
-|---|---------|-------|--------------|
-| 1 | `review` | `rev` | Code review — bugs, UI, UX, simplification |
-| 2 | `audit` | `aud` | Code quality — hacks, anti-patterns, latent bugs, race conditions |
-| 3 | `docs` | `doc` | Documentation accuracy vs actual code |
-| 4 | `mobile` | `tap` | Mobile UX — touch targets, viewport, safe areas |
-| 5 | `clean` | `cln` | Hygiene — duplication, refactor candidates, dead code |
-| 6 | `performance` | `perf` | Re-renders, expensive ops, bundle size, DB/API, memory |
-| 7 | `security` | `sec` | Injection, auth gaps, data exposure, insecure defaults, CVEs |
-| 8 | `debug` | `dbg` | Debug coverage — missing logs, noise |
-| 9 | `improve` | `imp` | Open-ended — architecture, DX, anything else |
-| 10 | `start` | `go` | Sequential sweep of all 9 above, one at a time |
+### How to invoke
 
-### Trigger behavior
+- **One perspective** — type the trigger name or its alias (e.g. `bugs`, `sec`, `a11y`).
+- **A group** — type the group name (e.g. `correctness`, `frontend`, `ops`).
+- **Everything** — type `all`.
+- **Meta sweep** — type `quick`, `ship`, or `risk` for pre-curated bundles.
 
-- Each trigger runs a single focused pass and reports findings.
-- Findings are listed as numbered text — never interactive prompts or selection UIs.
-- One trigger per response. Never combine multiple triggers in a single response.
+### Scope modifiers (suffix any trigger)
 
-### `start` / `go` behavior
+- *(none)* — whole codebase.
+- `branch` — diff against the branch's base (default: `main`).
+- `branch <base>` — diff against a specified base.
+- `staged` — staged changes only.
+- `file <path>` — single file.
 
-Runs all 9 triggers in priority sequence, one at a time:
+Examples:
+- `bugs` — bugs check across the whole codebase.
+- `bugs branch` — bugs check on the current branch's diff vs main.
+- `correctness branch main` — every correctness trigger against the branch diff.
+- `all staged` — every applicable trigger against staged files.
 
-`rev` → `aud` → `doc` → `tap` → `cln` → `perf` → `sec` → `dbg` → `imp`
+### Behavior rules
 
-After each trigger completes and findings are presented, the user responds with one of:
-1. `fix` — apply the suggested fixes, then move to the next trigger
-2. `skip` — skip this trigger's findings and move to the next trigger
-3. `stop` — end the sweep entirely
+- One trigger pass per response. Never combine.
+- Findings are numbered text — never interactive prompts or selection UIs.
+- After each pass, pause. User responds with `fix` / `skip` / `stop`:
+  - `fix` — apply the suggested fixes for this trigger, then move on.
+  - `skip` — skip this trigger's findings and move on.
+  - `stop` — end the sweep entirely.
+- Groups, meta sweeps, and `all` run triggers sequentially in table order, pausing after each.
+- If a trigger doesn't apply to this repo (e.g. `database` on a static site), report "N/A for this repo" and move on.
 
-Rules:
-- Always pause after each trigger — never auto-advance to the next one.
-- Never run multiple triggers in one response.
-- Wait for the user's explicit `fix`, `skip`, or `stop` before proceeding.
+### Correctness — group `correctness`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 1 | `bugs` | `bug` | Logic errors, off-by-ones, null/undefined paths, wrong default branches, stale assumptions |
+| 2 | `errors` | `err` | Missing try/catch, swallowed failures, unhelpful error surfaces to user and dev |
+| 3 | `race` | `rac` | Concurrency, stale closures, async ordering, event leaks, double-fire guards |
+| 4 | `types` | `typ` | `any`/`as` abuse, unsafe casts, missing generics, runtime-vs-compile-time gaps |
+| 5 | `edges` | `edg` | Empty/null/zero/max/unicode/timezone boundary cases; 0-item, 1-item, 10k-item behavior |
+
+### Security / trust — group `trust`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 6 | `security` | `sec` | Injection, XSS, CSRF, auth gaps, insecure defaults, exposed secrets in code or bundle |
+| 7 | `privacy` | `pri` | PII flow, redaction, retention, client-side data leaks, telemetry overreach |
+| 8 | `supply-chain` | `sup` | Dep integrity, lockfile drift, postinstall hooks, third-party scripts |
+
+### Performance — group `speed`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 9 | `performance` | `perf` | Render loops, expensive ops in hot paths, memory leaks, large re-computations |
+| 10 | `network` | `net` | Request count, caching, batching, waterfalls, payload size, compression |
+| 11 | `database` | `db` | N+1, missing indexes, transaction scope, lock contention |
+| 12 | `bundle` | `bun` | Code splitting, tree-shaking, duplicate deps, blocking resources |
+
+### User-facing — group `frontend`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 13 | `ux` | `ux` | Friction, cognitive load, missing loading/empty/error states, undiscoverable affordances |
+| 14 | `a11y` | `a11y` | Keyboard nav, screen reader labels, focus order, contrast, ARIA correctness |
+| 15 | `mobile` | `mob` | Touch target size, viewport, safe areas, tap delay, gestures, iOS keyboard handling |
+| 16 | `motion` | `mot` | `prefers-reduced-motion` respect, animation jank, 60fps budgets, autoplay, transitions that interrupt screen-reader flow |
+| 17 | `forms` | `frm` | Input validation, per-field error states, submit error handling, accessible field labels, paste/autofill behavior, unsaved-changes warnings |
+| 18 | `copy` | `cpy` | Microcopy, voice consistency, jargon, error messages users actually see |
+| 19 | `i18n` | `i18` | Hardcoded strings, RTL readiness, date/number formatting, pluralization |
+| 20 | `dark-mode` | `dm` | Semantic color usage, contrast in both themes, flash-on-load |
+| 21 | `visual` | `vis` | Layout/spacing/alignment, visual hierarchy, brand consistency, dark-vs-light visual parity, inconsistent corner radii/shadows/type scale |
+
+### Maintainability — group `quality`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 22 | `clean` | `cln` | Dead code, duplication, commented-out blocks, unused imports/exports, leftover TODOs |
+| 23 | `naming` | `nam` | Identifier clarity, consistency with local norms, misleading abbreviations |
+| 24 | `patterns` | `pat` | Deviation from established patterns (fleet-wide glow-props or repo-local), reinvented wheels |
+| 25 | `docs` | `doc` | Docs ↔ code drift, missing docs on public API, outdated README/CLAUDE.md claims |
+| 26 | `doc-cleanup` | `dcl` | Duplicated content across doc files, stale files no longer relevant, orphaned docs nothing references, superseded files that replaced but didn't delete their predecessor, sections still describing removed features |
+| 27 | `tests` | `tst` | Coverage gaps on critical paths, flaky patterns, test smells, missing edge-case tests |
+| 28 | `complexity` | `cpx` | Function length, nesting depth, cyclomatic complexity hotspots |
+| 29 | `hacks` | `hck` | `TODO`/`FIXME`/`HACK`/`XXX` markers, `@ts-ignore`/`@ts-expect-error`, `any` escapes framed as temporary, `setTimeout` for timing fixes, quick patches waiting to be done properly |
+| 30 | `simplify` | `smp` | Reinvented framework features, over-engineered abstractions, custom code that could be 1–2 stdlib/library calls, unnecessary layers |
+| 31 | `reuse` | `rus` | Custom-vs-stdlib balance: how much is hand-written that shouldn't be; logic that should be extracted for reuse but isn't; abstractions generalized for a single caller; speculative parameters, defensive checks for impossible states, and configurability serving no real need |
+| 32 | `back-compat` | `bck` | Orphaned feature flags, deprecated branches with no callers, `legacy*` exports, backcompat shims outliving their purpose, `// kept for compatibility` blocks |
+| 33 | `comments` | `cmt` | Code comments against repo rules — WHY not WHAT, no PR-reference rot, no AI narration, no commented-out blocks unless `// KEEP:` annotated |
+| 34 | `dx` | `dx` | Developer experience: README/setup clarity, dev-error message quality, source map/stack trace usefulness, debug-surface ergonomics, contribution path friction |
+| 35 | `undone` | `und` | Started-but-unfinished work — partial implementations, half-wired features, WIP branches of logic, features only reachable from dev but not production |
+
+### Operational — group `ops`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 36 | `deps` | `dep` | Outdated, unused, vulnerable, license-risky dependencies |
+| 37 | `observability` | `obs` | Log coverage, metric hygiene, trace completeness, debug-pill surfaces |
+| 38 | `reliability` | `rel` | Retries, timeouts, idempotency, graceful degradation, offline handling |
+| 39 | `config` | `cfg` | Env var handling, secret management, config schema drift |
+| 40 | `migration` | `mig` | DB migration safety, API versioning, rollback plan, backward compatibility |
+| 41 | `ci` | `ci` | Pipeline health, build speed, cache effectiveness, flake rate |
+| 42 | `pwa` | `pwa` | Service worker correctness, manifest validity, install prompt handling, update flow, offline behavior, icon cache-busting, standalone-mode quirks |
+
+### Design-level — group `design`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 43 | `architecture` | `arch` | Coupling, layering violations, abstraction leaks, module boundaries |
+| 44 | `api` | `api` | Interface consistency, versioning, deprecation, contract clarity |
+| 45 | `state` | `sta` | Where state lives, derivation vs storage, single-source-of-truth violations |
+| 46 | `data-model` | `dat` | Schema normalization, foreign-key integrity, nullable discipline |
+
+### Fleet alignment — group `fleet`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 47 | `align` | `aln` | Drift between this repo's CLAUDE.md and glow-props CLAUDE.md — missing sections, stale rules, divergent conventions |
+| 48 | `pattern-audit` | `pa` | Every glow-props implementation pattern: implemented / partial / missing / deviates — with diff notes for each |
+
+### Meta sweeps
+
+Run multiple triggers sequentially, pausing after each for `fix` / `skip` / `stop`. Organised roughly by cadence — pick the one that matches when you're running it.
+
+| Trigger | Alias | Cadence | What it does |
+|---------|-------|---------|--------------|
+| `hot` | `h` | pre-commit | `bugs` + `types` + `errors` — fastest sanity check before committing. Pairs well with `hot staged` |
+| `quick` | `q` | pre-push | `bugs` + `security` + `a11y` — the "don't ship this" triad |
+| `ship` | `shp` | pre-merge | `correctness` + `trust` + `a11y` + `tests` — full pre-merge check |
+| `session` | `ses` | end of session | `surface` + `wrap` + `undone` + `skipped` — "what state am I leaving this in?" |
+| `tidy` | `tdy` | weekly | `clean` + `doc-cleanup` + `hacks` + `deps` + `undone` + `dx` — maintenance / hygiene sweep |
+| `all` | `*` | quarterly | Every applicable trigger across every group, in order |
+
+### Reflective passes
+
+Single-pass, no fan-out to other triggers. Each answers one specific question about the recent work.
+
+| Trigger | Alias | What it does |
+|---------|-------|--------------|
+| `risk` | `rsk` | Worst-case blast radius analysis on the current change |
+| `surface` | `srf` | Reflective pass on recent changes: what was decided, what was assumed, what was skipped, what needs human review |
+| `wrap` | `wrp` | Wrap-up pass before moving on — anything to double-check / strengthen / improve, anything discovered / assumed / skipped, anything to cleanup / update / tighten, anything to note / document / clarify |
+| `skipped` | `skp` | What was skipped — including issues noticed outside the current changes that were intentionally left alone. Each item: what it is, where, why skipped |
+| `assumed` | `asm` | What was assumed — explicit assumptions made during the work, including things treated as out of scope. Each item: the assumption, why it was made, what happens if wrong |
+| `approach` | `apr` | Was the fix the best / most proper way? Honest self-review: what shortcuts were taken, what a senior reviewer would flag, what the "proper" version looks like if different |
+| `cold` | `cld` | Fresh-eyes branch audit. Re-read CLAUDE.md from scratch. Review every change on the branch as if this were a new session with no prior context — don't privilege the diffs you just made. List all findings with a fix plan per item. Default scope: `branch` |
 
 ### REMINDER: READ AND FOLLOW THE TRIGGERS EVERY TIME
 
@@ -538,6 +681,26 @@ The tool helps you optimise across multiple dimensions:
 
 ## Architecture
 
+### Frontend stack
+
+- **SvelteKit 2.x** + adapter-static (SPA fallback to `/200.html`).
+- **Tailwind CSS v4** (CSS-first config: `@import "tailwindcss"` + inline `@theme`; no `tailwind.config.js`).
+- **DaisyUI v5** with `emerald --default` (light) and `dim --prefersdark` (dark). **The themes are the brand** — no custom colour palette, no `--color-model-*` tokens, no hardcoded Tailwind colour utilities like `text-green-400`. Components use DaisyUI semantic classes (`bg-base-100`, `text-base-content`, `border-base-300`, status `text-success`/`error`/`warning`, brand `bg-primary`/`secondary`/`accent`) and DaisyUI components (`.card`, `.btn`, `.btn-primary`, `.input`, `.badge`, `.alert`, `.table`).
+- **Theme switching** is dual-layer: a `.dark` class on `<html>` (drives Tailwind's `dark:` variant via `@custom-variant`) PLUS `data-theme="dim|emerald"` (drives DaisyUI). Both move in lockstep — see `apps/web/src/lib/theme.ts`.
+- **PWA** via `vite-plugin-pwa` + `workbox-window`. `registerType: 'prompt'` means the user controls when an updated SW activates. `navigateFallback: '/200.html'` aligns with the SPA fallback. SW + manifest are generated at build time; the static `manifest.webmanifest` was deleted in favour of the VitePWA-generated one.
+- **Charts** use ApexCharts. `BaseChart.svelte` listens for the `theme:change` custom event and calls `chart.updateOptions({ theme: { mode } })`; per-chart components read live colours from DaisyUI tokens via `getThemeColor()` so series re-colour on theme flip.
+
+### Runtime singletons (`window` globals)
+
+Set by side-effect imports in `+layout.svelte`. Consumers (burger menu, banner, modal) read them via `window.__theme` / `window.__pwa`. Types live in `apps/web/src/app.d.ts`.
+
+| Global | Source | Purpose |
+|---|---|---|
+| `window.__theme` | `apps/web/src/lib/theme.ts` | `applyTheme(dark)`, `isDark()`, `toggle()`, `dispose()` |
+| `window.__pwa` | `apps/web/src/lib/pwa.ts` | `triggerInstall()`, `dismissInstall()`, `applyUpdate()`, `suppressUpdateBanner()`, `setUpdateBannerCallback()`, `setInstallModalCallback()`, `updateInstallMenuVisibility()`, `detectBrowser()`, `getInstallInstructions()` |
+| `window.__pwaInstallPromptEvent` | `apps/web/src/app.html` early-capture script | Stashes the `beforeinstallprompt` event on first fire so cached-SW repeat visits don't lose it before the framework loads |
+| `window.__themeAttached` / `window.__pwaModuleAttached` | guard flags | HMR-safe idempotency for the listener wiring |
+
 ### File Structure
 
 ```
@@ -545,9 +708,12 @@ model-pear/
 ├── apps/
 │   └── web/                    # SvelteKit web application
 │       ├── src/
+│       │   ├── app.html                        # Pre-paint theme bootstrap + early beforeinstallprompt capture
+│       │   ├── app.css                         # @plugin daisyui + @theme + base + print CSS
+│       │   ├── app.d.ts                        # Global Window/Navigator type augmentation
 │       │   ├── routes/
 │       │   │   ├── +page.svelte                # Home page
-│       │   │   ├── +layout.svelte              # Global layout with header/footer
+│       │   │   ├── +layout.svelte              # Header + burger disclosure + UpdateBanner + InstallModal
 │       │   │   ├── pricing/                    # Mode 1: Pricing Calculator
 │       │   │   │   └── +page.svelte            # 5 pricing models (subscription, usage, seat, one-time, marketplace)
 │       │   │   └── structuring/                # Mode 2: Transaction Structuring
@@ -556,10 +722,16 @@ model-pear/
 │       │   │           └── +page.svelte        # Model calculator with variants
 │       │   └── lib/
 │       │       ├── components/                 # Reusable UI components
+│       │       │   ├── UpdateBanner.svelte     # PWA update prompt (z-70)
+│       │       │   ├── InstallModal.svelte     # Per-browser install instructions (z-60/z-80)
 │       │       │   └── DebugPill.svelte        # Floating debug pill (inline styles, 3 tabs)
 │       │       ├── stores/                     # Svelte stores
 │       │       ├── config/                     # Configuration
-│       │       ├── utils/                      # Utilities
+│       │       ├── utils/
+│       │       │   ├── trackListener.ts        # Shared addEventListener cleanup helper
+│       │       │   └── bodyScrollLock.ts       # Reference-counted body scroll lock for nested overlays
+│       │       ├── theme.ts                    # Runtime theme management (window.__theme)
+│       │       ├── pwa.ts                      # Service-worker + install + update (window.__pwa)
 │       │       ├── debugLog.ts                 # In-memory debug log (circular buffer, pub/sub)
 │       │       └── clipboardUtils.ts           # Clipboard copy with multiple fallbacks
 │       ├── static/                             # Static assets (served at root)
@@ -567,9 +739,10 @@ model-pear/
 │       │   ├── apple-touch-icon.png            # 180x180 iOS home screen
 │       │   ├── icon-192.png                    # PWA manifest (any)
 │       │   ├── icon-512.png                    # PWA manifest (any)
-│       │   ├── icon-1024.png                   # PWA manifest (maskable)
-│       │   └── manifest.webmanifest            # PWA manifest
+│       │   └── icon-1024.png                   # PWA manifest (maskable)
 │       ├── svelte.config.js                    # SvelteKit config (adapter-static for Vercel)
+│       ├── vite.config.ts                      # VitePWA plugin config (manifest, workbox, navigateFallback)
+│       ├── postcss.config.js                   # @tailwindcss/postcss
 │       └── package.json
 │
 ├── packages/
@@ -593,7 +766,11 @@ model-pear/
 │   └── icon-source.svg         # SVG source icon (edit this, regenerate PNGs)
 │
 ├── scripts/
-│   └── generate-icons.mjs      # Sharp script: SVG → PNG icons (run: pnpm generate-icons)
+│   ├── generate-icons.mjs      # Sharp script: SVG → PNG icons (run: pnpm generate-icons)
+│   ├── oklch-to-hex.mjs        # Interactive: print DaisyUI dim/emerald tokens as sRGB hex
+│   ├── check-theme-hex.mjs     # CI assertion: hardcoded hex sites match DaisyUI tokens (gates `pnpm check`)
+│   └── lib/
+│       └── oklch.mjs           # Shared OKLCH → sRGB conversion + DaisyUI theme parsing
 │
 ├── CLAUDE.md                   # This file (AI assistant context)
 │
@@ -602,8 +779,7 @@ model-pear/
     ├── BUSINESS_GUIDE.md       # Comprehensive user guide with tutorials
     ├── CALCULATIONS.md         # Formula explanations and economic theory
     ├── ARCHITECTURE.md         # Technical architecture (TypeScript monorepo)
-    ├── HISTORY.md              # Changelog and bug fixes
-    ├── SESSION_NOTES.md        # Build commands and architecture reference
+    ├── SESSION_NOTES.md        # Compact session-continuity snapshot (rewritten each session)
     ├── TODO.md                 # Feature ideas and backlog
     ├── USER_ACTIONS.md         # Manual user action instructions (when needed)
     ├── AI_MISTAKES.md          # AI mistake log (prevent repeat errors across sessions)
@@ -895,7 +1071,6 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 | **docs/BUSINESS_GUIDE.md** | Comprehensive user guide with tutorials | User workflows, features, or terminology change |
 | **docs/CALCULATIONS.md** | All formulas, rationale, economic theory | Formulas or calculation logic change |
 | **docs/ARCHITECTURE.md** | Technical architecture (TypeScript monorepo) | Build process, package structure, or tech decisions change |
-| **docs/HISTORY.md** | Changelog and bug fixes | Any change to the application |
 | **docs/SESSION_NOTES.md** | Session continuity - context for next AI to continue work | After each significant task (sessions end abruptly); remove stale notes |
 | **docs/TODO.md** | Feature ideas and backlog | Add ideas to persist between sessions |
 | **docs/USER_ACTIONS.md** | Manual user action instructions | When user needs to do something outside the tool |

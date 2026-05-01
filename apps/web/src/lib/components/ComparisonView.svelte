@@ -3,11 +3,25 @@
    * ComparisonView - Side-by-side comparison of saved options
    *
    * Shows 2-4 options in columns with difference highlighting.
-   * Supports print and CSV export.
+   * Supports print and CSV export. Renders as a DaisyUI
+   * <dialog class="modal">; the parent route mounts this component
+   * only while a comparison is active, so onMount opens the dialog
+   * and the on:close event triggers comparisonStore.closeComparison()
+   * which unmounts.
    */
+  import { onMount } from 'svelte';
   import { selectedOptions, comparisonStore } from '$lib/stores';
   import type { SavedOption } from '$lib/stores';
   import { formatCurrency, formatPercent } from '$lib/utils/formatters';
+
+  let dialogEl: HTMLDialogElement;
+
+  onMount(() => {
+    // Component is mounted only while $isComparing — open the dialog
+    // immediately via the native showModal() call to engage the
+    // browser's top-layer rendering, focus trap, and Escape handling.
+    if (dialogEl) dialogEl.showModal();
+  });
 
   // Export to CSV
   function exportToCSV() {
@@ -58,10 +72,10 @@
     }
 
     if (value === max) {
-      return { arrow: '▲', class: 'text-green-400' };
+      return { arrow: '▲', class: 'text-success' };
     }
     if (value === min) {
-      return { arrow: '▼', class: 'text-red-400' };
+      return { arrow: '▼', class: 'text-error' };
     }
     return { arrow: '', class: '' };
   }
@@ -168,8 +182,9 @@
     },
   ];
 
-  // Group rows by section
-  $: sections = comparisonRows.reduce(
+  // Group rows by section. comparisonRows is const, so this only needs to
+  // run once at module load — not a reactive statement.
+  const sections = comparisonRows.reduce(
     (acc, row) => {
       if (!acc[row.section]) acc[row.section] = [];
       acc[row.section].push(row);
@@ -220,34 +235,43 @@
   }
 </script>
 
-<!-- Backdrop (z-40) and modal (z-60) are adjacent per glow-props Z_INDEX_SCALE -->
-<div class="fixed inset-0 bg-background/80 z-40"></div>
-<div class="fixed inset-0 z-60 flex items-center justify-center p-4 pointer-events-none">
-  <div class="bg-card rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden border border-border pointer-events-auto">
+<dialog
+  bind:this={dialogEl}
+  class="modal"
+  on:close={close}
+  aria-label="Comparison view"
+>
+  <!--
+    modal-box defaults to max-width:32rem; override with !max-w-6xl so
+    the comparison table has room. !p-0 because the existing layout
+    handles padding internally per section (header / summary / table /
+    footer).
+  -->
+  <div class="modal-box !max-w-6xl !p-0 max-h-[90vh] overflow-hidden">
     <!-- Header -->
-    <div class="flex items-center justify-between p-4 border-b border-border">
+    <div class="flex items-center justify-between p-4 border-b border-base-300">
       <div class="flex items-center space-x-2">
         <span class="text-xl">📊</span>
-        <h2 class="text-xl font-bold text-foreground">Comparison View</h2>
-        <span class="text-sm text-muted-foreground">({$selectedOptions.length} options)</span>
+        <h2 class="text-xl font-bold text-base-content">Comparison View</h2>
+        <span class="text-sm text-base-content/70">({$selectedOptions.length} options)</span>
       </div>
-      <button class="p-2 hover:bg-muted rounded-lg text-foreground" on:click={close} title="Close"> ✕ </button>
+      <button class="btn btn-ghost btn-sm btn-square tooltip tooltip-left" on:click={close} data-tip="Close" aria-label="Close"> ✕ </button>
     </div>
 
     <!-- Summary Section -->
     {#if optionSummaries.some(s => s.wins.length > 0)}
-      <div class="p-4 bg-primary/10 border-b border-border">
+      <div class="p-4 bg-primary/10 border-b border-base-300">
         <h3 class="text-sm font-semibold text-primary mb-2">Quick Summary</h3>
         <div class="grid gap-2 {$selectedOptions.length === 2 ? 'grid-cols-2' : $selectedOptions.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}">
-          {#each optionSummaries as summary, i}
-            <div class="bg-card rounded-lg p-3 shadow-sm border border-border/50">
-              <div class="font-medium text-foreground text-sm">{summary.name}</div>
+          {#each optionSummaries as summary, i (i)}
+            <div class="card p-3 bg-base-200 shadow-sm border border-base-300/50">
+              <div class="font-medium text-base-content text-sm">{summary.name}</div>
               {#if summary.wins.length > 0}
-                <div class="text-xs text-green-400 mt-1">
+                <div class="text-xs text-success mt-1">
                   {getSummaryText(summary)}
                 </div>
               {:else}
-                <div class="text-xs text-muted-foreground mt-1">No clear advantages</div>
+                <div class="text-xs text-base-content/70 mt-1">No clear advantages</div>
               {/if}
             </div>
           {/each}
@@ -259,13 +283,13 @@
     <div class="overflow-auto max-h-[calc(90vh-8rem)]">
       <table class="w-full">
         <!-- Column headers -->
-        <thead class="sticky top-0 bg-card z-10">
+        <thead class="sticky top-0 bg-base-200 z-10">
           <tr>
-            <th class="text-left p-3 bg-muted font-medium text-foreground/80 w-40">Metric</th>
-            {#each $selectedOptions as option}
-              <th class="p-3 bg-muted text-center min-w-[160px]">
-                <div class="font-semibold text-foreground">{option.name}</div>
-                <div class="text-xs text-muted-foreground mt-1">
+            <th class="text-left p-3 bg-base-200 font-medium text-base-content/80 w-40">Metric</th>
+            {#each $selectedOptions as option (option.id)}
+              <th class="p-3 bg-base-200 text-center min-w-[160px]">
+                <div class="font-semibold text-base-content">{option.name}</div>
+                <div class="text-xs text-base-content/70 mt-1">
                   {getModelLabel(option.modelId)} ({option.variantId})
                 </div>
               </th>
@@ -274,20 +298,20 @@
         </thead>
 
         <tbody>
-          {#each Object.entries(sections) as [sectionName, rows]}
+          {#each Object.entries(sections) as [sectionName, rows] (sectionName)}
             <!-- Section header -->
-            <tr class="bg-muted">
-              <td colspan={$selectedOptions.length + 1} class="p-2 font-semibold text-foreground/80">
+            <tr class="bg-base-200">
+              <td colspan={$selectedOptions.length + 1} class="p-2 font-semibold text-base-content/80">
                 {sectionName}
               </td>
             </tr>
 
             <!-- Section rows -->
-            {#each rows as row}
+            {#each rows as row (row.label)}
               {@const values = $selectedOptions.map((o) => row.getValue(o))}
-              <tr class="border-b border-border/50 hover:bg-muted/50">
-                <td class="p-3 text-sm text-muted-foreground">{row.label}</td>
-                {#each $selectedOptions as option, i}
+              <tr class="border-b border-base-300/50 hover:bg-base-200/50">
+                <td class="p-3 text-sm text-base-content/70">{row.label}</td>
+                {#each $selectedOptions as option, i (option.id)}
                   {@const diff = getDiff(values, i)}
                   {@const isBest =
                     row.higherIsBetter !== undefined &&
@@ -296,12 +320,12 @@
                     values.filter(v => v === values[i]).length === 1}
                   <td
                     class="p-3 text-center tabular-nums {isBest
-                      ? 'bg-green-500/10 font-semibold text-green-400'
-                      : 'text-foreground'}"
+                      ? 'bg-success/10 font-semibold text-success'
+                      : 'text-base-content'}"
                   >
                     {#if isBest}
                       <span class="inline-flex items-center">
-                        <span class="text-green-400 mr-1">★</span>
+                        <span class="text-success mr-1">★</span>
                         {row.format(row.getValue(option))}
                       </span>
                     {:else}
@@ -319,32 +343,32 @@
           {/each}
 
           <!-- Risk Level row -->
-          <tr class="bg-muted">
-            <td colspan={$selectedOptions.length + 1} class="p-2 font-semibold text-foreground/80">
+          <tr class="bg-base-200">
+            <td colspan={$selectedOptions.length + 1} class="p-2 font-semibold text-base-content/80">
               Risk Assessment
             </td>
           </tr>
-          <tr class="border-b border-border/50">
-            <td class="p-3 text-sm text-muted-foreground">Risk Level</td>
-            {#each $selectedOptions as option}
+          <tr class="border-b border-base-300/50">
+            <td class="p-3 text-sm text-base-content/70">Risk Level</td>
+            {#each $selectedOptions as option (option.id)}
               {@const level = option.result.transferPricing.riskLevel}
               <td class="p-3 text-center">
                 <span
-                  class="px-2 py-1 rounded text-xs font-medium {level === 'low'
-                    ? 'bg-green-500/20 text-green-400'
+                  class="badge badge-soft badge-sm {level === 'low'
+                    ? 'badge-success'
                     : level === 'medium'
-                      ? 'bg-amber-500/20 text-amber-400'
-                      : 'bg-red-500/20 text-red-400'}"
+                      ? 'badge-warning'
+                      : 'badge-error'}"
                 >
                   {level.toUpperCase()}
                 </span>
               </td>
             {/each}
           </tr>
-          <tr class="border-b border-border/50">
-            <td class="p-3 text-sm text-muted-foreground">Within Range</td>
-            {#each $selectedOptions as option}
-              <td class="p-3 text-center text-foreground">
+          <tr class="border-b border-base-300/50">
+            <td class="p-3 text-sm text-base-content/70">Within Range</td>
+            {#each $selectedOptions as option (option.id)}
+              <td class="p-3 text-center text-base-content">
                 {option.result.transferPricing.withinRange ? '✓ Yes' : '✗ No'}
               </td>
             {/each}
@@ -354,16 +378,20 @@
     </div>
 
     <!-- Footer -->
-    <div class="p-4 border-t border-border bg-muted flex justify-between">
+    <div class="p-4 border-t border-base-300 bg-base-200 flex justify-between">
       <div class="flex space-x-2">
-        <button class="btn-outline no-print" on:click={exportToCSV} title="Export as CSV">
+        <button class="btn btn-outline no-print tooltip" on:click={exportToCSV} data-tip="Export as CSV">
           Export CSV
         </button>
-        <button class="btn-outline no-print" on:click={() => window.print()} title="Print or save as PDF">
+        <button class="btn btn-outline no-print tooltip" on:click={() => window.print()} data-tip="Print or save as PDF">
           Print / PDF
         </button>
       </div>
-      <button class="btn-primary no-print" on:click={close}> Close </button>
+      <button class="btn btn-primary no-print" on:click={close}> Close </button>
     </div>
   </div>
-</div>
+  <!-- Native backdrop click → close -->
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

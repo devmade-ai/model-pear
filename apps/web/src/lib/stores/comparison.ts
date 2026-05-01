@@ -56,7 +56,7 @@ function saveToStorage(options: SavedOption[]): void {
 
 // Create the store
 function createComparisonStore() {
-  const { subscribe, set, update } = writable<ComparisonState>(loadFromStorage());
+  const { subscribe, update } = writable<ComparisonState>(loadFromStorage());
 
   return {
     subscribe,
@@ -233,7 +233,7 @@ function createComparisonStore() {
      * Clear all saved options
      */
     clearAll(): void {
-      update((state) => {
+      update(() => {
         saveToStorage([]);
         return { options: [], selectedIds: [], isComparing: false };
       });

@@ -1,45 +1,61 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" shape-rendering="geometricPrecision">
   <!-- Model Pear app icon
-       Design: White pear silhouette on primary blue (#2D68FF) background
-       Safe zone: Content within inner 80% (102-922px) for maskable crop
-       Legibility: Simple shape, no fine details — works at 48px favicon size -->
 
-  <!-- Background fills entire canvas (no transparency for maskable compatibility) -->
-  <rect width="1024" height="1024" fill="#2D68FF"/>
+       Concept: a Venn diagram. Two circles representing the two
+       parties in a software transaction (Your Company / Client),
+       with the lens-shaped overlap representing the equilibrium
+       zone — the price/structure range where BOTH parties win.
+       This is the tool's core thesis ("find the best deal for both")
+       rendered as geometry.
 
-  <!-- Pear shape — centered in safe zone
-       Single cubic bezier path: narrow top, wide bottom = classic pear silhouette
-       Stem and leaf add recognisability at small sizes -->
-  <g transform="translate(512, 530)">
-    <!-- Pear body: teardrop shape using cubic beziers
-         Wider bottom, narrower top — classic pear silhouette -->
-    <path d="
-      M 0,-280
-      C  80,-280  130,-240  150,-180
-      C 180,-100  200, -20  200,  60
-      C 200, 160  180, 240  140, 300
-      C 100, 360   50, 390    0, 390
-      C -50, 390 -100, 360 -140, 300
-      C-180, 240 -200, 160 -200,  60
-      C-200, -20 -180,-100 -150,-180
-      C-130,-240  -80,-280    0,-280
-      Z
-    " fill="#FFFFFF"/>
+       Geometry: just three SVG primitives + a clip-path:
+         - <rect> for the background
+         - two <circle>s for the parties
+         - a third <circle> clipped to the left party's region,
+           which produces the lens-shaped intersection.
+       Editable by hand without bezier tooling.
 
-    <!-- Stem -->
-    <path d="
-      M -6,-280
-      C -6,-310  -4,-340   0,-370
-      C  4,-340   6,-310   6,-280
-      Z
-    " fill="#FFFFFF"/>
+       Colours: literal sRGB hex computed from the dim DaisyUI theme's
+       OKLCH tokens (`node_modules/daisyui/theme/dim.css`). PNG icons
+       are static artefacts produced by Sharp/libvips at build time
+       and can't reference live CSS variables, so the values are baked
+       in. Each line below carries the OKLCH source so future edits
+       can re-derive the hex if dim's tokens shift.
 
-    <!-- Leaf — small, angled to the right for visual balance -->
-    <path d="
-      M 6,-340
-      C  30,-370   70,-380   90,-360
-      C  70,-340   30,-330    6,-340
-      Z
-    " fill="#FFFFFF"/>
-  </g>
+         #2A303C  base-100   oklch(30.857% 0.023 264.149)  — background
+         #9FE88D  primary    oklch(86.133% 0.141 139.549)  — left party
+         #C792E9  accent     oklch(74.229% 0.133 311.379)  — right party
+         #EFD057  warning    oklch(86.163% 0.142  94.818)  — equilibrium
+
+       To regenerate the hex values from current dim.css (e.g. after
+       a DaisyUI bump), run:
+         node scripts/oklch-to-hex.mjs --dim
+
+       Maskable safe zone: all three circles fit inside the inner
+       80% (102-922 px). Background fills the full 1024x1024 canvas
+       so the maskable crop has solid colour at every edge. -->
+
+  <defs>
+    <clipPath id="left-party">
+      <circle cx="412" cy="512" r="240"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background — dim base-100 -->
+  <rect width="1024" height="1024" fill="#2A303C"/>
+
+  <!-- Left party circle — Your Company / Seller (dim primary) -->
+  <circle cx="412" cy="512" r="240" fill="#9FE88D"/>
+
+  <!-- Right party circle — Client / Buyer (dim accent).
+       Drawn second so it overwrites the left circle in the overlap
+       region (otherwise the right would be obscured by the left's
+       fill in the lens area). -->
+  <circle cx="612" cy="512" r="240" fill="#C792E9"/>
+
+  <!-- Equilibrium zone — the lens-shaped intersection (dim warning).
+       Source shape is the RIGHT circle, clipped to the LEFT circle's
+       region: the result is exactly the two-circle intersection. -->
+  <circle cx="612" cy="512" r="240" fill="#EFD057"
+          clip-path="url(#left-party)"/>
 </svg>

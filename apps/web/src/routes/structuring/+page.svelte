@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { base } from '$app/paths';
+  import { resolve } from '$app/paths';
   import {
     MODEL_1_COST_PLUS,
     MODEL_2_LICENCE,
@@ -19,50 +19,50 @@
   // Model cards data
   const models = [
     {
-      id: 'model-1',
       ...MODEL_1_COST_PLUS,
+      id: 'model-1',
       bestFor: ['Development services', 'Custom software', 'Time & materials'],
       keyFeatures: ['Cost transparency', 'TP-safe margins', 'Immediate recognition'],
     },
     {
-      id: 'model-2',
       ...MODEL_2_LICENCE,
+      id: 'model-2',
       bestFor: ['Software products', 'IP licensing', 'Recurring revenue'],
       keyFeatures: ['Royalty streams', 'Perpetual or term', 'Usage-based options'],
     },
     {
-      id: 'model-3',
       ...MODEL_3_JOINT_DEVELOPMENT,
+      id: 'model-3',
       bestFor: ['R&D partnerships', 'Cost sharing', 'Joint ventures'],
       keyFeatures: ['Shared ownership', 'No intercompany profit', 'TP compliant'],
     },
     {
-      id: 'model-4',
       ...MODEL_4_BOT,
+      id: 'model-4',
       bestFor: ['IT outsourcing', 'System migrations', 'Asset transfers'],
       keyFeatures: ['Operating period', 'Deferred transfer', 'Performance-linked'],
     },
     {
-      id: 'model-5',
       ...MODEL_5_SOFTWARE_SALE,
+      id: 'model-5',
       bestFor: ['IP sale', 'Exit strategy', 'One-time deal'],
       keyFeatures: ['Full IP transfer', 'Upfront or deferred', 'Earnout options'],
     },
     {
-      id: 'model-6',
       ...MODEL_6_SAAS,
+      id: 'model-6',
       bestFor: ['Cloud services', 'Subscription model', 'Recurring revenue'],
       keyFeatures: ['Monthly billing', 'Per-user pricing', 'Usage-based'],
     },
   ];
 
   function selectModel(modelId: string) {
-    goto(`${base}/structuring/${modelId}`);
+    goto(resolve('/structuring/[model]', { model: modelId }));
   }
 
   function handleWizardSelect(event: CustomEvent<{ modelId: ModelId; variantId?: string }>) {
     const { modelId } = event.detail;
-    goto(`${base}/structuring/${modelId}`);
+    goto(resolve('/structuring/[model]', { model: modelId }));
   }
 
   function handleWizardSkip() {
@@ -77,31 +77,31 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- Page header -->
   <div class="mb-8">
-    <h1 class="text-3xl font-bold text-foreground">Transaction Structuring</h1>
-    <p class="text-secondary mt-2">
+    <h1 class="text-3xl font-bold text-base-content">Transaction Structuring</h1>
+    <p class="text-base-content/70 mt-2">
       {viewMode === 'wizard'
         ? 'Answer a few questions to find the best transaction model for your situation.'
         : 'Choose a transaction model to analyze financial outcomes for both parties.'}
     </p>
   </div>
 
-  <!-- View Mode Toggle -->
-  <div class="flex items-center justify-center gap-4 mb-8">
+  <!-- View Mode Toggle — DaisyUI .tabs/.tab.tab-active -->
+  <div role="tablist" class="tabs tabs-box justify-center mb-8 w-fit mx-auto">
     <button
-      class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
-             {viewMode === 'wizard'
-        ? 'bg-primary/20 text-primary border border-primary/30'
-        : 'text-secondary hover:bg-card'}"
+      role="tab"
+      type="button"
+      aria-selected={viewMode === 'wizard'}
+      class="tab {viewMode === 'wizard' ? 'tab-active' : ''}"
       on:click={() => (viewMode = 'wizard')}
     >
       <span class="mr-2">🧙</span>
       Guided Wizard
     </button>
     <button
-      class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
-             {viewMode === 'overview'
-        ? 'bg-primary/20 text-primary border border-primary/30'
-        : 'text-secondary hover:bg-card'}"
+      role="tab"
+      type="button"
+      aria-selected={viewMode === 'overview'}
+      class="tab {viewMode === 'overview' ? 'tab-active' : ''}"
       on:click={() => (viewMode = 'overview')}
     >
       <span class="mr-2">📋</span>
@@ -117,7 +117,7 @@
   {:else}
     <!-- Model Overview Grid -->
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {#each models as model}
+      {#each models as model (model.id)}
         <button
           on:click={() => selectModel(model.id)}
           class="card p-6 text-left hover:border-primary/50 transition-all duration-200 group"
@@ -127,28 +127,28 @@
             <div class="flex items-center space-x-3">
               <span class="text-2xl">{model.icon}</span>
               <div>
-                <h3 class="font-semibold text-foreground group-hover:text-primary transition-colors">
+                <h3 class="font-semibold text-base-content group-hover:text-primary transition-colors">
                   {model.shortName}
                 </h3>
-                <p class="text-xs text-secondary">{model.id.toUpperCase()}</p>
+                <p class="text-xs text-base-content/70">{model.id.toUpperCase()}</p>
               </div>
             </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-secondary-light text-secondary">
+            <span class="badge badge-ghost badge-sm">
               {Object.keys(model.variants).length} variants
             </span>
           </div>
 
           <!-- Description -->
-          <p class="text-sm text-secondary mb-4">
+          <p class="text-sm text-base-content/70 mb-4">
             {model.description}
           </p>
 
           <!-- Best for -->
           <div class="mb-4">
-            <p class="text-xs font-medium text-secondary mb-2">Best for:</p>
+            <p class="text-xs font-medium text-base-content/70 mb-2">Best for:</p>
             <div class="flex flex-wrap gap-1">
-              {#each model.bestFor as tag}
-                <span class="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+              {#each model.bestFor as tag (tag)}
+                <span class="badge badge-primary badge-soft badge-sm">
                   {tag}
                 </span>
               {/each}
@@ -157,9 +157,9 @@
 
           <!-- Key features -->
           <div class="mb-4">
-            <p class="text-xs font-medium text-secondary mb-2">Key features:</p>
-            <ul class="text-xs text-secondary space-y-1">
-              {#each model.keyFeatures as feature}
+            <p class="text-xs font-medium text-base-content/70 mb-2">Key features:</p>
+            <ul class="text-xs text-base-content/70 space-y-1">
+              {#each model.keyFeatures as feature (feature)}
                 <li class="flex items-center">
                   <span class="text-success mr-2">✓</span>
                   {feature}
@@ -169,8 +169,8 @@
           </div>
 
           <!-- CTA -->
-          <div class="flex items-center justify-between pt-4 border-t border-border">
-            <span class="text-xs text-secondary">
+          <div class="flex items-center justify-between pt-4 border-t border-base-300">
+            <span class="text-xs text-base-content/70">
               {model.accountingSummary.developer.split('.')[0]}.
             </span>
             <span class="text-primary text-sm font-medium group-hover:translate-x-1 transition-transform">
@@ -183,9 +183,9 @@
 
     <!-- Quick comparison table -->
     <div class="mt-12">
-      <h2 class="text-xl font-semibold text-foreground mb-4">Quick Comparison</h2>
+      <h2 class="text-xl font-semibold text-base-content mb-4">Quick Comparison</h2>
       <div class="overflow-x-auto">
-        <table class="table-dark min-w-full border border-border rounded-lg overflow-hidden">
+        <table class="table table-zebra min-w-full">
           <thead>
             <tr>
               <th>Model</th>
@@ -197,45 +197,45 @@
           </thead>
           <tbody>
             <tr>
-              <td class="font-medium text-foreground">Cost-Plus</td>
+              <td class="font-medium text-base-content">Cost-Plus</td>
               <td>Buyer</td>
               <td>Project-based</td>
-              <td><span class="badge-success">Low</span></td>
+              <td><span class="badge badge-success">Low</span></td>
               <td>6</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">Licence</td>
+              <td class="font-medium text-base-content">Licence</td>
               <td>Developer</td>
               <td>Upfront / Royalty</td>
-              <td><span class="badge-warning">Medium</span></td>
+              <td><span class="badge badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">Joint Dev</td>
+              <td class="font-medium text-base-content">Joint Dev</td>
               <td>Shared</td>
               <td>Cost contribution</td>
-              <td><span class="badge-success">Low</span></td>
+              <td><span class="badge badge-success">Low</span></td>
               <td>8</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">BOT</td>
+              <td class="font-medium text-base-content">BOT</td>
               <td>Developer → Buyer</td>
               <td>Fees + Transfer</td>
-              <td><span class="badge-warning">Medium</span></td>
+              <td><span class="badge badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">Sale</td>
+              <td class="font-medium text-base-content">Sale</td>
               <td>Buyer</td>
               <td>Upfront / Earnout</td>
-              <td><span class="badge-warning">Medium</span></td>
+              <td><span class="badge badge-warning">Medium</span></td>
               <td>8</td>
             </tr>
             <tr>
-              <td class="font-medium text-foreground">SaaS</td>
+              <td class="font-medium text-base-content">SaaS</td>
               <td>Developer</td>
               <td>Subscription</td>
-              <td><span class="badge-success">Low</span></td>
+              <td><span class="badge badge-success">Low</span></td>
               <td>9</td>
             </tr>
           </tbody>

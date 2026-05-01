@@ -4,92 +4,86 @@
 
 ---
 
-## Current State (April 10, 2026)
+## Current State (May 1, 2026)
 
-**Last completed**: Debug system — in-memory logging + floating debug pill
+**Last completed**: DaisyUI-completion audit re-do (chunks #1–#17 + #5b/#6b/#7b/#7c/#9a-e). All overlays migrated to native DaisyUI primitives. Drift-detection script wired into `pnpm check`.
 
-**Status**: Debug system fully implemented following glow-props DEBUG_SYSTEM.md pattern. Build passes, 301 tests pass.
+**Status**: Branch `claude/create-model-pear-todos-2ixM4` carries the full Tailwind-v3→v4 + DaisyUI-v5 migration, the migration-properness audit (Phases K/L/M/N), AND a follow-up DaisyUI-completion audit that took every remaining hand-rolled surface to its proper DaisyUI primitive. **Build green, lint 0/0, tests 301/301, svelte-check 0/0, theme-hex check 11/11, 16 vulnerabilities (unchanged — needs major-version epic).** Phases F-I (browser / a11y / deployed-PWA / Lighthouse), Phase J (tests), Phase N (browser-bound visual checks documented in USER_ACTIONS.md), and 9b/9c-print-rendering verification remain as `[USER ACTION]`.
 
 ### What was done this session
 
-1. **Fetched DEBUG_SYSTEM.md pattern** from glow-props repo (source of truth)
-2. **Created `debugLog.ts`** (`apps/web/src/lib/debugLog.ts`): Circular buffer (200 entries), exported types (`DebugSource`, `DebugSeverity`, `MAX_ENTRIES`), shared `formatDebugTimestamp()`, pub/sub with immediate delivery, console interception (error/warn) with HMR guard (true originals on window) and re-entrancy guard, global error capture, report generation with URL redaction, pre-framework error bridge with inline listener cleanup. All browser side-effects wrapped in `typeof window` guard for SSR safety.
-3. **Created `clipboardUtils.ts`** (`apps/web/src/lib/clipboardUtils.ts`): Three-tier clipboard fallback (ClipboardItem Blob → writeText → textarea execCommand)
-4. **Created `DebugPill.svelte`** (`apps/web/src/lib/components/DebugPill.svelte`): Floating pill with inline styles (not Tailwind), 3 tabs (Log with structured details, Environment, PWA Diagnostics with stale-run cancellation), mounted in separate `#debug-root` outside SvelteKit tree for crash isolation. Uses `tick()` for DOM-safe auto-scroll. Log container fills available panel space. Visible textarea fallback when clipboard copy fails. Initialisation via subscriber immediate delivery. Logs boot confirmation on mount.
-5. **Updated `app.html`**: Added `#debug-root` div, pre-framework inline `<script>` with `window.__debugPushError()`, 20-second loading timeout, named listener references for cleanup
-6. **Updated `+layout.svelte`**: Dynamic import of DebugPill (SSR-safe), stores pill reference, `destroyed` flag for race condition safety, cleanup on unmount via `$destroy()`
-7. **Verified**: Build passes, 301 tests pass, `debugLog.ts` confirmed absent from SSR bundle
+Substantial chain — see `git log claude/create-model-pear-todos-2ixM4 --oneline` for the full picture. Major buckets:
 
-### Key Files Changed
+1. **Documentation alignment (Chunks 1-2)** — restructured root `CLAUDE.md` to glow-props canonical layout (Principles / Communication / Code Standards / Triggers / 48-trigger version with 8 group tables); deleted `docs/HISTORY.md` per the cross-fleet "git log is the changelog" decision; cleaned completed items out of `docs/TODO.md`.
+2. **Tailwind v3 → v4 upgrade (Chunk 3a-i/ii/iii)** — toolchain swap (`@tailwindcss/postcss`, `@import "tailwindcss"`), border-color flip audit (zero remediation needed), JS config inlined into CSS-first `@theme {…}` and `tailwind.config.js` deleted. `@apply` chains forced to `@utility` declarations because v4 broke the v3 cascade pattern.
+3. **DaisyUI v5 + dual-layer theming (Chunk 3b)** — `@plugin "daisyui"` with `emerald --default` + `dim --prefersdark`, `@custom-variant dark`, base-layer `color-scheme` rules.
+4. **Path B custom-purge (Chunks 3c, 3d-prep/migrate/strip, 3g+)** — bridged legacy CSS vars to DaisyUI tokens, then atomically migrated 24 component files to DaisyUI semantic classes (`bg-base-100`, `text-base-content`, etc.) via sed + targeted Edits, then stripped the bridge. Subsequently purged ALL custom colours per the user's "themes are the brand" rule: dropped `--color-model-1..6`, migrated ~80 hardcoded Tailwind utilities (`text-green-400` → `text-success`, etc.), and migrated 16 chart hex codes to live DaisyUI tokens via a new `getThemeColor()` helper.
+5. **app.html bootstrap + theme module (Chunks 3e, 3f)** — pre-paint inline script reads localStorage / `prefers-color-scheme` / defaults dark and sets BOTH `.dark` class and `data-theme="dim|emerald"` on `<html>` before paint. Single dynamic `<meta name="theme-color">` tag updated by both the bootstrap script and `applyTheme()`. Theme module at `apps/web/src/lib/theme.ts` exposes `applyTheme`, `isDark`, `toggle`, `dispose`, `themeRev` store, and `getThemeColor()` with OKLCH→rgb probe-element resolution. Cross-tab sync via `storage` event, OS-pref tracking via `matchMedia`. HMR-safe via `window.__themeAttached` guard.
+6. **ApexCharts theme integration (Chunk 3g)** — `BaseChart.svelte` listens for the `theme:change` event and calls `chart.updateOptions({ theme: { mode } })`. Each per-chart component reads colours from CSS vars via `getThemeColor()` with a `themeKey` reactive variable so options re-evaluate on theme flip.
+7. **Burger menu rebuild (Chunk 4)** — Disclosure pattern with `aria-haspopup="menu"`, `aria-controls`, `aria-expanded`, `aria-label` flip; 44px touch target; full keyboard navigation (Esc / ArrowUp / ArrowDown / Home / End / Tab-trap); focus management via `tick() + requestAnimationFrame`; click-outside via z-40 backdrop with `cursor-pointer`; body scroll lock with `scrollbarGutter: stable`; theme toggle wired to `window.__theme.toggle()`; hidden install slot for Chunk 5; Save-as-PDF for Chunk 6; HMR-safe `track()` cleanup.
+8. **PWA system (Chunk 5)** — `vite-plugin-pwa` + `workbox-window`, `registerType: 'prompt'`, `navigateFallback: '/200.html'` aligned with adapter-static SPA fallback. Early `beforeinstallprompt` capture in `app.html`. PWA module at `apps/web/src/lib/pwa.ts` with browser detection (Chrome/Edge/Brave/Safari/Firefox), per-browser install instructions, `triggerInstall` with native-prompt-or-manual-modal handoff, `idle | pending` update state machine, hourly `registration.update()` poll for Safari, `controllerchange` reload throttle via `sessionStorage`, HMR-safe via `__pwaModuleAttached` guard, exposes `window.__pwa`. `UpdateBanner.svelte` (z-70, safe-area-inset-bottom, `role="alert"`, retry-on-failure, 15s post-update timeout) and `InstallModal.svelte` (z-60 backdrop / z-80 modal, focus-trapped, escape/backdrop close) mounted from `+layout.svelte`.
+9. **Print CSS / DOWNLOAD_PDF (Chunk 6)** — Save-as-PDF wired to `window.print()` in the burger menu (Chunk 4). `@media print` block in `app.css` overrides DaisyUI tokens at the `:root, [data-theme=emerald], [data-theme=dim]` specificity layer so both legacy and DaisyUI utilities resolve to print-friendly values. Comprehensive selectors: hides nav/header/footer/buttons, full-width tables, page-break-avoid for `section`/`.card`, print-only utility, etc.
+10. **Audit-driven hardening (multiple wrap rounds)** — bug trigger surfaced 8 issues; errors trigger surfaced 6 actionable issues; wrap trigger surfaced 15 items including state-machine refactor, ErrorEvent dispatch for SW registration failures, listener-tracker DRY into `$lib/utils/trackListener.ts`, global Window types in `apps/web/src/app.d.ts`, DebugPill SW-getRegistration timer cleanup.
+11. **Branch self-review Phases A–E** — 30 items across 5 phases produced ~25 commits. Real bugs caught: SSR 500 in onDestroy (`3d0faf3`), theme-color meta-tag ordering bug breaking first-paint chrome (`554f494`), 12 buttons missing `.btn` base class (`d3b26c3`), all 6 chart components had a `$:`-reactivity bug where data props weren't tracked deps (`d8a5f99`). Cleanup: 62 a11y label warnings paired (`da323a4`), full ESLint flat config + 58 findings closed (`d343c86` / `fffb98d`), all hardcoded colours purged from `DebugPill.svelte` / `app.html` / `app.css` print block (`7d3fa0e` / `3479a57`), 26 broken-alpha Tailwind classes (`text-base-content/70/60` → `/60`) (`7ee5573`), 3 timer leaks (`d458762`), `debugLog.ts` HMR teardown added (`610ea5c`), `bodyScrollLock` extracted with reference counting and applied to `InstallModal` too (`0e86fd0`), `WindowEventMap['theme:change']` typed via `app.d.ts` augmentation + type-aware `track()` overloads (`1711078`), local `PWAGlobals` dups dropped (`2d5a377`). Documentation refreshed: AI_MISTAKES.md populated with 5 lessons (`97072bc`), README + ARCHITECTURE updated for v4 / DaisyUI / PWA / ESLint reality (`8e7cf0e` / `660645f`), USER_ACTIONS date corrected (`e9caf7e`), CLAUDE.md `window.__pwa` table fixed (`25f1f48`).
+12. **Post-validation cleanup (6 items)** — six follow-ups surfaced by the wrap pass. (1) SESSION_NOTES first refresh (`f51ff8d`). (2) Triaged the 27-error svelte-check baseline that A4 had treated as immutable: every error was either a real bug or a fixable type-system fight. **27 → 0** errors after fixing component-side accessors that had drifted from calculator types (`profit.netProfit` → `.net`, `revenue.totalRevenue` → `.total`, `buyer.accounting?.cap` → `buyer.asset.cap`), id-overwrite spread order in 6 model literals, calc-fn casts via `as unknown as`, ApexOptions casts via `as unknown as`, missing rest param on `calculateResults`, ComparisonState.length → .options.length, fieldValue helper for unknown-typed inputs. Fixed in `9f37e94`. (3) Model 3 use-case doc drift: 3D/3E/3F sections rewritten to match the code's actual variant names (Usage Rights Split / Platform + Derivatives / Buy-In Arrangement) and 3G "Termination Provisions" section added (`3b2d66e`). (4) Audit of remaining docs: model-4 had similar drift (4D/4F headings + missing 4G "Transfer with Warranty") fixed in `76cd69a`; UI_UX_GUIDE design-system rewritten for DaisyUI v5 reality in `d07b618`; CALCULATIONS / DISCOVERY / NEGOTIATION / models 1/2/5/6 audited clean. (5) `pnpm audit` ran: bumped `@sveltejs/kit` 2.49→2.58, `postcss` to 8.5.12, `@playwright/test` to 1.59.1 — closes 14 advisories (transitively bumps `devalue` to 5.6.4+). **30 → 16** vulnerabilities. Remaining 16 require Svelte 4→5 / Vite 5→8 major-version bumps (separate epic, see Open Follow-ups). Fixed in `a973c07`. (6) Config audit: `.gitignore` / `tsconfig*` / `pnpm-workspace.yaml` clean; root `package.json` was missing dispatch scripts that downstream docs reference (`pnpm test:e2e`, `pnpm preview`, `pnpm check`). Added in `3d47ab0`.
 
-- `apps/web/src/lib/debugLog.ts` — Debug log module (new)
-- `apps/web/src/lib/clipboardUtils.ts` — Clipboard utility (new)
-- `apps/web/src/lib/components/DebugPill.svelte` — Debug pill component (new)
-- `apps/web/src/app.html` — Added #debug-root and inline pre-framework pill
-- `apps/web/src/routes/+layout.svelte` — Mount DebugPill into #debug-root
+13. **DaisyUI migration audit — Phase K (12 perspectives), Phase L (3 build-artefact verifications), Phase M (3 fixes), Phase N (6 user-action checks)** — surfaced as a "from which perspectives can we double-check the properness of the DaisyUI migration?" question after the migration landed. K1–K12 audited custom borders/shadows, !important usage, @theme tokens, focus styles, hover states, transitions, component-class conflicts, spacing tokens, radius scale, other DaisyUI tokens, forced-colors, prefers-reduced-motion. K1 produced **M1** (`d7d331f`): tokenised the print-block table border (`border: var(--border) solid var(--color-base-content)`). K9 produced **M2** (`172e2fe`): aliased Tailwind's `rounded-{sm,md,lg,xl}` onto DaisyUI's `--radius-field` / `--radius-box` so `rounded-lg` corners and `.btn` corners stay in lockstep under theme changes. K10 produced **doc note** (`d67b9c6`): explained why `--radius-selector` / `--size-{selector,field}` / `--depth` / `--noise` are deliberately not aliased. K12 produced **M3** (`a79448c`): added global `@media (prefers-reduced-motion: reduce)` rule to `app.css @layer base` because Tailwind v4 dropped v3's automatic prefers-reduced-motion wrapping of `transition-*` utilities. L1–L3 verified built CSS: every `var(--color-*)` / non-color-token reference resolves to a declaration emitted under both `[data-theme=emerald]` and `[data-theme=dim]` selectors, and every custom rule (print, prefers-reduced-motion, focus-visible, color-scheme, scroll-smooth, font stacks, headings, .dark variant, print-only) survives minification. N1–N6 (visual sweep / theme reactivity / first-paint flash / forced-colors / prefers-reduced-motion / print preview) require a real browser and are documented in `docs/USER_ACTIONS.md` (`d933f3a`). Wrap pass surfaced one real gap: ApexCharts drives draw/update animations via JS on canvas/SVG, which CSS can't reach — `BaseChart.svelte` now reads `matchMedia('(prefers-reduced-motion: reduce)')` at init and subscribes to the `change` event, calling `chart.updateOptions({ chart: { animations: { enabled: !reduce, ... } } })` so chart animations honour the OS preference live.
 
-### Pattern items intentionally omitted
+14. **DaisyUI-completion audit (chunks #1–#17 + sub-chunks)** — re-done chunk-by-chunk after the user objected to the first attempt's "exception bullshit". Outcomes: token-level checks (#1–#3 + #11) found a real bug (`bg-border` typo in StructureWizard progress bar) and pinned 6 missing print-block colour tokens. Component-class discipline (#5–#8 + #10) migrated 14 hand-rolled buttons to `.btn`, 5 form controls to `.select`/`.checkbox`/`.radio`, 2 generic divs to `.card`, fixed real bugs in 8 badges (variant-without-base — DaisyUI v5 splits `.badge` from `.badge-primary`), migrated 2 hand-rolled alerts to `.alert.alert-soft`, view toggles to `.tabs.tabs-box`, 13 `title=` attrs to `.tooltip`+`data-tip=`. Overlay/modal sweep (#9a–#9e) replaced 4 synthetic modals with `<dialog class="modal">` (Save / Install / Comparison / save-as-PDF) — browser handles focus trap, Escape, focus return — UpdateBanner became `.toast`+`.alert`, burger menu became `.dropdown.dropdown-end` + `.menu.dropdown-content` with all the bespoke keyboard nav preserved. Backlog cleanups (5b/6b/7b/7c) closed the alpha-only DebugPill exceptions: 7 buttons + 1 textarea + tab triplet migrated; pricing chart container + stat tiles → `.card` / `.stats.stat` / `.table.table-sm`. Build-pipeline drift detection (#15–#17) added `scripts/check-theme-hex.mjs` wired into `pnpm check` — fails the build if any of the 11 hardcoded hex sites no longer matches DaisyUI dim/emerald token values; shared OKLCH conversion lifted to `scripts/lib/oklch.mjs`.
 
-Two items from the glow-props `DEBUG_SYSTEM.md` pattern were deliberately scoped out (not forgotten):
+15. **Frontend-group sweep (ux + a11y + mobile + motion + forms + copy + i18n + dark-mode + visual)** — surfaced 8 fixes + 1 PASS after the DaisyUI-completion run. **ux**: UpdateBanner gets a `.loading.loading-spinner.loading-xs` next to "Updating…" so SW activation has visual progress. **a11y**: Save modal `<dialog>` got `aria-labelledby` (was anonymous to screen readers); burger nav links got `aria-current="page"` keyed off `$page.url.pathname`. **mobile**: per-row Rename/Delete icons bumped from `btn-xs` (24px) → `btn-sm` (32px) since they're primary touch targets. **motion**: `saveConfirmation` toast got `role="status"` + `aria-live="polite"` so screen readers announce save success. **forms**: InputField hint linked to its input via `aria-describedby={hint ? \`${id}-hint\` : undefined}` — cascades across all 30 hint configs in inputFields.ts. **copy**: 3 native browser dialogs in ComparisonManager (alert × 2, confirm × 1) replaced with DaisyUI surfaces (alert-soft toast for import results with auto-clear, `<dialog class="modal">` for the destructive Clear-All confirmation), plus parenthetical `option(s)` pluralization fixed to explicit `option`/`options`. **i18n**: SensitivityPanel `.toLocaleString()` → `.toLocaleString('en-ZA')` for consistency with formatters / EquilibriumChart / ComparisonManager. **dark-mode**: PASS — 0 `dark:` prefixes, 0 non-semantic palette colours, 0 `text-white`/`bg-black`, all alpha modifiers semantic. **visual**: ComparisonView risk-level pill (the chunk #8 sibling that was missed) migrated from hand-rolled `bg-X/20 text-X` to `badge badge-soft badge-sm badge-{success|warning|error}`.
 
-- **`diagnoseFailure()` utility**: Pattern describes it as "used by both the diagnostic panel and form submission error handlers." This app has no API calls or form submissions to external services — the utility would have zero consumers.
-- **Embed mode skip** (`?embed=` in URL): The app has no embed/iframe mode. Adding a guard for a non-existent feature would be speculative.
+### Architecture additions / new modules
 
-### Removal note
+- `apps/web/src/lib/theme.ts` — runtime theme management, exposes `window.__theme`. Resolved-token cache + idempotent `applyTheme()` added in Phase C.
+- `apps/web/src/lib/pwa.ts` — service-worker / install / update management, exposes `window.__pwa`.
+- `apps/web/src/lib/utils/trackListener.ts` — shared listener-collector helper. Phase C added type-aware overloads that pick up `WindowEventMap` / `DocumentEventMap` so `track(window, 'theme:change', e => e.detail.dark)` typechecks without a cast.
+- `apps/web/src/lib/utils/bodyScrollLock.ts` — reference-counted scroll lock used by both the burger menu and the install modal so nested overlays compose correctly.
+- `apps/web/src/lib/components/UpdateBanner.svelte` — PWA update prompt with idempotent `show()` (defends against re-emit while visible).
+- `apps/web/src/lib/components/InstallModal.svelte` — per-browser manual install instructions, focus-trapped, scroll-locks the body while open.
+- `apps/web/src/app.d.ts` — global Window / Navigator augmentation for the runtime singletons. Phase C added `WindowEventMap['theme:change']`, plus debug-pill / Brave / Safari-standalone fields so module bodies don't need `as any` casts.
+- `apps/web/eslint.config.js` — ESLint v10 flat config (typescript-eslint + eslint-plugin-svelte). Was completely missing before this session; added in Phase A5.
+- `scripts/lib/oklch.mjs` — shared OKLCH → sRGB hex conversion + DaisyUI theme parsing. Used by both `oklch-to-hex.mjs` (interactive) and `check-theme-hex.mjs` (CI assertion).
+- `scripts/check-theme-hex.mjs` — drift assertion run by `pnpm check`. Fails the build if any of the 11 hardcoded hex sites (app.html / theme.ts / vite.config.ts / icon-source.svg) no longer matches the OKLCH-derived value from DaisyUI's theme files.
 
-The debug system is alpha-only (per pattern: "intended to be removed post-alpha"). When alpha ends, remove: `debugLog.ts`, `clipboardUtils.ts`, `DebugPill.svelte`, `#debug-root` + inline `<script>` + inline pill in `app.html`, dynamic import in `+layout.svelte`. The z-80 layer becomes unused.
+### Bundle impact
 
-### Known remaining issue
+| | Before | After (latest) |
+|---|---|---|
+| `app.css` source | 516 lines | ~190 lines |
+| Production CSS | 137.7 kB | ~102 kB |
+| Layout JS chunk | n/a | ~30 kB |
+| Calculator tests | 301 | 301 (still green) |
+| ESLint | not configured | 0 errors / 0 warnings |
+| svelte-check | 27 errors / 0 warnings | **0 errors / 0 warnings** (closed in post-validation item 2) |
+| `pnpm audit` | 30 (5 low / 14 mod / 11 high) | **16** (1 low / 9 mod / 6 high) — remaining need major-version bumps |
 
-- **Model 3 model-use-cases doc**: Variant headings for 3D-3G describe different concepts than the code variants (e.g., doc says "Joint Venture Entity" for 3F but code says "Buy-In Arrangement"). Flagged for a future session.
+### Visual regressions accepted
 
----
+DaisyUI's `dim` and `emerald` themes now drive every colour. Prior dark palette (`#1B1B1B` / `#2D68FF` / `#FFFFFF`) is gone; chart series colours, badge colours, and brand accents all shift to whatever the active DaisyUI theme provides. This was the explicit "themes are the brand" decision — surfaced in commit `cb32a93`.
 
-## Architecture Overview (TypeScript Monorepo)
+### Open follow-ups for next session
 
-```
-model-pear/
-├── packages/calculator/          # Pure TypeScript calculation library
-│   ├── src/
-│   │   ├── models/               # 6 transaction models (47 variants)
-│   │   ├── projections/          # NPV, IRR, payback calculations
-│   │   ├── sensitivity/          # Ranges, scenarios, Monte Carlo
-│   │   └── types/                # Shared TypeScript types
-│   └── tests/                    # 301 unit tests
-│
-└── apps/web/                     # SvelteKit 2.x frontend
-    ├── src/
-    │   ├── lib/
-    │   │   ├── components/       # Svelte components + charts
-    │   │   ├── config/           # Input fields + wizard config
-    │   │   ├── stores/           # Svelte stores (comparison)
-    │   │   └── utils/            # Formatting utilities
-    │   └── routes/
-    │       ├── +page.svelte      # Home page
-    │       ├── pricing/          # Pricing calculator (5 models)
-    │       └── structuring/      # Transaction tool routes
-    ├── tests/e2e/                # Playwright E2E tests
-    └── static/                   # Static assets
-```
+1. **Branch self-review Phases F-I (browser + deployed).** Phases A-E + post-validation items 1-6 done this session. Remaining: visual walkthrough in dim + emerald, JS-disabled fallback, a11y / keyboard / SR sweep, PWA install + update + offline behaviour (deployed HTTPS), Save-as-PDF preview, Lighthouse, Vercel preview. All require a real browser or deployed instance.
+1a. **DaisyUI migration audit Phase N (browser-bound).** Six visual checks deferred to a real browser: token-gap visual sweep, theme reactivity, first-paint flash, forced-colors emulation, prefers-reduced-motion emulation (now also covers chart animations after BaseChart fix), print preview. Step-by-step instructions in `docs/USER_ACTIONS.md`. Run once after this branch lands or against the deployed Vercel preview.
+2. **Phase J — Tests.** No tests added for `$lib/theme`, `$lib/pwa`, the burger menu, or PWA components. CLAUDE.md's testing rules treat infra as optional, but these are critical paths for every user. Optional unit + Playwright E2E coverage flagged but not yet authorised.
+3. **Major-version dependency upgrade epic.** `pnpm audit` after the in-major bumps (item 5) shows **16 remaining vulnerabilities**, all in deps that need major-version moves: `svelte` 4→5 (runes migration), `vite` 5→8 (transitively closes `rollup` / `esbuild` / `picomatch` / `minimatch` / `serialize-javascript`), `@vitest/coverage-v8` 1→4, `vitest` 1→4, `apexcharts` 3→5, `typescript` 5→6, `zod` 3→4. Out of scope for this branch's "within-major hygiene" framing. See `docs/TODO.md`.
+4. **Manual `pnpm approve-builds`.** See `docs/USER_ACTIONS.md` — verified during Phase E that the action is still pending (`pnpm install` still emits the warning).
+5. **Intermediate-state regression** between commits `99a0c3f` (3d-strip) and `6a29608` (3e) is documented but not retroactively fixable — the `class="dark"`-without-`data-theme` window meant DaisyUI defaulted to emerald during that span.
 
----
+**Verified visually unaudited (browser-bound):**
+- **Chart reactivity fix (`d8a5f99`)** — static-analysis-driven; should observe a real chart re-render on data-prop change in F1/F4.
+- **InstallModal scroll-lock composition (`0e86fd0`)** — burger → install → close ref-counted unlock should be exercised once.
+- **Model-3 / model-4 use-case doc rewrites** — content drafted from code's `description`/`scenario` fields without domain-expert review. Sanity-check from a finance/TP person recommended.
 
-## Build Commands
+### Pattern items still intentionally omitted
 
-```bash
-pnpm install          # Install dependencies
-pnpm test             # Run calculator tests (301 tests)
-pnpm build            # Build all packages
-pnpm dev              # Start dev server (apps/web)
-pnpm test:e2e         # Run Playwright E2E tests
-pnpm test:e2e:ui      # Run Playwright with UI
-pnpm generate-icons   # Regenerate PNGs from assets/icon-source.svg
-```
+- **App-level error boundary.** Svelte 4 has no built-in error boundary; SvelteKit's `+error.svelte` only handles navigation errors. The DebugPill captures global `error` events as a partial substitute.
+
+### Removal note (carried forward)
+
+The debug system is alpha-only. When alpha ends, remove: `debugLog.ts`, `clipboardUtils.ts`, `DebugPill.svelte`, `#debug-root` + inline `<script>` + inline pill in `app.html`, dynamic import in `+layout.svelte`. The z-80 layer becomes unused.
 
 ---
 
-## Future Ideas
-
-- **Recommendation Summary** - Add weighted scoring to Compare Mode
-- **Accounting Treatment Comparison** - Journal entries side-by-side in Compare Mode
-- **Rename "intercompany" folders** - Rename to `transactions/` (low priority)
+For project architecture, file structure, and build commands, see `CLAUDE.md`. Backlog items live in `docs/TODO.md`.

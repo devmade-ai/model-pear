@@ -1,32 +1,65 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* Dark Theme - CSS Variables */
-:root {
-  /* Colors - HSL values for Tailwind compatibility */
-  --background: 0 0% 11%;           /* #1B1B1B */
-  --foreground: 0 0% 100%;          /* #FFFFFF */
-  --card: 0 0% 16%;                 /* #2a2a2a */
-  --card-foreground: 0 0% 100%;
-  --primary: 222 100% 59%;          /* #2D68FF */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 46%;            /* #767676 */
-  --secondary-foreground: 0 0% 100%;
-  --muted: 0 0% 16%;
-  --muted-foreground: 0 0% 46%;
-  --border: 0 0% 20%;               /* #333333 */
-  --ring: 222 100% 59%;             /* #2D68FF */
-
-  /* Spacing */
-  --radius: 0.5rem;
-
-  /* Color scheme */
-  color-scheme: dark;
+/* DaisyUI v5: emerald (light, default) + dim (dark, --prefersdark). */
+@plugin "daisyui" {
+  themes: emerald --default, dim --prefersdark;
 }
 
-/* Custom base styles */
+/* Tailwind dark-mode variant aligned with DaisyUI's data-theme system.
+   `dark:` utilities key on a `.dark` class anywhere in the ancestor chain.
+   The bootstrap script in Chunk 3e sets BOTH `.dark` AND
+   `data-theme="dim|emerald"` in lockstep. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Border-radius scale base.
+
+   Tailwind's `rounded-{sm,md,lg,xl}` utilities are aliased onto
+   DaisyUI's `--radius-field` / `--radius-box` tokens in the @theme
+   block below. That keeps `<div class="rounded-lg">` corners and
+   adjacent `.btn` / `.input` / `.card` corners in lock-step under
+   theme changes — without the alias, our scale would track an
+   inline `0.5rem` constant that only happens to match dim's current
+   `--radius-field` by coincidence. */
+
+/* CSS-first theme tokens — only what isn't covered by DaisyUI's emit. */
+@theme {
+  /* Typography. Sans stack mirrors Tailwind v3's defaultTheme.fontFamily.sans
+     with Figtree prepended; emoji fonts kept so cross-platform glyph
+     fallbacks match the v3 baseline. */
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "JetBrains Mono", "Consolas", monospace;
+
+  /* Border radius — alias Tailwind's scale onto DaisyUI's tokens.
+     `--radius-field` (= 0.5rem in dim and emerald) drives buttons,
+     inputs, badges. `--radius-box` (= 1rem) drives cards / modals.
+     If DaisyUI bumps either token, our `rounded-*` utilities follow
+     so corners stay consistent across DaisyUI components and
+     custom surfaces.
+
+     Tokens NOT aliased here:
+       --radius-selector  (used by DaisyUI checkbox/radio internally)
+       --size-{selector,field}  (drive DaisyUI's component heights)
+       --depth, --noise  (both 0 in dim and emerald; no-op to alias)
+     If a future feature builds a custom checkbox-style surface, use
+     var(--radius-selector) + var(--size-selector) directly so it
+     matches DaisyUI's selectors. */
+  --radius-sm: calc(var(--radius-field) - 4px);
+  --radius-md: calc(var(--radius-field) - 2px);
+  --radius-lg: var(--radius-field);
+  --radius-xl: var(--radius-box);
+}
+
 @layer base {
+  /* Dual-layer color-scheme: light by default, dark when .dark on <html>.
+     Drives native form controls, scrollbars, and canvas background to
+     match whichever theme is active. */
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
   html {
     @apply scroll-smooth;
   }
@@ -35,342 +68,177 @@
     @apply min-h-screen font-sans;
   }
 
-  /* Focus styles for accessibility */
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-primary;
   }
 
-  /* Typography defaults */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
-}
 
-/* Custom component styles - Dark Theme */
-@layer components {
-  /* Card component */
-  .card {
-    @apply bg-card rounded-xl border border-border;
-  }
-
-  .card-hover {
-    @apply card transition-all duration-200;
-  }
-
-  .card-hover:hover {
-    @apply border-primary/50;
-    background-color: hsl(var(--card) / 0.8);
-  }
-
-  /* Input styles */
-  .input {
-    @apply h-10 w-full px-6 bg-card border-2 border-border rounded-lg text-sm text-foreground;
-    @apply focus:ring-2 focus:ring-primary focus:border-primary;
-    @apply placeholder:text-secondary;
-  }
-
-  .input-error {
-    @apply border-error focus:ring-error focus:border-error;
-  }
-
-  /* Button styles */
-  .btn {
-    @apply inline-flex items-center justify-center rounded font-medium;
-    @apply transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-
-  /* Default button size */
-  .btn {
-    @apply h-10 px-8 text-sm;
-  }
-
-  .btn-sm {
-    @apply h-8 px-4 text-xs;
-  }
-
-  .btn-lg {
-    @apply h-12 px-10 text-base;
-  }
-
-  .btn-icon {
-    @apply h-10 w-10 p-0;
-  }
-
-  .btn-primary {
-    @apply btn bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary;
-  }
-
-  .btn-secondary {
-    @apply btn bg-secondary-light text-foreground hover:bg-secondary-dark focus:ring-secondary;
-  }
-
-  .btn-outline {
-    @apply btn border border-border bg-transparent text-foreground hover:bg-card focus:ring-primary;
-  }
-
-  .btn-ghost {
-    @apply btn bg-transparent text-foreground hover:bg-card focus:ring-primary;
-  }
-
-  /* Badge styles */
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
-  }
-
-  .badge-primary {
-    @apply badge bg-primary/20 text-primary border border-primary/30;
-  }
-
-  .badge-success {
-    @apply badge bg-success/10 text-success border border-success/30;
-  }
-
-  .badge-warning {
-    @apply badge bg-warning/10 text-warning border border-warning/30;
-  }
-
-  .badge-error {
-    @apply badge bg-error/10 text-error border border-error/30;
-  }
-
-  /* Legacy badge aliases for compatibility */
-  .badge-blue {
-    @apply badge-primary;
-  }
-
-  .badge-green {
-    @apply badge-success;
-  }
-
-  .badge-amber {
-    @apply badge-warning;
-  }
-
-  .badge-red {
-    @apply badge-error;
-  }
-
-  /* Result panel styles */
-  .result-panel {
-    @apply card p-6 space-y-4;
-  }
-
-  .result-row {
-    @apply flex justify-between items-center py-1.5 px-2 rounded;
-  }
-
-  .result-row:hover {
-    background-color: hsl(var(--foreground) / 0.05);
-  }
-
-  .result-label {
-    @apply text-sm text-secondary;
-  }
-
-  .result-value {
-    @apply font-medium text-foreground;
-  }
-
-  .result-value-positive {
-    @apply result-value text-success;
-  }
-
-  .result-value-negative {
-    @apply result-value text-error;
-  }
-
-  /* Alert styles */
-  .alert {
-    @apply p-4 rounded-lg border;
-  }
-
-  .alert-warning {
-    @apply alert bg-warning/10 border-warning/30 text-warning;
-  }
-
-  .alert-success {
-    @apply alert bg-success/10 border-success/30 text-success;
-  }
-
-  .alert-error {
-    @apply alert bg-error/10 border-error/30 text-error;
-  }
-
-  /* Table styles for dark theme */
-  .table-dark {
-    @apply w-full border-collapse;
-  }
-
-  .table-dark thead {
-    @apply bg-secondary-light;
-  }
-
-  .table-dark th {
-    @apply px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide;
-  }
-
-  .table-dark tbody {
-    @apply divide-y divide-border;
-  }
-
-  .table-dark td {
-    @apply px-4 py-3 text-sm text-foreground;
-  }
-
-  .table-dark tbody tr:hover {
-    background-color: hsl(var(--foreground) / 0.05);
+  /* Respect OS-level reduced-motion preference.
+     Tailwind v4 removed v3's automatic prefers-reduced-motion wrapping
+     of `transition-*` utilities, so component-level classes
+     (`transition-colors`, `transition-all`, `transition-transform`)
+     no longer respect the user's OS setting on their own. This global
+     rule flattens every transition/animation to ~0 across the app.
+     Using 0.01ms (not 0) preserves `transitionend` / `animationend`
+     event listeners that some libraries rely on. WCAG 2.3.3 pattern. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-/* Custom utilities */
 @layer utilities {
-  /* Currency formatting helper */
-  .tabular-nums {
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Hide scrollbar for horizontal scroll on mobile */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Touch-friendly tap targets */
-  .touch-manipulation {
-    touch-action: manipulation;
-  }
-
-  /* Safe area padding for notched devices */
-  .safe-area-inset {
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }
-
-  /* Print visibility utilities:
-     - .no-print: hidden in print, visible on screen (defined in @media print block)
-     - .print-only: hidden on screen, visible in print */
+  /* Hidden on screen, shown in print. Paired with @media print below. */
   .print-only {
     display: none;
   }
-
-  /* Text colors using CSS variables */
-  .text-primary-color {
-    color: hsl(var(--primary));
-  }
-
-  .text-secondary-color {
-    color: hsl(var(--secondary));
-  }
 }
 
-/* Print styles for PDF export via window.print()
-   Approach: Override dark theme CSS variables to light values so all Tailwind
-   utility classes (text-foreground, bg-card, etc.) automatically resolve to
-   print-friendly colors. This is cleaner than overriding individual classes.
-   See glow-props docs/implementations/DOWNLOAD_PDF.md for the canonical pattern. */
+/* Print styles for PDF export via window.print().
+   Override DaisyUI's semantic tokens at the same selector specificity
+   level DaisyUI uses for its theme rules (:root and [data-theme=*]).
+   Every utility (bg-base-100, text-base-content, bg-primary, etc.)
+   reads through these tokens, so a single override block reaches
+   every themed surface in print.
+   See glow-props docs/implementations/DOWNLOAD_PDF.md for the
+   canonical pattern. */
 @media print {
-  /* Override dark theme CSS variables with light-theme values for print.
-     Without this, text-foreground resolves to white (invisible on white paper)
-     and bg-card resolves to dark gray. Overriding at :root fixes all
-     Tailwind utility classes that reference these variables. */
-  :root {
-    --background: 0 0% 100%;         /* white */
-    --foreground: 0 0% 7%;           /* near-black */
-    --card: 0 0% 100%;               /* white */
-    --card-foreground: 0 0% 7%;      /* near-black */
-    --primary: 222 100% 40%;         /* darker blue for readability on white */
-    --primary-foreground: 0 0% 100%; /* white (for badges on primary bg) */
-    --secondary: 0 0% 35%;           /* dark gray — readable as secondary text */
-    --secondary-foreground: 0 0% 7%;
-    --muted: 0 0% 96%;               /* very light gray */
-    --muted-foreground: 0 0% 35%;    /* dark gray */
-    --border: 0 0% 80%;              /* light gray border */
-    --ring: 222 100% 40%;
+  :root,
+  [data-theme="emerald"],
+  [data-theme="dim"] {
+    --color-base-100: #ffffff;
+    --color-base-200: #ffffff;
+    --color-base-300: #cccccc;
+    --color-base-content: #111111;
+
+    --color-primary: #2D68FF;
+    --color-primary-content: #ffffff;
+
+    --color-secondary: #555555;
+    --color-secondary-content: #ffffff;
+
+    /* DaisyUI's remaining three semantic colour pairs. info and accent are
+       referenced today by ProjectionMetrics, StructureWizard, UpdateBanner,
+       and the home page (`bg-info/10`, `text-info`, `bg-accent/20`,
+       `text-accent`). neutral has zero refs at the moment but is overridden
+       for completeness — DaisyUI emits all 10 pairs, and any future use of
+       a neutral token would otherwise bleed the screen OKLCH value into
+       ink. Pinning to deep, desaturated sRGB values keeps every themed
+       surface readable on paper.
+
+       Order matches DaisyUI's canonical primary → secondary → accent →
+       neutral → info → success → warning → error sequence (with base at
+       the top, kept first since it's the conceptual surface family). */
+    --color-accent: #6b21a8;
+    --color-accent-content: #ffffff;
+    --color-neutral: #404040;
+    --color-neutral-content: #ffffff;
+    --color-info: #1e3a8a;
+    --color-info-content: #ffffff;
+
+    --color-success: #166534;
+    --color-success-content: #ffffff;
+    --color-warning: #92400e;
+    --color-warning-content: #ffffff;
+    --color-error: #991b1b;
+    --color-error-content: #ffffff;
+
+    /* Pin --border explicitly so the table-cell rule below
+       (`border: var(--border) solid var(--color-base-content)`) renders
+       a visible 1px line even if a future DaisyUI version stops emitting
+       the token in this selector chain. Currently DaisyUI sets it to 1px
+       on [data-theme=*]; this is a defensive belt-and-braces guarantee. */
+    --border: 1px;
 
     color-scheme: light;
   }
 
   /* Hide navigation and interactive elements.
-     - .no-print: semantic class for elements that should never appear in PDF
-     - button:not(.print-include): hides all buttons unless explicitly marked
-     - .btn-*: also targets <a> elements styled as buttons (Tailwind @apply
-       copies properties, doesn't add the base class to the element) */
+     `button:not(.print-include)` preserves explicitly-marked buttons.
+     `.btn` / `.btn-primary` also targets <a> elements styled as buttons. */
   nav,
   header,
   footer,
   .no-print,
   button:not(.print-include),
   .btn,
-  .btn-primary,
-  .btn-secondary {
+  .btn-primary {
     display: none !important;
   }
 
-  /* Reset background for printing.
-     !important on print-color-adjust ensures browsers preserve background
-     colors for badges, status indicators, and colored elements. */
   body {
-    background: white !important;
-    color: black !important;
+    background: var(--color-base-100) !important;
+    color: var(--color-base-content) !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Override hardcoded dark colors that aren't CSS-variable-based.
-     Tailwind config defines secondary-light (#222222) and secondary-dark (#333333)
-     as static hex values. These need explicit overrides for print. */
-  .bg-secondary-light {
-    background-color: #f5f5f5 !important;
-  }
-
-  .bg-secondary-dark {
-    background-color: #e5e5e5 !important;
-  }
-
-  /* Links lose their hover state in print — underlines make them identifiable */
   a {
-    color: black !important;
+    color: var(--color-base-content) !important;
     text-decoration: underline !important;
   }
 
-  /* Sticky elements overlap content in print. Override to normal flow. */
   .sticky {
     position: static !important;
   }
 
-  /* Full width for print content */
   .print-container {
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  /* Ensure comparison modal prints properly.
-     Modals use two adjacent .fixed.inset-0 siblings (backdrop z-40 + modal z-60).
-     Both match this selector — the empty backdrop collapses to 0 height harmlessly. */
-  .fixed.inset-0 {
-    position: relative !important;
-    background: white !important;
+  /* DaisyUI <dialog class="modal"> overrides for print.
+     Native <dialog showModal()> renders in the top-layer with a
+     ::backdrop pseudo-element and DaisyUI fixes the modal to inset:0.
+     For print we need it to flow inline with page content so
+     comparison tables and option summaries print at full page width.
+     - Lift it out of the top-layer feel by neutralising fixed
+       positioning and the backdrop pseudo.
+     - Strip the modal-box's max-width / max-height / shadow / radius
+       / padding so the content takes the full page. */
+  dialog.modal {
+    position: static !important;
+    display: block !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    background: transparent !important;
+    z-index: auto !important;
+    overflow: visible !important;
   }
-
-  .fixed.inset-0 > div {
+  dialog.modal::backdrop {
+    display: none !important;
+  }
+  dialog.modal .modal-box {
     max-width: 100% !important;
     max-height: none !important;
     box-shadow: none !important;
+    background: var(--color-base-100) !important;
+    overflow: visible !important;
+  }
+  /* The native modal-backdrop close button (form method="dialog") is
+     visible in print otherwise — hide it. */
+  dialog.modal .modal-backdrop {
+    display: none !important;
   }
 
-  /* Show print-only elements (hidden on screen via .print-only utility) */
   .print-only {
     display: block !important;
   }
 
-  /* Collapsible section toggle buttons with print-include:
-     Keep the heading text visible but hide the expand/collapse chevron SVG,
-     since it references interactive behavior that doesn't exist in print. */
+  /* Collapsible section toggle buttons: keep heading visible, hide chevron. */
   button.print-include {
     display: flex !important;
     cursor: default;
@@ -380,16 +248,21 @@
     display: none !important;
   }
 
-  /* Preserve background colors for badges and status indicators */
+  /* Preserve background colors for status badges.
+     Aligned with the print --color-* override block above (every variant
+     overridden there is listed here so its background renders to ink). */
   .badge-success,
   .badge-warning,
   .badge-error,
-  .badge-primary {
+  .badge-primary,
+  .badge-secondary,
+  .badge-info,
+  .badge-accent,
+  .badge-neutral {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Table styling for print */
   table {
     width: 100% !important;
     border-collapse: collapse;
@@ -397,40 +270,14 @@
 
   th,
   td {
-    border: 1px solid #333 !important;
+    border: var(--border) solid var(--color-base-content) !important;
     padding: 8px !important;
-    color: black !important;
+    color: var(--color-base-content) !important;
   }
 
-  /* Page break control — named utility class per glow-props pattern.
-     Apply selectively to cards, result panels, and content blocks
-     that should not be split across pages.
-     Uses both modern (break-inside) and legacy (page-break-inside) properties. */
-  .print-avoid-break {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .page-break-before {
-    break-before: page;
-    page-break-before: always;
-  }
-
-  .page-break-after {
-    break-after: page;
-    page-break-after: always;
-  }
-
-  /* Legacy alias — kept for existing usages, prefer .print-avoid-break for new code */
-  .avoid-break {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  /* Fallback: prevent content blocks from splitting across pages */
+  /* Prevent content blocks from splitting across pages. */
   section,
-  .card,
-  .result-panel {
+  .card {
     break-inside: avoid;
     page-break-inside: avoid;
   }

@@ -6,6 +6,7 @@
    * Uses a horizontal range visualization.
    */
   import BaseChart from './BaseChart.svelte';
+  import { themeRev, getThemeColor } from '$lib/theme';
 
   export let minimumPrice: number;
   export let maximumPrice: number;
@@ -27,7 +28,15 @@
   $: chartMin = Math.max(0, Math.min(minimumPrice, maximumPrice, currentPrice) * 0.8);
   $: chartMax = Math.max(minimumPrice, maximumPrice, currentPrice) * 1.2;
 
-  $: options = {
+  // Theme reactivity: see CashFlowChart.svelte for the pattern explanation.
+  let themeKey = 0;
+  $: themeKey = $themeRev;
+
+  function makeOptions(_rev: number, _deps: unknown[]): ApexCharts.ApexOptions {
+    // Cast: ApexCharts' label-formatter type signature is `(value: string)`
+    // but for numeric axes it's invoked with a number at runtime. The cast
+    // accepts the type-vs-runtime mismatch ApexCharts itself ships with.
+    return ({
     chart: {
       type: 'rangeBar' as const,
       toolbar: { show: false },
@@ -40,9 +49,24 @@
         rangeBarGroupRows: true,
       },
     },
+    // Series colors mapped to DaisyUI semantics:
+    //   When equilibrium exists: success (band), primary (your min),
+    //     secondary (client max), warning (suggested attention).
+    //   When no equilibrium:     error (no zone), primary (your min),
+    //     secondary (client max), neutral (current).
     colors: equilibriumExists
-      ? ['#dcfce7', '#3b82f6', '#10b981', '#f59e0b']
-      : ['#fee2e2', '#3b82f6', '#ef4444', '#9ca3af'],
+      ? [
+          getThemeColor('--color-success'),
+          getThemeColor('--color-primary'),
+          getThemeColor('--color-secondary'),
+          getThemeColor('--color-warning'),
+        ]
+      : [
+          getThemeColor('--color-error'),
+          getThemeColor('--color-primary'),
+          getThemeColor('--color-secondary'),
+          getThemeColor('--color-neutral'),
+        ],
     series: [
       {
         name: 'Equilibrium Zone',
@@ -68,13 +92,9 @@
     xaxis: {
       min: chartMin,
       max: chartMax,
-      labels: {
-        formatter: (val: number) => formatValue(val),
-      },
+      labels: { formatter: (val: number) => formatValue(val) },
     },
-    yaxis: {
-      labels: { show: false },
-    },
+    yaxis: { labels: { show: false } },
     legend: {
       show: true,
       position: 'bottom' as const,
@@ -85,47 +105,47 @@
         const seriesName = w.globals.seriesNames[seriesIndex];
         const data = w.config.series[seriesIndex].data[dataPointIndex];
         if (seriesIndex === 0 && equilibriumExists) {
-          return `<div class="p-2 p-2 bg-card shadow rounded text-sm text-foreground">
+          return `<div class="p-2 bg-base-200 shadow-sm rounded text-sm text-base-content">
             <strong>${seriesName}</strong><br/>
             ${formatValue(data.y[0])} - ${formatValue(data.y[1])}
           </div>`;
         }
         const midpoint = (data.y[0] + data.y[1]) / 2;
-        return `<div class="p-2 p-2 bg-card shadow rounded text-sm text-foreground">
+        return `<div class="p-2 bg-base-200 shadow-sm rounded text-sm text-base-content">
           <strong>${seriesName}</strong>: ${formatValue(midpoint)}
         </div>`;
       },
     },
-    grid: {
-      padding: { left: 10, right: 10 },
-    },
+    grid: { padding: { left: 10, right: 10 } },
     annotations: {
       xaxis: [
         {
           x: currentPrice,
-          borderColor: '#6366f1',
+          borderColor: getThemeColor('--color-info'),
           strokeDashArray: 4,
           label: {
             text: `Current: ${formatValue(currentPrice)}`,
             style: {
-              color: '#fff',
-              background: '#6366f1',
+              color: getThemeColor('--color-info-content'),
+              background: getThemeColor('--color-info'),
             },
           },
         },
       ],
     },
-  };
+  } as unknown as ApexCharts.ApexOptions);
+  }
+  $: options = makeOptions(themeKey, [minimumPrice, maximumPrice, currentPrice, suggestedPrice, equilibriumExists, isPercentage]);
 </script>
 
 <div class="w-full">
   <BaseChart {options} {height} />
-  <div class="mt-2 text-center text-sm text-muted-foreground">
+  <div class="mt-2 text-center text-sm text-base-content/70">
     {#if equilibriumExists}
-      <span class="text-green-400 font-medium">Equilibrium zone:</span>
+      <span class="text-success font-medium">Equilibrium zone:</span>
       {formatValue(minimumPrice)} to {formatValue(maximumPrice)}
     {:else}
-      <span class="text-red-400 font-medium">No overlap:</span>
+      <span class="text-error font-medium">No overlap:</span>
       Your minimum ({formatValue(minimumPrice)}) exceeds client maximum ({formatValue(maximumPrice)})
     {/if}
   </div>

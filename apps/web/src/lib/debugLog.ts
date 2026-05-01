@@ -22,7 +22,7 @@ export interface DebugEntry {
   details?: Record<string, unknown>
 }
 
-export const MAX_ENTRIES = 200
+const MAX_ENTRIES = 200
 let nextId = 0
 const entries: DebugEntry[] = []
 const subscribers = new Set<(entry: DebugEntry) => void>()
@@ -104,7 +104,7 @@ export function debugGenerateReport(): string {
 export function debugGetEnvironment(): { standalone: boolean; swSupport: boolean } {
   return {
     standalone: window.matchMedia('(display-mode: standalone)').matches
-      || (navigator as any).standalone === true,
+      || navigator.standalone === true,
     swSupport: 'serviceWorker' in navigator,
   }
 }
@@ -123,19 +123,19 @@ if (typeof window !== 'undefined') {
   // HMR guard: Store true originals on window so they survive module re-execution.
   // Without this, each HMR cycle captures the already-patched console.error as
   // "original", creating nested wrappers that produce duplicate log entries.
-  const w = window as any
-  if (!w.__debugOriginalConsoleError) {
-    w.__debugOriginalConsoleError = console.error
-    w.__debugOriginalConsoleWarn = console.warn
+  if (!window.__debugOriginalConsoleError) {
+    window.__debugOriginalConsoleError = console.error
+    window.__debugOriginalConsoleWarn = console.warn
   }
-  const originalError: (...args: unknown[]) => void = w.__debugOriginalConsoleError
-  const originalWarn: (...args: unknown[]) => void = w.__debugOriginalConsoleWarn
+  // Non-null after the guard above sets them.
+  const originalError = window.__debugOriginalConsoleError!
+  const originalWarn = window.__debugOriginalConsoleWarn!
 
   // Re-entrancy guard: prevents infinite recursion if a subscriber or library
   // calls console.error/warn during a debugAdd callback chain.
   let intercepting = false
 
-  console.error = (...args: unknown[]) => {
+  const patchedError = (...args: unknown[]) => {
     originalError.apply(console, args)
     if (!intercepting) {
       intercepting = true
@@ -144,7 +144,7 @@ if (typeof window !== 'undefined') {
     }
   }
 
-  console.warn = (...args: unknown[]) => {
+  const patchedWarn = (...args: unknown[]) => {
     originalWarn.apply(console, args)
     if (!intercepting) {
       intercepting = true
@@ -153,46 +153,71 @@ if (typeof window !== 'undefined') {
     }
   }
 
+  console.error = patchedError
+  console.warn = patchedWarn
+
   // --- Global error capture ---
-  // Installed at module load time — captures crashes before SvelteKit mounts.
-  // HMR guard prevents duplicate listeners during development.
-  if (!(window as any).__debugLogListenersAttached) {
-    (window as any).__debugLogListenersAttached = true
-
-    window.addEventListener('error', (e) => {
-      debugAdd('global', 'error', e.message || 'Unknown error', {
-        filename: e.filename,
-        lineno: e.lineno,
-        colno: e.colno,
-      })
+  // Named handlers (not arrow-inline) so import.meta.hot.dispose can remove
+  // them on HMR. Without removal, every save accumulates an orphan listener
+  // pointing at a stale module instance — eventually leaking memory and
+  // duplicating debug entries.
+  const errorHandler = (e: ErrorEvent) => {
+    debugAdd('global', 'error', e.message || 'Unknown error', {
+      filename: e.filename,
+      lineno: e.lineno,
+      colno: e.colno,
     })
+  }
 
-    window.addEventListener('unhandledrejection', (e) => {
-      debugAdd('global', 'error', `Unhandled rejection: ${e.reason}`)
-    })
+  const rejectionHandler = (e: PromiseRejectionEvent) => {
+    debugAdd('global', 'error', `Unhandled rejection: ${e.reason}`)
+  }
+
+  if (!window.__debugLogListenersAttached) {
+    window.__debugLogListenersAttached = true
+    window.addEventListener('error', errorHandler)
+    window.addEventListener('unhandledrejection', rejectionHandler)
   }
 
   // --- Bridge pre-framework errors into the structured log ---
   // The inline <script> in app.html captures errors before JS bundles load and stores
   // them in window.__debugErrors. Import them into the circular buffer, then clean up
   // the inline listeners to prevent double-capture now that the module has taken over.
-  if (Array.isArray((window as any).__debugErrors)) {
-    for (const err of (window as any).__debugErrors) {
+  if (Array.isArray(window.__debugErrors)) {
+    for (const err of window.__debugErrors) {
       debugAdd('boot', 'error', err.msg, err.stack ? { stack: err.stack } : undefined)
     }
     // Clean up: module listeners now handle all future errors.
     // Remove inline listeners (stored as named references on window by app.html)
     // and clear the pre-framework buffer.
-    if (typeof (window as any).__debugInlineErrorHandler === 'function') {
-      window.removeEventListener('error', (window as any).__debugInlineErrorHandler)
-      delete (window as any).__debugInlineErrorHandler
+    if (typeof window.__debugInlineErrorHandler === 'function') {
+      window.removeEventListener('error', window.__debugInlineErrorHandler)
+      delete window.__debugInlineErrorHandler
     }
-    if (typeof (window as any).__debugInlineRejectionHandler === 'function') {
-      window.removeEventListener('unhandledrejection', (window as any).__debugInlineRejectionHandler)
-      delete (window as any).__debugInlineRejectionHandler
+    if (typeof window.__debugInlineRejectionHandler === 'function') {
+      window.removeEventListener('unhandledrejection', window.__debugInlineRejectionHandler)
+      delete window.__debugInlineRejectionHandler
     }
-    (window as any).__debugErrors = []
+    window.__debugErrors = []
   }
 
   debugAdd('boot', 'info', 'Debug log module initialised')
+
+  // --- HMR teardown ---
+  // Without this, every dev save would accumulate orphan error/rejection
+  // listeners and re-patch console — the patched-version-of-the-patched-version
+  // chain causes duplicate log entries and prevents the next module instance
+  // from re-attaching cleanly.
+  if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+      if (typeof window === 'undefined') return
+      window.removeEventListener('error', errorHandler)
+      window.removeEventListener('unhandledrejection', rejectionHandler)
+      // Restore originals so the next instance re-patches from a clean baseline.
+      // The cached __debugOriginalConsoleError persists on window for that re-patch.
+      console.error = originalError
+      console.warn = originalWarn
+      window.__debugLogListenersAttached = false
+    })
+  }
 }

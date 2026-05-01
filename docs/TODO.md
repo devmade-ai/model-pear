@@ -4,53 +4,28 @@
 
 ---
 
-## High Priority: Align Tool with Discovery Findings
+## High Priority: Infrastructure
 
-*See [DISCOVERY_FINDINGS.md](./DISCOVERY_FINDINGS.md) for full context*
-*See [NEGOTIATION_MODE.md](./NEGOTIATION_MODE.md) for design and audit details*
-
-### 1. Design "Negotiation Mode" Flow
+### Major-version dependency upgrade epic
 **Priority**: High
-**Status**: Complete
+**Effort**: Large
+**Surfaced by**: branch self-review post-validation item 5 (`a973c07`, April 2026)
 
-See [NEGOTIATION_MODE.md](./NEGOTIATION_MODE.md) for:
-- 5-minute walkthrough script
-- Screen-by-screen requirements
-- Feature visibility matrix
-- Implementation recommendation (Option 2: Simplified by Default)
+`pnpm audit` reports **16 remaining vulnerabilities** after closing 14 via in-major bumps. All 16 are pinned by major-version-locked deps and require coordinated bumps:
 
-### 2. UI Audit Against Design Principles
-**Priority**: High
-**Status**: Complete
+- `svelte` 4 → 5 — runes migration; biggest single change
+- `vite` 5 → 8 — transitively closes 5 advisories (`rollup`, `esbuild`, `picomatch`, `minimatch`, `serialize-javascript`)
+- `@sveltejs/vite-plugin-svelte` 3 → 7 — required to pair with Svelte 5 / Vite 8
+- `@sveltejs/kit` 2.58 → next major (when published) — for the cookie advisory
+- `vitest` 1 → 4 + `@vitest/coverage-v8` 1 → 4 — usually upgraded together
+- `svelte-check` 3 → 4 — pairs with Svelte 5
+- `apexcharts` 3 → 5 — independent
+- `typescript` 5 → 6 — independent (ts 5→6 is more conservative than 4→5)
+- `zod` 3 → 4 — independent (calculator package only; no runtime usage today)
 
-Audit complete. See [NEGOTIATION_MODE.md - UI Audit Results](./NEGOTIATION_MODE.md#ui-audit-results) for full findings.
+**Why epic, not chunk**: each bump touches the public API or runtime semantics in ways that require coordinated component updates. Svelte 4 → 5 in particular requires migrating reactive primitives (`$:` declarations) to runes. Best done as a dedicated branch with E2E + visual-regression coverage in place first.
 
-**Summary by principle:**
-- Client in the room: Partial - tabs may confuse
-- Neutral ground first: Fix needed - no benchmark badges
-- Show both sides: Good - Developer/Buyer panels work well
-- Progressive complexity: Fix needed - all inputs visible
-- Compare to decide: Partial - save requires modal
-
-### 3. Implement Changes
-**Priority**: High
-**Status**: Complete (January 20, 2026)
-
-#### Quick Wins (Priority 1) - DONE
-- [x] Add "Industry Standard" badges to key input fields
-- [x] Hide Sensitivity/Projections tabs by default (collapse into "Advanced Analysis")
-- [x] Collapse Transfer Pricing section by default
-- [x] One-click save with auto-generated name
-
-#### Input Grouping (Priority 2) - DONE
-- [x] Group inputs into Essential / Advanced sections
-- [x] Use `essential` field in config for grouping
-- [x] Show collapsed count: "Advanced Options (N)"
-
-#### Comparison Enhancement (Priority 3) - DONE
-- [x] Show saved options count in action bar
-- [x] Add summary row to comparison view ("Quick Summary" with best-for insights)
-- [x] Add "winner" indicators per metric (★ star icon + green highlighting)
+**Verification surface**: after each bump, the existing `pnpm test` + `pnpm -r check` + `pnpm build` + `pnpm lint` flow should catch most regressions. Real risk is in the chart components (ApexCharts 3 → 5 has theme API changes), the chart-reactivity pattern (Svelte 4's `$:` lexical-dep tracking is replaced by runes' `$state` / `$derived`), and the test suite (Vitest 1 → 4 has config-format changes).
 
 ---
 
@@ -112,3 +87,9 @@ Audit complete. See [NEGOTIATION_MODE.md - UI Audit Results](./NEGOTIATION_MODE.
 - Buyer: Amortisation period
 
 **Why low priority**: Users can already see accounting treatment in individual results. Compare Mode covers the most impactful metrics. This would be a nice-to-have for detailed accounting analysis.
+
+---
+
+## Low Priority: Naming
+
+- [ ] Rename `intercompany` model category to `transactions` — the category id was set when the tool was scoped to intercompany transactions only; current scope is "any client (related or unrelated)" and the category name no longer reflects reality. Touches the model registry and any branching on `category === 'intercompany'`.

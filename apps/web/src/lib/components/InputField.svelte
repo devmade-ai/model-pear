@@ -26,7 +26,7 @@
   export let hint: string = '';
   export let benchmark: string = '';
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ change: { field: string; value: string | number } }>();
 
   function handleInput(e: Event) {
     const target = e.target as HTMLInputElement | HTMLSelectElement;
@@ -37,19 +37,25 @@
 
 <div>
   <div class="flex items-center justify-between mb-1">
-    <label for={id} class="block text-sm font-medium text-foreground/80">
+    <label for={id} class="block text-sm font-medium text-base-content/80">
       {label}
     </label>
     {#if benchmark}
-      <span class="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+      <span class="badge badge-primary badge-soft badge-sm">
         {benchmark}
       </span>
     {/if}
   </div>
 
   {#if type === 'select'}
-    <select {id} {value} on:change={handleInput} class="input">
-      {#each options as opt}
+    <select
+      {id}
+      {value}
+      on:change={handleInput}
+      class="select"
+      aria-describedby={hint ? `${id}-hint` : undefined}
+    >
+      {#each options as opt (opt.value)}
         <option value={opt.value}>{opt.label}</option>
       {/each}
     </select>
@@ -63,12 +69,20 @@
       {step}
       on:input={handleInput}
       class="input tabular-nums"
+      aria-describedby={hint ? `${id}-hint` : undefined}
     />
   {:else}
-    <input {id} type="text" {value} on:input={handleInput} class="input" />
+    <input
+      {id}
+      type="text"
+      {value}
+      on:input={handleInput}
+      class="input"
+      aria-describedby={hint ? `${id}-hint` : undefined}
+    />
   {/if}
 
   {#if hint}
-    <p class="text-xs text-muted-foreground mt-1">{hint}</p>
+    <p id={`${id}-hint`} class="text-xs text-base-content/70 mt-1">{hint}</p>
   {/if}
 </div>

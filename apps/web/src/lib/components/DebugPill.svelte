@@ -47,13 +47,18 @@
 
   // Auto-scroll log to bottom on new entries.
   // tick() waits for Svelte's pending DOM updates to flush before scrolling.
+  // The .scrollTop = .scrollHeight write is inside an async tick().then(),
+  // so it can't trigger a synchronous reactive loop — eslint-plugin-svelte
+  // flags it conservatively but the asynchrony breaks the cycle.
   $: if (logContainer && entries.length) {
     tick().then(() => {
+      // eslint-disable-next-line svelte/infinite-reactive-loop
       if (logContainer) logContainer.scrollTop = logContainer.scrollHeight;
     });
   }
 
   let unsubscribe: (() => void) | null = null;
+  let copyResetTimer: ReturnType<typeof setTimeout> | null = null;
 
   onMount(() => {
     // debugSubscribe delivers all existing entries immediately on subscribe,
@@ -63,9 +68,9 @@
     });
 
     // Signal to inline pill that the framework has mounted
-    (window as any).__debugSvelteMounted = true;
-    if (typeof (window as any).__debugClearLoadTimer === 'function') {
-      (window as any).__debugClearLoadTimer();
+    window.__debugSvelteMounted = true;
+    if (typeof window.__debugClearLoadTimer === 'function') {
+      window.__debugClearLoadTimer();
     }
 
     debugAdd('boot', 'success', 'SvelteKit mounted, debug pill active');
@@ -73,6 +78,7 @@
 
   onDestroy(() => {
     if (unsubscribe) unsubscribe();
+    if (copyResetTimer) clearTimeout(copyResetTimer);
   });
 
   function toggleExpanded() {
@@ -90,7 +96,10 @@
     if (success) {
       copyStatus = 'copied';
       copyFallbackText = '';
-      setTimeout(() => { copyStatus = 'idle'; }, 2000);
+      // Cleared in onDestroy so unmount during the 2s window doesn't
+      // leak a setState onto a destroyed component.
+      if (copyResetTimer) clearTimeout(copyResetTimer);
+      copyResetTimer = setTimeout(() => { copyStatus = 'idle'; }, 2000);
     } else {
       // Clipboard API failed in all 3 tiers — show visible textarea so users
       // can manually select and copy (pattern: textarea with onFocus auto-select).
@@ -99,30 +108,13 @@
     }
   }
 
-  // Source → color mapping (inline style values)
-  const SOURCE_COLORS: Record<string, string> = {
-    boot: '#f59e0b',
-    pwa: '#06b6d4',
-    render: '#8b5cf6',
-    global: '#ef4444',
-    api: '#3b82f6',
-    auth: '#ec4899',
-    db: '#10b981',
-    form: '#f97316',
-    engine: '#6366f1',
-  };
-
-  function sourceColor(source: string): string {
-    return SOURCE_COLORS[source] || '#9ca3af';
-  }
-
   // Severity → color mapping
   function severityColor(severity: string): string {
     switch (severity) {
-      case 'error': return '#ef4444';
-      case 'warn': return '#eab308';
-      case 'success': return '#16a34a';
-      default: return '#9ca3af';
+      case 'error': return 'var(--color-error)';
+      case 'warn': return 'var(--color-warning)';
+      case 'success': return 'var(--color-success)';
+      default: return 'color-mix(in srgb, var(--color-base-content) 60%, transparent)';
     }
   }
 
@@ -169,14 +161,26 @@
       detail: 'serviceWorker' in navigator ? 'Supported' : 'Not supported',
     });
 
-    // Async: Service Worker state
+    // Async: Service Worker state. 5s timeout so a pathological SW
+    // hanging on activation doesn't leave the diagnostic stuck on
+    // "Running…" indefinitely.
     if ('serviceWorker' in navigator) {
+      let swTimeoutId: ReturnType<typeof setTimeout> | null = null;
       try {
-        const reg = await navigator.serviceWorker.getRegistration('/');
+        const reg = await Promise.race([
+          navigator.serviceWorker.getRegistration('/'),
+          new Promise<never>((_, reject) => {
+            swTimeoutId = setTimeout(() => reject(new Error('timeout (5s)')), 5000);
+          }),
+        ]);
+        if (swTimeoutId) clearTimeout(swTimeoutId);
         if (runId !== diagnosticRunId) return;
         const state = reg?.active ? 'active' : reg?.waiting ? 'waiting' : reg?.installing ? 'installing' : 'none';
         results.push({ label: 'SW State', status: reg ? 'pass' : 'warn', detail: state });
       } catch (e) {
+        // clearTimeout even on the timeout-rejection path so the timer
+        // doesn't fire spuriously after we've already moved on.
+        if (swTimeoutId) clearTimeout(swTimeoutId);
         if (runId !== diagnosticRunId) return;
         results.push({ label: 'SW State', status: 'fail', detail: String(e) });
       }
@@ -206,11 +210,11 @@
 
     // Standalone mode
     const standalone = window.matchMedia('(display-mode: standalone)').matches
-      || (navigator as any).standalone === true;
+      || navigator.standalone === true;
     results.push({ label: 'Standalone', status: standalone ? 'pass' : 'warn', detail: String(standalone) });
 
     // beforeinstallprompt
-    const hasPrompt = !!(window as any).__pwaInstallPromptEvent;
+    const hasPrompt = !!window.__pwaInstallPromptEvent;
     results.push({ label: 'Install Prompt', status: hasPrompt ? 'pass' : 'warn', detail: hasPrompt ? 'Captured' : 'Not received' });
 
     // Final stale-run guard before applying results
@@ -241,50 +245,16 @@
 {#if !expanded}
   <button
     on:click={toggleExpanded}
-    style="
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      z-index: 80;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: #1e1e1e;
-      color: #9ca3af;
-      border: 1px solid #333;
-      border-radius: 9999px;
-      font-family: monospace;
-      font-size: 12px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-      user-select: none;
-    "
-    title="Open debug panel"
+    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300 tooltip tooltip-left"
+    data-tip="Open debug panel"
   >
     <span>dbg</span>
-    <span style="color: #6b7280;">{entries.length}</span>
+    <span class="opacity-60">{entries.length}</span>
     {#if errorCount > 0}
-      <span style="
-        background: #ef4444;
-        color: #fff;
-        border-radius: 9999px;
-        padding: 0 5px;
-        font-size: 10px;
-        min-width: 16px;
-        text-align: center;
-      ">{errorCount}</span>
+      <span class="badge badge-error badge-xs">{errorCount}</span>
     {/if}
     {#if warnCount > 0}
-      <span style="
-        background: #eab308;
-        color: #000;
-        border-radius: 9999px;
-        padding: 0 5px;
-        font-size: 10px;
-        min-width: 16px;
-        text-align: center;
-      ">{warnCount}</span>
+      <span class="badge badge-warning badge-xs">{warnCount}</span>
     {/if}
   </button>
 {/if}
@@ -302,13 +272,12 @@
       max-height: 480px;
       display: flex;
       flex-direction: column;
-      background: #1a1a1a;
-      color: #d4d4d4;
-      border: 1px solid #333;
-      border-radius: 8px;
+      background: var(--color-base-100);
+      color: var(--color-base-content);
+      border: var(--border) solid var(--color-base-300);
+      border-radius: var(--radius-field);
       font-family: monospace;
       font-size: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
       overflow: hidden;
     "
   >
@@ -318,59 +287,32 @@
       align-items: center;
       justify-content: space-between;
       padding: 8px 12px;
-      background: #222;
-      border-bottom: 1px solid #333;
+      background: var(--color-base-200);
+      border-bottom: 1px solid var(--color-base-300);
       flex-shrink: 0;
     ">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-weight: 600; color: #e5e5e5;">Debug</span>
-        <span style="color: #6b7280;">{entries.length} entries</span>
+        <span style="font-weight: 600; color: var(--color-base-content);">Debug</span>
+        <span style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent);">{entries.length} entries</span>
       </div>
       <div style="display: flex; align-items: center; gap: 4px;">
         <button
           on:click={handleCopy}
-          style="
-            padding: 3px 8px;
-            background: {copyStatus === 'copied' ? '#16a34a' : copyStatus === 'failed' ? '#ef4444' : '#333'};
-            color: #d4d4d4;
-            border: 1px solid #444;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 11px;
-          "
-          title="Copy debug report to clipboard"
+          class="btn btn-xs font-mono tooltip tooltip-bottom {copyStatus === 'copied' ? 'btn-success' : copyStatus === 'failed' ? 'btn-error' : ''}"
+          data-tip="Copy debug report to clipboard"
         >
           {copyStatus === 'copied' ? 'Copied!' : copyStatus === 'failed' ? 'Failed' : 'Copy'}
         </button>
         <button
           on:click={handleClear}
-          style="
-            padding: 3px 8px;
-            background: #333;
-            color: #d4d4d4;
-            border: 1px solid #444;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 11px;
-          "
-          title="Clear all log entries"
+          class="btn btn-xs font-mono tooltip tooltip-bottom"
+          data-tip="Clear all log entries"
         >Clear</button>
         <button
           on:click={toggleExpanded}
-          style="
-            padding: 3px 8px;
-            background: #333;
-            color: #d4d4d4;
-            border: 1px solid #444;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 14px;
-            line-height: 1;
-          "
-          title="Close debug panel"
+          class="btn btn-xs btn-square btn-ghost font-mono tooltip tooltip-left"
+          data-tip="Close debug panel"
+          aria-label="Close debug panel"
         >&times;</button>
       </div>
     </div>
@@ -379,71 +321,40 @@
     {#if copyFallbackText}
       <div style="
         padding: 8px 12px;
-        background: #262626;
-        border-bottom: 1px solid #333;
+        background: var(--color-base-300);
+        border-bottom: 1px solid var(--color-base-300);
         flex-shrink: 0;
       ">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="color: #eab308; font-size: 11px;">Copy failed — select text below and copy manually</span>
+          <span style="color: var(--color-warning); font-size: 11px;">Copy failed — select text below and copy manually</span>
           <button
             on:click={() => { copyFallbackText = ''; copyStatus = 'idle'; }}
-            style="
-              padding: 2px 6px;
-              background: #333;
-              color: #d4d4d4;
-              border: 1px solid #444;
-              border-radius: 4px;
-              cursor: pointer;
-              font-family: monospace;
-              font-size: 10px;
-            "
+            class="btn btn-xs btn-ghost font-mono"
           >Dismiss</button>
         </div>
         <textarea
           readonly
           on:focus={(e) => { e.currentTarget.select(); }}
-          style="
-            width: 100%;
-            height: 80px;
-            background: #1a1a1a;
-            color: #d4d4d4;
-            border: 1px solid #444;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 10px;
-            padding: 4px 6px;
-            resize: none;
-            box-sizing: border-box;
-          "
+          class="textarea textarea-xs font-mono w-full h-20 resize-none"
         >{copyFallbackText}</textarea>
       </div>
     {/if}
 
-    <!-- Tabs -->
-    <div style="
-      display: flex;
-      border-bottom: 1px solid #333;
-      background: #1e1e1e;
-      flex-shrink: 0;
-    ">
-      {#each TABS as tab}
+    <!-- Tabs — DaisyUI .tabs.tabs-border keeps the bottom-border indicator
+         the original styling used; .tab-active marks the current tab. -->
+    <div role="tablist" class="tabs tabs-border bg-base-200 flex-shrink-0">
+      {#each TABS as tab (tab.key)}
         <button
+          role="tab"
+          type="button"
+          id={`debug-tab-${tab.key}`}
+          aria-controls={`debug-tabpanel-${tab.key}`}
+          class="tab font-mono text-xs flex-1 {activeTab === tab.key ? 'tab-active' : ''}"
+          aria-selected={activeTab === tab.key}
           on:click={() => {
             activeTab = tab.key;
             if (tab.key === 'pwa') runDiagnostics();
           }}
-          style="
-            flex: 1;
-            padding: 6px 8px;
-            background: {activeTab === tab.key ? '#2a2a2a' : 'transparent'};
-            color: {activeTab === tab.key ? '#e5e5e5' : '#6b7280'};
-            border: none;
-            border-bottom: {activeTab === tab.key ? '2px solid #3b82f6' : '2px solid transparent'};
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 11px;
-            transition: color 0.15s;
-          "
         >{tab.label}</button>
       {/each}
     </div>
@@ -452,18 +363,24 @@
     <div style="flex: 1; overflow-y: auto; min-height: 0;">
       <!-- Log tab -->
       {#if activeTab === 'log'}
-        <div bind:this={logContainer} style="padding: 4px 0; overflow-y: auto; height: 100%;">
+        <div
+          bind:this={logContainer}
+          role="tabpanel"
+          id="debug-tabpanel-log"
+          aria-labelledby="debug-tab-log"
+          style="padding: 4px 0; overflow-y: auto; height: 100%;"
+        >
           {#if entries.length === 0}
-            <div style="padding: 16px; color: #6b7280; text-align: center;">No log entries yet</div>
+            <div style="padding: 16px; color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center;">No log entries yet</div>
           {:else}
             {#each entries as entry (entry.id)}
               <div style="
                 padding: 3px 10px;
-                border-bottom: 1px solid #262626;
+                border-bottom: 1px solid var(--color-base-300);
                 line-height: 1.4;
               ">
                 <div style="display: flex; gap: 6px; align-items: baseline;">
-                  <span style="color: #6b7280; flex-shrink: 0;">{formatDebugTimestamp(entry.timestamp)}</span>
+                  <span style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent); flex-shrink: 0;">{formatDebugTimestamp(entry.timestamp)}</span>
                   <span style="
                     color: {severityColor(entry.severity)};
                     flex-shrink: 0;
@@ -472,15 +389,15 @@
                     min-width: 36px;
                   ">{entry.severity}</span>
                   <span style="
-                    color: {sourceColor(entry.source)};
+                    color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
                     flex-shrink: 0;
                     font-size: 10px;
                   ">[{entry.source}]</span>
-                  <span style="color: #d4d4d4; word-break: break-word;">{entry.event}</span>
+                  <span style="color: var(--color-base-content); word-break: break-word;">{entry.event}</span>
                 </div>
                 {#if entry.details}
                   <div style="
-                    color: #6b7280;
+                    color: color-mix(in srgb, var(--color-base-content) 50%, transparent);
                     font-size: 10px;
                     margin-top: 1px;
                     margin-left: 82px;
@@ -495,17 +412,22 @@
 
       <!-- Environment tab -->
       {#if activeTab === 'env'}
-        <div style="padding: 8px 12px;">
-          {#each getEnvironmentData() as item}
+        <div
+          role="tabpanel"
+          id="debug-tabpanel-env"
+          aria-labelledby="debug-tab-env"
+          style="padding: 8px 12px;"
+        >
+          {#each getEnvironmentData() as item (item.label)}
             <div style="
               display: flex;
               justify-content: space-between;
               padding: 4px 0;
-              border-bottom: 1px solid #262626;
+              border-bottom: 1px solid var(--color-base-300);
               gap: 12px;
             ">
-              <span style="color: #9ca3af; flex-shrink: 0;">{item.label}</span>
-              <span style="color: #d4d4d4; text-align: right; word-break: break-all; max-width: 280px;">{item.value}</span>
+              <span style="color: color-mix(in srgb, var(--color-base-content) 60%, transparent); flex-shrink: 0;">{item.label}</span>
+              <span style="color: var(--color-base-content); text-align: right; word-break: break-all; max-width: 280px;">{item.value}</span>
             </div>
           {/each}
         </div>
@@ -513,35 +435,30 @@
 
       <!-- PWA Diagnostics tab -->
       {#if activeTab === 'pwa'}
-        <div style="padding: 8px 12px;">
+        <div
+          role="tabpanel"
+          id="debug-tabpanel-pwa"
+          aria-labelledby="debug-tab-pwa"
+          style="padding: 8px 12px;"
+        >
           <button
             on:click={runDiagnostics}
-            style="
-              margin-bottom: 8px;
-              padding: 4px 10px;
-              background: #333;
-              color: #d4d4d4;
-              border: 1px solid #444;
-              border-radius: 4px;
-              cursor: pointer;
-              font-family: monospace;
-              font-size: 11px;
-            "
+            class="btn btn-xs font-mono mb-2"
           >Re-run diagnostics</button>
           {#if diagnostics.length === 0}
-            <div style="color: #6b7280; text-align: center; padding: 16px;">Click "Re-run diagnostics" to check PWA status</div>
+            <div style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center; padding: 16px;">Click "Re-run diagnostics" to check PWA status</div>
           {:else}
-            {#each diagnostics as diag}
+            {#each diagnostics as diag (diag.label)}
               <div style="
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 padding: 4px 0;
-                border-bottom: 1px solid #262626;
+                border-bottom: 1px solid var(--color-base-300);
               ">
                 <span style="flex-shrink: 0; font-size: 14px;">{diagnosticStatusIcon(diag.status)}</span>
-                <span style="color: #9ca3af; flex-shrink: 0; min-width: 90px;">{diag.label}</span>
-                <span style="color: #d4d4d4; word-break: break-word;">{diag.detail}</span>
+                <span style="color: color-mix(in srgb, var(--color-base-content) 60%, transparent); flex-shrink: 0; min-width: 90px;">{diag.label}</span>
+                <span style="color: var(--color-base-content); word-break: break-word;">{diag.detail}</span>
               </div>
             {/each}
           {/if}

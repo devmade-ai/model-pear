@@ -28,7 +28,7 @@
       <ResultRow
         label="Tax Benefit (Year 1)"
         value={formatCurrency(buyer.tax.taxBenefit)}
-        valueClass="result-value-positive"
+        valueClass="font-medium text-success"
       />
     </ResultSection>
 
@@ -37,7 +37,7 @@
       <ResultRow
         label="Total Transaction Value"
         value={formatCurrency(buyer.totalCost)}
-        valueClass="result-value text-lg"
+        valueClass="font-medium text-base-content text-lg"
       />
     </ResultSection>
   </div>

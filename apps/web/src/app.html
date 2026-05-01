@@ -1,14 +1,123 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark" data-theme="dim">
   <head>
     <meta charset="utf-8" />
+
+    <!--
+      Single dynamic theme-color meta tag updated by the bootstrap script
+      below and by applyTheme() at runtime. Tracks app preference, not
+      OS preference — a user on dark-OS who toggles to light-app gets
+      a light URL bar. Initial value is dim base-100; the bootstrap
+      flips it to emerald base-100 (#ffffff) before paint when the
+      stored / OS preference is light.
+
+      MUST be declared before the bootstrap script — the bootstrap uses
+      document.querySelector('meta[name="theme-color"]') to find this tag,
+      and HTML parses incrementally. If declared later, the bootstrap
+      script runs first and the querySelector returns null, leaving
+      the OS browser chrome stuck at dim on first paint.
+    -->
+    <meta name="theme-color" content="#2A303C" />
+
+    <!--
+      Early beforeinstallprompt capture. Browsers (Chrome/Edge/Brave)
+      fire this event ONCE per session, often before the framework
+      bundle finishes loading on repeat visits with a cached SW. If we
+      wait for $lib/pwa.ts to register a listener we miss the event
+      and the install affordance silently disappears.
+
+      The handler stashes the event on `window.__pwaInstallPromptEvent`
+      and prevents the default mini-infobar; the PWA module reads the
+      stashed event when it loads.
+
+      MUST be a classic <script> (not type=module) so it runs sync
+      during head parse, before any module-script defer queue.
+    -->
+    <script>
+      (function () {
+        function capture(e) {
+          e.preventDefault();
+          window.__pwaInstallPromptEvent = e;
+        }
+        window.addEventListener('beforeinstallprompt', capture);
+        window.addEventListener('appinstalled', function () {
+          window.__pwaInstallPromptEvent = null;
+        });
+      })();
+    </script>
+
+    <!--
+      Theme bootstrap. Runs synchronously before paint so first render
+      uses the correct theme — no flash on reload.
+
+      Resolution order:
+        1. localStorage `darkMode` (set by the theme module in apps/web/src/lib/theme.ts)
+        2. prefers-color-scheme media query (OS preference)
+        3. default dark (matches the JS-disabled fallback above)
+
+      Sets both layers in lockstep:
+        - `.dark` class on <html> -> Tailwind's `dark:` variant (via @custom-variant in app.css)
+        - `data-theme="dim"|"emerald"` -> DaisyUI's theme switch
+      Keeps Tailwind's dark mode and DaisyUI's theme aligned.
+
+      MUST be a classic <script> (not type=module) so it runs sync
+      and blocks paint. MUST precede the SvelteKit head injection
+      and the debug-pill inline script.
+    -->
+    <script>
+      // Outer try-catch: the inner try blocks already handle the expected
+      // failure modes (localStorage blocked in private mode, matchMedia
+      // unavailable). The outer guard is for unexpected failures —
+      // sandboxed iframes can throw on document.documentElement access,
+      // exotic polyfill conflicts can break querySelector. Without it,
+      // any thrown exception during head parse aborts the script and
+      // leaves the JS-disabled fallback (.dark + data-theme="dim" on
+      // <html>) — a safe default that surfaces nothing to the console.
+      try {
+        (function () {
+          var darkMode;
+          try {
+            var stored = localStorage.getItem('darkMode');
+            if (stored === 'true') darkMode = true;
+            else if (stored === 'false') darkMode = false;
+          } catch (e) {
+            // localStorage blocked (private mode etc.); fall through to OS preference.
+          }
+
+          if (darkMode === undefined) {
+            try {
+              darkMode = !window.matchMedia('(prefers-color-scheme: light)').matches;
+            } catch (e) {
+              darkMode = true;
+            }
+          }
+
+          var html = document.documentElement;
+          html.classList.toggle('dark', darkMode);
+          html.setAttribute('data-theme', darkMode ? 'dim' : 'emerald');
+
+          // Update the meta theme-color BEFORE first paint so the OS browser
+          // chrome matches the active app theme on initial render. The meta
+          // tag is declared above so it's already in the DOM when this runs.
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', darkMode ? '#2A303C' : '#ffffff');
+        })();
+      } catch (e) {
+        // Surface to the console so we don't lose visibility on the
+        // exotic-environment failure mode. The .dark/dim fallback on
+        // <html> remains active.
+        if (typeof console !== 'undefined' && console.warn) {
+          console.warn('[theme-bootstrap] init failed; using fallback dark theme', e);
+        }
+      }
+    </script>
+
     <link rel="icon" type="image/png" sizes="48x48" href="%sveltekit.assets%/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="%sveltekit.assets%/apple-touch-icon.png" />
     <link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Software Transaction Structuring Tool - Find the best deal structure for both you and your client" />
-    <meta name="theme-color" content="#2D68FF" />
-    <meta name="color-scheme" content="dark" />
+
     <title>Model Pear - Software Transaction Structuring</title>
     <!-- Figtree font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +125,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
     %sveltekit.head%
   </head>
-  <body data-sveltekit-preload-data="hover" class="bg-background text-foreground antialiased">
+  <body data-sveltekit-preload-data="hover" class="bg-base-100 text-base-content antialiased">
     <div style="display: contents">%sveltekit.body%</div>
 
     <!-- Debug pill root — separate from SvelteKit tree so it survives app crashes -->
@@ -86,20 +195,19 @@
     ">
       <div id="debug-inline-warning" style="
         display: none;
-        background: #1a1a1a;
-        color: #eab308;
-        border: 1px solid #333;
-        border-radius: 8px;
+        background: var(--color-base-200);
+        color: var(--color-warning);
+        border: var(--border) solid var(--color-base-300);
+        border-radius: var(--radius-field);
         padding: 12px 16px;
         max-width: 320px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.5);
         line-height: 1.4;
       ">
         This is taking longer than usual. Check the browser console for errors, or try reloading.
         <span id="debug-inline-error-count" style="
           display: none;
-          background: #ef4444;
-          color: #fff;
+          background: var(--color-error);
+          color: var(--color-error-content);
           border-radius: 9999px;
           padding: 0 5px;
           font-size: 10px;
