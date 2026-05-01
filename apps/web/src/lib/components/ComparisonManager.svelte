@@ -5,6 +5,7 @@
    * Shows list of saved options, allows selection for comparison,
    * rename, delete, and export/import functionality.
    */
+  import { onDestroy } from 'svelte';
   import {
     comparisonStore,
     savedOptions,
@@ -19,6 +20,37 @@
   let isExpanded = true;
   let editingId: string | null = null;
   let editName = '';
+
+  // DaisyUI <dialog> for the destructive "Clear All" confirmation.
+  // Replaces the native confirm() which couldn't be styled and broke
+  // the otherwise-DaisyUI overlay surface.
+  let confirmClearOpen = false;
+  let confirmDialog: HTMLDialogElement;
+  $: if (confirmDialog) {
+    if (confirmClearOpen && !confirmDialog.open) confirmDialog.showModal();
+    else if (!confirmClearOpen && confirmDialog.open) confirmDialog.close();
+  }
+
+  // Inline status surface for import results — replaces the two
+  // native alert() calls. role="status" + aria-live announces to
+  // screen readers; auto-clears after 4s.
+  let importStatus: 'idle' | 'success' | 'error' = 'idle';
+  let importMessage = '';
+  let importStatusTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function showImportStatus(level: 'success' | 'error', message: string): void {
+    importStatus = level;
+    importMessage = message;
+    if (importStatusTimer) clearTimeout(importStatusTimer);
+    importStatusTimer = setTimeout(() => {
+      importStatus = 'idle';
+      importMessage = '';
+    }, 4000);
+  }
+
+  onDestroy(() => {
+    if (importStatusTimer) clearTimeout(importStatusTimer);
+  });
 
   function startEdit(option: SavedOption) {
     editingId = option.id;
@@ -69,9 +101,9 @@
         const text = await file.text();
         const count = comparisonStore.importJSON(text);
         if (count > 0) {
-          alert(`Imported ${count} option(s)`);
+          showImportStatus('success', `Imported ${count} ${count === 1 ? 'option' : 'options'}`);
         } else {
-          alert('No valid options found in file');
+          showImportStatus('error', 'No valid options found in file');
         }
       }
     };
@@ -229,16 +261,54 @@
           </div>
           <button
             class="btn btn-ghost btn-sm text-error hover:text-error"
-            on:click={() => {
-              if (confirm('Delete all saved options?')) {
-                comparisonStore.clearAll();
-              }
-            }}
+            on:click={() => (confirmClearOpen = true)}
           >
             Clear All
           </button>
         </div>
+
+        {#if importStatus !== 'idle'}
+          <div
+            class="alert {importStatus === 'success' ? 'alert-success' : 'alert-error'} alert-soft mt-3"
+            role="status"
+            aria-live="polite"
+          >
+            <span class="text-sm">{importMessage}</span>
+          </div>
+        {/if}
       {/if}
     </div>
   {/if}
 </div>
+
+<!-- "Clear All" confirmation — DaisyUI <dialog class="modal">
+     replaces the native confirm() so the destructive flow uses the
+     same overlay surface as the rest of the app. The body explains
+     consequences explicitly per CLAUDE.md UX rule "confirm
+     destructive actions with clear consequences explained". -->
+<dialog
+  bind:this={confirmDialog}
+  class="modal"
+  on:close={() => (confirmClearOpen = false)}
+  aria-labelledby="confirm-clear-title"
+>
+  <div class="modal-box">
+    <h3 id="confirm-clear-title" class="text-lg font-semibold text-base-content">Delete all saved options?</h3>
+    <p class="text-sm text-base-content/70 mt-2">
+      This permanently removes every option you've saved for comparison. You can't undo this.
+    </p>
+    <div class="modal-action">
+      <button class="btn btn-outline" on:click={() => (confirmClearOpen = false)}>Cancel</button>
+      <button
+        class="btn btn-error"
+        on:click={() => {
+          comparisonStore.clearAll();
+          confirmClearOpen = false;
+        }}
+      >Delete all</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
