@@ -133,7 +133,7 @@
                 <p class="text-xs text-base-content/70">{model.id.toUpperCase()}</p>
               </div>
             </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-base-300 text-base-content/70">
+            <span class="badge badge-ghost badge-sm">
               {Object.keys(model.variants).length} variants
             </span>
           </div>

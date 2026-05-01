@@ -447,6 +447,9 @@ pnpm build            # Build all packages
 pnpm dev              # Start dev server (apps/web)
 pnpm test:e2e         # Run Playwright E2E tests
 pnpm test:e2e:ui      # Run Playwright with UI
+pnpm check            # Theme-hex drift check + svelte-check (typecheck)
+pnpm check:theme-hex  # Standalone: hardcoded hex sites match DaisyUI tokens
+pnpm lint             # ESLint across workspaces
 pnpm generate-icons   # Regenerate PNGs from assets/icon-source.svg
 ```
 
@@ -763,7 +766,11 @@ model-pear/
 │   └── icon-source.svg         # SVG source icon (edit this, regenerate PNGs)
 │
 ├── scripts/
-│   └── generate-icons.mjs      # Sharp script: SVG → PNG icons (run: pnpm generate-icons)
+│   ├── generate-icons.mjs      # Sharp script: SVG → PNG icons (run: pnpm generate-icons)
+│   ├── oklch-to-hex.mjs        # Interactive: print DaisyUI dim/emerald tokens as sRGB hex
+│   ├── check-theme-hex.mjs     # CI assertion: hardcoded hex sites match DaisyUI tokens (gates `pnpm check`)
+│   └── lib/
+│       └── oklch.mjs           # Shared OKLCH → sRGB conversion + DaisyUI theme parsing
 │
 ├── CLAUDE.md                   # This file (AI assistant context)
 │
