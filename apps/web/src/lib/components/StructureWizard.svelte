@@ -260,7 +260,7 @@
             {@const isCurrent = idx === currentQuestionIndex}
             {@const isAccessible = idx <= (QUESTION_ORDER.findIndex((id) => answers[id] === undefined) === -1 ? totalQuestions - 1 : QUESTION_ORDER.findIndex((id) => answers[id] === undefined))}
             <button
-              class="btn btn-circle btn-xs transition-all
+              class="btn btn-circle btn-xs transition-all tooltip
                      {isCurrent
                 ? 'btn-primary ring-2 ring-primary/50'
                 : isAnswered
@@ -268,7 +268,7 @@
                   : 'btn-ghost'}"
               on:click={() => goToQuestion(idx)}
               disabled={!isAccessible}
-              title="Question {idx + 1}{isAnswered ? ' (answered)' : ''}"
+              data-tip="Question {idx + 1}{isAnswered ? ' (answered)' : ''}"
             >
               {#if isAnswered && !isCurrent}
                 ✓

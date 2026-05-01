@@ -255,7 +255,7 @@
         <h2 class="text-xl font-bold text-base-content">Comparison View</h2>
         <span class="text-sm text-base-content/70">({$selectedOptions.length} options)</span>
       </div>
-      <button class="btn btn-ghost btn-sm btn-square" on:click={close} title="Close" aria-label="Close"> ✕ </button>
+      <button class="btn btn-ghost btn-sm btn-square tooltip tooltip-left" on:click={close} data-tip="Close" aria-label="Close"> ✕ </button>
     </div>
 
     <!-- Summary Section -->
@@ -380,10 +380,10 @@
     <!-- Footer -->
     <div class="p-4 border-t border-base-300 bg-base-200 flex justify-between">
       <div class="flex space-x-2">
-        <button class="btn btn-outline no-print" on:click={exportToCSV} title="Export as CSV">
+        <button class="btn btn-outline no-print tooltip" on:click={exportToCSV} data-tip="Export as CSV">
           Export CSV
         </button>
-        <button class="btn btn-outline no-print" on:click={() => window.print()} title="Print or save as PDF">
+        <button class="btn btn-outline no-print tooltip" on:click={() => window.print()} data-tip="Print or save as PDF">
           Print / PDF
         </button>
       </div>

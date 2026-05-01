@@ -245,8 +245,8 @@
 {#if !expanded}
   <button
     on:click={toggleExpanded}
-    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300"
-    title="Open debug panel"
+    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300 tooltip tooltip-left"
+    data-tip="Open debug panel"
   >
     <span>dbg</span>
     <span class="opacity-60">{entries.length}</span>
@@ -298,20 +298,20 @@
       <div style="display: flex; align-items: center; gap: 4px;">
         <button
           on:click={handleCopy}
-          class="btn btn-xs font-mono {copyStatus === 'copied' ? 'btn-success' : copyStatus === 'failed' ? 'btn-error' : ''}"
-          title="Copy debug report to clipboard"
+          class="btn btn-xs font-mono tooltip tooltip-bottom {copyStatus === 'copied' ? 'btn-success' : copyStatus === 'failed' ? 'btn-error' : ''}"
+          data-tip="Copy debug report to clipboard"
         >
           {copyStatus === 'copied' ? 'Copied!' : copyStatus === 'failed' ? 'Failed' : 'Copy'}
         </button>
         <button
           on:click={handleClear}
-          class="btn btn-xs font-mono"
-          title="Clear all log entries"
+          class="btn btn-xs font-mono tooltip tooltip-bottom"
+          data-tip="Clear all log entries"
         >Clear</button>
         <button
           on:click={toggleExpanded}
-          class="btn btn-xs btn-square btn-ghost font-mono"
-          title="Close debug panel"
+          class="btn btn-xs btn-square btn-ghost font-mono tooltip tooltip-left"
+          data-tip="Close debug panel"
           aria-label="Close debug panel"
         >&times;</button>
       </div>

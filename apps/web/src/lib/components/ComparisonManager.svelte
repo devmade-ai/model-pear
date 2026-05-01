@@ -177,9 +177,9 @@
                   />
                 {:else}
                   <button
-                    class="font-medium text-base-content truncate block text-left w-full"
+                    class="font-medium text-base-content truncate block text-left w-full tooltip"
                     on:dblclick={() => startEdit(option)}
-                    title="Double-click to rename"
+                    data-tip="Double-click to rename"
                   >
                     {option.name}
                   </button>
@@ -197,16 +197,16 @@
               <!-- Actions -->
               <div class="flex items-center space-x-1 ml-2">
                 <button
-                  class="btn btn-ghost btn-xs btn-square"
-                  title="Rename"
+                  class="btn btn-ghost btn-xs btn-square tooltip"
+                  data-tip="Rename"
                   aria-label="Rename"
                   on:click={() => startEdit(option)}
                 >
                   ✏️
                 </button>
                 <button
-                  class="btn btn-ghost btn-xs btn-square hover:text-error"
-                  title="Delete"
+                  class="btn btn-ghost btn-xs btn-square hover:text-error tooltip"
+                  data-tip="Delete"
                   aria-label="Delete"
                   on:click={() => comparisonStore.delete(option.id)}
                 >

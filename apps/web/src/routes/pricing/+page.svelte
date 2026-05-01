@@ -595,7 +595,7 @@
                Approach: window.print() — zero dependencies, leverages existing @media print CSS in app.css.
                Alternative considered: pdf-lib — rejected because content is text/tables (not canvas),
                so the browser print engine handles it well without extra bundle size. -->
-          <button class="btn btn-outline text-sm no-print" on:click={() => window.print()} title="Save this page as a PDF using your browser's print dialog">
+          <button class="btn btn-outline text-sm no-print tooltip tooltip-bottom" on:click={() => window.print()} data-tip="Save this page as a PDF using your browser's print dialog">
             Save as PDF
           </button>
         </div>
