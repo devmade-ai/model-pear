@@ -12,7 +12,8 @@
     "test:watch": "pnpm --filter @model-pear/calculator test:watch",
     "test:e2e": "pnpm --filter @model-pear/web test:e2e",
     "test:e2e:ui": "pnpm --filter @model-pear/web test:e2e:ui",
-    "check": "pnpm -r check",
+    "check": "node scripts/check-theme-hex.mjs && pnpm -r check",
+    "check:theme-hex": "node scripts/check-theme-hex.mjs",
     "lint": "pnpm -r lint",
     "clean": "pnpm -r clean",
     "generate-icons": "node scripts/generate-icons.mjs"
