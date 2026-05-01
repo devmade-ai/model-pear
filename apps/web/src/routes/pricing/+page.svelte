@@ -630,7 +630,7 @@
           <!-- Equilibrium Visualization -->
           <div class="mb-6">
             <h3 class="text-sm font-medium text-base-content/70 mb-3">Price Range Visualization</h3>
-            <div class="bg-base-300 rounded-lg p-4">
+            <div class="card p-4 bg-base-300">
               <EquilibriumChart
                 minimumPrice={results.minimumPrice}
                 maximumPrice={results.maximumPrice}
