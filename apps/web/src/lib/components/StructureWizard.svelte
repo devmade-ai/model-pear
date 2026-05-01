@@ -283,7 +283,7 @@
           <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
           <span>{answeredCount} answered</span>
         </div>
-        <div class="h-2 bg-border rounded-full overflow-hidden">
+        <div class="h-2 bg-base-300 rounded-full overflow-hidden">
           <div class="h-full bg-primary transition-all duration-300" style="width: {((currentQuestionIndex + 1) / totalQuestions) * 100}%"></div>
         </div>
       </div>
