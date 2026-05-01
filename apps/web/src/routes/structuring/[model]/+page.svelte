@@ -352,24 +352,17 @@
             {/each}
           </div>
 
-          <!-- Advanced Inputs (Collapsed) -->
+          <!-- Advanced Inputs (DaisyUI .collapse). The hidden checkbox is
+               bound to showAdvancedInputs so existing Svelte state still
+               drives open/close; .collapse-arrow renders the chevron and
+               its rotation natively. -->
           {#if advancedFields.length > 0}
-            <div class="mt-6 pt-4 border-t border-base-300">
-              <button
-                class="flex items-center justify-between w-full text-sm font-medium text-base-content/70 hover:text-base-content"
-                on:click={() => showAdvancedInputs = !showAdvancedInputs}
-              >
-                <span>Advanced Options ({advancedFields.length})</span>
-                <svg
-                  class="w-5 h-5 transition-transform {showAdvancedInputs ? 'rotate-180' : ''}"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {#if showAdvancedInputs}
+            <div class="collapse collapse-arrow mt-6 pt-4 border-t border-base-300">
+              <input type="checkbox" bind:checked={showAdvancedInputs} />
+              <div class="collapse-title px-0 py-0 min-h-0 text-sm font-medium text-base-content/70 hover:text-base-content">
+                Advanced Options ({advancedFields.length})
+              </div>
+              <div class="collapse-content px-0">
                 <div class="space-y-4 mt-4">
                   {#each advancedFields as field (field.id)}
                     <InputField
@@ -387,7 +380,7 @@
                     />
                   {/each}
                 </div>
-              {/if}
+              </div>
             </div>
           {/if}
         </div>
@@ -424,82 +417,61 @@
         <DeveloperResults developer={result.developer} />
         <BuyerResults buyer={result.buyer} />
 
-        <!-- Transfer Pricing (Collapsed by Default)
-             Print behavior: hidden when collapsed (empty card), visible with heading when expanded.
-             class:no-print hides the empty shell; print-include keeps the heading visible. -->
-        <div class="card" class:no-print={!showTransferPricing}>
-          <button
-            class="w-full p-4 flex items-center justify-between text-left print-include"
-            on:click={() => showTransferPricing = !showTransferPricing}
-          >
-            <div class="flex items-center space-x-3">
-              <span class="text-xl">⚖️</span>
-              <div>
-                <h3 class="font-semibold text-base-content">Transfer Pricing Assessment</h3>
-                <p class="text-sm text-base-content/70">Related party compliance details</p>
+        <!-- Transfer Pricing (DaisyUI .collapse). collapse-arrow renders
+             the chevron natively. The trailing risk badge stays inside
+             the title row by absolute-positioning since DaisyUI's
+             collapse-title centres a single child by default. Print
+             behaviour preserved: class:no-print hides the empty shell
+             when collapsed; print-include keeps the title row visible. -->
+        <div class="collapse collapse-arrow card" class:no-print={!showTransferPricing}>
+          <input type="checkbox" bind:checked={showTransferPricing} />
+          <div class="collapse-title p-4 print-include">
+            <div class="flex items-center justify-between pr-8">
+              <div class="flex items-center space-x-3">
+                <span class="text-xl">⚖️</span>
+                <div>
+                  <h3 class="font-semibold text-base-content">Transfer Pricing Assessment</h3>
+                  <p class="text-sm text-base-content/70">Related party compliance details</p>
+                </div>
               </div>
-            </div>
-            <div class="flex items-center space-x-2">
               <span class="badge badge-soft badge-sm {result.transferPricing.riskLevel === 'low' ? 'badge-success' : result.transferPricing.riskLevel === 'medium' ? 'badge-warning' : 'badge-error'}">
                 {result.transferPricing.riskLevel.toUpperCase()} RISK
               </span>
-              <svg
-                class="w-5 h-5 text-base-content/70 transition-transform {showTransferPricing ? 'rotate-180' : ''}"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
             </div>
-          </button>
-          {#if showTransferPricing}
-            <div class="px-4 pb-4">
-              <TransferPricingResults transferPricing={result.transferPricing} minimal={true} />
-            </div>
-          {/if}
+          </div>
+          <div class="collapse-content px-4 pb-4">
+            <TransferPricingResults transferPricing={result.transferPricing} minimal={true} />
+          </div>
         </div>
 
-        <!-- Advanced Analysis (Collapsed by Default)
-             Print behavior: hidden when collapsed (empty card), visible with heading when expanded.
-             class:no-print hides the empty shell; print-include keeps the heading visible. -->
-        <div class="card" class:no-print={!showAdvancedAnalysis}>
-          <button
-            class="w-full p-4 flex items-center justify-between text-left print-include"
-            on:click={() => showAdvancedAnalysis = !showAdvancedAnalysis}
-          >
-            <div class="flex items-center space-x-3">
+        <!-- Advanced Analysis (DaisyUI .collapse). Same migration as
+             the Transfer Pricing block above — collapse-arrow renders
+             the chevron natively, the hidden checkbox carries state. -->
+        <div class="collapse collapse-arrow card" class:no-print={!showAdvancedAnalysis}>
+          <input type="checkbox" bind:checked={showAdvancedAnalysis} />
+          <div class="collapse-title p-4 print-include">
+            <div class="flex items-center space-x-3 pr-8">
               <span class="text-xl">📊</span>
               <div>
                 <h3 class="font-semibold text-base-content">Advanced Analysis</h3>
                 <p class="text-sm text-base-content/70">Sensitivity, projections, and detailed metrics</p>
               </div>
             </div>
-            <svg
-              class="w-5 h-5 text-base-content/70 transition-transform {showAdvancedAnalysis ? 'rotate-180' : ''}"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          {#if showAdvancedAnalysis}
-            <div class="p-4 pt-0 space-y-6">
-              <div>
-                <h4 class="text-sm font-medium text-base-content/70 mb-3">Sensitivity Analysis</h4>
-                <SensitivityPanel
-                  {inputs}
-                  {result}
-                  calculateFn={erasedCalculate}
-                />
-              </div>
-              <div>
-                <h4 class="text-sm font-medium text-base-content/70 mb-3">Growth Projections</h4>
-                <ProjectionsPanel {result} />
-              </div>
+          </div>
+          <div class="collapse-content space-y-6 px-4 pb-4">
+            <div>
+              <h4 class="text-sm font-medium text-base-content/70 mb-3">Sensitivity Analysis</h4>
+              <SensitivityPanel
+                {inputs}
+                {result}
+                calculateFn={erasedCalculate}
+              />
             </div>
-          {/if}
+            <div>
+              <h4 class="text-sm font-medium text-base-content/70 mb-3">Growth Projections</h4>
+              <ProjectionsPanel {result} />
+            </div>
+          </div>
         </div>
 
         <!-- Comparison Manager (interactive-only — hidden in print) -->

@@ -291,8 +291,14 @@
     <!-- Mobile: horizontal scroll, Tablet+: grid -->
     <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-3 md:grid-cols-5 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
       {#each models as model (model.id)}
+        <!-- DaisyUI .card is the canonical panel surface; same pattern as
+             the structuring/+page.svelte model selector. The conditional
+             border / background utilities preserve the radio-style
+             "selected" affordance the previous hand-rolled implementation
+             had. -->
         <button
-          class="flex-shrink-0 w-28 sm:w-auto p-3 sm:p-4 border-2 rounded-lg transition-all text-left touch-manipulation {selectedModel === model.id
+          type="button"
+          class="card flex-shrink-0 w-28 sm:w-auto p-3 sm:p-4 border-2 transition-all text-left touch-manipulation {selectedModel === model.id
             ? 'border-primary bg-primary/10'
             : 'border-base-300 hover:border-secondary active:bg-base-200'}"
           on:click={() => selectedModel = model.id}
