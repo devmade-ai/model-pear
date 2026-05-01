@@ -508,7 +508,7 @@ export function calculate(
 // INPUT CONFIGURATION (for UI form generation)
 // ============================================================
 
-export const INPUT_CATEGORIES: Record<string, InputCategory> = {
+const INPUT_CATEGORIES: Record<string, InputCategory> = {
   transaction: {
     name: 'Transaction Details',
     description: 'Core transaction structure and values',
@@ -531,7 +531,7 @@ export const INPUT_CATEGORIES: Record<string, InputCategory> = {
   },
 };
 
-export const BASE_INPUT_FIELDS: InputFieldConfig[] = [
+const BASE_INPUT_FIELDS: InputFieldConfig[] = [
   {
     name: 'projectName',
     label: 'Project Name',

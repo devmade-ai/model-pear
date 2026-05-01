@@ -3,9 +3,11 @@
  */
 
 // Base components
-export { default as ResultPanel } from './ResultPanel.svelte';
-export { default as ResultRow } from './ResultRow.svelte';
-export { default as ResultSection } from './ResultSection.svelte';
+//
+// ResultPanel/ResultRow/ResultSection are intentionally NOT barrel-exported:
+// only neighbouring components in this folder consume them, and they import
+// the .svelte files directly. Re-exporting via the barrel widened the public
+// surface for no caller — removed during the `clean` sweep.
 export { default as InputField } from './InputField.svelte';
 
 // Perspective result components
@@ -18,7 +20,9 @@ export { default as ComparisonManager } from './ComparisonManager.svelte';
 export { default as ComparisonView } from './ComparisonView.svelte';
 
 // Analysis components
-export { default as ProjectionMetrics } from './ProjectionMetrics.svelte';
+//
+// ProjectionMetrics is consumed only by ProjectionsPanel via a direct
+// `./ProjectionMetrics.svelte` import — not surfaced through the barrel.
 export { default as SensitivityPanel } from './SensitivityPanel.svelte';
 export { default as ProjectionsPanel } from './ProjectionsPanel.svelte';
 

@@ -95,7 +95,7 @@ const commonFields: Record<string, InputFieldConfig> = {
 };
 
 // Model 1: Cost-Plus input fields
-export const model1Fields: InputFieldConfig[] = [
+const model1Fields: InputFieldConfig[] = [
   commonFields.projectName,
   commonFields.developmentCost,
   commonFields.researchPhaseCost,
@@ -118,7 +118,7 @@ export const model1Fields: InputFieldConfig[] = [
 ];
 
 // Model 2: Licence input fields
-export const model2Fields: InputFieldConfig[] = [
+const model2Fields: InputFieldConfig[] = [
   commonFields.projectName,
   commonFields.developmentCost,
   commonFields.researchPhaseCost,
@@ -222,7 +222,7 @@ export const model2Fields: InputFieldConfig[] = [
 ];
 
 // Model 3: Joint Development input fields
-export const model3Fields: InputFieldConfig[] = [
+const model3Fields: InputFieldConfig[] = [
   commonFields.projectName,
   {
     id: 'totalProjectCost',
@@ -351,7 +351,7 @@ export const model3Fields: InputFieldConfig[] = [
 ];
 
 // Model 4: BOT input fields
-export const model4Fields: InputFieldConfig[] = [
+const model4Fields: InputFieldConfig[] = [
   commonFields.projectName,
   commonFields.developmentCost,
   commonFields.researchPhaseCost,
@@ -428,7 +428,7 @@ export const model4Fields: InputFieldConfig[] = [
 ];
 
 // Model 5: Software Sale input fields
-export const model5Fields: InputFieldConfig[] = [
+const model5Fields: InputFieldConfig[] = [
   commonFields.projectName,
   commonFields.developmentCost,
   commonFields.researchPhaseCost,
@@ -490,7 +490,7 @@ export const model5Fields: InputFieldConfig[] = [
 ];
 
 // Model 6: SaaS input fields
-export const model6Fields: InputFieldConfig[] = [
+const model6Fields: InputFieldConfig[] = [
   commonFields.projectName,
   commonFields.developmentCost,
   commonFields.researchPhaseCost,
