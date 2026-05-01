@@ -277,8 +277,13 @@
 
   function saveOption() {
     if (result && saveName.trim()) {
+      // Capture trimmed name BEFORE clearing — the confirmation message
+      // shows what was just saved, but `saveName = ''` runs before the
+      // template literal would evaluate it, so reading saveName at that
+      // point returned the empty string and the toast read `Saved as ""`.
+      const savedName = saveName.trim();
       comparisonStore.save(
-        saveName.trim(),
+        savedName,
         modelId,
         result.metadata.variantId,
         inputs,
@@ -286,7 +291,7 @@
       );
       showSaveModal = false;
       saveName = '';
-      saveConfirmation = `Saved as "${saveName}"`;
+      saveConfirmation = `Saved as "${savedName}"`;
       scheduleConfirmationClear();
     }
   }

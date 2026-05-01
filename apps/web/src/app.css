@@ -248,11 +248,17 @@
     display: none !important;
   }
 
-  /* Preserve background colors for status badges. */
+  /* Preserve background colors for status badges.
+     Aligned with the print --color-* override block above (every variant
+     overridden there is listed here so its background renders to ink). */
   .badge-success,
   .badge-warning,
   .badge-error,
-  .badge-primary {
+  .badge-primary,
+  .badge-secondary,
+  .badge-info,
+  .badge-accent,
+  .badge-neutral {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }

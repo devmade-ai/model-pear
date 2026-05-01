@@ -347,6 +347,8 @@
         <button
           role="tab"
           type="button"
+          id={`debug-tab-${tab.key}`}
+          aria-controls={`debug-tabpanel-${tab.key}`}
           class="tab font-mono text-xs flex-1 {activeTab === tab.key ? 'tab-active' : ''}"
           aria-selected={activeTab === tab.key}
           on:click={() => {
@@ -361,7 +363,13 @@
     <div style="flex: 1; overflow-y: auto; min-height: 0;">
       <!-- Log tab -->
       {#if activeTab === 'log'}
-        <div bind:this={logContainer} style="padding: 4px 0; overflow-y: auto; height: 100%;">
+        <div
+          bind:this={logContainer}
+          role="tabpanel"
+          id="debug-tabpanel-log"
+          aria-labelledby="debug-tab-log"
+          style="padding: 4px 0; overflow-y: auto; height: 100%;"
+        >
           {#if entries.length === 0}
             <div style="padding: 16px; color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center;">No log entries yet</div>
           {:else}
@@ -404,7 +412,12 @@
 
       <!-- Environment tab -->
       {#if activeTab === 'env'}
-        <div style="padding: 8px 12px;">
+        <div
+          role="tabpanel"
+          id="debug-tabpanel-env"
+          aria-labelledby="debug-tab-env"
+          style="padding: 8px 12px;"
+        >
           {#each getEnvironmentData() as item (item.label)}
             <div style="
               display: flex;
@@ -422,7 +435,12 @@
 
       <!-- PWA Diagnostics tab -->
       {#if activeTab === 'pwa'}
-        <div style="padding: 8px 12px;">
+        <div
+          role="tabpanel"
+          id="debug-tabpanel-pwa"
+          aria-labelledby="debug-tab-pwa"
+          style="padding: 8px 12px;"
+        >
           <button
             on:click={runDiagnostics}
             class="btn btn-xs font-mono mb-2"
