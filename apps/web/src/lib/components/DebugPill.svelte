@@ -335,19 +335,7 @@
         <textarea
           readonly
           on:focus={(e) => { e.currentTarget.select(); }}
-          style="
-            width: 100%;
-            height: 80px;
-            background: var(--color-base-100);
-            color: var(--color-base-content);
-            border: var(--border) solid var(--color-base-300);
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 10px;
-            padding: 4px 6px;
-            resize: none;
-            box-sizing: border-box;
-          "
+          class="textarea textarea-xs font-mono w-full h-20 resize-none"
         >{copyFallbackText}</textarea>
       </div>
     {/if}
