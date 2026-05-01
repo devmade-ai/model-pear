@@ -197,7 +197,7 @@
               <!-- Actions -->
               <div class="flex items-center space-x-1 ml-2">
                 <button
-                  class="btn btn-ghost btn-xs btn-square tooltip"
+                  class="btn btn-ghost btn-sm btn-square tooltip"
                   data-tip="Rename"
                   aria-label="Rename"
                   on:click={() => startEdit(option)}
@@ -205,7 +205,7 @@
                   ✏️
                 </button>
                 <button
-                  class="btn btn-ghost btn-xs btn-square hover:text-error tooltip"
+                  class="btn btn-ghost btn-sm btn-square hover:text-error tooltip"
                   data-tip="Delete"
                   aria-label="Delete"
                   on:click={() => comparisonStore.delete(option.id)}
