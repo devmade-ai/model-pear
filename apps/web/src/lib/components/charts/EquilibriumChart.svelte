@@ -105,13 +105,13 @@
         const seriesName = w.globals.seriesNames[seriesIndex];
         const data = w.config.series[seriesIndex].data[dataPointIndex];
         if (seriesIndex === 0 && equilibriumExists) {
-          return `<div class="p-2 p-2 bg-base-200 shadow rounded text-sm text-base-content">
+          return `<div class="p-2 p-2 bg-base-200 shadow-sm rounded text-sm text-base-content">
             <strong>${seriesName}</strong><br/>
             ${formatValue(data.y[0])} - ${formatValue(data.y[1])}
           </div>`;
         }
         const midpoint = (data.y[0] + data.y[1]) / 2;
-        return `<div class="p-2 p-2 bg-base-200 shadow rounded text-sm text-base-content">
+        return `<div class="p-2 p-2 bg-base-200 shadow-sm rounded text-sm text-base-content">
           <strong>${seriesName}</strong>: ${formatValue(midpoint)}
         </div>`;
       },
