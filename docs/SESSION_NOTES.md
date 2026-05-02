@@ -4,7 +4,19 @@
 
 ---
 
-## Current State (May 1, 2026)
+## Current State (May 2, 2026 — in progress on `claude/fix-menu-dbg-freeze-gCRhf`)
+
+**Working on**: two reported bugs.
+
+1. **Burger menu items don't navigate (just close)** — FIXED. Header had `sticky top-0 z-20`, which establishes a stacking context that flattens DaisyUI's `dropdown-content z-999` to z-20 globally. The click-outside backdrop (z-40) sat above the menu, so taps landed on the backdrop and ran `closeMenu()` instead of the menu item's handler. Bumped header to `z-50` so its stacking context sits above the backdrop, matching the documented z-scale (backdrop 40, panel 50, banner 70, modal/debug 60/80). Comment on the backdrop updated to describe the actual stacking model. Typecheck clean.
+
+2. **DebugPill click freezes the whole tab on mobile/PWA** — NOT YET FIXED. Cause not yet pinpointed. User can't read DevTools because the only tool to read logs is the broken pill. Awaiting one more data point before touching the pill: does the freeze occur on the very first tap (collapsed → expanded panel), or only after interacting with controls/tabs inside the open panel? See conversation for the question.
+
+**Don't touch**: the reactive auto-scroll block in `DebugPill.svelte` lines 53-58 has an `eslint-disable-next-line svelte/infinite-reactive-loop` comment defending why `tick().then()` breaks the cycle. Read carefully before assuming it's safe — the lint rule flagged it for a reason.
+
+---
+
+## Previous State (May 1, 2026)
 
 **Last completed**: DaisyUI-completion audit re-do (chunks #1–#17 + #5b/#6b/#7b/#7c/#9a-e). All overlays migrated to native DaisyUI primitives. Drift-detection script wired into `pnpm check`.
 

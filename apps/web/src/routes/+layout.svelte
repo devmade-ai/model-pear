@@ -223,7 +223,22 @@
 
 <div class="min-h-screen flex flex-col">
   <!-- Header -->
-  <header class="bg-base-200 border-b border-base-300 sticky top-0 z-20">
+  <!-- Requirement: burger menu items must remain clickable while the
+       click-outside backdrop is active.
+       Approach: header sits at z-50, above the z-40 backdrop. The header
+       creates a stacking context (sticky + z-index), which flattens the
+       DaisyUI dropdown-content's internal z-999 to the header's level
+       globally. With the header at z-50 the menu's dropdown sits above
+       the backdrop, matching the documented z-scale (backdrop z-40,
+       panel z-50, banner z-70, modal/debug z-60/80).
+       Alternatives:
+         - Move the dropdown out of the header into the layout root: rejected,
+           breaks sticky-header positioning of the trigger and complicates
+           focus management.
+         - Lower the backdrop below the header (z-10): rejected, the backdrop
+           must cover all page content (which sits below the header) so a
+           tap anywhere on the page area dismisses the menu. -->
+  <header class="bg-base-200 border-b border-base-300 sticky top-0 z-50">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center">
@@ -391,7 +406,10 @@
        which is unreliable on touch (taps outside don't always blur
        focused descendants). This explicit backdrop intercepts every
        outside click/tap and calls closeMenu(). z-40 sits below the
-       dropdown-content (z-999 from DaisyUI) so the menu stays clickable. -->
+       header (z-50) — which contains the dropdown panel — so menu
+       items remain clickable. The dropdown's internal z-999 has no
+       global effect: the header's stacking context flattens it to the
+       header's level. -->
   {#if menuOpen}
     <div
       class="fixed inset-0 z-40 bg-base-100/60 cursor-pointer"
