@@ -423,7 +423,7 @@
              collapse-title centres a single child by default. Print
              behaviour preserved: class:no-print hides the empty shell
              when collapsed; print-include keeps the title row visible. -->
-        <div class="collapse collapse-arrow card" class:no-print={!showTransferPricing}>
+        <div class="collapse collapse-arrow bg-base-100 border border-base-300 rounded-box" class:no-print={!showTransferPricing}>
           <input type="checkbox" bind:checked={showTransferPricing} />
           <div class="collapse-title p-4 print-include">
             <div class="flex items-center justify-between pr-8">
@@ -447,7 +447,7 @@
         <!-- Advanced Analysis (DaisyUI .collapse). Same migration as
              the Transfer Pricing block above — collapse-arrow renders
              the chevron natively, the hidden checkbox carries state. -->
-        <div class="collapse collapse-arrow card" class:no-print={!showAdvancedAnalysis}>
+        <div class="collapse collapse-arrow bg-base-100 border border-base-300 rounded-box" class:no-print={!showAdvancedAnalysis}>
           <input type="checkbox" bind:checked={showAdvancedAnalysis} />
           <div class="collapse-title p-4 print-include">
             <div class="flex items-center space-x-3 pr-8">
