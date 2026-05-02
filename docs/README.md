@@ -64,12 +64,21 @@ pnpm dev
 # Run tests (301 unit tests)
 pnpm test
 
+# Typecheck + theme-token drift assertion (gates merges)
+pnpm check
+
+# Lint (ESLint flat config across both workspaces)
+pnpm lint
+
 # Build for production
 pnpm build
 
 # Run E2E tests
 pnpm test:e2e
 ```
+
+`pnpm check` and `pnpm lint` must pass before opening a PR — both are
+enforced in CI.
 
 ## Technology Stack
 

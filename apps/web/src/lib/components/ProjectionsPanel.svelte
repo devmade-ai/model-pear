@@ -18,11 +18,18 @@
 
   export let result: CalculationResult;
 
-  // Projection parameters (could be made configurable later)
+  // Projection parameters — all five surfaced as user inputs in the
+  // panel header (years / discount / revenue growth / cost growth /
+  // buyer-benefit). Defaults preserve prior behaviour for any saved
+  // option that was created when these values were hardcoded.
   let projectionYears = 5;
   let discountRate = 12; // WACC / hurdle rate
   let revenueGrowthRate = 5;
   let costGrowthRate = 3;
+  // Annual operational benefit the Buyer realises from the software,
+  // expressed as a percentage of the capitalised cost. Default 30%
+  // matches the literal `* 0.3` heuristic that preceded this control.
+  let buyerBenefitRate = 30;
 
   // Generate developer cash flows from result
   $: developerInitialCost = result.developer.revenue.total - result.developer.profit.net;
@@ -30,6 +37,7 @@
 
   // Generate buyer cash flows (total cost, then ongoing benefits from software)
   $: buyerInitialCost = result.buyer.asset.capitalised || result.buyer.totalCost || 0;
+  $: buyerAnnualBenefit = buyerInitialCost * (buyerBenefitRate / 100);
 
   // Generate yearly projections
   $: developerYearlyData = generateYearlyProjections(
@@ -43,7 +51,7 @@
 
   $: buyerYearlyData = generateYearlyProjections(
     -buyerInitialCost,
-    buyerInitialCost * 0.3, // Assume 30% annual benefit from software
+    buyerAnnualBenefit,
     revenueGrowthRate,
     costGrowthRate,
     projectionYears,
@@ -152,8 +160,9 @@
       <h2 class="text-xl font-bold text-base-content">Growth Projections</h2>
     </div>
 
-    <!-- Parameter Controls -->
-    <div class="flex items-center space-x-4 text-sm">
+    <!-- Parameter Controls. Every input drives the reactive
+         developerYearlyData / buyerYearlyData / metrics blocks above. -->
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
       <label class="flex items-center space-x-2">
         <span class="text-base-content/70">Years:</span>
         <select bind:value={projectionYears} class="select select-sm w-16">
@@ -170,7 +179,43 @@
           bind:value={discountRate}
           min="0"
           max="50"
-          class="input py-1 px-2 w-16"
+          class="input input-sm py-1 px-2 w-16"
+        />
+        <span class="text-base-content/70">%</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <span class="text-base-content/70">Revenue growth:</span>
+        <input
+          type="number"
+          bind:value={revenueGrowthRate}
+          min="-20"
+          max="50"
+          step="0.5"
+          class="input input-sm py-1 px-2 w-16"
+        />
+        <span class="text-base-content/70">%</span>
+      </label>
+      <label class="flex items-center space-x-2">
+        <span class="text-base-content/70">Cost growth:</span>
+        <input
+          type="number"
+          bind:value={costGrowthRate}
+          min="-20"
+          max="50"
+          step="0.5"
+          class="input input-sm py-1 px-2 w-16"
+        />
+        <span class="text-base-content/70">%</span>
+      </label>
+      <label class="flex items-center space-x-2" title="Annual operational benefit the Buyer realises from the software, as % of capitalised cost">
+        <span class="text-base-content/70">Buyer benefit:</span>
+        <input
+          type="number"
+          bind:value={buyerBenefitRate}
+          min="0"
+          max="200"
+          step="1"
+          class="input input-sm py-1 px-2 w-16"
         />
         <span class="text-base-content/70">%</span>
       </label>
