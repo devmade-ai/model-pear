@@ -17,6 +17,16 @@
    - **Removed DaisyUI `tooltip` from the closed pill and the inner Copy/Clear/× buttons.** `tooltip + position:fixed` on touch can leave a stuck `:hover` state that interleaves badly with the synchronous panel mount. `aria-label` carries the accessible name; visible button text carries the affordance.
    - **Header comment updated** to drop the inconsistent "Tailwind rejected" rationale (file already uses Tailwind/DaisyUI throughout) and document the mobile freeze guard.
 
+3. **Wrap-pass cleanups applied** (after user direction "fix all properly").
+   - **AI_MISTAKES.md** — added two entries: (a) `z-index on a positioned ancestor flattens descendants' effective stacking` (the menu bug's general lesson), (b) `Patched two layers before diagnosing the actual cause of a "freeze"` (the pill bug's process lesson).
+   - **DebugPill inline-style migration** — every `style="..."` attribute on the panel migrated to Tailwind / DaisyUI utility classes (~150 lines of inline CSS gone). Dynamic severity colour now goes through `severityClass()` returning DaisyUI semantic tokens (`text-error` / `text-warning` / `text-success` / `text-base-content/60`) instead of inline `style="color: var(--color-error)"`. Resolves the file's "no inline CSS" violation per CLAUDE.md.
+   - **Tooltips restored, hover-gated** — the closed pill and the Copy/Clear/× buttons get their `tooltip` + `data-tip` back, with a scoped `<style>` block that disables `.tooltip::before`/`::after` inside `#debug-root` on coarse-pointer / non-hover devices via `@media not all and (hover: hover) and (pointer: fine)`. Desktop hover affordance preserved; touch devices skip the stuck-hover footgun.
+   - **`safeStringify` extracted to `$lib/utils/safeStringify.ts`** with full JSDoc on why-it-exists (the freeze-prevention guarantee). Importable from anywhere.
+   - **Vitest set up in `apps/web`** (`apps/web/vitest.config.ts`, `tests/unit/`, `pnpm test` script). Mirrors the calculator package's config — node environment, no DOM. Six unit tests for `safeStringify` covering: null/undefined → empty string; primitives, objects, arrays serialise normally; circular references → `[unserialisable]`; BigInt → `[unserialisable]`; `toJSON` that throws → `[unserialisable]`; legitimate falsy values (`0`, `false`, `''`, `{}`, `[]`) round-trip correctly.
+   - **Root `pnpm test`** changed from filtering only the calculator to `pnpm -r --if-present test` — now runs both calculator (301) and web (6).
+
+**Validation**: svelte-check 0/0, eslint 0/0, calculator 301/301, web 6/6, theme-hex 11/11.
+
 ---
 
 ## Previous State (May 1, 2026)

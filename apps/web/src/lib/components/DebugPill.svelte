@@ -3,27 +3,32 @@
   Approach: Svelte component mounted in a separate #debug-root sibling
     of %sveltekit.body% (apps/web/src/app.html). Lives outside the
     SvelteKit tree so the pill survives a navigation crash in the app.
-  Styling: DaisyUI/Tailwind classes for the closed pill and the panel's
-    header / tab / button surfaces; a small set of remaining inline
-    `style="..."` attributes carry the panel's exact pixel sizing,
-    flexbox layout, and DaisyUI-token-driven colours. The isolated
-    `#debug-root` still inherits the document stylesheet, so utility
-    classes resolve normally — the original "stylesheet might not
-    load" rationale was overcautious and inconsistent with the rest
-    of the file.
+  Styling: DaisyUI / Tailwind utility classes throughout — the panel
+    inherits the document stylesheet via the global #debug-root, so
+    the same conventions used everywhere else in the app apply here.
+    Dynamic severity colours go through DaisyUI semantic tokens
+    (text-error / text-warning / text-success / text-base-content/60)
+    via severityClass(); no inline `style="color:..."`.
   Mobile freeze guard: the log tab caps rendered entries to
     MAX_VISIBLE_ENTRIES (50) regardless of buffer size; the full 200-
     entry buffer is preserved for Copy / report. This stops the
     afterUpdate scrollHeight read from forcing a multi-second layout
     pass on touch devices.
+  Touch-tooltip guard: a scoped @media rule disables DaisyUI
+    `.tooltip` pseudo elements on coarse-pointer devices for elements
+    inside #debug-root. Without it, position:fixed + .tooltip on
+    touch can leave a stuck :hover state after tap that interferes
+    with the synchronous panel mount; with it, desktop hover still
+    shows the descriptive tooltip.
   Removal note: when alpha ends, delete this component, debugLog.ts,
-    clipboardUtils.ts, and the #debug-root + inline boot scripts in
-    app.html (see SESSION_NOTES.md "Removal note").
+    safeStringify.ts (if no other consumer), clipboardUtils.ts, and
+    the #debug-root + inline boot scripts in app.html (see
+    SESSION_NOTES.md "Removal note").
   Source: glow-props DEBUG_SYSTEM.md pattern, adapted for Svelte 4.
 -->
 <script lang="ts">
   import { onMount, onDestroy, afterUpdate } from 'svelte';
-  import type { DebugEntry } from '$lib/debugLog';
+  import type { DebugEntry, DebugSeverity } from '$lib/debugLog';
   import {
     debugAdd,
     debugSubscribe,
@@ -34,6 +39,7 @@
     formatDebugTimestamp,
   } from '$lib/debugLog';
   import { copyToClipboard } from '$lib/clipboardUtils';
+  import { safeStringify } from '$lib/utils/safeStringify';
 
   // --- State ---
   let expanded = false;
@@ -64,8 +70,7 @@
   // Approach: cap the rendered list to MAX_VISIBLE_ENTRIES. The full
   //   buffer (up to 200) stays in memory and is included in the
   //   copy/report; the cap is purely a render-cost reduction.
-  // Why: each entry compiles to ~7 DOM nodes with dynamic styles and
-  //   color-mix() lookups against DaisyUI tokens. Rendering 200 of those
+  // Why: each entry compiles to ~7 DOM nodes; rendering 200 of those
   //   AND forcing a layout pass via afterUpdate's scrollHeight read
   //   pinned the JS thread on touch devices long enough to read as a
   //   permanent freeze. 50 is empirically enough to read the recent
@@ -86,37 +91,11 @@
   // Approach: afterUpdate runs once per render cycle, AFTER Svelte has
   //   flushed DOM updates — so scrollHeight reflects the just-rendered
   //   content. No tick() / microtask scheduling needed.
-  // Why not the previous `$: if (logContainer && entries.length) { tick().then(...) }`:
-  //   - That reactive pattern needed an `eslint-disable svelte/infinite-reactive-loop`
-  //     suppression because reading scrollHeight + writing scrollTop inside a
-  //     statement that depends on a reactive variable is structurally a loop
-  //     even if the asynchronous tick().then() breaks it in practice.
-  //   - On mobile, every reactive update queued another microtask whose
-  //     scrollHeight read forced a layout pass. Under high update rates
-  //     (rapid debugAdd → subscriber → entries reassign) the microtask
-  //     queue plus layout work could starve the UI thread on a touch device.
-  // afterUpdate is the canonical Svelte 4 hook for "do DOM stuff after
-  // render", scoped to one fire per update regardless of how many
-  // reactive dependencies changed in that cycle.
   afterUpdate(() => {
     if (activeTab === 'log' && logContainer && entries.length) {
       logContainer.scrollTop = logContainer.scrollHeight;
     }
   });
-
-  // Defensive JSON serialiser for log entry details.
-  // Requirement: rendering a log entry must NEVER throw — a thrown render
-  //   would bubble to the window 'error' handler, which calls debugAdd,
-  //   which triggers subscribers, which sets `entries`, which re-renders
-  //   the same broken entry → infinite loop → frozen tab.
-  // Approach: try/catch around JSON.stringify. Circular refs and BigInt
-  //   throw TypeError; we render '[unserialisable]' so the entry is still
-  //   visible without crashing the panel.
-  function safeStringifyDetails(details: Record<string, unknown> | undefined): string {
-    if (!details) return '';
-    try { return JSON.stringify(details); }
-    catch { return '[unserialisable]'; }
-  }
 
   let unsubscribe: (() => void) | null = null;
   let copyResetTimer: ReturnType<typeof setTimeout> | null = null;
@@ -169,13 +148,17 @@
     }
   }
 
-  // Severity → color mapping
-  function severityColor(severity: string): string {
+  // Severity → DaisyUI semantic text colour utility class.
+  // Replaces the previous `severityColor()` that returned raw CSS strings
+  // (var(--color-error), color-mix(...)) for inline `style="color:..."`.
+  // Going through DaisyUI tokens keeps the pill's colour palette in
+  // lockstep with the active theme automatically.
+  function severityClass(severity: DebugSeverity): string {
     switch (severity) {
-      case 'error': return 'var(--color-error)';
-      case 'warn': return 'var(--color-warning)';
-      case 'success': return 'var(--color-success)';
-      default: return 'color-mix(in srgb, var(--color-base-content) 60%, transparent)';
+      case 'error': return 'text-error';
+      case 'warn': return 'text-warning';
+      case 'success': return 'text-success';
+      default: return 'text-base-content/60';
     }
   }
 
@@ -286,11 +269,11 @@
 
   function diagnosticStatusIcon(status: string): string {
     switch (status) {
-      case 'pass': return '\u2705';
-      case 'fail': return '\u274c';
-      case 'warn': return '\u26a0\ufe0f';
-      case 'running': return '\u23f3';
-      default: return '\u2753';
+      case 'pass': return '✅';
+      case 'fail': return '❌';
+      case 'warn': return '⚠️';
+      case 'running': return '⏳';
+      default: return '❓';
     }
   }
 
@@ -302,17 +285,14 @@
   ];
 </script>
 
-<!-- Collapsed pill.
-     Tooltip removed: DaisyUI .tooltip + position:fixed on touch devices
-     can leave a stuck :hover state after tap, which on mobile WebKit can
-     interleave badly with the synchronous panel-mount that follows. The
-     pill text "dbg" + entry count is self-explanatory. -->
+<!-- Collapsed pill -->
 {#if !expanded}
   <button
     on:click={toggleExpanded}
     type="button"
     aria-label="Open debug panel"
-    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300"
+    data-tip="Open debug panel"
+    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300 tooltip tooltip-left"
   >
     <span>dbg</span>
     <span class="opacity-60">{entries.length}</span>
@@ -328,48 +308,21 @@
 <!-- Expanded panel -->
 {#if expanded}
   <div
-    style="
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      z-index: 80;
-      width: 420px;
-      max-width: calc(100vw - 32px);
-      max-height: 480px;
-      display: flex;
-      flex-direction: column;
-      background: var(--color-base-100);
-      color: var(--color-base-content);
-      border: var(--border) solid var(--color-base-300);
-      border-radius: var(--radius-field);
-      font-family: monospace;
-      font-size: 12px;
-      overflow: hidden;
-    "
+    class="fixed bottom-4 right-4 z-[80] w-[420px] max-w-[calc(100vw-2rem)] max-h-[480px] flex flex-col bg-base-100 text-base-content border border-base-300 rounded-lg font-mono text-xs overflow-hidden"
   >
     <!-- Header -->
-    <div style="
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      background: var(--color-base-200);
-      border-bottom: 1px solid var(--color-base-300);
-      flex-shrink: 0;
-    ">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-weight: 600; color: var(--color-base-content);">Debug</span>
-        <span style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent);">{entries.length} entries</span>
+    <div class="flex items-center justify-between px-3 py-2 bg-base-200 border-b border-base-300 flex-shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="font-semibold text-base-content">Debug</span>
+        <span class="text-base-content/50">{entries.length} entries</span>
       </div>
-      <!-- Tooltips removed for the same touch-device reason as the closed
-           pill: aria-label is the accessible name; the visible label
-           text on Copy/Clear/× is the affordance for sighted users. -->
-      <div style="display: flex; align-items: center; gap: 4px;">
+      <div class="flex items-center gap-1">
         <button
           on:click={handleCopy}
           type="button"
           aria-label="Copy debug report to clipboard"
-          class="btn btn-xs font-mono {copyStatus === 'copied' ? 'btn-success' : copyStatus === 'failed' ? 'btn-error' : ''}"
+          data-tip="Copy debug report to clipboard"
+          class="btn btn-xs font-mono tooltip tooltip-bottom {copyStatus === 'copied' ? 'btn-success' : copyStatus === 'failed' ? 'btn-error' : ''}"
         >
           {copyStatus === 'copied' ? 'Copied!' : copyStatus === 'failed' ? 'Failed' : 'Copy'}
         </button>
@@ -377,27 +330,24 @@
           on:click={handleClear}
           type="button"
           aria-label="Clear all log entries"
-          class="btn btn-xs font-mono"
+          data-tip="Clear all log entries"
+          class="btn btn-xs font-mono tooltip tooltip-bottom"
         >Clear</button>
         <button
           on:click={toggleExpanded}
           type="button"
           aria-label="Close debug panel"
-          class="btn btn-xs btn-square btn-ghost font-mono"
+          data-tip="Close debug panel"
+          class="btn btn-xs btn-square btn-ghost font-mono tooltip tooltip-left"
         >&times;</button>
       </div>
     </div>
 
     <!-- Clipboard fallback: visible textarea when all clipboard methods fail -->
     {#if copyFallbackText}
-      <div style="
-        padding: 8px 12px;
-        background: var(--color-base-300);
-        border-bottom: 1px solid var(--color-base-300);
-        flex-shrink: 0;
-      ">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="color: var(--color-warning); font-size: 11px;">Copy failed — select text below and copy manually</span>
+      <div class="px-3 py-2 bg-base-300 border-b border-base-300 flex-shrink-0">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-warning text-[11px]">Copy failed — select text below and copy manually</span>
           <button
             on:click={() => { copyFallbackText = ''; copyStatus = 'idle'; }}
             class="btn btn-xs btn-ghost font-mono"
@@ -431,7 +381,7 @@
     </div>
 
     <!-- Tab content -->
-    <div style="flex: 1; overflow-y: auto; min-height: 0;">
+    <div class="flex-1 overflow-y-auto min-h-0">
       <!-- Log tab -->
       {#if activeTab === 'log'}
         <div
@@ -439,51 +389,26 @@
           role="tabpanel"
           id="debug-tabpanel-log"
           aria-labelledby="debug-tab-log"
-          style="padding: 4px 0; overflow-y: auto; height: 100%;"
+          class="py-1 overflow-y-auto h-full"
         >
           {#if entries.length === 0}
-            <div style="padding: 16px; color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center;">No log entries yet</div>
+            <div class="p-4 text-base-content/50 text-center">No log entries yet</div>
           {:else}
             {#if hiddenEntryCount > 0}
-              <div style="
-                padding: 4px 10px;
-                color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
-                font-size: 10px;
-                text-align: center;
-                border-bottom: 1px solid var(--color-base-300);
-                background: var(--color-base-200);
-              ">Showing last {visibleEntries.length} of {entries.length} entries (older trimmed for performance — full log included in Copy)</div>
+              <div class="px-2.5 py-1 text-base-content/60 text-[10px] text-center border-b border-base-300 bg-base-200">
+                Showing last {visibleEntries.length} of {entries.length} entries (older trimmed for performance — full log included in Copy)
+              </div>
             {/if}
             {#each visibleEntries as entry (entry.id)}
-              <div style="
-                padding: 3px 10px;
-                border-bottom: 1px solid var(--color-base-300);
-                line-height: 1.4;
-              ">
-                <div style="display: flex; gap: 6px; align-items: baseline;">
-                  <span style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent); flex-shrink: 0;">{formatDebugTimestamp(entry.timestamp)}</span>
-                  <span style="
-                    color: {severityColor(entry.severity)};
-                    flex-shrink: 0;
-                    font-size: 10px;
-                    text-transform: uppercase;
-                    min-width: 36px;
-                  ">{entry.severity}</span>
-                  <span style="
-                    color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
-                    flex-shrink: 0;
-                    font-size: 10px;
-                  ">[{entry.source}]</span>
-                  <span style="color: var(--color-base-content); word-break: break-word;">{entry.event}</span>
+              <div class="px-2.5 py-[3px] border-b border-base-300 leading-[1.4]">
+                <div class="flex gap-1.5 items-baseline">
+                  <span class="text-base-content/50 flex-shrink-0">{formatDebugTimestamp(entry.timestamp)}</span>
+                  <span class="flex-shrink-0 text-[10px] uppercase min-w-9 {severityClass(entry.severity)}">{entry.severity}</span>
+                  <span class="text-base-content/60 flex-shrink-0 text-[10px]">[{entry.source}]</span>
+                  <span class="text-base-content break-words">{entry.event}</span>
                 </div>
                 {#if entry.details}
-                  <div style="
-                    color: color-mix(in srgb, var(--color-base-content) 50%, transparent);
-                    font-size: 10px;
-                    margin-top: 1px;
-                    margin-left: 82px;
-                    word-break: break-all;
-                  ">{safeStringifyDetails(entry.details)}</div>
+                  <div class="text-base-content/50 text-[10px] mt-px ml-[82px] break-all">{safeStringify(entry.details)}</div>
                 {/if}
               </div>
             {/each}
@@ -497,18 +422,12 @@
           role="tabpanel"
           id="debug-tabpanel-env"
           aria-labelledby="debug-tab-env"
-          style="padding: 8px 12px;"
+          class="px-3 py-2"
         >
           {#each getEnvironmentData() as item (item.label)}
-            <div style="
-              display: flex;
-              justify-content: space-between;
-              padding: 4px 0;
-              border-bottom: 1px solid var(--color-base-300);
-              gap: 12px;
-            ">
-              <span style="color: color-mix(in srgb, var(--color-base-content) 60%, transparent); flex-shrink: 0;">{item.label}</span>
-              <span style="color: var(--color-base-content); text-align: right; word-break: break-all; max-width: 280px;">{item.value}</span>
+            <div class="flex justify-between py-1 border-b border-base-300 gap-3">
+              <span class="text-base-content/60 flex-shrink-0">{item.label}</span>
+              <span class="text-base-content text-right break-all max-w-[280px]">{item.value}</span>
             </div>
           {/each}
         </div>
@@ -520,26 +439,20 @@
           role="tabpanel"
           id="debug-tabpanel-pwa"
           aria-labelledby="debug-tab-pwa"
-          style="padding: 8px 12px;"
+          class="px-3 py-2"
         >
           <button
             on:click={runDiagnostics}
             class="btn btn-xs font-mono mb-2"
           >Re-run diagnostics</button>
           {#if diagnostics.length === 0}
-            <div style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center; padding: 16px;">Click "Re-run diagnostics" to check PWA status</div>
+            <div class="text-base-content/50 text-center p-4">Click "Re-run diagnostics" to check PWA status</div>
           {:else}
             {#each diagnostics as diag (diag.label)}
-              <div style="
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 4px 0;
-                border-bottom: 1px solid var(--color-base-300);
-              ">
-                <span style="flex-shrink: 0; font-size: 14px;">{diagnosticStatusIcon(diag.status)}</span>
-                <span style="color: color-mix(in srgb, var(--color-base-content) 60%, transparent); flex-shrink: 0; min-width: 90px;">{diag.label}</span>
-                <span style="color: var(--color-base-content); word-break: break-word;">{diag.detail}</span>
+              <div class="flex items-center gap-2 py-1 border-b border-base-300">
+                <span class="flex-shrink-0 text-sm">{diagnosticStatusIcon(diag.status)}</span>
+                <span class="text-base-content/60 flex-shrink-0 min-w-[90px]">{diag.label}</span>
+                <span class="text-base-content break-words">{diag.detail}</span>
               </div>
             {/each}
           {/if}
@@ -548,3 +461,26 @@
     </div>
   </div>
 {/if}
+
+<style>
+  /* Touch-tooltip guard.
+     DaisyUI's .tooltip pseudo-elements activate on :hover and :focus.
+     On coarse-pointer / non-hover devices a tap synthesises a hover
+     state that can stick after the click handler runs — and on a
+     position:fixed element that mounts/unmounts synchronously
+     (the DebugPill swapping the closed pill for the expanded panel,
+     or the open panel mounting alongside its tooltip-bearing buttons)
+     the stuck pseudo-element interleaves with the layout pass. The
+     practical effect on mobile WebKit was a multi-second freeze on
+     first tap.
+     Scoping :global() to #debug-root keeps this rule targeted at the
+     pill's own DOM and leaves DaisyUI tooltips elsewhere in the app
+     untouched. The selector matches both ::before (label text)
+     and ::after (arrow). */
+  @media not all and (hover: hover) and (pointer: fine) {
+    :global(#debug-root .tooltip::before),
+    :global(#debug-root .tooltip::after) {
+      display: none !important;
+    }
+  }
+</style>
