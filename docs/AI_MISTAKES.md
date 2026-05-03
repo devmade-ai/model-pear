@@ -1,7 +1,7 @@
 # AI Mistakes Log
 
 > **Purpose**: Track AI assistant mistakes and learnings so they are not repeated across sessions.
-> **Last Updated**: February 2026
+> **Last Updated**: May 2026
 
 When an AI assistant makes a mistake during a session, document it here so future sessions can avoid the same error.
 
@@ -56,6 +56,20 @@ When an AI assistant makes a mistake during a session, document it here so futur
 **What happened**: All 6 chart components used `$: options = makeOptions(themeKey);` where `makeOptions` read prop data via closure. Svelte's compile-time dependency analysis only tracked `themeKey`, so when data props changed (without a theme flip), `options` was never recomputed and BaseChart kept the stale chart options. Bug only manifested on data-prop updates between theme flips — masked by HMR / page reloads / theme toggle during dev.
 **Root cause**: Pattern was extracted to satisfy an earlier svelte-check error about comma-operator unused-LHS. The function-call pattern silenced the check but inadvertently broke reactivity. No one caught it because the workflow always involved theme toggle / reload.
 **Prevention**: For Svelte 4 reactive blocks where the right-hand side is a function call, every reactive dependency MUST appear in the call expression itself (not inside the function body). Pattern: `$: result = compute(dep1, dep2, dep3);` even if `compute` reads them via closure — Svelte tracks lexical reads on the RHS, not closure captures.
+
+### z-index on a positioned ancestor flattens descendants' effective stacking
+**Date**: 2026-05-02
+**Impact**: high
+**What happened**: Burger menu items "did nothing" when tapped — they always just closed the menu. The cause: the header had `sticky top-0 z-20`, which establishes a stacking context. The DaisyUI `.dropdown-content` panel inside it carries its own `z-999` but that z-index is local to the header's stacking context — globally the entire header (panel included) stacked at z-20. The click-outside backdrop at z-40 sat on top of the panel; taps on menu items hit the backdrop and ran `closeMenu()` instead of the menu item handler. Comments in the layout AND in `UpdateBanner.svelte` documented the wrong mental model ("the panel sits at z-50" / "z-40 is below dropdown-content z-999"), so a previous review had already missed this.
+**Root cause**: Treating `z-index` as a single global ordering instead of a tree of nested stacking contexts. A positioned ancestor with z-index caps the effective z-index of every descendant globally, regardless of the descendant's own z-index value. DaisyUI's `z-999` on `.dropdown-content` is meaningful WITHIN its parent context only.
+**Prevention**: When a descendant element is "supposed to be on top" but isn't, check the chain of positioned ancestors with their own z-index BEFORE adjusting the descendant's z-index. The fix is usually at the ancestor (raise the stacking context root above whatever it's losing to), not the descendant. For overlay layouts: backdrop + panel must share a stacking context, OR the panel's stacking context root must outrank the backdrop globally.
+
+### Patched two layers before diagnosing the actual cause of a "freeze"
+**Date**: 2026-05-02
+**Impact**: medium
+**What happened**: User reported "tapping the dbg pill freezes the whole tab on mobile web." First commit replaced a suspicious reactive `$: { tick().then(...) }` auto-scroll with `afterUpdate` (defensive, removes an eslint-disable suppression but doesn't change runtime behaviour materially). Second commit added a `safeStringifyDetails` try/catch (defensive against a circular-ref render-loop hypothesis). Neither was the cause. User pushed back: "fix all properly. no shortcuts." Third commit found the actual cause — rendering 200 dynamically-styled log entries forced a multi-second layout pass via the `scrollHeight` read on a touch device — and fixed it by capping the rendered list to 50.
+**Root cause**: For "freeze" reports I jumped to JS-level patterns (reactive loops, throwing renders) before considering raw render volume. The pill's render path was 200 entries × ~7 DOM nodes × dynamic `color-mix()` styles + a layout-forcing measurement; that was always going to be slow on a phone, regardless of the reactive scaffolding.
+**Prevention**: When a UI freezes on a single user action, profile DOM weight and layout cost FIRST. Count: how many elements does this render mount? How dynamic are their styles? Does the render trigger a synchronous layout-forcing read (`scrollHeight`, `getBoundingClientRect`, `offsetTop`)? Defensive patches against speculative JS-level bugs are wasted commits if the real cost is render volume. For production debug surfaces specifically: cap rendered lists to a small N regardless of buffer size; the buffer can be larger for export/copy.
 
 ### Svelte 4 template-expression parser rejects inline `as` casts
 **Date**: 2026-04-29

@@ -4,7 +4,32 @@
 
 ---
 
-## Current State (May 1, 2026)
+## Current State (May 2, 2026 — in progress on `claude/fix-menu-dbg-freeze-gCRhf`)
+
+**Working on**: two reported bugs.
+
+1. **Burger menu items don't navigate (just close)** — FIXED. Header had `sticky top-0 z-20`, which establishes a stacking context that flattens DaisyUI's `dropdown-content z-999` to z-20 globally. The click-outside backdrop (z-40) sat above the menu, so taps landed on the backdrop and ran `closeMenu()` instead of the menu item's handler. Bumped header to `z-50` so its stacking context sits above the backdrop, matching the documented z-scale (backdrop 40, panel 50, banner 70, modal/debug 60/80). Comment on the backdrop updated to describe the actual stacking model. Typecheck clean.
+
+2. **DebugPill first-tap freezes the whole tab on mobile web** — root-cause fix applied. Three layers, in order of importance:
+   - **Cap rendered entries to last 50** (`MAX_VISIBLE_ENTRIES`). The actual freeze cause: 200 log entries × ~7 DOM nodes each × dynamic `color-mix()` styles, then `afterUpdate` forced a layout pass via `scrollHeight`. On touch devices that compounds to multi-second JS-thread block, which reads as a permanent freeze. The full 200-entry buffer stays in memory for Copy / report — only the visible render is capped. Indicator row "Showing last 50 of N" appears when N > 50.
+   - **Switched reactive `tick().then()` auto-scroll to `afterUpdate`.** Previous pattern carried an `eslint-disable svelte/infinite-reactive-loop` suppression and queued a layout-forcing microtask per reactive update.
+   - **Wrapped `JSON.stringify(entry.details)` in try/catch** (`safeStringifyDetails`). A throw inside the template would bubble → window error handler → `debugAdd` → subscriber → re-render same broken entry → infinite loop.
+   - **Removed DaisyUI `tooltip` from the closed pill and the inner Copy/Clear/× buttons.** `tooltip + position:fixed` on touch can leave a stuck `:hover` state that interleaves badly with the synchronous panel mount. `aria-label` carries the accessible name; visible button text carries the affordance.
+   - **Header comment updated** to drop the inconsistent "Tailwind rejected" rationale (file already uses Tailwind/DaisyUI throughout) and document the mobile freeze guard.
+
+3. **Wrap-pass cleanups applied** (after user direction "fix all properly").
+   - **AI_MISTAKES.md** — added two entries: (a) `z-index on a positioned ancestor flattens descendants' effective stacking` (the menu bug's general lesson), (b) `Patched two layers before diagnosing the actual cause of a "freeze"` (the pill bug's process lesson).
+   - **DebugPill inline-style migration** — every `style="..."` attribute on the panel migrated to Tailwind / DaisyUI utility classes (~150 lines of inline CSS gone). Dynamic severity colour now goes through `severityClass()` returning DaisyUI semantic tokens (`text-error` / `text-warning` / `text-success` / `text-base-content/60`) instead of inline `style="color: var(--color-error)"`. Resolves the file's "no inline CSS" violation per CLAUDE.md.
+   - **Tooltips restored, hover-gated** — the closed pill and the Copy/Clear/× buttons get their `tooltip` + `data-tip` back, with a scoped `<style>` block that disables `.tooltip::before`/`::after` inside `#debug-root` on coarse-pointer / non-hover devices via `@media not all and (hover: hover) and (pointer: fine)`. Desktop hover affordance preserved; touch devices skip the stuck-hover footgun.
+   - **`safeStringify` extracted to `$lib/utils/safeStringify.ts`** with full JSDoc on why-it-exists (the freeze-prevention guarantee). Importable from anywhere.
+   - **Vitest set up in `apps/web`** (`apps/web/vitest.config.ts`, `tests/unit/`, `pnpm test` script). Mirrors the calculator package's config — node environment, no DOM. Six unit tests for `safeStringify` covering: null/undefined → empty string; primitives, objects, arrays serialise normally; circular references → `[unserialisable]`; BigInt → `[unserialisable]`; `toJSON` that throws → `[unserialisable]`; legitimate falsy values (`0`, `false`, `''`, `{}`, `[]`) round-trip correctly.
+   - **Root `pnpm test`** changed from filtering only the calculator to `pnpm -r --if-present test` — now runs both calculator (301) and web (6).
+
+**Validation**: svelte-check 0/0, eslint 0/0, calculator 301/301, web 6/6, theme-hex 11/11.
+
+---
+
+## Previous State (May 1, 2026)
 
 **Last completed**: DaisyUI-completion audit re-do (chunks #1–#17 + #5b/#6b/#7b/#7c/#9a-e). All overlays migrated to native DaisyUI primitives. Drift-detection script wired into `pnpm check`.
 
