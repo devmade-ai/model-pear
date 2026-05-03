@@ -9,7 +9,7 @@
   Source: glow-props DEBUG_SYSTEM.md pattern, adapted for Svelte 4
 -->
 <script lang="ts">
-  import { onMount, onDestroy, tick } from 'svelte';
+  import { onMount, onDestroy, afterUpdate } from 'svelte';
   import type { DebugEntry } from '$lib/debugLog';
   import {
     debugAdd,
@@ -45,16 +45,41 @@
   $: errorCount = entries.filter((e) => e.severity === 'error').length;
   $: warnCount = entries.filter((e) => e.severity === 'warn').length;
 
-  // Auto-scroll log to bottom on new entries.
-  // tick() waits for Svelte's pending DOM updates to flush before scrolling.
-  // The .scrollTop = .scrollHeight write is inside an async tick().then(),
-  // so it can't trigger a synchronous reactive loop — eslint-plugin-svelte
-  // flags it conservatively but the asynchrony breaks the cycle.
-  $: if (logContainer && entries.length) {
-    tick().then(() => {
-      // eslint-disable-next-line svelte/infinite-reactive-loop
-      if (logContainer) logContainer.scrollTop = logContainer.scrollHeight;
-    });
+  // Auto-scroll log to bottom after every component update.
+  // Requirement: pin the log view to the latest entry so users see new logs.
+  // Approach: afterUpdate runs once per render cycle, AFTER Svelte has
+  //   flushed DOM updates — so scrollHeight reflects the just-rendered
+  //   content. No tick() / microtask scheduling needed.
+  // Why not the previous `$: if (logContainer && entries.length) { tick().then(...) }`:
+  //   - That reactive pattern needed an `eslint-disable svelte/infinite-reactive-loop`
+  //     suppression because reading scrollHeight + writing scrollTop inside a
+  //     statement that depends on a reactive variable is structurally a loop
+  //     even if the asynchronous tick().then() breaks it in practice.
+  //   - On mobile, every reactive update queued another microtask whose
+  //     scrollHeight read forced a layout pass. Under high update rates
+  //     (rapid debugAdd → subscriber → entries reassign) the microtask
+  //     queue plus layout work could starve the UI thread on a touch device.
+  // afterUpdate is the canonical Svelte 4 hook for "do DOM stuff after
+  // render", scoped to one fire per update regardless of how many
+  // reactive dependencies changed in that cycle.
+  afterUpdate(() => {
+    if (activeTab === 'log' && logContainer && entries.length) {
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+  });
+
+  // Defensive JSON serialiser for log entry details.
+  // Requirement: rendering a log entry must NEVER throw — a thrown render
+  //   would bubble to the window 'error' handler, which calls debugAdd,
+  //   which triggers subscribers, which sets `entries`, which re-renders
+  //   the same broken entry → infinite loop → frozen tab.
+  // Approach: try/catch around JSON.stringify. Circular refs and BigInt
+  //   throw TypeError; we render '[unserialisable]' so the entry is still
+  //   visible without crashing the panel.
+  function safeStringifyDetails(details: Record<string, unknown> | undefined): string {
+    if (!details) return '';
+    try { return JSON.stringify(details); }
+    catch { return '[unserialisable]'; }
   }
 
   let unsubscribe: (() => void) | null = null;
@@ -402,7 +427,7 @@
                     margin-top: 1px;
                     margin-left: 82px;
                     word-break: break-all;
-                  ">{JSON.stringify(entry.details)}</div>
+                  ">{safeStringifyDetails(entry.details)}</div>
                 {/if}
               </div>
             {/each}
