@@ -476,8 +476,12 @@
      Scoping :global() to #debug-root keeps this rule targeted at the
      pill's own DOM and leaves DaisyUI tooltips elsewhere in the app
      untouched. The selector matches both ::before (label text)
-     and ::after (arrow). */
-  @media not all and (hover: hover) and (pointer: fine) {
+     and ::after (arrow).
+     Comma-OR form chosen over `not all and (hover) and (pointer)` —
+     `not` precedence on compound media queries varies between older
+     parsers; comma-OR is unambiguous: matches when the device has
+     no hover capability OR a coarse pointer. */
+  @media (hover: none), (pointer: coarse) {
     :global(#debug-root .tooltip::before),
     :global(#debug-root .tooltip::after) {
       display: none !important;
