@@ -1,12 +1,25 @@
 <!--
-  Requirement: Floating debug pill for alpha-phase diagnostics
-  Approach: Svelte component mounted in separate #debug-root (survives app crashes).
-    Uses inline styles instead of Tailwind — survives stylesheet load failures since
-    the pill runs in an isolated root outside the SvelteKit tree.
-  Alternatives:
-    - Embed in SvelteKit layout tree: Rejected — dies if app crashes
-    - Tailwind classes: Rejected — app CSS not guaranteed to load in isolated root
-  Source: glow-props DEBUG_SYSTEM.md pattern, adapted for Svelte 4
+  Requirement: Floating debug pill for alpha-phase diagnostics.
+  Approach: Svelte component mounted in a separate #debug-root sibling
+    of %sveltekit.body% (apps/web/src/app.html). Lives outside the
+    SvelteKit tree so the pill survives a navigation crash in the app.
+  Styling: DaisyUI/Tailwind classes for the closed pill and the panel's
+    header / tab / button surfaces; a small set of remaining inline
+    `style="..."` attributes carry the panel's exact pixel sizing,
+    flexbox layout, and DaisyUI-token-driven colours. The isolated
+    `#debug-root` still inherits the document stylesheet, so utility
+    classes resolve normally — the original "stylesheet might not
+    load" rationale was overcautious and inconsistent with the rest
+    of the file.
+  Mobile freeze guard: the log tab caps rendered entries to
+    MAX_VISIBLE_ENTRIES (50) regardless of buffer size; the full 200-
+    entry buffer is preserved for Copy / report. This stops the
+    afterUpdate scrollHeight read from forcing a multi-second layout
+    pass on touch devices.
+  Removal note: when alpha ends, delete this component, debugLog.ts,
+    clipboardUtils.ts, and the #debug-root + inline boot scripts in
+    app.html (see SESSION_NOTES.md "Removal note").
+  Source: glow-props DEBUG_SYSTEM.md pattern, adapted for Svelte 4.
 -->
 <script lang="ts">
   import { onMount, onDestroy, afterUpdate } from 'svelte';
@@ -41,9 +54,32 @@
   let diagnostics: DiagnosticResult[] = [];
   let diagnosticRunId = 0;
 
-  // Counts for badge display
+  // Counts for badge display — run on the full buffer so the closed pill
+  // always shows true totals, not just what's visible in the panel.
   $: errorCount = entries.filter((e) => e.severity === 'error').length;
   $: warnCount = entries.filter((e) => e.severity === 'warn').length;
+
+  // Render only the most recent N entries in the log tab.
+  // Requirement: opening the panel must not freeze the tab on mobile.
+  // Approach: cap the rendered list to MAX_VISIBLE_ENTRIES. The full
+  //   buffer (up to 200) stays in memory and is included in the
+  //   copy/report; the cap is purely a render-cost reduction.
+  // Why: each entry compiles to ~7 DOM nodes with dynamic styles and
+  //   color-mix() lookups against DaisyUI tokens. Rendering 200 of those
+  //   AND forcing a layout pass via afterUpdate's scrollHeight read
+  //   pinned the JS thread on touch devices long enough to read as a
+  //   permanent freeze. 50 is empirically enough to read the recent
+  //   trail; older entries are still in the report when needed.
+  // Alternatives considered:
+  //   - Virtualised list (svelte-virtual-list etc): rejected, adds a dep
+  //     for an alpha-only debug surface.
+  //   - Lower MAX_ENTRIES from 200 to 50: rejected, would lose history
+  //     in copy/report exports which are the diagnostic deliverable.
+  const MAX_VISIBLE_ENTRIES = 50;
+  $: visibleEntries = entries.length > MAX_VISIBLE_ENTRIES
+    ? entries.slice(-MAX_VISIBLE_ENTRIES)
+    : entries;
+  $: hiddenEntryCount = Math.max(0, entries.length - visibleEntries.length);
 
   // Auto-scroll log to bottom after every component update.
   // Requirement: pin the log view to the latest entry so users see new logs.
@@ -266,12 +302,17 @@
   ];
 </script>
 
-<!-- Collapsed pill -->
+<!-- Collapsed pill.
+     Tooltip removed: DaisyUI .tooltip + position:fixed on touch devices
+     can leave a stuck :hover state after tap, which on mobile WebKit can
+     interleave badly with the synchronous panel-mount that follows. The
+     pill text "dbg" + entry count is self-explanatory. -->
 {#if !expanded}
   <button
     on:click={toggleExpanded}
-    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300 tooltip tooltip-left"
-    data-tip="Open debug panel"
+    type="button"
+    aria-label="Open debug panel"
+    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300"
   >
     <span>dbg</span>
     <span class="opacity-60">{entries.length}</span>
@@ -320,24 +361,29 @@
         <span style="font-weight: 600; color: var(--color-base-content);">Debug</span>
         <span style="color: color-mix(in srgb, var(--color-base-content) 50%, transparent);">{entries.length} entries</span>
       </div>
+      <!-- Tooltips removed for the same touch-device reason as the closed
+           pill: aria-label is the accessible name; the visible label
+           text on Copy/Clear/× is the affordance for sighted users. -->
       <div style="display: flex; align-items: center; gap: 4px;">
         <button
           on:click={handleCopy}
-          class="btn btn-xs font-mono tooltip tooltip-bottom {copyStatus === 'copied' ? 'btn-success' : copyStatus === 'failed' ? 'btn-error' : ''}"
-          data-tip="Copy debug report to clipboard"
+          type="button"
+          aria-label="Copy debug report to clipboard"
+          class="btn btn-xs font-mono {copyStatus === 'copied' ? 'btn-success' : copyStatus === 'failed' ? 'btn-error' : ''}"
         >
           {copyStatus === 'copied' ? 'Copied!' : copyStatus === 'failed' ? 'Failed' : 'Copy'}
         </button>
         <button
           on:click={handleClear}
-          class="btn btn-xs font-mono tooltip tooltip-bottom"
-          data-tip="Clear all log entries"
+          type="button"
+          aria-label="Clear all log entries"
+          class="btn btn-xs font-mono"
         >Clear</button>
         <button
           on:click={toggleExpanded}
-          class="btn btn-xs btn-square btn-ghost font-mono tooltip tooltip-left"
-          data-tip="Close debug panel"
+          type="button"
           aria-label="Close debug panel"
+          class="btn btn-xs btn-square btn-ghost font-mono"
         >&times;</button>
       </div>
     </div>
@@ -398,7 +444,17 @@
           {#if entries.length === 0}
             <div style="padding: 16px; color: color-mix(in srgb, var(--color-base-content) 50%, transparent); text-align: center;">No log entries yet</div>
           {:else}
-            {#each entries as entry (entry.id)}
+            {#if hiddenEntryCount > 0}
+              <div style="
+                padding: 4px 10px;
+                color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
+                font-size: 10px;
+                text-align: center;
+                border-bottom: 1px solid var(--color-base-300);
+                background: var(--color-base-200);
+              ">Showing last {visibleEntries.length} of {entries.length} entries (older trimmed for performance — full log included in Copy)</div>
+            {/if}
+            {#each visibleEntries as entry (entry.id)}
               <div style="
                 padding: 3px 10px;
                 border-bottom: 1px solid var(--color-base-300);

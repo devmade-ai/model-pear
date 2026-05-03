@@ -10,11 +10,12 @@
 
 1. **Burger menu items don't navigate (just close)** — FIXED. Header had `sticky top-0 z-20`, which establishes a stacking context that flattens DaisyUI's `dropdown-content z-999` to z-20 globally. The click-outside backdrop (z-40) sat above the menu, so taps landed on the backdrop and ran `closeMenu()` instead of the menu item's handler. Bumped header to `z-50` so its stacking context sits above the backdrop, matching the documented z-scale (backdrop 40, panel 50, banner 70, modal/debug 60/80). Comment on the backdrop updated to describe the actual stacking model. Typecheck clean.
 
-2. **DebugPill first-tap freezes the whole tab on mobile web** — defensive fix applied; needs user verification. Two changes:
-   - Replaced the `$: if (logContainer && entries.length) { tick().then(...) }` reactive auto-scroll (which carried an `eslint-disable svelte/infinite-reactive-loop` suppression) with the canonical Svelte 4 `afterUpdate` hook. The previous pattern queued a microtask per reactive update, each of which forced a layout pass via `scrollHeight`. On mobile this could starve the UI thread under high update rates.
-   - Wrapped `JSON.stringify(entry.details)` in a try/catch (`safeStringifyDetails`). If a logged details object had a circular ref / BigInt / throwing toJSON, the throw bubbled to the global error handler → `debugAdd` → subscriber → re-render same broken entry → infinite loop. The render path now degrades to `[unserialisable]` instead of throwing.
-
-   Either of these could be the actual cause. If the freeze persists after this commit, the next layer to investigate is the panel render itself (200 entries × inline styles + color-mix() on a touch device) — possibly cap rendered entries to last 50 with a "showing N of M" indicator.
+2. **DebugPill first-tap freezes the whole tab on mobile web** — root-cause fix applied. Three layers, in order of importance:
+   - **Cap rendered entries to last 50** (`MAX_VISIBLE_ENTRIES`). The actual freeze cause: 200 log entries × ~7 DOM nodes each × dynamic `color-mix()` styles, then `afterUpdate` forced a layout pass via `scrollHeight`. On touch devices that compounds to multi-second JS-thread block, which reads as a permanent freeze. The full 200-entry buffer stays in memory for Copy / report — only the visible render is capped. Indicator row "Showing last 50 of N" appears when N > 50.
+   - **Switched reactive `tick().then()` auto-scroll to `afterUpdate`.** Previous pattern carried an `eslint-disable svelte/infinite-reactive-loop` suppression and queued a layout-forcing microtask per reactive update.
+   - **Wrapped `JSON.stringify(entry.details)` in try/catch** (`safeStringifyDetails`). A throw inside the template would bubble → window error handler → `debugAdd` → subscriber → re-render same broken entry → infinite loop.
+   - **Removed DaisyUI `tooltip` from the closed pill and the inner Copy/Clear/× buttons.** `tooltip + position:fixed` on touch can leave a stuck `:hover` state that interleaves badly with the synchronous panel mount. `aria-label` carries the accessible name; visible button text carries the affordance.
+   - **Header comment updated** to drop the inconsistent "Tailwind rejected" rationale (file already uses Tailwind/DaisyUI throughout) and document the mobile freeze guard.
 
 ---
 
