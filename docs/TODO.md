@@ -90,6 +90,11 @@
 
 ---
 
+## PWA
+
+- [ ] Browser-verify the auto-on-launch update loop on a deployed HTTPS instance: deploy → revisit installed app → silent launch-apply reload picks up the new version; flip "Automatic updates" OFF → same scenario shows the UpdateBanner instead; "Check for updates" surfaces each typed result (up-to-date toast, update-available → banner). Pairs with the existing Phase F–I browser sweep in SESSION_NOTES.
+- [ ] Optional launch-apply "Updating…" affordance — the launch reload is currently silent (sub-second on warm cache, before any interaction). If it proves noticeable on slow devices/networks, add a brief indicator per the glow-props spec's "behind the app's brief 'Updating…' affordance" wording.
+
 ## Low Priority: Naming
 
 - [ ] Rename `intercompany` model category to `transactions` — the category id was set when the tool was scoped to intercompany transactions only; current scope is "any client (related or unrelated)" and the category name no longer reflects reality. Touches the model registry and any branching on `category === 'intercompany'`.

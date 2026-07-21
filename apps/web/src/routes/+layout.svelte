@@ -130,6 +130,57 @@
     closeMenu();
   }
 
+  /* ===========================================================
+     PWA update policy UI (fleet auto-on-launch standard).
+
+     - "Automatic updates" toggle: persisted preference (default ON)
+       gating the launch-apply in $lib/pwa. Mirrors the effective value
+       returned by setAutoUpdateEnabled so a blocked localStorage can't
+       leave the toggle claiming a state that won't persist.
+     - "Check for updates": runs the typed check and surfaces the result
+       as a transient toast. 'update-available' shows NO toast — the
+       UpdateBanner (which $lib/pwa emits for that result) is the
+       feedback surface; a second toast would say the same thing twice.
+     =========================================================== */
+
+  let autoUpdateEnabled = true;
+
+  type UpdateCheckStatus = 'idle' | 'checking' | 'up-to-date' | 'no-sw' | 'error';
+  let updateCheckStatus: UpdateCheckStatus = 'idle';
+  /* Auto-dismiss timer for the result toast — held in component scope so
+     the onMount cleanup can clear it (TIMER_LEAKS: single-shot → ref). */
+  let updateCheckTimer: ReturnType<typeof setTimeout> | null = null;
+  const UPDATE_CHECK_TOAST_MS = 4_000;
+
+  function toggleAutoUpdate(e: Event): void {
+    const el = e.currentTarget as HTMLInputElement;
+    autoUpdateEnabled = window.__pwa?.setAutoUpdateEnabled(el.checked) ?? el.checked;
+    // Keep the DOM checkbox in lockstep with the effective value when the
+    // write was rejected (read-back differs from what was clicked).
+    el.checked = autoUpdateEnabled;
+  }
+
+  async function runUpdateCheck(): Promise<void> {
+    closeMenu();
+    if (updateCheckStatus === 'checking') return; // one check at a time
+    if (updateCheckTimer) {
+      clearTimeout(updateCheckTimer);
+      updateCheckTimer = null;
+    }
+    updateCheckStatus = 'checking';
+    const result = (await window.__pwa?.checkForUpdates()) ?? 'no-sw';
+    if (result === 'update-available') {
+      // The UpdateBanner takes over (see block comment above).
+      updateCheckStatus = 'idle';
+      return;
+    }
+    updateCheckStatus = result;
+    updateCheckTimer = setTimeout(() => {
+      updateCheckStatus = 'idle';
+      updateCheckTimer = null;
+    }, UPDATE_CHECK_TOAST_MS);
+  }
+
   /* Keyboard nav inside the menu. Bound on the menu container so it
      fires regardless of which item has focus. */
   function handleMenuKeydown(e: KeyboardEvent): void {
@@ -182,6 +233,11 @@
     // Initial theme state for the toggle label.
     isDark = document.documentElement.classList.contains('dark');
 
+    // Initial "Automatic updates" state for the menu toggle. $lib/pwa is
+    // imported above, so window.__pwa exists by mount time; the fallback
+    // matches the fleet default (ON).
+    autoUpdateEnabled = window.__pwa?.isAutoUpdateEnabled() ?? true;
+
     // Listen for theme changes from any source (toggle button, cross-tab
     // storage event, OS-preference flip). Keeps the menu's label in sync.
     // `theme:change` is typed via WindowEventMap augmentation in app.d.ts.
@@ -214,9 +270,14 @@
     return () => {
       destroyed = true;
       if (pill) pill.$destroy();
-      // Run all tracked listener cleanups; release any leftover scroll lock.
+      // Run all tracked listener cleanups; release any leftover scroll lock
+      // and the update-check toast's auto-dismiss timer.
       disposeListeners();
       unlockBodyScroll();
+      if (updateCheckTimer) {
+        clearTimeout(updateCheckTimer);
+        updateCheckTimer = null;
+      }
     };
   });
 </script>
@@ -378,6 +439,48 @@
               </button>
             </li>
 
+            <!-- Check for updates: closes the menu, then the transient
+                 toast (bottom-centre) carries the checking/result feedback.
+                 If an update IS found, the UpdateBanner appears instead. -->
+            <li>
+              <button
+                type="button"
+                data-menu-item
+                role="menuitem"
+                on:click={runUpdateCheck}
+              >
+                <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Check for updates</span>
+              </button>
+            </li>
+
+            <!-- Automatic updates toggle. Native checkbox with DaisyUI
+                 .toggle styling; role="menuitemcheckbox" fits the menu's
+                 ARIA content model. Both `checked` (native state) and
+                 `aria-checked` (required by the ARIA role, enforced by
+                 svelte-check) render from the same variable so they can't
+                 drift. No data-close — like the theme toggle, the menu
+                 stays open so the user sees the state flip. -->
+            <li>
+              <label class="justify-between gap-3">
+                <span class="flex flex-col items-start gap-0.5">
+                  <span>Automatic updates</span>
+                  <span class="text-xs text-base-content/60">Updates apply automatically when the app opens</span>
+                </span>
+                <input
+                  type="checkbox"
+                  class="toggle toggle-primary toggle-sm flex-shrink-0"
+                  data-menu-item
+                  role="menuitemcheckbox"
+                  checked={autoUpdateEnabled}
+                  aria-checked={autoUpdateEnabled}
+                  on:change={toggleAutoUpdate}
+                />
+              </label>
+            </li>
+
             <li class="menu-divider"><hr class="border-base-300" /></li>
 
             <!-- Save-as-PDF: closes the menu first via savePdf() so the
@@ -427,6 +530,41 @@
        Mounted from the layout so they're available on every route. -->
   <UpdateBanner />
   <InstallModal />
+
+  <!-- "Check for updates" feedback toast.
+       Requirement: user feedback for every check outcome (checking /
+       up-to-date / unsupported / failed).
+       Approach: DaisyUI .toast + .alert (same idiom as UpdateBanner) at
+       toast-CENTER so it can never overlap the UpdateBanner's toast-end
+       container if both are on screen; same z-70 banner tier.
+       Alternatives:
+         - Reuse UpdateBanner for result messages: rejected — it models
+           exactly one thing ("a new SW is waiting" + apply/dismiss);
+           overloading it with transient statuses muddles its state machine.
+         - toast-end like the banner: rejected — two fixed containers in
+           the same corner paint on top of each other. -->
+  {#if updateCheckStatus !== 'idle'}
+    <div class="toast toast-center toast-bottom z-[70] pb-[env(safe-area-inset-bottom)]">
+      <div
+        class="alert {updateCheckStatus === 'error' || updateCheckStatus === 'no-sw'
+          ? 'alert-warning'
+          : 'alert-info'} alert-soft shadow-2xl"
+        role="status"
+        aria-live="polite"
+      >
+        {#if updateCheckStatus === 'checking'}
+          <span class="loading loading-spinner loading-xs" aria-hidden="true"></span>
+          <span class="text-sm">Checking for updates…</span>
+        {:else if updateCheckStatus === 'up-to-date'}
+          <span class="text-sm">You're on the latest version.</span>
+        {:else if updateCheckStatus === 'no-sw'}
+          <span class="text-sm">Update checks aren't available in this browser.</span>
+        {:else}
+          <span class="text-sm">Couldn't check for updates. Please try again in a moment.</span>
+        {/if}
+      </div>
+    </div>
+  {/if}
 
   <!-- Footer -->
   <footer class="bg-base-200 border-t border-base-300">

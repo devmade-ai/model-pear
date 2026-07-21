@@ -3,11 +3,21 @@
  *
  * Responsibilities:
  *   - Register the service worker via vite-plugin-pwa's virtual module.
+ *   - Apply the fleet-standard "auto-on-launch" update policy (glow-props
+ *     PWA_SYSTEM.md): a SW that is ALREADY waiting when registration first
+ *     resolves is applied immediately (skipWaiting → one reload) — that
+ *     moment is safe because the user hasn't entered any calculator inputs
+ *     yet. Updates that install mid-session NEVER auto-reload (Model Pear
+ *     holds calculator inputs in memory; a reload loses them) — they arm
+ *     the banner and otherwise apply on the next launch. A persisted
+ *     "Automatic updates" preference (default ON) gates the launch-apply.
  *   - Drive the update banner: show "A new version is available" when a
  *     new SW is waiting, run updateSW() on click, suppress for 30s after
  *     dismiss, only emit when the document is visible (Safari doesn't
  *     close backgrounded PWAs — without the visibility check the banner
  *     pops behind a tab the user isn't looking at).
+ *   - Manual "Check for updates": registration.update() + settle delay,
+ *     returning the fleet-canonical typed result for toast feedback.
  *   - Manage the install affordance: hand off to the native deferred
  *     prompt on Chromium browsers; show a browser-specific instructions
  *     modal on Safari/Firefox.
@@ -49,6 +59,49 @@ let installModalCallback: ((info: InstallInstruction) => void) | null = null;
 let dismissedAt = 0;
 const SUPPRESS_MS = 30_000;
 
+/** The resolved SW registration — stored so checkForUpdates() can drive
+    registration.update() on demand (the hourly poll closes over it too). */
+let swRegistration: ServiceWorkerRegistration | null = null;
+
+/** True from module load until the launch-apply decision has been made in
+    onRegisteredSW (or registration failed). While true, an armed update
+    stays banner-silent — the decision resolves it to either a silent
+    launch-apply or the normal banner path. */
+let launchPhase = true;
+
+/** True while a launch-apply (skipWaiting → reload) is in flight. Gates
+    onNeedRefresh and the banner so nothing flashes during the sub-second
+    window before controllerchange reloads the page. */
+let launchApplying = false;
+
+/** Requirement: fleet "Automatic updates" toggle — persisted, default ON.
+    Key convention: bare camelCase matches the theme module's `darkMode`
+    (this repo has no prefixed-key or safeStorage convention; access is
+    inline try/catch like theme.ts).
+    Value '' + 'true' + absent = ON; only the literal 'false' turns it off,
+    so a corrupted value fails toward the fleet default. */
+const AUTO_UPDATE_KEY = 'pwaAutoUpdate';
+
+/** Post-apply re-detection suppression stamp (sessionStorage — the
+    double-underscore internal convention matches __pwaReloadedAt).
+    For ~30s after an update is applied, workbox can re-fire `waiting`
+    for the version just installed while the SW lifecycle settles after
+    the reload; onNeedRefresh and the launch-apply check both consult
+    this stamp to ignore that echo. */
+const UPDATE_APPLIED_KEY = '__pwaUpdateAppliedAt';
+const UPDATE_APPLIED_SUPPRESS_MS = 30_000;
+
+/** Settle delay after registration.update() in checkForUpdates() —
+    workbox's waiting/needRefresh events land asynchronously, so the
+    typed result is read after this window (fleet-standard ~1500ms). */
+const CHECK_SETTLE_MS = 1_500;
+
+/** Watchdog for the launch-apply path: if controllerchange hasn't
+    reloaded the page within this window, the skipWaiting silently
+    failed — fall back to the banner so the user can apply by hand.
+    Mirrors UpdateBanner's POST_UPDATE_RELOAD_TIMEOUT_MS rationale. */
+const LAUNCH_APPLY_TIMEOUT_MS = 15_000;
+
 /** Three-state machine for the update banner.
  *    'idle'    — no update available (initial / after user actioned).
  *    'pending' — onNeedRefresh has fired; the banner should appear as
@@ -71,7 +124,58 @@ const RELOAD_THROTTLE_KEY = '__pwaReloadedAt';
 const RELOAD_THROTTLE_MS = 5_000;
 
 const { track, dispose: disposeListeners } = createListenerTracker();
-const intervalCleanups: Array<() => void> = [];
+/** Interval + timeout releases for HMR teardown (hourly poll, launch watchdog). */
+const timerCleanups: Array<() => void> = [];
+
+// ---------------------------------------------------------------------------
+// Auto-update preference + post-apply suppression
+// ---------------------------------------------------------------------------
+
+/** Persisted "Automatic updates" preference — absent/unreadable = ON
+    (fleet default: every client converges by its next launch). */
+function isAutoUpdateEnabled(): boolean {
+  try {
+    return localStorage.getItem(AUTO_UPDATE_KEY) !== 'false';
+  } catch {
+    // localStorage blocked (private mode, sandboxed iframe) — fleet default.
+    return true;
+  }
+}
+
+/**
+ * Persist the "Automatic updates" preference. Returns the EFFECTIVE value
+ * read back from storage so a blocked localStorage can't leave the menu
+ * toggle claiming a state that won't survive the session — the caller
+ * renders whatever this returns.
+ */
+function setAutoUpdateEnabled(on: boolean): boolean {
+  try {
+    localStorage.setItem(AUTO_UPDATE_KEY, String(on));
+  } catch {
+    // Blocked — the read-back below reports the unchanged default.
+  }
+  return isAutoUpdateEnabled();
+}
+
+/** Whether an update was applied within the last 30s (survives the
+    controllerchange reload via sessionStorage). */
+function wasJustUpdated(): boolean {
+  try {
+    const ts = Number(sessionStorage.getItem(UPDATE_APPLIED_KEY) ?? 0);
+    return Date.now() - ts < UPDATE_APPLIED_SUPPRESS_MS;
+  } catch {
+    return false;
+  }
+}
+
+/** Stamp the moment an update is applied (user-clicked OR launch-apply). */
+function markUpdateApplied(): void {
+  try {
+    sessionStorage.setItem(UPDATE_APPLIED_KEY, String(Date.now()));
+  } catch {
+    // sessionStorage blocked — worst case is a redundant post-reload banner.
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Browser detection + install instructions
@@ -223,6 +327,10 @@ function applyUpdate(): Promise<void> {
   // failures (download dropped, skip-waiting threw) instead of
   // silently doing nothing.
   updateState = 'idle';
+  // Stamp the 30s suppression BEFORE skipWaiting so the post-reload
+  // module instance (and any late `waiting` echo in this one) can
+  // recognise the applied version and not re-arm the banner for it.
+  markUpdateApplied();
   if (!updateSW) return Promise.resolve();
   return updateSW().catch((err: unknown) => {
     if (typeof console !== 'undefined') {
@@ -260,11 +368,69 @@ function setInstallModalCallback(cb: ((info: InstallInstruction) => void) | null
  *  has to actively dismiss or apply to return to 'idle'. */
 function maybeEmitUpdateBanner(): void {
   if (typeof document === 'undefined') return;
+  // During the launch window the banner stays silent: either the update
+  // is about to launch-apply (banner would flash for <1s before the
+  // reload), or the decision hasn't been made yet — endLaunchPhase()
+  // re-runs this emit once it has.
+  if (launchPhase || launchApplying) return;
   if (updateState !== 'pending') return;
   if (document.visibilityState !== 'visible') return;
   if (Date.now() - dismissedAt < SUPPRESS_MS) return;
   if (!updateBannerCallback) return;
   updateBannerCallback();
+}
+
+/** Close the launch window. An update that was armed during the window
+ *  but not launch-applied (toggle OFF, apply failed, registration error)
+ *  falls through to the normal banner path here. */
+function endLaunchPhase(): void {
+  launchPhase = false;
+  maybeEmitUpdateBanner();
+}
+
+/**
+ * Manual "Check for updates" (burger-menu action).
+ *
+ * Requirement: fleet-standard typed result so the caller can surface
+ * plain-language feedback for every outcome.
+ * Approach: registration.update() then a ~1500ms settle so workbox's
+ * async waiting/needRefresh events land, then read the update state.
+ * Alternatives:
+ *   - Resolve on the workbox event directly: rejected — "no update found"
+ *     produces NO event, so the no-op case would hang without a timer
+ *     anyway; the settle window covers both outcomes with one mechanism.
+ *   - Skip the settle and read registration.installing: rejected — races
+ *     the HTTP fetch of sw.js; reports 'up-to-date' while a new version
+ *     is mid-download.
+ *
+ * The settle setTimeout is an awaited one-shot that always resolves —
+ * nothing to clean up (it holds no component/module resource).
+ */
+async function checkForUpdates(): Promise<PWACheckForUpdatesResult> {
+  if (!w || !('serviceWorker' in navigator) || !swRegistration) {
+    // No SW support, or registration hasn't resolved (dev mode registers
+    // no SW at all — devOptions.enabled is false in vite.config.ts).
+    return 'no-sw';
+  }
+  try {
+    await swRegistration.update();
+  } catch (err: unknown) {
+    if (typeof console !== 'undefined') {
+      console.error('[pwa] manual update check failed:', err);
+    }
+    return 'error';
+  }
+  await new Promise((resolve) => setTimeout(resolve, CHECK_SETTLE_MS));
+  if (updateState === 'pending' || swRegistration.waiting) {
+    // An explicit user check overrides the "Later" 30s suppression AND a
+    // waiting worker whose event was swallowed by the post-apply stamp —
+    // the user actively asked, so surface the banner now.
+    updateState = 'pending';
+    dismissedAt = 0;
+    maybeEmitUpdateBanner();
+    return 'update-available';
+  }
+  return 'up-to-date';
 }
 
 // ---------------------------------------------------------------------------
@@ -328,7 +494,14 @@ function attachListeners(): void {
 if (w && 'serviceWorker' in navigator) {
   updateSW = registerSW({
     onNeedRefresh: () => {
+      // Ignore the `waiting` echo for a version that was just applied
+      // (30s post-apply window straddling the reload), and anything that
+      // fires while a launch-apply reload is already in flight.
+      if (wasJustUpdated() || launchApplying) return;
       updateState = 'pending';
+      // During launchPhase this arms the state without emitting (gated
+      // inside maybeEmitUpdateBanner); endLaunchPhase() emits later if
+      // the update doesn't launch-apply.
       maybeEmitUpdateBanner();
     },
     onOfflineReady: () => {
@@ -347,9 +520,59 @@ if (w && 'serviceWorker' in navigator) {
         message: '[pwa] Service worker registration failed',
         error: err instanceof Error ? err : new Error(String(err)),
       }));
+      // Registration failed → no launch-apply decision will ever be made;
+      // close the window so nothing stays banner-gated.
+      endLaunchPhase();
     },
     onRegisteredSW: (_swUrl: string, registration: ServiceWorkerRegistration | undefined) => {
-      if (!registration) return;
+      if (!registration) {
+        endLaunchPhase();
+        return;
+      }
+      swRegistration = registration;
+
+      // Requirement: fleet auto-on-launch update policy (glow-props
+      // PWA_SYSTEM.md "Update Application Policy").
+      // Approach: a worker ALREADY waiting when registration first
+      // resolves was armed on a previous visit — apply it now via the
+      // same applyUpdate() path the banner uses (skipWaiting → the
+      // existing controllerchange listener reloads exactly once). This
+      // moment is safe: the user hasn't entered calculator inputs yet.
+      // A worker that reaches waiting later in the session is deferred
+      // to the banner / next launch.
+      // Alternatives:
+      //   - registerType 'autoUpdate': rejected — reloads mid-session
+      //     and destroys the in-memory calculator inputs.
+      //   - Tap-only prompt (previous behaviour): rejected as fleet
+      //     default — clients that never tap run stale code forever
+      //     (the canva-grid stale-GA incident).
+      if (registration.waiting && isAutoUpdateEnabled() && !wasJustUpdated()) {
+        launchApplying = true;
+        launchPhase = false; // decision made: silent apply, no banner
+        void applyUpdate().catch(() => {
+          // updateSW() failed (already logged inside applyUpdate). Fall
+          // back to the banner so the user can retry by hand instead of
+          // dead-ending until the next launch.
+          launchApplying = false;
+          updateState = 'pending';
+          maybeEmitUpdateBanner();
+        });
+        // Watchdog: skipWaiting resolved but controllerchange never
+        // reloaded (activation stuck) — fall back to the banner. On the
+        // normal path the reload discards this timer with the page.
+        const watchdogId = window.setTimeout(() => {
+          if (!launchApplying) return;
+          launchApplying = false;
+          updateState = 'pending';
+          maybeEmitUpdateBanner();
+        }, LAUNCH_APPLY_TIMEOUT_MS);
+        timerCleanups.push(() => window.clearTimeout(watchdogId));
+      } else {
+        // No waiting worker, auto-update OFF, or inside the post-apply
+        // suppression window — banner path owns any pending update.
+        endLaunchPhase();
+      }
+
       // Hourly poll for SW updates. Safari deprioritises backgrounded
       // PWAs and won't auto-check; without this, a user with the app
       // open for days never sees a new version. Tracked for HMR
@@ -361,7 +584,7 @@ if (w && 'serviceWorker' in navigator) {
           }
         });
       }, 60 * 60 * 1000);
-      intervalCleanups.push(() => window.clearInterval(intervalId));
+      timerCleanups.push(() => window.clearInterval(intervalId));
     },
   });
 }
@@ -378,17 +601,20 @@ if (w) {
     updateInstallMenuVisibility,
     detectBrowser,
     getInstallInstructions,
+    isAutoUpdateEnabled,
+    setAutoUpdateEnabled,
+    checkForUpdates,
   };
 }
 
-// HMR teardown: release the SW polling interval, the listeners attached
-// via track(), and clear the global handles so the next module instance
-// can re-attach without duplicates.
+// HMR teardown: release the SW polling interval + launch watchdog, the
+// listeners attached via track(), and clear the global handles so the
+// next module instance can re-attach without duplicates.
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
     disposeListeners();
-    intervalCleanups.forEach((fn) => fn());
-    intervalCleanups.length = 0;
+    timerCleanups.forEach((fn) => fn());
+    timerCleanups.length = 0;
     if (w) {
       w.__pwaModuleAttached = false;
       delete w.__pwa;

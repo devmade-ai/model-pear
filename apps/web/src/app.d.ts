@@ -33,6 +33,10 @@ declare global {
     note?: string;
   }
 
+  /** Typed result of the manual "Check for updates" action — the
+      fleet-canonical union from glow-props PWA_SYSTEM.md. */
+  type PWACheckForUpdatesResult = 'no-sw' | 'up-to-date' | 'update-available' | 'error';
+
   /** PWA global exposed by $lib/pwa. */
   interface PWAGlobals {
     triggerInstall(): void;
@@ -44,6 +48,13 @@ declare global {
     updateInstallMenuVisibility(): void;
     detectBrowser(): PWABrowser;
     getInstallInstructions(browser: PWABrowser): PWAInstallInstruction;
+    /** Persisted "Automatic updates" preference (absent = ON). */
+    isAutoUpdateEnabled(): boolean;
+    /** Persist the preference; returns the EFFECTIVE read-back value so a
+        blocked localStorage can't leave the UI toggle lying. */
+    setAutoUpdateEnabled(on: boolean): boolean;
+    /** registration.update() + ~1500ms settle → typed result. */
+    checkForUpdates(): Promise<PWACheckForUpdatesResult>;
   }
 
   /** beforeinstallprompt event — present on Chromium browsers. */
