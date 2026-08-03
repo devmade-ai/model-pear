@@ -24,17 +24,53 @@ export default defineConfig({
       registerType: 'prompt',
       injectRegister: false,  // The pwa.ts module calls registerSW manually.
       strategies: 'generateSW',
-      includeAssets: [
-        'favicon.png',
-        'apple-touch-icon.png',
-        'icon-192.png',
-        'icon-512.png',
-        'icon-1024.png',
-      ],
+      // Requirement: exactly ONE precache source per URL.
+      // Approach: globPatterns below is the sole source — it already matches every
+      //   icon via `png`, so `includeAssets` is deliberately absent.
+      // Why: includeAssets feeds workbox.additionalManifestEntries, which is appended
+      //   after the transform pipeline with no dedupe against the globbed manifest,
+      //   producing two entries per icon. They currently agree on revision so workbox
+      //   dedupes silently, but anything that nulls one side (a wider
+      //   dontCacheBustURLsMatching, a manifest transform) makes them two different
+      //   cache keys and precacheAndRoute() throws add-to-cache-list-conflicting-entries
+      //   at SW evaluation — the worker then never installs at all.
+      //   `includeManifestIcons` is the same mechanism and defaults to TRUE, so it has
+      //   to be turned off explicitly or the three manifest icons come back as a second
+      //   source even with includeAssets gone.
+      includeManifestIcons: false,
       workbox: {
         cleanupOutdatedCaches: true,
         navigateFallback: '/200.html',
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json,webmanifest}'],
+        // Requirement: the navigateFallback URL MUST be in the precache manifest.
+        // Why it isn't automatic here: SvelteKit runs the SSR build as the outer build
+        //   and spawns the client build inside it, so vite-plugin-pwa globs
+        //   .svelte-kit/output/client — which contains no HTML at all. adapter-static
+        //   writes 200.html into build/ afterwards, so workbox never sees it.
+        //   createHandlerBoundToURL('/200.html') then throws non-precached-url while the
+        //   worker script evaluates: registration rejects and the app ships with no
+        //   offline support and no update mechanism, while `vite build` exits 0.
+        // Approach: register the shell explicitly; the SW fetches it from the network at
+        //   install time, where it does exist.
+        // Alternatives:
+        //   - navigateFallback: null — Rejected, kills offline client-side routing,
+        //     which is the entire purpose of a fallback in an SPA.
+        //   - Point it at an already-precached URL — Rejected, nothing in the client
+        //     output is an HTML shell.
+        //   - Switch to @vite-pwa/sveltekit, which globs the adapter's real output —
+        //     the architecturally correct fix, but a build-pipeline change; tracked
+        //     separately rather than bundled into a production hotfix.
+        additionalManifestEntries: [
+          // Revision changes every build on purpose: the shell references
+          // content-hashed asset filenames, so a stale shell points at deleted chunks.
+          // It is one small HTML file.
+          { url: '/200.html', revision: Date.now().toString(36) },
+        ],
+        // `json` deliberately excluded: it precached _app/version.json, which froze
+        // SvelteKit's own `updated` store — that store polls the file to detect deploys,
+        // so a precached copy makes it report "no new version" forever.
+        // `webmanifest` deliberately excluded too: vite-plugin-pwa injects the generated
+        // manifest's own precache entry, so globbing it made a second entry for that URL.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
       },
       manifest: {
         id: '/',
