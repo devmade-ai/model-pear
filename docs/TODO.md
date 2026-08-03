@@ -98,3 +98,82 @@
 ## Low Priority: Naming
 
 - [ ] Rename `intercompany` model category to `transactions` — the category id was set when the tool was scoped to intercompany transactions only; current scope is "any client (related or unrelated)" and the category name no longer reflects reality. Touches the model registry and any branching on `category === 'intercompany'`.
+
+## PWA pattern audit — 2026-08-03
+
+Repo-side findings from a fleet-wide audit of every devmade-ai PWA against the
+glow-props implementation patterns. The pattern-side learnings are already folded
+back into those docs, so **fetch the current pattern before starting any item**:
+
+```bash
+curl -sf "https://devmade-ai.github.io/glow-props/patterns/PWA_SYSTEM.md"
+curl -sf "https://devmade-ai.github.io/glow-props/patterns/PWA_ICON_CACHE_BUST.md"
+```
+
+Line references were accurate at audit time. Severity-ordered.
+
+**The service-worker fault found by this audit is already fixed** (PR #119):
+`navigateFallback: '/200.html'` named a URL workbox never precached — Kit globs
+`.svelte-kit/output/client` (no HTML) while adapter-static writes `200.html`
+afterwards — so `createHandlerBoundToURL` threw and the navigation route was never
+registered. Verified in Chromium: an offline deep link failed with
+`ERR_INTERNET_DISCONNECTED` before and returns the shell (HTTP 200) after.
+Precaching itself worked in both cases. The items below are what remains.
+
+1. [ ] **Consider `@vite-pwa/sveltekit`.** It globs the adapter's *real* output,
+   which removes the root cause that the current `additionalManifestEntries` entry
+   compensates for. Deliberately kept out of the hotfix. The same build-order
+   mismatch is why no HTML is precached at all here.
+2. [ ] **`controllerchange` reloads unconditionally** (`pwa.ts:464-475`) — there is
+   only a 5s throttle and no apply latch anywhere. Real harm, and it defeats this
+   repo's own stated rationale at `pwa.ts:10-13` ("Model Pear holds calculator inputs
+   in memory; a reload loses them"): a user mid-calculation in tab A loses their
+   inputs when tab B launch-applies an update. Add the latch and set it in
+   `applyUpdate()` and on the launch-apply path.
+3. [ ] **`launchPhase` has no terminal timeout** (`pwa.ts:70`). If `register()` never
+   settles — neither `onRegisteredSW` nor `onRegisterError`, a known Safari
+   behaviour — the flag stays `true` and `maybeEmitUpdateBanner()` suppresses the
+   banner for the entire session. `launchApplying` has a 15s watchdog; the phase flag
+   does not.
+4. [ ] **Google Fonts are loaded from the CDN with no runtime route**
+   (`app.html:123-125`), so an installed PWA falls back to system fonts offline.
+5. [ ] **PWA_ICON_CACHE_BUST is unimplemented** — no `?v=` anywhere. Note the
+   glow-props `transformIndexHtml` approach **cannot be ported as-is**: vite-plugin-pwa's
+   HTML pipeline never runs under SvelteKit (the client build has no HTML entry), so
+   `app.html` has to be rewritten from a custom plugin. Also `icon-1024.png` is
+   declared `purpose: 'maskable'` but generated as a plain render with no full-bleed
+   flatten and no safe-zone inset.
+6. [ ] **No PWA tests.** `vitest.config.ts` has no `virtual:pwa-register` alias and
+   the launch-apply here is a *custom* implementation (a phase flag rather than the
+   pattern's time window), which makes this the fleet instance that most needs them —
+   an unwanted reload is the riskiest behaviour in the app.
+7. [ ] **`onNeedRefresh` returns without recording the update inside the suppression
+   window** (`pwa.ts:500`); no shared in-flight promise in `checkForUpdates`;
+   `'no-sw'` is returned in dev where `devOptions.enabled: false` means no worker was
+   built, and rendered as "Update checks aren't available in this browser" — simply
+   false. Branch on `import.meta.env.DEV`.
+8. [ ] **Install flow:** the inline capture has no attach guard, no durable flag and
+   no named handler, and the module attaches a *second* `beforeinstallprompt`
+   listener so both handlers overwrite the same slot; `detectBrowser()` has no
+   `isIOS` branch at all, so iOS Chrome/Firefox users are told to "click the install
+   icon in the address bar"; no iPadOS test; `EdgiOS` unhandled.
+9. [ ] **`vercel.json` has no cache headers** and its SPA rewrite is not scoped away
+   from `_app/` (the SvelteKit equivalent of `assets/`), so a deleted chunk returns
+   HTML under a JS MIME type.
+10. [ ] **PWA lifecycle events never reach the debug store** — `debugLog.ts:10` has a
+    `'pwa'` category the PWA module never uses; `onRegisterError` reaches the pill only
+    by re-dispatching a synthetic `ErrorEvent`, and `onOfflineReady` is a no-op that
+    produces no toast.
+11. [ ] **Correct the glow-props record.** That repo's tracking matrix lists this one
+    as PWA_SYSTEM "Missing / no vite-plugin-pwa" and ICON_CACHE_BUST "N/A (no PWA)" —
+    both false. Its portfolio `meta.json` also records the stack as "TypeScript,
+    React, Vite" when this is **SvelteKit**. The neighbouring "no DaisyUI",
+    "`class="dark"` hardcoded" and "BURGER_MENU still `p-2`" claims are stale too.
+
+**Promoted into the fleet pattern from this repo:** the entire SvelteKit variant
+section — the build-order hazard, `transformIndexHtml` never running, the SSR
+import-safety rule, the Svelte-4 `onDestroy`-runs-during-SSR footgun — plus the
+finding that `navigateFallback` defaults to `index.html` (so MPAs must pass `null`
+rather than omit it), that `updateServiceWorker`'s argument has been inert since
+0.13.2, launch-apply as an explicit phase flag rather than a wall-clock window, and
+the bounded watchdog on a stuck apply.
