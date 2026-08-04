@@ -118,7 +118,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Software Transaction Structuring Tool - Find the best deal structure for both you and your client" />
 
-    <title>Model Pear - Software Transaction Structuring</title>
+    <!-- No static <title> here on purpose. Each route sets its own in
+         <svelte:head>, which %sveltekit.head% injects below — and a static one
+         here would come FIRST in the document, so the browser and every crawler
+         would use it and ignore the page's own. That was live: all three
+         prerendered pages carried two <title> tags and the generic one won.
+         The SPA fallback (200.html) has no title until JS runs, which is
+         correct for a shell that only ever exists to boot the app. -->
     <!-- Figtree font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

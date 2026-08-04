@@ -74,6 +74,21 @@ let launchPhase = true;
     window before controllerchange reloads the page. */
 let launchApplying = false;
 
+/**
+ * Requirement: reload this tab ONLY for an update this tab asked to apply.
+ *
+ * `controllerchange` fires whenever a new service worker takes control — and a
+ * worker activated by ANOTHER TAB takes control of every tab. Without a latch,
+ * a second tab tapping "Update" reloaded this one too, wiping the in-memory
+ * inputs of a calculator with no persistence. That is the exact mid-session
+ * data loss the fleet's auto-on-launch policy exists to prevent, and this
+ * module's own header cites that policy.
+ *
+ * Set by both apply paths — launch-apply and the user's tap — because both mean
+ * "this page intends to reload when the new worker takes over".
+ */
+let applyRequested = false;
+
 /** Requirement: fleet "Automatic updates" toggle — persisted, default ON.
     Key convention: bare camelCase matches the theme module's `darkMode`
     (this repo has no prefixed-key or safeStorage convention; access is
@@ -327,6 +342,8 @@ function applyUpdate(): Promise<void> {
   // failures (download dropped, skip-waiting threw) instead of
   // silently doing nothing.
   updateState = 'idle';
+  // This tab asked for it, so this tab may reload — see applyRequested.
+  applyRequested = true;
   // Stamp the 30s suppression BEFORE skipWaiting so the post-reload
   // module instance (and any late `waiting` echo in this one) can
   // recognise the applied version and not re-arm the banner for it.
@@ -462,6 +479,13 @@ function attachListeners(): void {
   // versions arriving in quick succession could double-reload.
   if ('serviceWorker' in navigator) {
     track(navigator.serviceWorker, 'controllerchange', () => {
+      // Only reload for an apply THIS page requested. A worker activated in
+      // another tab takes control here too, and reloading on that wiped the
+      // calculator's in-memory inputs for a user who never asked for anything.
+      // The 5s throttle below was never a substitute: it limits how OFTEN the
+      // surprise happens, not whether it happens.
+      if (!applyRequested) return;
+      applyRequested = false;
       try {
         const last = Number(sessionStorage.getItem(RELOAD_THROTTLE_KEY) ?? 0);
         if (Date.now() - last < RELOAD_THROTTLE_MS) return;
