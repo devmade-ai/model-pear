@@ -177,3 +177,34 @@ finding that `navigateFallback` defaults to `index.html` (so MPAs must pass `nul
 rather than omit it), that `updateServiceWorker`'s argument has been inert since
 0.13.2, launch-apply as an explicit phase flag rather than a wall-clock window, and
 the bounded watchdog on a stuck apply.
+
+
+## Public visibility — 2026-08-04 fleet audit
+
+Findings from the fleet-wide public-visibility audit against
+[`DISCOVERABILITY.md`](https://devmade-ai.github.io/glow-props/patterns/discoverability/).
+**Fetch that pattern before starting** — it gained a SvelteKit variant because of
+this repo. Verified against the deployed origin
+(`https://model-pear-web.vercel.app/`) on 2026-08-04, not only read from source.
+
+1. [ ] **The four `<svelte:head>` titles never reach a file.** The routes are not
+   prerendered, so the head content exists only after hydration — a crawler and
+   an unfurler both get the fallback shell. `<svelte:head>` is worthless for
+   discoverability unless the route is prerendered, so
+   `export const prerender = true` on the routes that should be findable comes
+   **first**; every other item here depends on it.
+2. [ ] **No Open Graph, no Twitter tags, no card image.** A pasted link renders
+   as a bare URL. Needs the full tag set plus a 1200×630 card.
+3. [ ] **No `robots.txt`.** `GET /robots.txt` returns **200 with HTML** — the
+   file doesn't exist and the fallback answers for it. Add a real one that allows
+   the crawl and names the sitemap.
+4. [ ] **`GET /sitemap.xml` has the same problem** — 200, HTML, no sitemap.
+   With `adapter-static` and prerendered routes, generating one is cheap.
+5. [ ] **No canonical.** The `*.vercel.app` alias and every preview alias serve
+   byte-identical pages with nothing electing a winner.
+6. [ ] **Soft 404s.** A nonexistent path returns **200** with the app shell.
+7. [ ] **Almost no crawlable body text** (measured: 91 characters in the served
+   document). Resolved by item 1 for the prerendered routes.
+8. [ ] **No structured data.** `WebApplication` is the right node type here
+   (Step 5 of the pattern).
+9. [ ] **No tripwire**, so every item above is invisible to the gate.
