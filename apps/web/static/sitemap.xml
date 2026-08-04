@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The three PRERENDERED routes. /structuring/[model] is deliberately absent: it
+  is still SPA-rendered, so listing it would point crawlers at the generic app
+  shell — a sitemap entry for a URL with no real document of its own is worse
+  than no entry, because it invites indexing of the fallback.
+  Add entries here when those routes gain their own prerendered pages.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://model-pear-web.vercel.app/</loc></url>
+  <url><loc>https://model-pear-web.vercel.app/pricing</loc></url>
+  <url><loc>https://model-pear-web.vercel.app/structuring</loc></url>
+</urlset>

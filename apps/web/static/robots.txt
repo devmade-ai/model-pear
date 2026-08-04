@@ -1,0 +1,18 @@
+# Model Pear — https://model-pear-web.vercel.app/
+#
+# A public tool: the calculators are meant to be found. Crawling is allowed and
+# nothing is Disallow-ed.
+#
+# Worth stating, because Disallow is the wrong reflex here: it stops the crawl,
+# so a crawler never reads a noindex, and a URL discovered from a link elsewhere
+# can still be listed with no way to get it removed. It also blocks the
+# unfurlers — facebookexternalhit, Twitterbot, LinkedInBot and Slack all honour
+# robots.txt — which would switch off link previews on the platforms most likely
+# to carry a shared calculator link.
+#
+# See glow-props docs/implementations/DISCOVERABILITY.md.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://model-pear-web.vercel.app/sitemap.xml
