@@ -2,6 +2,8 @@
   "framework": null,
   "outputDirectory": "build",
   "rewrites": [
+    { "source": "/pricing", "destination": "/pricing.html" },
+    { "source": "/structuring", "destination": "/structuring.html" },
     { "source": "/(.*)", "destination": "/200.html" }
   ]
 }
