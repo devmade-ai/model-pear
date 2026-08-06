@@ -12,7 +12,7 @@
    * the PWA module fires the callback only when the document is visible
    * AND the suppression window has elapsed.
    *
-   * z-70 (per the glow-props Z_INDEX_SCALE) so the banner is above the
+   * z-70 (per the gp-props Z_INDEX_SCALE) so the banner is above the
    * burger-menu backdrop (z-40) and panel (z-50) but below modal
    * dialogs (z-80, debug pill).
    */

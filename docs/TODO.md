@@ -93,7 +93,7 @@
 ## PWA
 
 - [ ] Browser-verify the auto-on-launch update loop on a deployed HTTPS instance: deploy → revisit installed app → silent launch-apply reload picks up the new version; flip "Automatic updates" OFF → same scenario shows the UpdateBanner instead; "Check for updates" surfaces each typed result (up-to-date toast, update-available → banner). Pairs with the existing Phase F–I browser sweep in SESSION_NOTES.
-- [ ] Optional launch-apply "Updating…" affordance — the launch reload is currently silent (sub-second on warm cache, before any interaction). If it proves noticeable on slow devices/networks, add a brief indicator per the glow-props spec's "behind the app's brief 'Updating…' affordance" wording.
+- [ ] Optional launch-apply "Updating…" affordance — the launch reload is currently silent (sub-second on warm cache, before any interaction). If it proves noticeable on slow devices/networks, add a brief indicator per the gp-props spec's "behind the app's brief 'Updating…' affordance" wording.
 
 ## Low Priority: Naming
 
@@ -102,12 +102,12 @@
 ## PWA pattern audit — 2026-08-03
 
 Repo-side findings from a fleet-wide audit of every devmade-ai PWA against the
-glow-props implementation patterns. The pattern-side learnings are already folded
+gp-props implementation patterns. The pattern-side learnings are already folded
 back into those docs, so **fetch the current pattern before starting any item**:
 
 ```bash
-curl -sf "https://devmade-ai.github.io/glow-props/patterns/PWA_SYSTEM.md"
-curl -sf "https://devmade-ai.github.io/glow-props/patterns/PWA_ICON_CACHE_BUST.md"
+curl -sf "https://gp-props.vercel.app/patterns/PWA_SYSTEM.md"
+curl -sf "https://gp-props.vercel.app/patterns/PWA_ICON_CACHE_BUST.md"
 ```
 
 Line references were accurate at audit time. Severity-ordered.
@@ -138,7 +138,7 @@ Precaching itself worked in both cases. The items below are what remains.
 4. [ ] **Google Fonts are loaded from the CDN with no runtime route**
    (`app.html:123-125`), so an installed PWA falls back to system fonts offline.
 5. [ ] **PWA_ICON_CACHE_BUST is unimplemented** — no `?v=` anywhere. Note the
-   glow-props `transformIndexHtml` approach **cannot be ported as-is**: vite-plugin-pwa's
+   gp-props `transformIndexHtml` approach **cannot be ported as-is**: vite-plugin-pwa's
    HTML pipeline never runs under SvelteKit (the client build has no HTML entry), so
    `app.html` has to be rewritten from a custom plugin. Also `icon-1024.png` is
    declared `purpose: 'maskable'` but generated as a plain render with no full-bleed
@@ -164,7 +164,7 @@ Precaching itself worked in both cases. The items below are what remains.
     `'pwa'` category the PWA module never uses; `onRegisterError` reaches the pill only
     by re-dispatching a synthetic `ErrorEvent`, and `onOfflineReady` is a no-op that
     produces no toast.
-11. [ ] **Correct the glow-props record.** That repo's tracking matrix lists this one
+11. [ ] **Correct the gp-props record.** That repo's tracking matrix lists this one
     as PWA_SYSTEM "Missing / no vite-plugin-pwa" and ICON_CACHE_BUST "N/A (no PWA)" —
     both false. Its portfolio `meta.json` also records the stack as "TypeScript,
     React, Vite" when this is **SvelteKit**. The neighbouring "no DaisyUI",
@@ -182,7 +182,7 @@ the bounded watchdog on a stuck apply.
 ## Public visibility — 2026-08-04 fleet audit
 
 Findings from the fleet-wide public-visibility audit against
-[`DISCOVERABILITY.md`](https://devmade-ai.github.io/glow-props/patterns/discoverability/).
+[`DISCOVERABILITY.md`](https://gp-props.vercel.app/patterns/discoverability/).
 **Fetch that pattern before starting** — it gained a SvelteKit variant because of
 this repo. Verified against the deployed origin
 (`https://model-pear-web.vercel.app/`) on 2026-08-04, not only read from source.

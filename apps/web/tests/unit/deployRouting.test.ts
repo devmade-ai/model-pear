@@ -15,7 +15,7 @@
 //
 //   The pages were built correctly the whole time. Nothing in the repo was
 //   wrong; the deploy config quietly discarded the output. This is the
-//   "prerendering and routing must agree" trap in glow-props'
+//   "prerendering and routing must agree" trap in gp-props'
 //   DISCOVERABILITY.md, and it only became reachable once the pages existed.
 //
 // Approach: derive the expectation from the BUILD, not from a hardcoded list —

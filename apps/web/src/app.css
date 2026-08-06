@@ -109,7 +109,7 @@
    Every utility (bg-base-100, text-base-content, bg-primary, etc.)
    reads through these tokens, so a single override block reaches
    every themed surface in print.
-   See glow-props docs/implementations/DOWNLOAD_PDF.md for the
+   See gp-props docs/implementations/DOWNLOAD_PDF.md for the
    canonical pattern. */
 @media print {
   :root,

@@ -6,7 +6,7 @@
 
 ## Current State (July 21, 2026 — branch `claude/projects-missing-analytics-vla4ja`)
 
-**Worked on**: fleet-standard PWA update policy (**auto-on-launch**, per glow-props `PWA_SYSTEM.md` → "Update Application Policy"). Epic: `pwa-auto-update`.
+**Worked on**: fleet-standard PWA update policy (**auto-on-launch**, per gp-props `PWA_SYSTEM.md` → "Update Application Policy"). Epic: `pwa-auto-update`.
 
 ### Accomplished
 

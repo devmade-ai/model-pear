@@ -34,7 +34,7 @@ declare global {
   }
 
   /** Typed result of the manual "Check for updates" action — the
-      fleet-canonical union from glow-props PWA_SYSTEM.md. */
+      fleet-canonical union from gp-props PWA_SYSTEM.md. */
   type PWACheckForUpdatesResult = 'no-sw' | 'up-to-date' | 'update-available' | 'error';
 
   /** PWA global exposed by $lib/pwa. */

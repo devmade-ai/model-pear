@@ -144,7 +144,7 @@ Good: "Please enter your phone number as 10 digits, like 0821234567"
 - Store timer ids in a scope the cleanup can reach. Nested timeouts → array; single-shot → local const or ref.
 - In Svelte components: return cleanup from `onMount`, or use `onDestroy`. In plain modules: export a `dispose()` or use `AbortController`.
 - HMR-safe: guard global listener attachment behind a `window.__<featureName>Attached` flag so hot-reload doesn't double-subscribe. For Vite, also release listeners via `import.meta.hot.dispose()`.
-- See [`docs/implementations/TIMER_LEAKS.md`](docs/implementations/TIMER_LEAKS.md) in glow-props for concrete patterns (nested-timeout array, AbortController, per-effect dispose, HMR guard).
+- See [`docs/implementations/TIMER_LEAKS.md`](docs/implementations/TIMER_LEAKS.md) in gp-props for concrete patterns (nested-timeout array, AbortController, per-effect dispose, HMR guard).
 
 ### Quality Checks
 
@@ -238,7 +238,7 @@ These footers are required on every commit. No exceptions.
   - Use `$(printenv GITHUB_ALL_REPO_TOKEN)` not `$GITHUB_ALL_REPO_TOKEN` to avoid shell expansion issues
   - Never clone sibling repos — use the API instead
 
-- **Implementation patterns — always fetch from glow-props.** Never look for local copies of implementation pattern files (e.g., `docs/implementations/*.md`) in downstream repos. They do not exist locally — the single source of truth is the `docs/implementations/` folder in the glow-props repo. Fetch the latest version before every implementation task.
+- **Implementation patterns — always fetch from gp-props.** Never look for local copies of implementation pattern files (e.g., `docs/implementations/*.md`) in downstream repos. They do not exist locally — the single source of truth is the `docs/implementations/` folder in the gp-props repo. Fetch the latest version before every implementation task.
 - **DaisyUI is the styling system in DaisyUI-installed repos. No exceptions. No "documented why we rolled custom" escape hatches.** If `daisyui` is in `package.json`:
   - **Tokens.** No overrides of `--color-*`, `--radius-selector` / `--radius-field` / `--radius-box`, `--border`, `--depth`, `--size-*`, `--noise`. No inline `style="border-radius: ..."`, no arbitrary `rounded-[Xpx]`. Use `rounded-box` / `rounded-field` / `rounded-selector` and DaisyUI's size scale.
   - **Components.** Every `<button>` is `btn` + variant. Form inputs are `input input-bordered` / `select select-bordered` / `textarea textarea-bordered` / `checkbox` / `radio` / `range` / `file-input`. Cards/panels are `card` + `card-body`. Status is `badge` / `alert` / `toast`. Overlays are `modal` / `drawer` / `dropdown`. Tabs are `tabs` + `tab`. Tooltips are `tooltip`.
@@ -391,17 +391,17 @@ These footers are required on every commit. No exceptions.
 
 ## Implementation Patterns (Source of Truth)
 
-All implementation patterns live in the **glow-props** repo and are the single source of truth for all devmade-ai projects.
+All implementation patterns live in the **gp-props** repo and are the single source of truth for all devmade-ai projects.
 
-**Source location:** `docs/implementations/` in the glow-props repo
+**Source location:** `docs/implementations/` in the gp-props repo
 
 **How to access from any repo:**
-- Fetch via GitHub Pages: `curl -sf "https://devmade-ai.github.io/glow-props/patterns/{PATTERN_NAME}.md"`
-- Fetch via GitHub API: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/glow-props/contents/docs/implementations/{PATTERN_NAME}.md" | jq -r .content | base64 -d`
-- To list all available patterns: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/glow-props/contents/docs/implementations" | jq -r '.[].name'`
+- Fetch via GitHub Pages: `curl -sf "https://gp-props.vercel.app/patterns/{PATTERN_NAME}.md"`
+- Fetch via GitHub API: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/gp-props/contents/docs/implementations/{PATTERN_NAME}.md" | jq -r .content | base64 -d`
+- To list all available patterns: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/gp-props/contents/docs/implementations" | jq -r '.[].name'`
 
 **Rules:**
-- **Always fetch the latest version** from glow-props before implementing — patterns are continuously improved
+- **Always fetch the latest version** from gp-props before implementing — patterns are continuously improved
 - **Never create local copies** of implementation pattern files in downstream repos
 - **Do not hardcode a list of patterns** — scan the source folder to discover what's available
 - The set of patterns grows over time; always check the source for new additions
@@ -496,7 +496,7 @@ Never:
 - Remove features during "cleanup" without checking if they're documented as intentional (see AI_MISTAKES.md)
 - Proceed with assumptions when a single clarifying question would prevent a wrong commit
 - Use interactive input prompts or selection UIs — list options as numbered text instead
-- Create local copies of implementation pattern files in any repo — always fetch from glow-props
+- Create local copies of implementation pattern files in any repo — always fetch from gp-props
 - Mention branches, pull requests, squashing, rebasing, merging, or force-pushing unless the user raises the topic first. When the user does raise one, answer the specific question and stop — do not volunteer opinions on what they should do process-wise.
 - Frame any work as "out of scope" or "deferred as out of scope". Work is either doable (do it) or blocked on missing user input (say exactly what input is needed). "Scope" is a process concept, not a reason to skip work.
 - Offer opinions on git history editing, branch strategy, PR size or shape, review flow, or commit structure. Follow instructions; don't editorialize on how the work should be organized.
@@ -600,7 +600,7 @@ Findings are fixed, not justified. No "documented exceptions" carve-outs. All fo
 |---|---------|-------|-----------|
 | 26 | `clean` | `cln` | Dead code, duplication, commented-out blocks, unused imports/exports, leftover TODOs |
 | 27 | `naming` | `nam` | Identifier clarity, consistency with local norms, misleading abbreviations |
-| 28 | `patterns` | `pat` | Deviation from established patterns (fleet-wide glow-props or repo-local), reinvented wheels |
+| 28 | `patterns` | `pat` | Deviation from established patterns (fleet-wide gp-props or repo-local), reinvented wheels |
 | 29 | `docs` | `doc` | Docs ↔ code drift, missing docs on public API, outdated README/CLAUDE.md claims |
 | 30 | `doc-cleanup` | `dcl` | Duplicated content across doc files, stale files no longer relevant, orphaned docs nothing references, superseded files that replaced but didn't delete their predecessor, sections still describing removed features |
 | 31 | `tests` | `tst` | Coverage gaps on critical paths, flaky patterns, test smells, missing edge-case tests |
@@ -638,8 +638,8 @@ Findings are fixed, not justified. No "documented exceptions" carve-outs. All fo
 
 | # | Trigger | Alias | Looks for |
 |---|---------|-------|-----------|
-| 51 | `align` | `aln` | Drift between this repo's CLAUDE.md and glow-props CLAUDE.md — missing sections, stale rules, divergent conventions |
-| 52 | `pattern-audit` | `pa` | Every glow-props implementation pattern: implemented / partial / missing / deviates — with diff notes for each |
+| 51 | `align` | `aln` | Drift between this repo's CLAUDE.md and gp-props CLAUDE.md — missing sections, stale rules, divergent conventions |
+| 52 | `pattern-audit` | `pa` | Every gp-props implementation pattern: implemented / partial / missing / deviates — with diff notes for each |
 
 ### Meta sweeps
 
@@ -715,7 +715,7 @@ The tool helps you optimise across multiple dimensions:
 - **Tailwind CSS v4** (CSS-first config: `@import "tailwindcss"` + inline `@theme`; no `tailwind.config.js`).
 - **DaisyUI v5** with `emerald --default` (light) and `dim --prefersdark` (dark). **The themes are the brand** — no custom colour palette, no `--color-model-*` tokens, no hardcoded Tailwind colour utilities like `text-green-400`. Components use DaisyUI semantic classes (`bg-base-100`, `text-base-content`, `border-base-300`, status `text-success`/`error`/`warning`, brand `bg-primary`/`secondary`/`accent`) and DaisyUI components (`.card`, `.btn`, `.btn-primary`, `.input`, `.badge`, `.alert`, `.table`).
 - **Theme switching** is dual-layer: a `.dark` class on `<html>` (drives Tailwind's `dark:` variant via `@custom-variant`) PLUS `data-theme="dim|emerald"` (drives DaisyUI). Both move in lockstep — see `apps/web/src/lib/theme.ts`.
-- **PWA** via `vite-plugin-pwa` + `workbox-window`. `registerType: 'prompt'` stays as the *mechanism* (it exposes the waiting worker to app code); the *behaviour* on top is the fleet-standard **auto-on-launch** update policy (glow-props `PWA_SYSTEM.md` → "Update Application Policy"): a SW already **waiting** when registration first resolves at startup is applied silently (skipWaiting → one reload — safe, no calculator inputs entered yet); an update that installs **mid-session** never auto-reloads (Model Pear holds calculator inputs in memory) — it shows the UpdateBanner and otherwise applies on the next launch. A persisted **"Automatic updates"** burger-menu toggle (localStorage `pwaAutoUpdate`, default ON, `'false'` = tap-only) gates the launch-apply, and a **"Check for updates"** menu action runs `registration.update()` + ~1.5s settle and surfaces the typed result (`'no-sw' | 'up-to-date' | 'update-available' | 'error'`) as a bottom-centre toast (the UpdateBanner is the feedback for `update-available`). `navigateFallback: '/200.html'` aligns with the SPA fallback. SW + manifest are generated at build time; the static `manifest.webmanifest` was deleted in favour of the VitePWA-generated one.
+- **PWA** via `vite-plugin-pwa` + `workbox-window`. `registerType: 'prompt'` stays as the *mechanism* (it exposes the waiting worker to app code); the *behaviour* on top is the fleet-standard **auto-on-launch** update policy (gp-props `PWA_SYSTEM.md` → "Update Application Policy"): a SW already **waiting** when registration first resolves at startup is applied silently (skipWaiting → one reload — safe, no calculator inputs entered yet); an update that installs **mid-session** never auto-reloads (Model Pear holds calculator inputs in memory) — it shows the UpdateBanner and otherwise applies on the next launch. A persisted **"Automatic updates"** burger-menu toggle (localStorage `pwaAutoUpdate`, default ON, `'false'` = tap-only) gates the launch-apply, and a **"Check for updates"** menu action runs `registration.update()` + ~1.5s settle and surfaces the typed result (`'no-sw' | 'up-to-date' | 'update-available' | 'error'`) as a bottom-centre toast (the UpdateBanner is the feedback for `update-available`). `navigateFallback: '/200.html'` aligns with the SPA fallback. SW + manifest are generated at build time; the static `manifest.webmanifest` was deleted in favour of the VitePWA-generated one.
 - **Charts** use ApexCharts. `BaseChart.svelte` listens for the `theme:change` custom event and calls `chart.updateOptions({ theme: { mode } })`; per-chart components read live colours from DaisyUI tokens via `getThemeColor()` so series re-colour on theme flip.
 
 ### Runtime singletons (`window` globals)

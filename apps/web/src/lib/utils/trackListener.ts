@@ -3,7 +3,7 @@
  * during initialisation and need to release them on unmount / HMR
  * teardown.
  *
- * Pattern from glow-props TIMER_LEAKS.md:
+ * Pattern from gp-props TIMER_LEAKS.md:
  *   "every addEventListener / setInterval / subscribe needs a matching
  *    cleanup."
  *
