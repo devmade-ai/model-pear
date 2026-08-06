@@ -3,7 +3,7 @@
 // Alternatives:
 //   - External logging service: Rejected — adds dependency, network requirement
 //   - localStorage persistence: Rejected — fills storage, not needed for alpha
-// Source: glow-props DEBUG_SYSTEM.md pattern, adapted for SvelteKit
+// Source: gp-props DEBUG_SYSTEM.md pattern, adapted for SvelteKit
 
 // Typed sources with string fallback — preserves IDE autocomplete while allowing ad-hoc sources
 export type DebugSource =

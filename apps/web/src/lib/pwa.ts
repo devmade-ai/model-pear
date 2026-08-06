@@ -3,7 +3,7 @@
  *
  * Responsibilities:
  *   - Register the service worker via vite-plugin-pwa's virtual module.
- *   - Apply the fleet-standard "auto-on-launch" update policy (glow-props
+ *   - Apply the fleet-standard "auto-on-launch" update policy (gp-props
  *     PWA_SYSTEM.md): a SW that is ALREADY waiting when registration first
  *     resolves is applied immediately (skipWaiting → one reload) — that
  *     moment is safe because the user hasn't entered any calculator inputs
@@ -555,7 +555,7 @@ if (w && 'serviceWorker' in navigator) {
       }
       swRegistration = registration;
 
-      // Requirement: fleet auto-on-launch update policy (glow-props
+      // Requirement: fleet auto-on-launch update policy (gp-props
       // PWA_SYSTEM.md "Update Application Policy").
       // Approach: a worker ALREADY waiting when registration first
       // resolves was armed on a previous visit — apply it now via the

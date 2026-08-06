@@ -15,7 +15,7 @@
  * first lock and restored on the last unlock so we don't clobber any
  * inline styles a future ancestor might set.
  *
- * Pattern from glow-props TIMER_LEAKS.md: "every lock needs a matching
+ * Pattern from gp-props TIMER_LEAKS.md: "every lock needs a matching
  * unlock; reference-count when locks can compose."
  */
 

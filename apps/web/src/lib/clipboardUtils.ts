@@ -3,7 +3,7 @@
 // Alternatives:
 //   - Single writeText: Rejected — fails in some PWA webview contexts
 //   - External clipboard library: Rejected — adds dependency for a small utility
-// Source: glow-props DEBUG_SYSTEM.md pattern
+// Source: gp-props DEBUG_SYSTEM.md pattern
 
 export async function copyToClipboard(text: string): Promise<boolean> {
   // Method 1: ClipboardItem Blob — works in contexts where writeText is blocked

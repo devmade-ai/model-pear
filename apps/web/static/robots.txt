@@ -10,7 +10,7 @@
 # robots.txt — which would switch off link previews on the platforms most likely
 # to carry a shared calculator link.
 #
-# See glow-props docs/implementations/DISCOVERABILITY.md.
+# See gp-props docs/implementations/DISCOVERABILITY.md.
 
 User-agent: *
 Allow: /

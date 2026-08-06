@@ -24,7 +24,7 @@
     safeStringify.ts (if no other consumer), clipboardUtils.ts, and
     the #debug-root + inline boot scripts in app.html (see
     SESSION_NOTES.md "Removal note").
-  Source: glow-props DEBUG_SYSTEM.md pattern, adapted for Svelte 4.
+  Source: gp-props DEBUG_SYSTEM.md pattern, adapted for Svelte 4.
 -->
 <script lang="ts">
   import { onMount, onDestroy, afterUpdate } from 'svelte';

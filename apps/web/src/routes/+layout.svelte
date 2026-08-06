@@ -48,7 +48,7 @@
      disposeListeners() releases everything on unmount/HMR. The shared
      helper in $lib/utils/trackListener replaces the per-file overload
      gymnastics with one type-erased target signature. Pattern from
-     glow-props TIMER_LEAKS.md: "every addEventListener / setInterval /
+     gp-props TIMER_LEAKS.md: "every addEventListener / setInterval /
      subscribe needs a matching cleanup". */
   const { track, dispose: disposeListeners } = createListenerTracker();
 
