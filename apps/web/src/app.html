@@ -116,7 +116,17 @@
     <link rel="apple-touch-icon" sizes="180x180" href="%sveltekit.assets%/apple-touch-icon.png" />
     <link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Software Transaction Structuring Tool - Find the best deal structure for both you and your client" />
+    <!-- No description here, for the same reason there is no title: each route
+         sets its own via src/lib/SeoHead.svelte, and a static one in this shell
+         comes FIRST in the document, so it is the one every crawler and
+         unfurler reads. That is not a guess — it was live: a static title here
+         gave all three prerendered pages the generic one, and this description
+         did the same thing until the per-page set landed.
+
+         The rule, worth stating plainly: THIS TEMPLATE MUST NOT CARRY ANY
+         IDENTITY TAG A ROUTE ALSO EMITS. Either the shell owns it or the route
+         does. tests/unit/discoverability.test.ts asserts the built pages each
+         have exactly one. -->
 
     <!-- No static title element here on purpose. Each route sets its own in a
          svelte:head block, injected at the placeholder below — and a static one

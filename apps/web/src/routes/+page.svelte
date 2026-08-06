@@ -1,10 +1,10 @@
 <script lang="ts">
+  import SeoHead from '$lib/SeoHead.svelte';
+  import { PAGES } from '$lib/seo';
   import { resolve } from '$app/paths';
 </script>
 
-<svelte:head>
-  <title>Model Pear - Software Transaction Structuring Tool</title>
-</svelte:head>
+<SeoHead page={PAGES.home} />
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
   <!-- Hero section -->

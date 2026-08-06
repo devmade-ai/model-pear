@@ -1,4 +1,6 @@
 <script lang="ts">
+  import SeoHead from '$lib/SeoHead.svelte';
+  import { PAGES } from '$lib/seo';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import {
@@ -70,9 +72,7 @@
   }
 </script>
 
-<svelte:head>
-  <title>Transaction Structuring - Model Pear</title>
-</svelte:head>
+<SeoHead page={PAGES.structuring} />
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- Page header -->

@@ -13,7 +13,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "generate-og": "node scripts/generate-og-image.mjs",
+    "prebuild": "npm run generate-og"
   },
   "dependencies": {
     "@model-pear/calculator": "workspace:*",

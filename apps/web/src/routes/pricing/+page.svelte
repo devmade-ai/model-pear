@@ -1,4 +1,6 @@
 <script lang="ts">
+  import SeoHead from '$lib/SeoHead.svelte';
+  import { PAGES } from '$lib/seo';
   import { formatCurrency, formatPercent } from '$lib/utils/formatters';
   import { EquilibriumChart } from '$lib/components/charts';
 
@@ -272,9 +274,7 @@
   }
 </script>
 
-<svelte:head>
-  <title>Pricing Calculator - Model Pear</title>
-</svelte:head>
+<SeoHead page={PAGES.pricing} />
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
   <!-- Header -->
