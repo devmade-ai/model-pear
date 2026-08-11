@@ -208,3 +208,13 @@ this repo. Verified against the deployed origin
 8. [ ] **No structured data.** `WebApplication` is the right node type here
    (Step 5 of the pattern).
 9. [ ] **No tripwire**, so every item above is invisible to the gate.
+
+## Browser-bound verification (carried from session notes 2026-08-10)
+
+These need a real browser against a deployed HTTPS instance and cannot be closed from a container.
+
+- [ ] **PWA launch-apply loop** — deploy, revisit, confirm the silent reload; toggle automatic updates OFF and confirm the banner appears instead.
+- [ ] **Branch self-review phases F–I** — visual walkthrough dim + emerald, JS-disabled fallback, a11y/keyboard/screen-reader sweep, PWA install + update + offline, Save-as-PDF preview, Lighthouse, Vercel preview.
+- [ ] **DaisyUI migration audit phase N** — the six visual checks; steps are in `docs/USER_ACTIONS.md`.
+- [ ] **Phase J — tests** for `$lib/theme`, `$lib/pwa`, burger menu and the PWA components. No unit tests exist for `$lib/pwa`: the web vitest config is node-env only (no jsdom, and `virtual:pwa-register` would need aliasing).
+- [ ] **Major-version dependency upgrade epic** — 16 remaining `pnpm audit` findings need svelte 4→5 / vite 5→8 and friends.
