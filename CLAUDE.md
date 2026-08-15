@@ -195,7 +195,7 @@ Good: "Please enter your phone number as 10 digits, like 0821234567"
 - Store timer ids in a scope the cleanup can reach. Nested timeouts → array; single-shot → local const or ref.
 - In Svelte components: return cleanup from `onMount`, or use `onDestroy`. In plain modules: export a `dispose()` or use `AbortController`.
 - HMR-safe: guard global listener attachment behind a `window.__<featureName>Attached` flag so hot-reload doesn't double-subscribe. For Vite, also release listeners via `import.meta.hot.dispose()`.
-- See [`docs/implementations/TIMER_LEAKS.md`](docs/implementations/TIMER_LEAKS.md) in gp-props for concrete patterns (nested-timeout array, AbortController, per-effect dispose, HMR guard).
+- See the [TIMER_LEAKS pattern](https://gp-props.vercel.app/patterns/TIMER_LEAKS.md) for concrete patterns (nested-timeout array, AbortController, per-effect dispose, HMR guard). The hosted URL, not a repo-relative path — this block is mirrored into every repo, and only gp-props holds the file.
 
 ### Quality Checks
 
