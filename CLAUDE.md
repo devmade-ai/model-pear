@@ -1,5 +1,15 @@
 # READ AND FOLLOW THE PROCESS, PRINCIPLES, COMMUNICATION, SCOPE AND COMPLETION, CODE STANDARDS, DOCUMENTATION, AI NOTES, TRIGGERS, AND PROHIBITIONS EVERY TIME
 
+## Fetching the Fleet Standards
+
+The canonical rules live in **gp-props** and this file mirrors them. To read the current version:
+
+```bash
+curl -sf "https://gp-props.vercel.app/CLAUDE.md"
+```
+
+Implementation patterns are fetched separately — see Implementation Patterns below.
+
 ## Process
 
 1. **Read these preferences first**
@@ -98,15 +108,6 @@ Not reasons to stop: it was already broken; it's a different kind of change; it'
 
 These rules are non-negotiable. Stop and ask before proceeding if any rule would be violated.
 
-### Before Making Changes
-
-- [ ] Read relevant existing code and documentation first
-- [ ] Read SESSION_NOTES.md for current state and context
-- [ ] Check TODO.md for pending items
-- [ ] Ask clarifying questions if scope, approach, or intent is unclear
-- [ ] Confirm understanding before implementing non-trivial changes
-- [ ] Never assume - when in doubt, ask
-
 ### Best Practices
 
 - [ ] Follow established patterns and conventions in the codebase
@@ -194,7 +195,7 @@ Good: "Please enter your phone number as 10 digits, like 0821234567"
 - Store timer ids in a scope the cleanup can reach. Nested timeouts → array; single-shot → local const or ref.
 - In Svelte components: return cleanup from `onMount`, or use `onDestroy`. In plain modules: export a `dispose()` or use `AbortController`.
 - HMR-safe: guard global listener attachment behind a `window.__<featureName>Attached` flag so hot-reload doesn't double-subscribe. For Vite, also release listeners via `import.meta.hot.dispose()`.
-- See [`docs/implementations/TIMER_LEAKS.md`](docs/implementations/TIMER_LEAKS.md) in gp-props for concrete patterns (nested-timeout array, AbortController, per-effect dispose, HMR guard).
+- See the [TIMER_LEAKS pattern](https://gp-props.vercel.app/patterns/TIMER_LEAKS.md) for concrete patterns (nested-timeout array, AbortController, per-effect dispose, HMR guard). The hosted URL, not a repo-relative path — this block is mirrored into every repo, and only gp-props holds the file.
 
 ### Quality Checks
 
@@ -567,6 +568,10 @@ Never:
 - Decide that anything is out of scope, or frame work as "deferred as out of scope". Only the user sets scope. Work is either doable (do it) or blocked on user input (say exactly what input is needed).
 - Offer opinions on git history editing, branch strategy, PR size or shape, review flow, or commit structure. Follow instructions; don't editorialize on how the work should be organized.
 - Document an "exception" or "intentional deviation" from DaisyUI in a DaisyUI-installed repo. Hand-rolled components, token overrides, raw Tailwind colors, `dark:` pairs, arbitrary radii/shadows, inline hex — all are violations to be fixed, never justified. If DaisyUI seems insufficient, ask the user. Don't write a "we rolled custom because…" comment.
+- Add a workaround for an architectural problem — find the root cause and fix that. Globals, duplicate listeners and flag variables to patch over a structural issue are the shape to watch for; if a fix needs 3+ files coordinated to share state, that is the smell
+- Document or recommend a feature that has not been tested — writing it up is a claim that it works
+- Swallow an error with a silent `.catch(() => {})` — handle the specific failure, or let it surface
+- Hardcode a value that belongs in a CSS variable, a token, or config
 
 ### REMINDER: READ AND FOLLOW THE PROHIBITIONS EVERY TIME
 
