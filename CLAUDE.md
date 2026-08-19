@@ -933,18 +933,13 @@ See **[BUSINESS_GUIDE.md - Default Entity Configuration](docs/BUSINESS_GUIDE.md#
 - Growth Projections (NPV, IRR, payback)
 - Advanced Visualisations (comparisons, timelines, charts)
 
-## Rescued From Replaced Sections
+## Kept From Replaced Sections
 
-Lines the fleet sync found in this repo's canonical sections that canonical
-does not say. Kept verbatim, prefixed with the section they came from, so a
-later pass can decide whether each is local, obsolete, or worth upstreaming.
+What this repo said in sections the fleet sync replaced, that canonical does
+not say. Superseded lines were dropped; these were not. Each is a line, not a
+block — the rescue was line-based, so the surrounding context is in the commit
+before the sync.
 
-- Fetching the Fleet Standards :: The canonical rules live in **gp-props** and this file mirrors them. To read the current version:
-- Fetching the Fleet Standards :: Implementation patterns are fetched separately — see Implementation Patterns below.
-- Process :: 2. **Gather context from documentation** (CLAUDE.md, SESSION_NOTES.md, TODO.md, relevant docs/)
-- Principles :: 8. **Preserve session context** - Update SESSION_NOTES.md after each significant task (not at the end - sessions can end abruptly)
-- Principles :: 9. **Capture ideas** - Add lower priority items and improvements to TODO.md so they persist between sessions
-- Principles :: 10. **Document user actions** - When manual user action is required (external dashboards, credentials, etc.), add detailed instructions to docs/USER_ACTIONS.md
 - Code Standards :: These rules are non-negotiable. Stop and ask before proceeding if any rule would be violated.
 - Code Standards :: - [ ] Follow established patterns and conventions in the codebase
 - Code Standards :: - [ ] Use industry-standard solutions over custom implementations when available
@@ -960,7 +955,6 @@ later pass can decide whether each is local, obsolete, or worth upstreaming.
 - Code Standards :: - [ ] Group related functionality into logical directories
 - Code Standards :: - [ ] Split large classes into smaller, focused classes when responsibilities diverge
 - Code Standards :: Every non-trivial code change must include comments explaining:
-- Code Standards :: Example:
 - Code Standards :: ```typescript
 - Code Standards :: // Requirement: Calculate NPV for multi-year projections
 - Code Standards :: // Approach: Newton-Raphson method for IRR, standard DCF for NPV
@@ -1040,7 +1034,6 @@ later pass can decide whether each is local, obsolete, or worth upstreaming.
 - Documentation :: - Larger items (those needing problem/solution context, rationale, mock-ups): `### Heading` followed by `**Priority**: …` and a body
 - Documentation :: - When complete, delete (git history tracks what was done)
 - Documentation :: - Mode-by-mode walkthrough of the interface
-- Implementation Patterns (Source of Truth) :: - Fetch via GitHub Pages: `curl -sf "https://gp-props.vercel.app/patterns/{PATTERN_NAME}.md"`
 - Implementation Patterns (Source of Truth) :: Patterns evaluated against this repo's actual needs and intentionally **not** implemented. Each entry includes the reasoning so a future contributor doesn't re-evaluate from scratch.
 - Implementation Patterns (Source of Truth) :: Evaluated April 28, 2026. The pattern's three triggering criteria — (a) cross-module unrelated reactions to the same domain event, (b) service-layer boundaries where producers don't know consumers, (c) need for typed event payloads enforced at compile time — are all already satisfied by existing primitives:
 - Implementation Patterns (Source of Truth) :: - **Theme change broadcast** uses a typed `CustomEvent<{ dark: boolean }>` dispatched on `window` from `applyTheme()` in `$lib/theme.ts`. `BaseChart.svelte` listens via `window.addEventListener('theme:change', …)`. DOM CustomEvent fans out to N listeners at zero coupling cost; type safety comes from the generic.
@@ -1057,33 +1050,6 @@ later pass can decide whether each is local, obsolete, or worth upstreaming.
 - Triggers :: | 23 | `daisyui-components` | `dsc` | Hand-rolled where DaisyUI has a class — `<button>` not `btn`, inputs not `input input-bordered` (etc.), panels not `card` + `card-body`, status not `badge` / `alert` / `toast`, overlays not `modal` / `drawer` / `dropdown`, tabs not `tabs` + `tab`, custom tooltips not `tooltip`. |
 - Triggers :: | 24 | `daisyui-utilities` | `dsu` | Raw Tailwind colors where semantic tokens fit — `bg-white`, `bg-gray-*`, `text-gray-*`, `text-blue-*`. Non-semantic borders — `border-gray-*` / `border-zinc-*` / `border-slate-*`. Arbitrary `shadow-[...]`. Inline hex — `style="color: #..."` / `style="background: #..."`. `dark:` color pairs that should collapse to a single semantic token. |
 - Triggers :: | 25 | `daisyui-build` | `dsb` | Theme-meta generator non-idempotent (second run produces a diff). `GEN:` markers in templates stripped, moved, or formatted away. Theme catalog out of sync with `daisyui/theme/object.js` (DaisyUI bumped a color, regen missed). `pnpm check:theme-hex` failures (hardcoded hex sites no longer match DaisyUI tokens). |
-- Triggers :: | 26 | `clean` | `cln` | Dead code, duplication, commented-out blocks, unused imports/exports, leftover TODOs |
-- Triggers :: | 27 | `naming` | `nam` | Identifier clarity, consistency with local norms, misleading abbreviations |
-- Triggers :: | 28 | `patterns` | `pat` | Deviation from established patterns (fleet-wide gp-props or repo-local), reinvented wheels |
-- Triggers :: | 29 | `docs` | `doc` | Docs ↔ code drift, missing docs on public API, outdated README/CLAUDE.md claims |
-- Triggers :: | 30 | `doc-cleanup` | `dcl` | Duplicated content across doc files, stale files no longer relevant, orphaned docs nothing references, superseded files that replaced but didn't delete their predecessor, sections still describing removed features |
-- Triggers :: | 31 | `tests` | `tst` | Coverage gaps on critical paths, flaky patterns, test smells, missing edge-case tests |
-- Triggers :: | 32 | `complexity` | `cpx` | Function length, nesting depth, cyclomatic complexity hotspots |
-- Triggers :: | 33 | `hacks` | `hck` | `TODO`/`FIXME`/`HACK`/`XXX` markers, `@ts-ignore`/`@ts-expect-error`, `any` escapes framed as temporary, `setTimeout` for timing fixes, quick patches waiting to be done properly |
-- Triggers :: | 34 | `simplify` | `smp` | Reinvented framework features, over-engineered abstractions, custom code that could be 1–2 stdlib/library calls, unnecessary layers |
-- Triggers :: | 35 | `reuse` | `rus` | Custom-vs-stdlib balance: how much is hand-written that shouldn't be; logic that should be extracted for reuse but isn't; abstractions generalized for a single caller; speculative parameters, defensive checks for impossible states, and configurability serving no real need |
-- Triggers :: | 36 | `back-compat` | `bck` | Orphaned feature flags, deprecated branches with no callers, `legacy*` exports, backcompat shims outliving their purpose, `// kept for compatibility` blocks |
-- Triggers :: | 37 | `comments` | `cmt` | Code comments against repo rules — WHY not WHAT, no PR-reference rot, no AI narration, no commented-out blocks unless `// KEEP:` annotated |
-- Triggers :: | 38 | `dx` | `dx` | Developer experience: README/setup clarity, dev-error message quality, source map/stack trace usefulness, debug-surface ergonomics, contribution path friction |
-- Triggers :: | 39 | `undone` | `und` | Started-but-unfinished work — partial implementations, half-wired features, WIP branches of logic, features only reachable from dev but not production |
-- Triggers :: | 40 | `deps` | `dep` | Outdated, unused, vulnerable, license-risky dependencies |
-- Triggers :: | 41 | `observability` | `obs` | Log coverage, metric hygiene, trace completeness, debug-pill surfaces |
-- Triggers :: | 42 | `reliability` | `rel` | Retries, timeouts, idempotency, graceful degradation, offline handling |
-- Triggers :: | 43 | `config` | `cfg` | Env var handling, secret management, config schema drift |
-- Triggers :: | 44 | `migration` | `mig` | DB migration safety, API versioning, rollback plan, backward compatibility |
-- Triggers :: | 45 | `ci` | `ci` | Pipeline health, build speed, cache effectiveness, flake rate |
-- Triggers :: | 46 | `pwa` | `pwa` | Service worker correctness, manifest validity, install prompt handling, update flow, offline behavior, icon cache-busting, standalone-mode quirks |
-- Triggers :: | 47 | `architecture` | `arch` | Coupling, layering violations, abstraction leaks, module boundaries |
-- Triggers :: | 48 | `api` | `api` | Interface consistency, versioning, deprecation, contract clarity |
-- Triggers :: | 49 | `state` | `sta` | Where state lives, derivation vs storage, single-source-of-truth violations |
-- Triggers :: | 50 | `data-model` | `dat` | Schema normalization, foreign-key integrity, nullable discipline |
-- Triggers :: | 51 | `align` | `aln` | Drift between this repo's CLAUDE.md and gp-props CLAUDE.md — missing sections, stale rules, divergent conventions. Drift runs both ways: anything this repo does better gets upstreamed, not overwritten (see "Alignment levels up, never down") |
-- Triggers :: | 52 | `pattern-audit` | `pa` | Every gp-props implementation pattern: implemented / partial / missing / deviates — with diff notes for each. A deviation that is an improvement is an upstream candidate, not a defect |
 - Triggers :: > **Purpose**: AI assistant context file for the Software Transaction Structuring Tool
 - Triggers :: > **Last Updated**: March 2026
 - Triggers :: > **Status**: Active - TypeScript + SvelteKit application with 5 pricing models and 6 transaction models (47 variants)
