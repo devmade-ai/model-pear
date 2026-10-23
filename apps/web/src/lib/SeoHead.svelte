@@ -41,5 +41,6 @@
   <meta name="twitter:description" content={page.description} />
   <meta name="twitter:image" content={OG_IMAGE} />
 
+  <!-- eslint-disable-next-line svelte/no-at-html-tags -- build-time literal from seo.ts, `<` escaped; see the header comment -->
   {@html `<script type="application/ld+json">${graph}<` + `/script>`}
 </svelte:head>
