@@ -107,6 +107,21 @@ test.describe('Pricing calculator regression', () => {
     });
   }
 
+  test('marketplace commission 100 allowed; desired margin 100 blocked', async ({ page }) => {
+    await page.getByRole('button', { name: /Marketplace/ }).click();
+    await page.locator('#market_commissionRate').fill('100');
+    await page.locator('#market_desiredMargin').fill('70');
+    await page.waitForTimeout(500);
+    const alert = page.getByRole('alert');
+    await expect(alert).toHaveCount(0);
+    await expect(page.getByRole('status')).toContainText(/Equilibrium|Viable/i);
+
+    await page.locator('#market_desiredMargin').fill('100');
+    await page.locator('#market_desiredMargin').blur();
+    await page.waitForTimeout(400);
+    await expect(page.getByRole('alert')).toContainText(/cannot be above 99|Desired margin must be below 100%/i);
+  });
+
   test('negative cost shows validation', async ({ page }) => {
     const cost = page.locator('#sub_costToServe');
     await cost.fill('-167');

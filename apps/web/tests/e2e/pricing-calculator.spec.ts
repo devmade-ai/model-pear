@@ -31,9 +31,8 @@ test.describe('Pricing Calculator', () => {
     await page.click('button:has-text("Per-Seat")');
     await expect(page.locator('text=Price per Seat')).toBeVisible();
 
-    // Switch to one-time
-    await page.click('button:has-text("One-Time")');
-    await expect(page.locator('text=License Price')).toBeVisible();
+    await page.getByRole('button', { name: /One-Time/ }).click();
+    await expect(page.locator('label[for="onetime_licensePrice"]')).toBeVisible();
 
     // Switch to marketplace
     await page.click('button:has-text("Marketplace")');
@@ -45,13 +44,8 @@ test.describe('Pricing Calculator', () => {
   });
 
   test('input changes update results reactively', async ({ page }) => {
-    // Change monthly price
-    await page.fill('input[type="number"]', '1000');
-
-    // Wait for reactive update
-    await page.waitForTimeout(100);
-
-    // Results should have updated (we just verify the element is still there and interactive)
+    await page.locator('#sub_monthlyPrice').fill('1000');
+    await page.waitForTimeout(300);
     await expect(page.locator('text=Monthly Revenue')).toBeVisible();
   });
 

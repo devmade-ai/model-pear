@@ -19,6 +19,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: /mobile\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         // Cloud agent: Playwright browser download fails; use system Chrome when present.
@@ -38,7 +39,13 @@ export default defineConfig({
     // Mobile viewports for responsive testing
     {
       name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
+      testMatch: /mobile\.spec\.ts/,
+      use: {
+        ...devices['Pixel 5'],
+        ...(process.env.PLAYWRIGHT_USE_SYSTEM_CHROME === '1'
+          ? { channel: 'chrome' as const }
+          : {}),
+      },
     },
     {
       name: 'mobile-safari',

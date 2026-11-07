@@ -16,6 +16,15 @@ export type PricingModelId =
   | 'one-time'
   | 'marketplace';
 
+/** Gross-margin fields only — never marketplace commission rate (0–100% allowed). */
+const DESIRED_MARGIN_FIELD: Record<PricingModelId, string> = {
+  subscription: 'sub_desiredMargin',
+  'usage-based': 'usage_desiredMargin',
+  'per-seat': 'seat_desiredMargin',
+  'one-time': 'onetime_desiredMargin',
+  marketplace: 'market_desiredMargin',
+};
+
 export function validatePricingModel(
   model: PricingModelId,
   fields: Record<string, { label: string; value: NumericInput; min?: number; max?: number }>
@@ -27,9 +36,14 @@ export function validatePricingModel(
   }
   if (issues.length) return issues;
 
-  const marginKey = Object.keys(fields).find((k) => k.includes('desiredMargin') || k === 'market_commissionRate');
-  if (marginKey) {
-    const m = parseFiniteNumber(fields[marginKey].value);
+  // Requirement: margin >= 100% guard applies only to desired gross margin inputs,
+  // not marketplace commission rate (commission may be 0–100% inclusive).
+  // Approach: model-specific field id — Object.keys iteration previously picked
+  //   market_commissionRate before market_desiredMargin on marketplace.
+  const marginKey = DESIRED_MARGIN_FIELD[model];
+  const marginField = marginKey ? fields[marginKey] : undefined;
+  if (marginField) {
+    const m = parseFiniteNumber(marginField.value);
     if (m !== null && m >= 100) {
       issues.push(
         'Desired margin must be below 100%. At 100% or above, there is no finite minimum price to calculate.'

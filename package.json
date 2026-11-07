@@ -33,7 +33,7 @@
     "pnpm": ">=8.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["sharp"]
+    "onlyBuiltDependencies": ["sharp", "esbuild"]
   },
   "devDependencies": {
     "sharp": "^0.34.5"
