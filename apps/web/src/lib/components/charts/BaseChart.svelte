@@ -8,8 +8,10 @@
 
   let chartElement: HTMLDivElement;
   let chart: ApexCharts | null = null;
+  let syncChartWidth: (() => void) | null = null;
   let cleanupThemeListener: (() => void) | null = null;
   let cleanupMotionListener: (() => void) | null = null;
+  let cleanupResizeObserver: (() => void) | null = null;
 
   onMount(async () => {
     // Dynamic import to avoid SSR issues (apexcharts uses browser-only APIs).
@@ -46,6 +48,15 @@
       },
     });
     chart.render();
+    syncChartWidth = () => {
+      if (!chart || !chartElement) return;
+      const w = chartElement.clientWidth;
+      if (w > 0) chart.updateOptions({ chart: { width: w } }, false, false);
+    };
+    syncChartWidth();
+    const resizeObserver = new ResizeObserver(() => syncChartWidth?.());
+    resizeObserver.observe(chartElement);
+    cleanupResizeObserver = () => resizeObserver.disconnect();
 
     // Theme switching is dispatched from apps/web/src/lib/theme.ts every
     // time applyTheme() runs (toggle, cross-tab storage, OS-pref change).
@@ -76,6 +87,7 @@
   onDestroy(() => {
     if (cleanupThemeListener) cleanupThemeListener();
     if (cleanupMotionListener) cleanupMotionListener();
+    if (cleanupResizeObserver) cleanupResizeObserver();
     if (chart) {
       chart.destroy();
     }
@@ -86,7 +98,10 @@
   // the new options explicitly include `theme`, so the active theme is preserved.
   $: if (chart && options) {
     chart.updateOptions(options);
+    syncChartWidth?.();
   }
 </script>
 
-<div bind:this={chartElement} class="w-full"></div>
+<!-- Requirement: chart SVG tick overflow must not widen the document (mobile).
+     Approach: clip at chart root only — not global canvas/svg rules. -->
+<div bind:this={chartElement} class="w-full max-w-full overflow-x-hidden chart-host"></div>

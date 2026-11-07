@@ -25,12 +25,21 @@
   export let step: number | undefined = undefined;
   export let hint: string = '';
   export let benchmark: string = '';
+  /** Plain-language validation message (no silent clamping). */
+  export let error: string = '';
 
   const dispatch = createEventDispatcher<{ change: { field: string; value: string | number } }>();
 
+  // Requirement: preserve empty field while user clears and retypes.
+  // Approach: emit '' for empty number inputs instead of coercing to 0.
   function handleInput(e: Event) {
     const target = e.target as HTMLInputElement | HTMLSelectElement;
-    const newValue = type === 'number' ? Number(target.value) : target.value;
+    let newValue: string | number;
+    if (type === 'number') {
+      newValue = target.value === '' ? '' : Number(target.value);
+    } else {
+      newValue = target.value;
+    }
     dispatch('change', { field: id, value: newValue });
   }
 </script>
@@ -69,7 +78,8 @@
       {step}
       on:input={handleInput}
       class="input tabular-nums"
-      aria-describedby={hint ? `${id}-hint` : undefined}
+      aria-invalid={error ? 'true' : undefined}
+      aria-describedby={[hint ? `${id}-hint` : '', error ? `${id}-error` : ''].filter(Boolean).join(' ') || undefined}
     />
   {:else}
     <input
@@ -82,6 +92,9 @@
     />
   {/if}
 
+  {#if error}
+    <p id={`${id}-error`} class="text-xs text-error mt-1" role="alert">{error}</p>
+  {/if}
   {#if hint}
     <p id={`${id}-hint`} class="text-xs text-base-content/70 mt-1">{hint}</p>
   {/if}

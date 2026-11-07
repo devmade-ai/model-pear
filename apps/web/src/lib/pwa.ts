@@ -35,7 +35,7 @@
  * HMR-safe via `window.__pwaModuleAttached` guard + import.meta.hot.dispose.
  */
 /// <reference types="vite-plugin-pwa/client" />
-import { registerSW } from 'virtual:pwa-register';
+import { Workbox } from 'workbox-window';
 import { createListenerTracker } from './utils/trackListener';
 
 // ---------------------------------------------------------------------------
@@ -515,28 +515,61 @@ function attachListeners(): void {
   updateInstallMenuVisibility();
 }
 
-if (w && 'serviceWorker' in navigator) {
-  updateSW = registerSW({
-    onNeedRefresh: () => {
-      // Ignore the `waiting` echo for a version that was just applied
-      // (30s post-apply window straddling the reload), and anything that
-      // fires while a launch-apply reload is already in flight.
-      if (wasJustUpdated() || launchApplying) return;
+function onRegisteredSWResolved(registration: ServiceWorkerRegistration | undefined): void {
+  if (!registration) {
+    endLaunchPhase();
+    return;
+  }
+  swRegistration = registration;
+
+  if (registration.waiting && isAutoUpdateEnabled() && !wasJustUpdated()) {
+    launchApplying = true;
+    launchPhase = false;
+    void applyUpdate().catch(() => {
+      launchApplying = false;
       updateState = 'pending';
-      // During launchPhase this arms the state without emitting (gated
-      // inside maybeEmitUpdateBanner); endLaunchPhase() emits later if
-      // the update doesn't launch-apply.
       maybeEmitUpdateBanner();
-    },
-    onOfflineReady: () => {
-      // Nothing to do; the offline-ready state is informational. Future:
-      // surface a small toast if desired.
-    },
-    onRegisterError: (err: unknown) => {
-      // SW registration failures are otherwise silent. Surface to the
-      // console AND dispatch a synthetic ErrorEvent so the DebugPill's
-      // `error` listener captures it (console.error doesn't trigger an
-      // ErrorEvent in all browsers).
+    });
+    const watchdogId = window.setTimeout(() => {
+      if (!launchApplying) return;
+      launchApplying = false;
+      updateState = 'pending';
+      maybeEmitUpdateBanner();
+    }, LAUNCH_APPLY_TIMEOUT_MS);
+    timerCleanups.push(() => window.clearTimeout(watchdogId));
+  } else {
+    endLaunchPhase();
+  }
+
+  const intervalId = window.setInterval(() => {
+    registration.update().catch((err: unknown) => {
+      if (typeof console !== 'undefined') {
+        console.warn('[pwa] hourly update poll failed:', err);
+      }
+    });
+  }, 60 * 60 * 1000);
+  timerCleanups.push(() => window.clearInterval(intervalId));
+}
+
+if (w && 'serviceWorker' in navigator) {
+  // Requirement: register `/sw.js` at site root on deep-linked SPA routes.
+  // Approach: Workbox with absolute script URL + scope `/`.
+  // Alternatives:
+  //   - virtual:pwa-register: Rejected — build emits `./sw.js`, which resolves
+  //     to `/structuring/sw.js` and returns HTML (registration fails).
+  const wb = new Workbox('/sw.js', { scope: '/', type: 'classic' });
+  updateSW = async () => {
+    await wb.messageSkipWaiting();
+  };
+  wb.addEventListener('waiting', () => {
+    if (wasJustUpdated() || launchApplying) return;
+    updateState = 'pending';
+    maybeEmitUpdateBanner();
+  });
+  void wb
+    .register()
+    .then((registration) => onRegisteredSWResolved(registration))
+    .catch((err: unknown) => {
       if (typeof console !== 'undefined') {
         console.error('[pwa] SW registration failed:', err);
       }
@@ -544,73 +577,8 @@ if (w && 'serviceWorker' in navigator) {
         message: '[pwa] Service worker registration failed',
         error: err instanceof Error ? err : new Error(String(err)),
       }));
-      // Registration failed → no launch-apply decision will ever be made;
-      // close the window so nothing stays banner-gated.
       endLaunchPhase();
-    },
-    onRegisteredSW: (_swUrl: string, registration: ServiceWorkerRegistration | undefined) => {
-      if (!registration) {
-        endLaunchPhase();
-        return;
-      }
-      swRegistration = registration;
-
-      // Requirement: fleet auto-on-launch update policy (gp-props
-      // PWA_SYSTEM.md "Update Application Policy").
-      // Approach: a worker ALREADY waiting when registration first
-      // resolves was armed on a previous visit — apply it now via the
-      // same applyUpdate() path the banner uses (skipWaiting → the
-      // existing controllerchange listener reloads exactly once). This
-      // moment is safe: the user hasn't entered calculator inputs yet.
-      // A worker that reaches waiting later in the session is deferred
-      // to the banner / next launch.
-      // Alternatives:
-      //   - registerType 'autoUpdate': rejected — reloads mid-session
-      //     and destroys the in-memory calculator inputs.
-      //   - Tap-only prompt (previous behaviour): rejected as fleet
-      //     default — clients that never tap run stale code forever
-      //     (the canva-grid stale-GA incident).
-      if (registration.waiting && isAutoUpdateEnabled() && !wasJustUpdated()) {
-        launchApplying = true;
-        launchPhase = false; // decision made: silent apply, no banner
-        void applyUpdate().catch(() => {
-          // updateSW() failed (already logged inside applyUpdate). Fall
-          // back to the banner so the user can retry by hand instead of
-          // dead-ending until the next launch.
-          launchApplying = false;
-          updateState = 'pending';
-          maybeEmitUpdateBanner();
-        });
-        // Watchdog: skipWaiting resolved but controllerchange never
-        // reloaded (activation stuck) — fall back to the banner. On the
-        // normal path the reload discards this timer with the page.
-        const watchdogId = window.setTimeout(() => {
-          if (!launchApplying) return;
-          launchApplying = false;
-          updateState = 'pending';
-          maybeEmitUpdateBanner();
-        }, LAUNCH_APPLY_TIMEOUT_MS);
-        timerCleanups.push(() => window.clearTimeout(watchdogId));
-      } else {
-        // No waiting worker, auto-update OFF, or inside the post-apply
-        // suppression window — banner path owns any pending update.
-        endLaunchPhase();
-      }
-
-      // Hourly poll for SW updates. Safari deprioritises backgrounded
-      // PWAs and won't auto-check; without this, a user with the app
-      // open for days never sees a new version. Tracked for HMR
-      // teardown so the interval is released on hot reload.
-      const intervalId = window.setInterval(() => {
-        registration.update().catch((err: unknown) => {
-          if (typeof console !== 'undefined') {
-            console.warn('[pwa] hourly update poll failed:', err);
-          }
-        });
-      }, 60 * 60 * 1000);
-      timerCleanups.push(() => window.clearInterval(intervalId));
-    },
-  });
+    });
 }
 
 if (w) {

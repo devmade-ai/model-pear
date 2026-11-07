@@ -1,7 +1,7 @@
 <script lang="ts">
   import BaseChart from './BaseChart.svelte';
   import type { YearlyProjection } from '@model-pear/calculator';
-  import { formatCurrency } from '$lib/utils';
+  import { apexAxisFormat, formatCurrency } from '$lib/utils';
   import { themeRev, getThemeColor } from '$lib/theme';
 
   export let developerData: YearlyProjection[];
@@ -24,7 +24,7 @@
     xaxis: { categories: years },
     yaxis: {
       title: { text: 'Cumulative Cash Flow (ZAR)' },
-      labels: { formatter: (val: number) => formatCurrency(val, true) },
+      labels: { show: false },
     },
     fill: {
       type: 'gradient',
@@ -35,7 +35,7 @@
         stops: [0, 100],
       },
     },
-    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
+    tooltip: { y: { formatter: (val: string | number) => apexAxisFormat(val, (n) => formatCurrency(n)) } },
     legend: { position: 'top' as const, horizontalAlign: 'center' as const },
     annotations: {
       yaxis: [

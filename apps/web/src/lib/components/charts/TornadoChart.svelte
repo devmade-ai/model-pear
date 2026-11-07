@@ -1,7 +1,7 @@
 <script lang="ts">
   import BaseChart from './BaseChart.svelte';
   import type { InputSensitivity } from '@model-pear/calculator';
-  import { formatCurrency } from '$lib/utils';
+  import { apexAxisFormat, formatCurrency } from '$lib/utils';
   import { themeRev, getThemeColor } from '$lib/theme';
 
   export let sensitivities: InputSensitivity[];
@@ -41,20 +41,29 @@
     colors: [getThemeColor('--color-error'), getThemeColor('--color-success')],
     dataLabels: { enabled: false },
     stroke: { width: 1, colors: [getThemeColor('--color-base-100')] },
-    grid: { xaxis: { lines: { show: true } } },
+    grid: { xaxis: { lines: { show: true } }, padding: { left: 8, right: 12 } },
     xaxis: {
       categories,
-      labels: { formatter: (val: number) => formatCurrency(val, true) },
-      title: { text: 'Impact on Output' },
+      tickAmount: 4,
+      // Requirement: Apex concatenates two formatter outputs into one SVG text node on
+      //   horizontal bar charts, widening the document on narrow viewports.
+      // Approach: hide numeric tick labels; exact values stay in tooltips + the HTML
+      //   impact scale below (readable without duplicating R400KR400K artifacts).
+      labels: { show: false },
+      title: { text: undefined },
     },
     yaxis: {
       title: { text: undefined },
-      labels: { maxWidth: 180 },
+      labels: {
+        maxWidth: 120,
+        trim: true,
+        style: { fontSize: '11px' },
+      },
     },
     tooltip: {
       shared: true,
       intersect: false,
-      y: { formatter: (val: number) => formatCurrency(val) },
+      y: { formatter: (val: string | number) => apexAxisFormat(val, (n) => formatCurrency(n)) },
     },
     legend: { position: 'top' as const, horizontalAlign: 'center' as const },
     annotations: {
@@ -89,6 +98,16 @@
   </p>
   {#if sortedData.length > 0}
     <BaseChart {options} {height} />
+    <p class="text-xs text-center text-base-content/70 mt-2">
+      Impact in ZAR (compact). Tap or hover a bar for exact values.
+    </p>
+    {#if lowDeltas.length > 0 || highDeltas.length > 0}
+      <p class="text-xs text-center text-base-content/60 tabular-nums mt-1" aria-label="Impact scale">
+        {formatCurrency(Math.min(...lowDeltas, ...highDeltas), true)}
+        —
+        {formatCurrency(Math.max(...lowDeltas, ...highDeltas), true)}
+      </p>
+    {/if}
   {:else}
     <p class="text-base-content/70 text-center py-8">No sensitivity data available</p>
   {/if}

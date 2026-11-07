@@ -1,6 +1,6 @@
 <script lang="ts">
   import BaseChart from './BaseChart.svelte';
-  import { formatCurrency } from '$lib/utils';
+  import { apexAxisFormat, formatCurrency } from '$lib/utils';
   import { themeRev, getThemeColor } from '$lib/theme';
 
   export let baseValue: number;
@@ -31,20 +31,18 @@
       getThemeColor('--color-neutral'),
       getThemeColor('--color-success'),
     ],
-    dataLabels: {
-      enabled: true,
-      formatter: (val: number) => formatCurrency(val, true),
-      style: { fontSize: '11px', fontWeight: 'bold' },
-      offsetY: -20,
-    },
+    dataLabels: { enabled: false },
     stroke: { show: false },
-    xaxis: { categories: ['Worst Case', 'Base Case', 'Best Case'] },
+    xaxis: {
+      categories: ['Worst Case', 'Base Case', 'Best Case'],
+      labels: { show: false },
+    },
     yaxis: {
-      title: { text: 'Developer Profit (ZAR)' },
-      labels: { formatter: (val: number) => formatCurrency(val, true) },
+      title: { text: undefined },
+      labels: { show: false },
     },
     fill: { opacity: 1 },
-    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
+    tooltip: { y: { formatter: (val: string | number) => apexAxisFormat(val, (n) => formatCurrency(n)) } },
     legend: { show: false },
     series: [{ name: 'Profit', data: [worstValue, baseValue, bestValue] }],
     };
@@ -60,10 +58,29 @@
   <p class="text-sm text-base-content/70 mb-4">
     Best, base, and worst case outcomes based on input ranges.
   </p>
+  <div class="grid grid-cols-3 gap-2 text-xs font-medium text-center text-base-content/80 mb-2" aria-hidden="true">
+    <span>Worst</span>
+    <span>Base</span>
+    <span>Best</span>
+  </div>
   <BaseChart {options} {height} />
 
   <!-- Summary Stats -->
   <div class="mt-4 pt-4 border-t border-base-300 grid grid-cols-3 gap-4 text-center">
+    <div>
+      <p class="text-xs text-base-content/70">Worst</p>
+      <p class="text-sm font-semibold text-error">{formatCurrency(worstValue, true)}</p>
+    </div>
+    <div>
+      <p class="text-xs text-base-content/70">Base</p>
+      <p class="text-sm font-semibold text-base-content">{formatCurrency(baseValue, true)}</p>
+    </div>
+    <div>
+      <p class="text-xs text-base-content/70">Best</p>
+      <p class="text-sm font-semibold text-success">{formatCurrency(bestValue, true)}</p>
+    </div>
+  </div>
+  <div class="mt-3 pt-3 border-t border-base-300 grid grid-cols-3 gap-4 text-center">
     <div>
       <p class="text-xs text-base-content/70">Range</p>
       <p class="text-sm font-semibold text-base-content">{formatCurrency(range)}</p>

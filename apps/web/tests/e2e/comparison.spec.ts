@@ -6,57 +6,26 @@ test.describe('Comparison Feature', () => {
   });
 
   test('can save calculation result', async ({ page }) => {
-    // Look for save button
-    const saveButton = page.locator('button:has-text("Save")');
-
-    if (await saveButton.isVisible()) {
-      await saveButton.click();
-
-      // Should show save dialog or confirmation
-      const saveDialog = page.locator('text=Save Option');
-      const savedMessage = page.locator('text=saved');
-
-      const dialogVisible = await saveDialog.isVisible().catch(() => false);
-      const messageVisible = await savedMessage.isVisible().catch(() => false);
-
-      // One of these should appear
-      expect(dialogVisible || messageVisible).toBeTruthy();
-    }
+    const saveOption = page.getByRole('button', { name: 'Save Option' });
+    await expect(saveOption).toBeVisible();
+    await saveOption.click();
+    await expect(page.getByText('Save Option').first()).toBeVisible();
   });
 
   test('comparison manager shows saved options', async ({ page }) => {
-    // Save a calculation first
-    const saveButton = page.locator('button:has-text("Save")');
-    if (await saveButton.isVisible()) {
-      await saveButton.click();
-
-      // Fill name if dialog appears
-      const nameInput = page.locator('input[placeholder*="name"], input[type="text"]').first();
-      if (await nameInput.isVisible()) {
-        await nameInput.fill('Test Option');
-        await page.click('button:has-text("Save")');
-      }
-    }
-
-    // Look for comparison manager panel
-    const comparisonPanel = page.locator('text=Saved Options');
-    if (await comparisonPanel.isVisible()) {
-      await expect(comparisonPanel).toBeVisible();
-    }
+    const toggle = page.getByRole('button', { name: /Saved Options/i });
+    await expect(toggle).toBeVisible();
+    await toggle.click();
+    await expect(page.locator('h2:text("Saved Options")')).toBeVisible();
   });
 });
 
 test.describe('Export Features', () => {
   test('comparison view has export buttons', async ({ page }) => {
     await page.goto('/structuring/model-1');
-
-    // We need saved options to open comparison view
-    // This test verifies the structure exists when comparison is opened
-    const compareButton = page.locator('button:has-text("Compare")');
-
+    const compareButton = page.getByRole('button', { name: /Compare/i }).first();
     if (await compareButton.isVisible()) {
-      // Button exists, feature is present
-      expect(true).toBeTruthy();
+      await expect(compareButton).toBeVisible();
     }
   });
 });

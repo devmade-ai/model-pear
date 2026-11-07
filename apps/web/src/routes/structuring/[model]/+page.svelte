@@ -35,6 +35,7 @@
   } from '$lib/components';
   import { modelFieldConfigs, type InputFieldConfig } from '$lib/config';
   import { comparisonStore, isComparing } from '$lib/stores';
+  import { validateNumberBounds, type NumericInput } from '$lib/utils';
 
   // Collapsible section states
   let showAdvancedInputs = false;
@@ -222,6 +223,21 @@
     return typeof v === 'string' || typeof v === 'number' ? v : '';
   }
 
+  function fieldError(field: InputFieldConfig): string {
+    if (field.type !== 'number') return '';
+    const raw = inputs[field.id] as NumericInput;
+    const issue = validateNumberBounds(field.id, field.label, raw, {
+      min: field.min,
+      max: field.max,
+      allowEmpty: true,
+    });
+    return issue?.message ?? '';
+  }
+
+  $: structuringInputIssues = [...essentialFields, ...advancedFields]
+    .map((f) => fieldError(f))
+    .filter((m) => m.length > 0);
+
   // Erased calculate signature for SensitivityPanel. Same parser issue as
   // fieldValue — the `as unknown as` chain doesn't survive inline-expression
   // parsing in the template.
@@ -310,7 +326,7 @@
 </svelte:head>
 
 {#if config && result}
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0 overflow-x-clip">
     <!-- Page header -->
     <div class="mb-8">
       <div class="flex items-center space-x-2 mb-2">
@@ -333,6 +349,17 @@
         <div class="card p-6 sticky top-4">
           <h2 class="text-lg font-semibold text-base-content mb-4">Inputs</h2>
 
+          {#if structuringInputIssues.length > 0}
+            <div class="alert alert-warning alert-soft mb-4" role="alert">
+              <p class="text-sm font-medium">Some values need attention before you rely on the results:</p>
+              <ul class="list-disc list-inside text-sm mt-1 space-y-0.5">
+                {#each structuringInputIssues as msg (msg)}
+                  <li>{msg}</li>
+                {/each}
+              </ul>
+            </div>
+          {/if}
+
           <!-- Essential Inputs -->
           <div class="space-y-4">
             {#each essentialFields as field (field.id)}
@@ -347,6 +374,7 @@
                 step={field.step}
                 hint={field.hint}
                 benchmark={field.benchmark}
+                error={fieldError(field)}
                 on:change={handleInputChange}
               />
             {/each}
@@ -376,6 +404,7 @@
                       step={field.step}
                       hint={field.hint}
                       benchmark={field.benchmark}
+                      error={fieldError(field)}
                       on:change={handleInputChange}
                     />
                   {/each}
@@ -458,7 +487,7 @@
               </div>
             </div>
           </div>
-          <div class="collapse-content space-y-6 px-4 pb-4">
+          <div class="collapse-content space-y-6 px-4 pb-4 min-w-0 max-w-full overflow-x-clip">
             <div>
               <h4 class="text-sm font-medium text-base-content/70 mb-3">Sensitivity Analysis</h4>
               <SensitivityPanel
@@ -527,7 +556,7 @@
     <ComparisonView />
   {/if}
 {:else}
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0 overflow-x-clip">
     <div class="text-center">
       <h1 class="text-2xl font-bold text-base-content mb-4">Model Not Found</h1>
       <p class="text-base-content/70 mb-4">The requested model "{modelId}" was not found.</p>

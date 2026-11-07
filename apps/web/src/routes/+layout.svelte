@@ -303,7 +303,7 @@
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center">
-          <a href={resolve('/')} class="flex items-center space-x-2" on:click={closeMenu}>
+          <a id="brand-home-link" href={resolve('/')} class="flex items-center space-x-2 touch-brand-link" on:click={closeMenu}>
             <span class="text-2xl">🍐</span>
             <span class="font-semibold text-xl text-base-content">Model Pear</span>
           </a>
@@ -333,7 +333,7 @@
             bind:this={triggerEl}
             id="burger-trigger"
             type="button"
-            class="btn btn-ghost btn-square"
+            class="btn btn-ghost btn-square touch-menu-trigger"
             aria-haspopup="menu"
             aria-expanded={menuOpen}
             aria-controls="burger-menu"
@@ -522,7 +522,7 @@
   {/if}
 
   <!-- Main content -->
-  <main class="flex-1">
+  <main class="flex-1 min-w-0 overflow-x-clip">
     <slot />
   </main>
 

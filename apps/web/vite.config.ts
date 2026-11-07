@@ -3,6 +3,10 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  // Requirement: PWA SW must register at `/sw.js` with scope `/` on deep routes.
+  // SvelteKit client assets default to relative `./` bases, which made Workbox
+  // register `structuring/sw.js` from `/structuring/model-5`.
+  base: '/',
   plugins: [
     sveltekit(),
     /* PWA configuration.
@@ -22,6 +26,7 @@ export default defineConfig({
          base-100 because dim is the default theme (see app.html). */
     VitePWA({
       registerType: 'prompt',
+      scope: '/',
       injectRegister: false,  // The pwa.ts module calls registerSW manually.
       strategies: 'generateSW',
       // Requirement: exactly ONE precache source per URL.

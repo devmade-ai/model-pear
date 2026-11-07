@@ -1,6 +1,6 @@
 <script lang="ts">
   import BaseChart from './BaseChart.svelte';
-  import { formatCurrency } from '$lib/utils';
+  import { apexAxisFormat, formatCurrency } from '$lib/utils';
   import { themeRev, getThemeColor } from '$lib/theme';
 
   export let developerNPV: number;
@@ -24,20 +24,12 @@
       },
     },
     colors: [getThemeColor('--color-primary'), getThemeColor('--color-secondary')],
-    dataLabels: {
-      enabled: true,
-      formatter: (val: number) => formatCurrency(val, true),
-      style: { fontSize: '12px', fontWeight: 'bold' },
-      offsetY: -20,
-    },
+    dataLabels: { enabled: false },
     stroke: { show: false },
     xaxis: { categories: ['Developer', 'Buyer'] },
-    yaxis: {
-      title: { text: 'Net Present Value (ZAR)' },
-      labels: { formatter: (val: number) => formatCurrency(val, true) },
-    },
+    yaxis: { title: { text: undefined }, labels: { show: false } },
     fill: { opacity: 1 },
-    tooltip: { y: { formatter: (val: number) => formatCurrency(val) } },
+    tooltip: { y: { formatter: (val: string | number) => apexAxisFormat(val, (n) => formatCurrency(n)) } },
     legend: { show: false },
     series: [{ name: 'NPV', data: [developerNPV, buyerNPV] }],
   };
@@ -50,5 +42,15 @@
   <p class="text-sm text-base-content/70 mb-4">
     Net Present Value for each party, discounted at the specified rate.
   </p>
+  <div class="grid grid-cols-2 gap-2 text-xs text-center tabular-nums mb-2">
+    <div>
+      <p class="text-base-content/60">Developer NPV</p>
+      <p class="font-medium text-base-content">{formatCurrency(developerNPV, true)}</p>
+    </div>
+    <div>
+      <p class="text-base-content/60">Buyer NPV</p>
+      <p class="font-medium text-base-content">{formatCurrency(buyerNPV, true)}</p>
+    </div>
+  </div>
   <BaseChart {options} {height} />
 </div>

@@ -292,7 +292,7 @@
     type="button"
     aria-label="Open debug panel"
     data-tip="Open debug panel"
-    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300 tooltip tooltip-left"
+    class="btn btn-sm btn-ghost rounded-full font-mono fixed bottom-4 right-4 z-[80] bg-base-200 border-base-300 tooltip tooltip-left touch-debug-trigger"
   >
     <span>dbg</span>
     <span class="opacity-60">{entries.length}</span>
