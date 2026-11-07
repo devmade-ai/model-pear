@@ -2,12 +2,15 @@
  * Formatting utilities for currency, percentages, and numbers
  */
 
+import { finiteOrNull } from './numericInput';
+
 /**
  * Format a number as South African Rand currency
  * @param value - The number to format
  * @param compact - If true, use compact notation (e.g., R1.2M)
  */
 export function formatCurrency(value: number, compact?: boolean): string {
+  if (!Number.isFinite(value)) return '—';
   if (compact) {
     const absValue = Math.abs(value);
     const sign = value < 0 ? '-' : '';
@@ -30,7 +33,26 @@ export function formatCurrency(value: number, compact?: boolean): string {
  * Format a number as a percentage
  */
 export function formatPercent(value: number, decimals = 1): string {
+  if (!Number.isFinite(value)) return '—';
   return `${value.toFixed(decimals)}%`;
+}
+
+/**
+ * Safe currency for reactive UI / charts when bind state may be empty or null.
+ */
+export function formatCurrencySafe(value: unknown, compact?: boolean): string {
+  const n = finiteOrNull(value);
+  if (n === null) return '—';
+  return formatCurrency(n, compact);
+}
+
+/**
+ * Safe percentage for reactive UI when bind state may be empty or null.
+ */
+export function formatPercentSafe(value: unknown, decimals = 1): string {
+  const n = finiteOrNull(value);
+  if (n === null) return '—';
+  return formatPercent(n, decimals);
 }
 
 /**

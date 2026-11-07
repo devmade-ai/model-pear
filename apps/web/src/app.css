@@ -282,3 +282,40 @@
     page-break-inside: avoid;
   }
 }
+
+/* Requirement: WCAG 2.5.5 touch targets on coarse pointers without
+   changing compact desktop sizing (pointer: fine unchanged).
+   Approach: scoped utility classes on header/debug controls + form controls. */
+@media (pointer: coarse) {
+  .touch-menu-trigger {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .touch-brand-link {
+    min-height: 2.75rem;
+    align-items: center;
+    padding-inline: 0.25rem;
+  }
+
+  #burger-menu [data-menu-item] {
+    min-height: 2.75rem;
+  }
+
+  .touch-debug-trigger {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  input.input,
+  select.select,
+  textarea.textarea {
+    font-size: 1rem;
+    min-height: 2.75rem;
+  }
+}
+
+/* Keep chart layers from widening the scrollable document on small viewports. */
+.chart-host {
+  max-width: 100%;
+}

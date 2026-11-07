@@ -1,7 +1,7 @@
 <script lang="ts">
   import BaseChart from './BaseChart.svelte';
   import type { InputSensitivity } from '@model-pear/calculator';
-  import { formatCurrency } from '$lib/utils';
+  import { apexAxisFormat, formatCurrency } from '$lib/utils';
   import { themeRev, getThemeColor } from '$lib/theme';
 
   export let sensitivities: InputSensitivity[];
@@ -44,7 +44,11 @@
     grid: { xaxis: { lines: { show: true } } },
     xaxis: {
       categories,
-      labels: { formatter: (val: number) => formatCurrency(val, true) },
+      labels: {
+        showDuplicates: false,
+        hideOverlappingLabels: true,
+        formatter: (val: string | number) => apexAxisFormat(val, (n) => formatCurrency(n, true)),
+      },
       title: { text: 'Impact on Output' },
     },
     yaxis: {
@@ -54,7 +58,7 @@
     tooltip: {
       shared: true,
       intersect: false,
-      y: { formatter: (val: number) => formatCurrency(val) },
+      y: { formatter: (val: string | number) => apexAxisFormat(val, (n) => formatCurrency(n)) },
     },
     legend: { position: 'top' as const, horizontalAlign: 'center' as const },
     annotations: {

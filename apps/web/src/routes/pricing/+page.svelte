@@ -1,7 +1,16 @@
 <script lang="ts">
   import SeoHead from '$lib/SeoHead.svelte';
   import { PAGES } from '$lib/seo';
-  import { formatCurrency, formatPercent } from '$lib/utils/formatters';
+  import {
+    formatCurrency,
+    formatPercent,
+    formatCurrencySafe,
+    formatPercentSafe,
+    parseFiniteNumber,
+    validatePricingModel,
+    chartFiniteProps,
+    type PricingModelId,
+  } from '$lib/utils';
   import { EquilibriumChart } from '$lib/components/charts';
 
   const models = [
@@ -17,50 +26,75 @@
   // Derived: selected model metadata for print heading
   $: selectedModelInfo = models.find(m => m.id === selectedModel);
 
-  // Subscription inputs
-  let sub_monthlyPrice = 500;
-  let sub_customers = 100;
-  let sub_costToServe = 150;
-  let sub_desiredMargin = 70;
-  let sub_buyerValue = 5000;
+  // Subscription inputs (number | '' preserves clearing/retyping)
+  let sub_monthlyPrice: number | '' = 500;
+  let sub_customers: number | '' = 100;
+  let sub_costToServe: number | '' = 150;
+  let sub_desiredMargin: number | '' = 70;
+  let sub_buyerValue: number | '' = 5000;
 
   // Usage-based inputs
-  let usage_pricePerUnit = 2.00;
-  let usage_monthlyUnits = 10000;
-  let usage_costPerUnit = 0.50;
-  let usage_desiredMargin = 75;
-  let usage_buyerValuePerUnit = 10.00;
+  let usage_pricePerUnit: number | '' = 2.0;
+  let usage_monthlyUnits: number | '' = 10000;
+  let usage_costPerUnit: number | '' = 0.5;
+  let usage_desiredMargin: number | '' = 75;
+  let usage_buyerValuePerUnit: number | '' = 10.0;
 
   // Per-seat inputs
-  let seat_pricePerSeat = 250;
-  let seat_seats = 25;
-  let seat_costPerSeat = 70;
-  let seat_desiredMargin = 72;
-  let seat_valuePerSeat = 2000;
+  let seat_pricePerSeat: number | '' = 250;
+  let seat_seats: number | '' = 25;
+  let seat_costPerSeat: number | '' = 70;
+  let seat_desiredMargin: number | '' = 72;
+  let seat_valuePerSeat: number | '' = 2000;
 
   // One-time inputs
-  let onetime_licensePrice = 5000;
-  let onetime_maintenanceFee = 20;
-  let onetime_maintenanceAttach = 60;
-  let onetime_existingCustomers = 30;
-  let onetime_costToDeliver = 1500;
-  let onetime_monthlySupportCost = 50;
-  let onetime_desiredMargin = 70;
-  let onetime_buyerValuePerYear = 15000;
+  let onetime_licensePrice: number | '' = 5000;
+  let onetime_maintenanceFee: number | '' = 20;
+  let onetime_maintenanceAttach: number | '' = 60;
+  let onetime_existingCustomers: number | '' = 30;
+  let onetime_costToDeliver: number | '' = 1500;
+  let onetime_monthlySupportCost: number | '' = 50;
+  let onetime_desiredMargin: number | '' = 70;
+  let onetime_buyerValuePerYear: number | '' = 15000;
 
   // Marketplace inputs
-  let market_commissionRate = 10;
-  let market_avgTransactionValue = 500;
-  let market_monthlyTransactions = 200;
-  let market_activeSellers = 20;
-  let market_costPerTransaction = 15;
-  let market_desiredMargin = 70;
-  let market_sellerValuePerTransaction = 150;
+  let market_commissionRate: number | '' = 10;
+  let market_avgTransactionValue: number | '' = 500;
+  let market_monthlyTransactions: number | '' = 200;
+  let market_activeSellers: number | '' = 20;
+  let market_costPerTransaction: number | '' = 15;
+  let market_desiredMargin: number | '' = 70;
+  let market_sellerValuePerTransaction: number | '' = 150;
 
   // Requirement: Recalculate pricing results reactively when any input changes.
   // Approach: List all reactive dependencies explicitly in the $: declaration
   //   so Svelte's compiler tracks them. The function itself reads from closure
   //   variables, but Svelte needs them in the call expression to trigger reactivity.
+  $: pricingFieldDefs = buildPricingFieldDefs(selectedModel as PricingModelId);
+  $: pricingInputIssues = validatePricingModel(selectedModel as PricingModelId, pricingFieldDefs);
+  $: pricingInputsValid = pricingInputIssues.length === 0;
+
+  $: currentPriceForChart =
+    selectedModel === 'subscription'
+      ? num(sub_monthlyPrice)
+      : selectedModel === 'usage-based'
+        ? num(usage_pricePerUnit)
+        : selectedModel === 'per-seat'
+          ? num(seat_pricePerSeat)
+          : selectedModel === 'one-time'
+            ? num(onetime_licensePrice)
+            : num(market_commissionRate);
+
+  $: showEquilibriumChart =
+    pricingInputsValid &&
+    results &&
+    chartFiniteProps({
+      minimumPrice: results.minimumPrice,
+      maximumPrice: results.maximumPrice,
+      currentPrice: currentPriceForChart,
+      suggestedPrice: results.suggestedPrice,
+    });
+
   $: results = calculateResults(
     selectedModel,
     sub_monthlyPrice, sub_customers, sub_costToServe, sub_desiredMargin, sub_buyerValue,
@@ -71,6 +105,51 @@
     market_commissionRate, market_avgTransactionValue, market_monthlyTransactions, market_activeSellers,
     market_costPerTransaction, market_desiredMargin, market_sellerValuePerTransaction
   );
+
+  function num(v: number | ''): number {
+    return parseFiniteNumber(v) ?? 0;
+  }
+
+  function buildPricingFieldDefs(model: PricingModelId) {
+    const defs: Record<string, { label: string; value: number | ''; min?: number; max?: number }> = {};
+    if (model === 'subscription') {
+      defs.sub_monthlyPrice = { label: 'Monthly Price per Customer', value: sub_monthlyPrice, min: 0 };
+      defs.sub_customers = { label: 'Number of Customers', value: sub_customers, min: 0 };
+      defs.sub_costToServe = { label: 'Cost to Serve per Customer', value: sub_costToServe, min: 0 };
+      defs.sub_desiredMargin = { label: 'Desired Gross Margin', value: sub_desiredMargin, min: 0, max: 99 };
+      defs.sub_buyerValue = { label: 'Monthly Value to Client', value: sub_buyerValue, min: 0 };
+    } else if (model === 'usage-based') {
+      defs.usage_pricePerUnit = { label: 'Price per Unit', value: usage_pricePerUnit, min: 0 };
+      defs.usage_monthlyUnits = { label: 'Monthly Units', value: usage_monthlyUnits, min: 0 };
+      defs.usage_costPerUnit = { label: 'Cost per Unit', value: usage_costPerUnit, min: 0 };
+      defs.usage_desiredMargin = { label: 'Desired Gross Margin', value: usage_desiredMargin, min: 0, max: 99 };
+      defs.usage_buyerValuePerUnit = { label: 'Value per Unit to Client', value: usage_buyerValuePerUnit, min: 0 };
+    } else if (model === 'per-seat') {
+      defs.seat_pricePerSeat = { label: 'Price per Seat', value: seat_pricePerSeat, min: 0 };
+      defs.seat_seats = { label: 'Number of Seats', value: seat_seats, min: 0 };
+      defs.seat_costPerSeat = { label: 'Cost per Seat', value: seat_costPerSeat, min: 0 };
+      defs.seat_desiredMargin = { label: 'Desired Gross Margin', value: seat_desiredMargin, min: 0, max: 99 };
+      defs.seat_valuePerSeat = { label: 'Monthly Value per Seat to Client', value: seat_valuePerSeat, min: 0 };
+    } else if (model === 'one-time') {
+      defs.onetime_licensePrice = { label: 'License Price', value: onetime_licensePrice, min: 0 };
+      defs.onetime_costToDeliver = { label: 'Cost to Deliver per License', value: onetime_costToDeliver, min: 0 };
+      defs.onetime_desiredMargin = { label: 'Desired Gross Margin', value: onetime_desiredMargin, min: 0, max: 99 };
+      defs.onetime_buyerValuePerYear = { label: 'Annual Value to Client', value: onetime_buyerValuePerYear, min: 0 };
+      defs.onetime_maintenanceFee = { label: 'Annual Maintenance Fee', value: onetime_maintenanceFee, min: 0, max: 100 };
+      defs.onetime_maintenanceAttach = { label: 'Maintenance Attach Rate', value: onetime_maintenanceAttach, min: 0, max: 100 };
+      defs.onetime_existingCustomers = { label: 'Existing Customers on Maintenance', value: onetime_existingCustomers, min: 0 };
+      defs.onetime_monthlySupportCost = { label: 'Monthly Support Cost per Customer', value: onetime_monthlySupportCost, min: 0 };
+    } else if (model === 'marketplace') {
+      defs.market_commissionRate = { label: 'Commission Rate', value: market_commissionRate, min: 0, max: 100 };
+      defs.market_avgTransactionValue = { label: 'Average Transaction Value', value: market_avgTransactionValue, min: 0 };
+      defs.market_monthlyTransactions = { label: 'Monthly Transactions', value: market_monthlyTransactions, min: 0 };
+      defs.market_costPerTransaction = { label: 'Cost per Transaction', value: market_costPerTransaction, min: 0 };
+      defs.market_desiredMargin = { label: 'Desired Gross Margin', value: market_desiredMargin, min: 0, max: 99 };
+      defs.market_sellerValuePerTransaction = { label: 'Value per Transaction to Seller', value: market_sellerValuePerTransaction, min: 0 };
+      defs.market_activeSellers = { label: 'Active Sellers', value: market_activeSellers, min: 0 };
+    }
+    return defs;
+  }
 
   // Requirement: Find the price range where seller hits margin AND buyer sees ROI.
   // Approach: For each pricing model, calculate three key values:
@@ -92,18 +171,26 @@
   // args this function wouldn't re-run when an input prop changes.
   function calculateResults(..._deps: unknown[]) {
     if (selectedModel === 'subscription') {
-      const monthlyRevenue = sub_monthlyPrice * sub_customers;
-      const monthlyCost = sub_costToServe * sub_customers;
+      const monthlyPrice = num(sub_monthlyPrice);
+      const customers = num(sub_customers);
+      const costToServe = num(sub_costToServe);
+      const desiredMargin = num(sub_desiredMargin);
+      const buyerValue = num(sub_buyerValue);
+
+      const monthlyRevenue = monthlyPrice * customers;
+      const monthlyCost = costToServe * customers;
       const monthlyProfit = monthlyRevenue - monthlyCost;
       const actualMargin = monthlyRevenue > 0 ? (monthlyProfit / monthlyRevenue) * 100 : 0;
 
-      const minimumPrice = sub_desiredMargin >= 100 ? Infinity : sub_costToServe / (1 - sub_desiredMargin / 100);
-      const sellerMeetsTarget = sub_monthlyPrice >= minimumPrice;
+      const minimumPrice =
+        desiredMargin >= 100 ? Number.NaN : costToServe / (1 - desiredMargin / 100);
+      const sellerMeetsTarget = Number.isFinite(minimumPrice) && monthlyPrice >= minimumPrice;
 
-      const maximumPrice = sub_buyerValue * 0.4;
-      const buyerROI = sub_monthlyPrice > 0 ? sub_buyerValue / sub_monthlyPrice : 0;
+      const maximumPrice = buyerValue * 0.4;
+      const buyerROI = monthlyPrice > 0 ? buyerValue / monthlyPrice : 0;
 
-      const equilibriumExists = minimumPrice <= maximumPrice;
+      const equilibriumExists =
+        Number.isFinite(minimumPrice) && Number.isFinite(maximumPrice) && minimumPrice <= maximumPrice;
       const suggestedPrice = equilibriumExists ? (minimumPrice + maximumPrice) / 2 : 0;
 
       return {
@@ -119,24 +206,34 @@
         equilibriumExists,
         sellerMeetsTarget,
         buyerROI,
-        buyerAnnualSavings: (sub_buyerValue - sub_monthlyPrice) * 12,
+        buyerAnnualSavings: (buyerValue - monthlyPrice) * 12,
         metricLabel: 'per customer/month'
       };
     } else if (selectedModel === 'usage-based') {
-      const monthlyRevenue = usage_pricePerUnit * usage_monthlyUnits;
-      const monthlyCost = usage_costPerUnit * usage_monthlyUnits;
+      const pricePerUnit = num(usage_pricePerUnit);
+      const monthlyUnits = num(usage_monthlyUnits);
+      const costPerUnit = num(usage_costPerUnit);
+      const desiredMargin = num(usage_desiredMargin);
+      const buyerValuePerUnit = num(usage_buyerValuePerUnit);
+
+      const monthlyRevenue = pricePerUnit * monthlyUnits;
+      const monthlyCost = costPerUnit * monthlyUnits;
       const monthlyProfit = monthlyRevenue - monthlyCost;
       const actualMargin = monthlyRevenue > 0 ? (monthlyProfit / monthlyRevenue) * 100 : 0;
 
-      const minimumPricePerUnit = usage_desiredMargin >= 100 ? Infinity : usage_costPerUnit / (1 - usage_desiredMargin / 100);
-      const sellerMeetsTarget = usage_pricePerUnit >= minimumPricePerUnit;
+      const minimumPricePerUnit =
+        desiredMargin >= 100 ? Number.NaN : costPerUnit / (1 - desiredMargin / 100);
+      const sellerMeetsTarget = Number.isFinite(minimumPricePerUnit) && pricePerUnit >= minimumPricePerUnit;
 
-      const maximumPricePerUnit = usage_buyerValuePerUnit * 0.4;
-      const buyerROIPerUnit = usage_pricePerUnit > 0 ? usage_buyerValuePerUnit / usage_pricePerUnit : 0;
-      const buyerMonthlyValue = usage_buyerValuePerUnit * usage_monthlyUnits;
+      const maximumPricePerUnit = buyerValuePerUnit * 0.4;
+      const buyerROIPerUnit = pricePerUnit > 0 ? buyerValuePerUnit / pricePerUnit : 0;
+      const buyerMonthlyValue = buyerValuePerUnit * monthlyUnits;
       const buyerMonthlySavings = buyerMonthlyValue - monthlyRevenue;
 
-      const equilibriumExists = minimumPricePerUnit <= maximumPricePerUnit;
+      const equilibriumExists =
+        Number.isFinite(minimumPricePerUnit) &&
+        Number.isFinite(maximumPricePerUnit) &&
+        minimumPricePerUnit <= maximumPricePerUnit;
       const suggestedPrice = equilibriumExists ? (minimumPricePerUnit + maximumPricePerUnit) / 2 : 0;
 
       return {
@@ -156,20 +253,30 @@
         metricLabel: 'per unit'
       };
     } else if (selectedModel === 'per-seat') {
-      const monthlyRevenue = seat_pricePerSeat * seat_seats;
-      const monthlyCost = seat_costPerSeat * seat_seats;
+      const pricePerSeat = num(seat_pricePerSeat);
+      const seats = num(seat_seats);
+      const costPerSeat = num(seat_costPerSeat);
+      const desiredMargin = num(seat_desiredMargin);
+      const valuePerSeat = num(seat_valuePerSeat);
+
+      const monthlyRevenue = pricePerSeat * seats;
+      const monthlyCost = costPerSeat * seats;
       const monthlyProfit = monthlyRevenue - monthlyCost;
       const actualMargin = monthlyRevenue > 0 ? (monthlyProfit / monthlyRevenue) * 100 : 0;
 
-      const minimumPricePerSeat = seat_desiredMargin >= 100 ? Infinity : seat_costPerSeat / (1 - seat_desiredMargin / 100);
-      const sellerMeetsTarget = seat_pricePerSeat >= minimumPricePerSeat;
+      const minimumPricePerSeat =
+        desiredMargin >= 100 ? Number.NaN : costPerSeat / (1 - desiredMargin / 100);
+      const sellerMeetsTarget = Number.isFinite(minimumPricePerSeat) && pricePerSeat >= minimumPricePerSeat;
 
-      const maximumPricePerSeat = seat_valuePerSeat * 0.4;
-      const buyerROIPerSeat = seat_pricePerSeat > 0 ? seat_valuePerSeat / seat_pricePerSeat : 0;
-      const buyerMonthlyValue = seat_valuePerSeat * seat_seats;
+      const maximumPricePerSeat = valuePerSeat * 0.4;
+      const buyerROIPerSeat = pricePerSeat > 0 ? valuePerSeat / pricePerSeat : 0;
+      const buyerMonthlyValue = valuePerSeat * seats;
       const buyerMonthlySavings = buyerMonthlyValue - monthlyRevenue;
 
-      const equilibriumExists = minimumPricePerSeat <= maximumPricePerSeat;
+      const equilibriumExists =
+        Number.isFinite(minimumPricePerSeat) &&
+        Number.isFinite(maximumPricePerSeat) &&
+        minimumPricePerSeat <= maximumPricePerSeat;
       const suggestedPrice = equilibriumExists ? (minimumPricePerSeat + maximumPricePerSeat) / 2 : 0;
 
       return {
@@ -189,25 +296,40 @@
         metricLabel: 'per seat/month'
       };
     } else if (selectedModel === 'one-time') {
-      const annualMaintenanceFee = onetime_licensePrice * (onetime_maintenanceFee / 100);
-      const monthlyMaintenanceRevenue = (onetime_existingCustomers * annualMaintenanceFee) / 12;
+      const licensePrice = num(onetime_licensePrice);
+      const maintenanceFee = num(onetime_maintenanceFee);
+      const maintenanceAttach = num(onetime_maintenanceAttach);
+      const existingCustomers = num(onetime_existingCustomers);
+      const monthlySupportCost = num(onetime_monthlySupportCost);
+      const costToDeliver = num(onetime_costToDeliver);
+      const desiredMargin = num(onetime_desiredMargin);
+      const buyerValuePerYear = num(onetime_buyerValuePerYear);
+
+      const annualMaintenanceFee = licensePrice * (maintenanceFee / 100);
+      const monthlyMaintenanceRevenue = (existingCustomers * annualMaintenanceFee) / 12;
       const monthlyRevenue = monthlyMaintenanceRevenue;
 
-      const monthlySupportCost = onetime_existingCustomers * onetime_monthlySupportCost;
-      const monthlyCost = monthlySupportCost;
+      const monthlyCost = existingCustomers * monthlySupportCost;
 
       const monthlyProfit = monthlyRevenue - monthlyCost;
       const actualMargin = monthlyRevenue > 0 ? (monthlyProfit / monthlyRevenue) * 100 : 0;
 
-      const minimumLicensePrice = onetime_desiredMargin >= 100 ? Infinity : onetime_costToDeliver / (1 - onetime_desiredMargin / 100);
-      const sellerMeetsTarget = onetime_licensePrice >= minimumLicensePrice;
+      const minimumLicensePrice =
+        desiredMargin >= 100 ? Number.NaN : costToDeliver / (1 - desiredMargin / 100);
+      const sellerMeetsTarget = Number.isFinite(minimumLicensePrice) && licensePrice >= minimumLicensePrice;
 
-      const buyerFirstYearCost = onetime_licensePrice + (annualMaintenanceFee * (onetime_maintenanceAttach / 100));
-      const buyerROIFirstYear = buyerFirstYearCost > 0 ? onetime_buyerValuePerYear / buyerFirstYearCost : 0;
-      const buyerPaybackMonths = buyerFirstYearCost > 0 && onetime_buyerValuePerYear > 0 ? 12 * (buyerFirstYearCost / onetime_buyerValuePerYear) : Infinity;
+      const buyerFirstYearCost = licensePrice + annualMaintenanceFee * (maintenanceAttach / 100);
+      const buyerROIFirstYear = buyerFirstYearCost > 0 ? buyerValuePerYear / buyerFirstYearCost : 0;
+      const buyerPaybackMonths =
+        buyerFirstYearCost > 0 && buyerValuePerYear > 0
+          ? 12 * (buyerFirstYearCost / buyerValuePerYear)
+          : Number.POSITIVE_INFINITY;
 
-      const maximumPriceBuyerWillPay = onetime_buyerValuePerYear * 0.5;
-      const equilibriumExists = minimumLicensePrice <= maximumPriceBuyerWillPay;
+      const maximumPriceBuyerWillPay = buyerValuePerYear * 0.5;
+      const equilibriumExists =
+        Number.isFinite(minimumLicensePrice) &&
+        Number.isFinite(maximumPriceBuyerWillPay) &&
+        minimumLicensePrice <= maximumPriceBuyerWillPay;
       const suggestedPrice = equilibriumExists ? (minimumLicensePrice + maximumPriceBuyerWillPay) / 2 : 0;
 
       return {
@@ -223,30 +345,46 @@
         equilibriumExists,
         sellerMeetsTarget,
         buyerROI: buyerROIFirstYear,
-        buyerAnnualSavings: onetime_buyerValuePerYear - buyerFirstYearCost,
+        buyerAnnualSavings: buyerValuePerYear - buyerFirstYearCost,
         buyerPaybackMonths,
         metricLabel: 'license price'
       };
     } else if (selectedModel === 'marketplace') {
-      const monthlyGMV = market_avgTransactionValue * market_monthlyTransactions;
-      const commissionPerTransaction = market_avgTransactionValue * (market_commissionRate / 100);
-      const monthlyRevenue = commissionPerTransaction * market_monthlyTransactions;
+      const commissionRate = num(market_commissionRate);
+      const avgTxn = num(market_avgTransactionValue);
+      const monthlyTx = num(market_monthlyTransactions);
+      const costPerTxn = num(market_costPerTransaction);
+      const desiredMargin = num(market_desiredMargin);
+      const sellerValue = num(market_sellerValuePerTransaction);
+      const activeSellers = num(market_activeSellers);
 
-      const monthlyCost = market_costPerTransaction * market_monthlyTransactions;
+      const monthlyGMV = avgTxn * monthlyTx;
+      const commissionPerTransaction = avgTxn * (commissionRate / 100);
+      const monthlyRevenue = commissionPerTransaction * monthlyTx;
+
+      const monthlyCost = costPerTxn * monthlyTx;
       const monthlyProfit = monthlyRevenue - monthlyCost;
       const actualMargin = monthlyRevenue > 0 ? (monthlyProfit / monthlyRevenue) * 100 : 0;
 
-      const minimumCommissionRate = market_desiredMargin >= 100 ? 100 :
-        (market_costPerTransaction / market_avgTransactionValue) / (1 - market_desiredMargin / 100) * 100;
-      const sellerMeetsTarget = market_commissionRate >= minimumCommissionRate;
+      const minimumCommissionRate =
+        desiredMargin >= 100
+          ? Number.NaN
+          : avgTxn > 0
+            ? (costPerTxn / avgTxn) / (1 - desiredMargin / 100) * 100
+            : Number.NaN;
+      const sellerMeetsTarget =
+        Number.isFinite(minimumCommissionRate) && commissionRate >= minimumCommissionRate;
 
-      const sellerNetProfit = market_sellerValuePerTransaction - commissionPerTransaction;
-      const sellerROI = market_sellerValuePerTransaction > 0 ? sellerNetProfit / market_sellerValuePerTransaction : 0;
-      const sellerMonthlyProfit = sellerNetProfit * market_monthlyTransactions;
+      const sellerNetProfit = sellerValue - commissionPerTransaction;
+      const sellerROI = sellerValue > 0 ? sellerNetProfit / sellerValue : 0;
+      const sellerMonthlyProfit = sellerNetProfit * monthlyTx;
 
-      const maximumCommissionRate = market_avgTransactionValue > 0 ?
-        (market_sellerValuePerTransaction * 0.3) / market_avgTransactionValue * 100 : 0;
-      const equilibriumExists = minimumCommissionRate <= maximumCommissionRate;
+      const maximumCommissionRate =
+        avgTxn > 0 ? (sellerValue * 0.3) / avgTxn * 100 : 0;
+      const equilibriumExists =
+        Number.isFinite(minimumCommissionRate) &&
+        Number.isFinite(maximumCommissionRate) &&
+        minimumCommissionRate <= maximumCommissionRate;
       const suggestedPrice = equilibriumExists ? (minimumCommissionRate + maximumCommissionRate) / 2 : 0;
 
       return {
@@ -265,7 +403,7 @@
         sellerMeetsTarget,
         buyerROI: sellerROI,
         buyerAnnualSavings: sellerMonthlyProfit * 12,
-        avgTransactionsPerSeller: market_activeSellers > 0 ? market_monthlyTransactions / market_activeSellers : 0,
+        avgTransactionsPerSeller: activeSellers > 0 ? monthlyTx / activeSellers : 0,
         metricLabel: 'commission rate %'
       };
     }
@@ -606,7 +744,18 @@
           </button>
         </div>
 
-        {#if results}
+        {#if pricingInputIssues.length > 0}
+          <div class="alert alert-warning mb-6" role="alert">
+            <div class="font-medium mb-1">Please fix these inputs</div>
+            <ul class="list-disc list-inside text-sm space-y-1">
+              {#each pricingInputIssues as issue (issue)}
+                <li>{issue}</li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+
+        {#if results && pricingInputsValid}
           <!-- Equilibrium Status -->
           <div class="alert {results.equilibriumExists ? 'alert-success' : 'alert-error'} alert-soft mb-6 flex-col items-start" role="status">
             <div class="flex items-center gap-2 mb-2">
@@ -617,41 +766,39 @@
             </div>
             {#if results.equilibriumExists}
               <p class="text-sm">
-                A mutually beneficial price exists between {selectedModel === 'marketplace' ? formatPercent(results.minimumPrice) : formatCurrency(results.minimumPrice)} and {selectedModel === 'marketplace' ? formatPercent(results.maximumPrice) : formatCurrency(results.maximumPrice)}
+                A mutually beneficial price exists between {selectedModel === 'marketplace' ? formatPercentSafe(results.minimumPrice) : formatCurrencySafe(results.minimumPrice)} and {selectedModel === 'marketplace' ? formatPercentSafe(results.maximumPrice) : formatCurrencySafe(results.maximumPrice)}
               </p>
               <div class="mt-3 p-3 bg-base-200 rounded border border-success/30">
                 <div class="text-xs text-base-content/70 mb-1">Suggested Price</div>
                 <div class="text-2xl font-bold text-success">
-                  {selectedModel === 'marketplace' ? formatPercent(results.suggestedPrice) : formatCurrency(results.suggestedPrice)}
+                  {selectedModel === 'marketplace' ? formatPercentSafe(results.suggestedPrice) : formatCurrencySafe(results.suggestedPrice)}
                 </div>
                 <div class="text-xs text-base-content/70 mt-1">{results.metricLabel}</div>
               </div>
             {:else}
               <p class="text-sm text-error/80">
-                Your minimum price ({selectedModel === 'marketplace' ? formatPercent(results.minimumPrice) : formatCurrency(results.minimumPrice)}) exceeds the client's maximum ({selectedModel === 'marketplace' ? formatPercent(results.maximumPrice) : formatCurrency(results.maximumPrice)})
+                Your minimum price ({selectedModel === 'marketplace' ? formatPercentSafe(results.minimumPrice) : formatCurrencySafe(results.minimumPrice)}) exceeds the client's maximum ({selectedModel === 'marketplace' ? formatPercentSafe(results.maximumPrice) : formatCurrencySafe(results.maximumPrice)})
               </p>
             {/if}
           </div>
 
           <!-- Equilibrium Visualization -->
-          <div class="mb-6">
-            <h3 class="text-sm font-medium text-base-content/70 mb-3">Price Range Visualization</h3>
-            <div class="card p-4 bg-base-300">
-              <EquilibriumChart
-                minimumPrice={results.minimumPrice}
-                maximumPrice={results.maximumPrice}
-                currentPrice={selectedModel === 'subscription' ? sub_monthlyPrice :
-                              selectedModel === 'usage-based' ? usage_pricePerUnit :
-                              selectedModel === 'per-seat' ? seat_pricePerSeat :
-                              selectedModel === 'one-time' ? onetime_licensePrice :
-                              market_commissionRate}
-                suggestedPrice={results.suggestedPrice}
-                equilibriumExists={results.equilibriumExists}
-                isPercentage={selectedModel === 'marketplace'}
-                height={180}
-              />
+          {#if showEquilibriumChart}
+            <div class="mb-6">
+              <h3 class="text-sm font-medium text-base-content/70 mb-3">Price Range Visualization</h3>
+              <div class="card p-4 bg-base-300 max-w-full overflow-x-hidden">
+                <EquilibriumChart
+                  minimumPrice={results.minimumPrice}
+                  maximumPrice={results.maximumPrice}
+                  currentPrice={currentPriceForChart}
+                  suggestedPrice={results.suggestedPrice}
+                  equilibriumExists={results.equilibriumExists}
+                  isPercentage={selectedModel === 'marketplace'}
+                  height={180}
+                />
+              </div>
             </div>
-          </div>
+          {/if}
 
           <!-- Financial Metrics — DaisyUI .stats/.stat for the
                title-above-value tile pattern. Each tile is its own

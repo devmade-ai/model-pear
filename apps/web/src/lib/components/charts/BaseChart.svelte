@@ -89,4 +89,6 @@
   }
 </script>
 
-<div bind:this={chartElement} class="w-full"></div>
+<!-- Requirement: chart SVG tick overflow must not widen the document (mobile).
+     Approach: clip at chart root only — not global canvas/svg rules. -->
+<div bind:this={chartElement} class="w-full max-w-full overflow-x-hidden chart-host"></div>
