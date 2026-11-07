@@ -56,21 +56,25 @@
     have the biggest impact on profitability.
   </p>
 
-  <div class="grid lg:grid-cols-2 gap-6">
+  <div class="grid lg:grid-cols-2 gap-6 min-w-0">
     <!-- Tornado Chart -->
+    <div class="min-w-0 max-w-full overflow-x-hidden">
     <TornadoChart
       sensitivities={sensitivities.sensitivities}
       baseValue={sensitivities.baseOutput}
       title="Input Sensitivity Ranking"
     />
+    </div>
 
     <!-- Scenario Analysis -->
+    <div class="min-w-0 max-w-full overflow-x-hidden">
     <ScenarioChart
       baseValue={baseProfit}
       bestValue={bestProfit}
       worstValue={worstProfit}
       title="Scenario Analysis"
     />
+    </div>
   </div>
 
   <!-- Top Influencers Summary -->

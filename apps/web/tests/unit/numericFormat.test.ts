@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   apexAxisFormat,
+  apexEquilibriumTick,
   formatCurrency,
   formatCurrencySafe,
   parseFiniteNumber,
@@ -36,5 +37,13 @@ describe('apexAxisFormat', () => {
     expect(apexAxisFormat('R5K', (n) => formatCurrency(n, true))).toBe('R5K');
     expect(apexAxisFormat('R 5', (n) => `R ${n}`)).toBe('R 5');
     expect(apexAxisFormat('R 2\u00a0400R 2\u00a0400', (n) => formatCurrency(n))).toBe('R 2\u00a0400');
+    expect(apexAxisFormat('R400KR400K', (n) => formatCurrency(n, true))).toBe('R400K');
+  });
+});
+
+describe('apexEquilibriumTick', () => {
+  it('uses compact numeric ticks', () => {
+    expect(apexEquilibriumTick(2400)).toBe('2.4k');
+    expect(apexEquilibriumTick('24002400')).toBe('2.4k');
   });
 });

@@ -244,7 +244,7 @@
   </div>
 
   <!-- Charts -->
-  <div class="grid lg:grid-cols-2 gap-6">
+  <div class="grid lg:grid-cols-2 gap-6 min-w-0 max-w-full overflow-x-clip">
     <CashFlowChart
       developerData={developerYearlyData}
       buyerData={buyerYearlyData}

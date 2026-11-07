@@ -318,4 +318,11 @@
 /* Keep chart layers from widening the scrollable document on small viewports. */
 .chart-host {
   max-width: 100%;
+  contain: inline-size;
+  overflow-x: clip;
+}
+
+.chart-host :global(svg) {
+  max-width: 100%;
+  overflow: hidden;
 }

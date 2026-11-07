@@ -326,7 +326,7 @@
 </svelte:head>
 
 {#if config && result}
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0 overflow-x-clip">
     <!-- Page header -->
     <div class="mb-8">
       <div class="flex items-center space-x-2 mb-2">
@@ -487,7 +487,7 @@
               </div>
             </div>
           </div>
-          <div class="collapse-content space-y-6 px-4 pb-4">
+          <div class="collapse-content space-y-6 px-4 pb-4 min-w-0 max-w-full overflow-x-clip">
             <div>
               <h4 class="text-sm font-medium text-base-content/70 mb-3">Sensitivity Analysis</h4>
               <SensitivityPanel
@@ -556,7 +556,7 @@
     <ComparisonView />
   {/if}
 {:else}
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0 overflow-x-clip">
     <div class="text-center">
       <h1 class="text-2xl font-bold text-base-content mb-4">Model Not Found</h1>
       <p class="text-base-content/70 mb-4">The requested model "{modelId}" was not found.</p>

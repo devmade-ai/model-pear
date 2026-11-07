@@ -25,18 +25,7 @@
     chart: {
       type: 'bar' as const,
       stacked: false,
-      toolbar: {
-        show: true,
-        tools: {
-          download: true,
-          selection: false,
-          zoom: false,
-          zoomin: false,
-          zoomout: false,
-          pan: false,
-          reset: false,
-        },
-      },
+      toolbar: { show: false },
     },
     plotOptions: {
       bar: {
@@ -50,12 +39,8 @@
     stroke: { show: true, width: 2, colors: ['transparent'] },
     xaxis: { categories: years },
     yaxis: {
-      title: { text: 'Cash Flow (ZAR)' },
-      labels: {
-        showDuplicates: false,
-        hideOverlappingLabels: true,
-        formatter: (val: string | number) => apexAxisFormat(val, (n) => formatCurrency(n, true)),
-      },
+      title: { text: undefined },
+      labels: { show: false },
     },
     fill: { opacity: 1 },
     tooltip: { y: { formatter: (val: string | number) => apexAxisFormat(val, (n) => formatCurrency(n)) } },

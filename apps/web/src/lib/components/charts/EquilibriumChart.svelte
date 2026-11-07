@@ -92,24 +92,16 @@
             : [{ x: 'Price', y: [curF - pad, curF + pad] }],
         },
       ],
-      // Requirement: Apex rangeBar duplicate tick text widens the document on mobile.
-      // Approach: hide x tick labels — values are repeated in the legend tooltip
-      //   and the summary line below the chart (plain language for users).
-      // Alternatives:
-      //   - Custom formatter only: still duplicated inside Apex SVG for this chart type.
-      //   - Switch chart type: rejected — out of scope for this fix.
       xaxis: {
         min: chartMin,
         max: chartMax,
+        tickAmount: 5,
+        // Readable scale lives in the HTML <dl> below; Apex x-axis SVG labels
+        // duplicate/widen the document on narrow viewports.
         labels: { show: false },
-        tooltip: { enabled: false },
       },
       yaxis: { labels: { show: false } },
-      legend: {
-        show: true,
-        position: 'bottom' as const,
-        horizontalAlign: 'center' as const,
-      },
+      legend: { show: false },
       tooltip: {
         custom: function ({
           seriesIndex,
@@ -137,23 +129,9 @@
         </div>`;
         },
       },
-      grid: { padding: { left: 10, right: 10 } },
-      annotations: {
-        xaxis: [
-          {
-            x: curF,
-            borderColor: getThemeColor('--color-info'),
-            strokeDashArray: 4,
-            label: {
-              text: `Current: ${formatValue(curF)}`,
-              style: {
-                color: getThemeColor('--color-info-content'),
-                background: getThemeColor('--color-info'),
-              },
-            },
-          },
-        ],
-      },
+      grid: { padding: { left: 4, right: 4 } },
+      // Current price is shown in the HTML price scale below — SVG annotations widen narrow viewports.
+      annotations: { xaxis: [], yaxis: [] },
     } as unknown as ApexCharts.ApexOptions);
   }
 
@@ -163,6 +141,20 @@
 <div class="w-full max-w-full overflow-x-hidden">
   {#if options}
     <BaseChart {options} {height} />
+    <dl class="mt-3 grid grid-cols-3 gap-2 text-center text-xs tabular-nums" aria-label="Price scale">
+      <div>
+        <dt class="text-base-content/60">Scale low</dt>
+        <dd class="font-medium text-base-content">{formatValue(chartMin)}</dd>
+      </div>
+      <div>
+        <dt class="text-base-content/60">Your price</dt>
+        <dd class="font-medium text-base-content">{formatValue(currentPrice)}</dd>
+      </div>
+      <div>
+        <dt class="text-base-content/60">Scale high</dt>
+        <dd class="font-medium text-base-content">{formatValue(chartMax)}</dd>
+      </div>
+    </dl>
   {:else}
     <p class="text-sm text-base-content/70 text-center py-8">Enter valid prices to see the chart.</p>
   {/if}

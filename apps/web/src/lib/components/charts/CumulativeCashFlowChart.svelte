@@ -24,11 +24,7 @@
     xaxis: { categories: years },
     yaxis: {
       title: { text: 'Cumulative Cash Flow (ZAR)' },
-      labels: {
-        showDuplicates: false,
-        hideOverlappingLabels: true,
-        formatter: (val: string | number) => apexAxisFormat(val, (n) => formatCurrency(n, true)),
-      },
+      labels: { show: false },
     },
     fill: {
       type: 'gradient',

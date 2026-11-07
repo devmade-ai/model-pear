@@ -12,14 +12,20 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:4173',
+    baseURL: 'http://127.0.0.1:4173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Cloud agent: Playwright browser download fails; use system Chrome when present.
+        ...(process.env.PLAYWRIGHT_USE_SYSTEM_CHROME === '1'
+          ? { channel: 'chrome' as const }
+          : {}),
+      },
     },
     {
       name: 'firefox',
@@ -40,8 +46,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm preview',
-    url: 'http://localhost:4173',
+    command: 'node scripts/preview-e2e.mjs',
+    url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
   },
 });

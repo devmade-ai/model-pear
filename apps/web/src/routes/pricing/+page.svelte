@@ -70,7 +70,41 @@
   // Approach: List all reactive dependencies explicitly in the $: declaration
   //   so Svelte's compiler tracks them. The function itself reads from closure
   //   variables, but Svelte needs them in the call expression to trigger reactivity.
-  $: pricingFieldDefs = buildPricingFieldDefs(selectedModel as PricingModelId);
+  // List every pricing input in the deps so Svelte re-runs validation on edit
+  // (same pattern as calculateResults below — closure-only reads are not tracked).
+  $: pricingFieldDefs = buildPricingFieldDefs(
+    selectedModel as PricingModelId,
+    sub_monthlyPrice,
+    sub_customers,
+    sub_costToServe,
+    sub_desiredMargin,
+    sub_buyerValue,
+    usage_pricePerUnit,
+    usage_monthlyUnits,
+    usage_costPerUnit,
+    usage_desiredMargin,
+    usage_buyerValuePerUnit,
+    seat_pricePerSeat,
+    seat_seats,
+    seat_costPerSeat,
+    seat_desiredMargin,
+    seat_valuePerSeat,
+    onetime_licensePrice,
+    onetime_maintenanceFee,
+    onetime_maintenanceAttach,
+    onetime_existingCustomers,
+    onetime_costToDeliver,
+    onetime_monthlySupportCost,
+    onetime_desiredMargin,
+    onetime_buyerValuePerYear,
+    market_commissionRate,
+    market_avgTransactionValue,
+    market_monthlyTransactions,
+    market_activeSellers,
+    market_costPerTransaction,
+    market_desiredMargin,
+    market_sellerValuePerTransaction
+  );
   $: pricingInputIssues = validatePricingModel(selectedModel as PricingModelId, pricingFieldDefs);
   $: pricingInputsValid = pricingInputIssues.length === 0;
 
@@ -110,7 +144,8 @@
     return parseFiniteNumber(v) ?? 0;
   }
 
-  function buildPricingFieldDefs(model: PricingModelId) {
+  function buildPricingFieldDefs(model: PricingModelId, ..._reactivityDeps: unknown[]) {
+    void _reactivityDeps;
     const defs: Record<string, { label: string; value: number | ''; min?: number; max?: number }> = {};
     if (model === 'subscription') {
       defs.sub_monthlyPrice = { label: 'Monthly Price per Customer', value: sub_monthlyPrice, min: 0 };
@@ -424,10 +459,13 @@
   </div>
 
   <!-- Model Selector (interactive — hidden in print) -->
-  <div class="mb-8 no-print">
+  <div class="mb-8 no-print w-full min-w-0 overflow-x-hidden">
     <p class="block text-sm font-medium text-base-content/70 mb-3">Pricing Model</p>
     <!-- Mobile: horizontal scroll, Tablet+: grid -->
-    <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-3 md:grid-cols-5 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
+    <div
+      data-pricing-model-strip
+      class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-3 md:grid-cols-5 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0 max-w-full"
+    >
       {#each models as model (model.id)}
         <!-- DaisyUI .card is the canonical panel surface; same pattern as
              the structuring/+page.svelte model selector. The conditional
@@ -459,7 +497,7 @@
     </div>
   {/if}
 
-  <div class="grid lg:grid-cols-2 gap-8">
+  <div class="grid lg:grid-cols-2 gap-8 min-w-0 max-w-full overflow-x-clip">
     <!-- Inputs -->
     <div>
       <div class="card p-6">
@@ -472,12 +510,12 @@
               <div class="space-y-3">
                 <div>
                   <label for="sub_monthlyPrice" class="block text-sm text-base-content/70 mb-1">Monthly Price per Customer (R)</label>
-                  <input id="sub_monthlyPrice" type="number" bind:value={sub_monthlyPrice} min="0" step="10"
+                  <input id="sub_monthlyPrice" type="number" bind:value={sub_monthlyPrice} step="10"
                     class="input">
                 </div>
                 <div>
                   <label for="sub_customers" class="block text-sm text-base-content/70 mb-1">Number of Customers</label>
-                  <input id="sub_customers" type="number" bind:value={sub_customers} min="0" step="1"
+                  <input id="sub_customers" type="number" bind:value={sub_customers} step="1"
                     class="input">
                 </div>
               </div>
@@ -488,13 +526,13 @@
               <div class="space-y-3">
                 <div>
                   <label for="sub_costToServe" class="block text-sm text-base-content/70 mb-1">Cost to Serve per Customer (R/month)</label>
-                  <input id="sub_costToServe" type="number" bind:value={sub_costToServe} min="0" step="10"
+                  <input id="sub_costToServe" type="number" bind:value={sub_costToServe} step="10"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Infrastructure, support costs per customer</p>
                 </div>
                 <div>
                   <label for="sub_desiredMargin" class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
-                  <input id="sub_desiredMargin" type="number" bind:value={sub_desiredMargin} min="0" max="100" step="1"
+                  <input id="sub_desiredMargin" type="number" bind:value={sub_desiredMargin} step="1"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Target profit margin (typical SaaS: 70-85%)</p>
                 </div>
@@ -505,7 +543,7 @@
               <h3 class="text-sm font-medium text-base-content/70 mb-3">Client Value</h3>
               <div>
                 <label for="sub_buyerValue" class="block text-sm text-base-content/70 mb-1">Monthly Value to Client (R)</label>
-                <input id="sub_buyerValue" type="number" bind:value={sub_buyerValue} min="0" step="100"
+                <input id="sub_buyerValue" type="number" bind:value={sub_buyerValue} step="100"
                   class="input">
                 <p class="text-xs text-base-content/60 mt-1">Revenue enabled or cost saved per month</p>
               </div>
@@ -518,13 +556,13 @@
               <div class="space-y-3">
                 <div>
                   <label for="usage_pricePerUnit" class="block text-sm text-base-content/70 mb-1">Price per Unit (R)</label>
-                  <input id="usage_pricePerUnit" type="number" bind:value={usage_pricePerUnit} min="0" step="0.10"
+                  <input id="usage_pricePerUnit" type="number" bind:value={usage_pricePerUnit} step="0.10"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">E.g., per 1,000 API calls</p>
                 </div>
                 <div>
                   <label for="usage_monthlyUnits" class="block text-sm text-base-content/70 mb-1">Monthly Units</label>
-                  <input id="usage_monthlyUnits" type="number" bind:value={usage_monthlyUnits} min="0" step="100"
+                  <input id="usage_monthlyUnits" type="number" bind:value={usage_monthlyUnits} step="100"
                     class="input">
                 </div>
               </div>
@@ -535,13 +573,13 @@
               <div class="space-y-3">
                 <div>
                   <label for="usage_costPerUnit" class="block text-sm text-base-content/70 mb-1">Cost per Unit (R)</label>
-                  <input id="usage_costPerUnit" type="number" bind:value={usage_costPerUnit} min="0" step="0.05"
+                  <input id="usage_costPerUnit" type="number" bind:value={usage_costPerUnit} step="0.05"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Infrastructure cost per unit</p>
                 </div>
                 <div>
                   <label for="usage_desiredMargin" class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
-                  <input id="usage_desiredMargin" type="number" bind:value={usage_desiredMargin} min="0" max="100" step="1"
+                  <input id="usage_desiredMargin" type="number" bind:value={usage_desiredMargin} step="1"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Typical usage-based: 75-90%</p>
                 </div>
@@ -552,7 +590,7 @@
               <h3 class="text-sm font-medium text-base-content/70 mb-3">Client Value</h3>
               <div>
                 <label for="usage_buyerValuePerUnit" class="block text-sm text-base-content/70 mb-1">Value per Unit to Client (R)</label>
-                <input id="usage_buyerValuePerUnit" type="number" bind:value={usage_buyerValuePerUnit} min="0" step="0.50"
+                <input id="usage_buyerValuePerUnit" type="number" bind:value={usage_buyerValuePerUnit} step="0.50"
                   class="input">
                 <p class="text-xs text-base-content/60 mt-1">Revenue enabled or cost saved per unit</p>
               </div>
@@ -565,12 +603,12 @@
               <div class="space-y-3">
                 <div>
                   <label for="seat_pricePerSeat" class="block text-sm text-base-content/70 mb-1">Price per Seat (R/month)</label>
-                  <input id="seat_pricePerSeat" type="number" bind:value={seat_pricePerSeat} min="0" step="10"
+                  <input id="seat_pricePerSeat" type="number" bind:value={seat_pricePerSeat} step="10"
                     class="input">
                 </div>
                 <div>
                   <label for="seat_seats" class="block text-sm text-base-content/70 mb-1">Number of Seats</label>
-                  <input id="seat_seats" type="number" bind:value={seat_seats} min="0" step="1"
+                  <input id="seat_seats" type="number" bind:value={seat_seats} step="1"
                     class="input">
                 </div>
               </div>
@@ -581,13 +619,13 @@
               <div class="space-y-3">
                 <div>
                   <label for="seat_costPerSeat" class="block text-sm text-base-content/70 mb-1">Cost per Seat (R/month)</label>
-                  <input id="seat_costPerSeat" type="number" bind:value={seat_costPerSeat} min="0" step="5"
+                  <input id="seat_costPerSeat" type="number" bind:value={seat_costPerSeat} step="5"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Infrastructure and support cost per seat</p>
                 </div>
                 <div>
                   <label for="seat_desiredMargin" class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
-                  <input id="seat_desiredMargin" type="number" bind:value={seat_desiredMargin} min="0" max="100" step="1"
+                  <input id="seat_desiredMargin" type="number" bind:value={seat_desiredMargin} step="1"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Typical per-seat: 70-80%</p>
                 </div>
@@ -598,7 +636,7 @@
               <h3 class="text-sm font-medium text-base-content/70 mb-3">Client Value</h3>
               <div>
                 <label for="seat_valuePerSeat" class="block text-sm text-base-content/70 mb-1">Monthly Value per Seat to Client (R)</label>
-                <input id="seat_valuePerSeat" type="number" bind:value={seat_valuePerSeat} min="0" step="50"
+                <input id="seat_valuePerSeat" type="number" bind:value={seat_valuePerSeat} step="50"
                   class="input">
                 <p class="text-xs text-base-content/60 mt-1">Productivity gain or cost saved per user per month</p>
               </div>
@@ -611,25 +649,25 @@
               <div class="space-y-3">
                 <div>
                   <label for="onetime_licensePrice" class="block text-sm text-base-content/70 mb-1">License Price (R)</label>
-                  <input id="onetime_licensePrice" type="number" bind:value={onetime_licensePrice} min="0" step="100"
+                  <input id="onetime_licensePrice" type="number" bind:value={onetime_licensePrice} step="100"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">One-time perpetual license fee</p>
                 </div>
                 <div>
                   <label for="onetime_maintenanceFee" class="block text-sm text-base-content/70 mb-1">Annual Maintenance Fee (%)</label>
-                  <input id="onetime_maintenanceFee" type="number" bind:value={onetime_maintenanceFee} min="0" max="100" step="1"
+                  <input id="onetime_maintenanceFee" type="number" bind:value={onetime_maintenanceFee} max="100" step="1"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">% of license price (typical: 15-25%)</p>
                 </div>
                 <div>
                   <label for="onetime_maintenanceAttach" class="block text-sm text-base-content/70 mb-1">Maintenance Attach Rate (%)</label>
-                  <input id="onetime_maintenanceAttach" type="number" bind:value={onetime_maintenanceAttach} min="0" max="100" step="1"
+                  <input id="onetime_maintenanceAttach" type="number" bind:value={onetime_maintenanceAttach} max="100" step="1"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">% of customers buying maintenance</p>
                 </div>
                 <div>
                   <label for="onetime_existingCustomers" class="block text-sm text-base-content/70 mb-1">Existing Customers on Maintenance</label>
-                  <input id="onetime_existingCustomers" type="number" bind:value={onetime_existingCustomers} min="0" step="1"
+                  <input id="onetime_existingCustomers" type="number" bind:value={onetime_existingCustomers} step="1"
                     class="input">
                 </div>
               </div>
@@ -640,18 +678,18 @@
               <div class="space-y-3">
                 <div>
                   <label for="onetime_costToDeliver" class="block text-sm text-base-content/70 mb-1">Cost to Deliver per License (R)</label>
-                  <input id="onetime_costToDeliver" type="number" bind:value={onetime_costToDeliver} min="0" step="100"
+                  <input id="onetime_costToDeliver" type="number" bind:value={onetime_costToDeliver} step="100"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">One-time onboarding, implementation cost</p>
                 </div>
                 <div>
                   <label for="onetime_monthlySupportCost" class="block text-sm text-base-content/70 mb-1">Monthly Support Cost per Customer (R)</label>
-                  <input id="onetime_monthlySupportCost" type="number" bind:value={onetime_monthlySupportCost} min="0" step="10"
+                  <input id="onetime_monthlySupportCost" type="number" bind:value={onetime_monthlySupportCost} step="10"
                     class="input">
                 </div>
                 <div>
                   <label for="onetime_desiredMargin" class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
-                  <input id="onetime_desiredMargin" type="number" bind:value={onetime_desiredMargin} min="0" max="100" step="1"
+                  <input id="onetime_desiredMargin" type="number" bind:value={onetime_desiredMargin} step="1"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Typical: 70-80%</p>
                 </div>
@@ -662,7 +700,7 @@
               <h3 class="text-sm font-medium text-base-content/70 mb-3">Client Value</h3>
               <div>
                 <label for="onetime_buyerValuePerYear" class="block text-sm text-base-content/70 mb-1">Annual Value to Client (R)</label>
-                <input id="onetime_buyerValuePerYear" type="number" bind:value={onetime_buyerValuePerYear} min="0" step="500"
+                <input id="onetime_buyerValuePerYear" type="number" bind:value={onetime_buyerValuePerYear} step="500"
                   class="input">
                 <p class="text-xs text-base-content/60 mt-1">Annual productivity gain or cost saved</p>
               </div>
@@ -675,24 +713,24 @@
               <div class="space-y-3">
                 <div>
                   <label for="market_commissionRate" class="block text-sm text-base-content/70 mb-1">Commission Rate (%)</label>
-                  <input id="market_commissionRate" type="number" bind:value={market_commissionRate} min="0" max="100" step="0.5"
+                  <input id="market_commissionRate" type="number" bind:value={market_commissionRate} max="100" step="0.5"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">% commission on each transaction</p>
                 </div>
                 <div>
                   <label for="market_avgTransactionValue" class="block text-sm text-base-content/70 mb-1">Average Transaction Value (R)</label>
-                  <input id="market_avgTransactionValue" type="number" bind:value={market_avgTransactionValue} min="0" step="50"
+                  <input id="market_avgTransactionValue" type="number" bind:value={market_avgTransactionValue} step="50"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Average GMV per transaction</p>
                 </div>
                 <div>
                   <label for="market_monthlyTransactions" class="block text-sm text-base-content/70 mb-1">Monthly Transactions</label>
-                  <input id="market_monthlyTransactions" type="number" bind:value={market_monthlyTransactions} min="0" step="10"
+                  <input id="market_monthlyTransactions" type="number" bind:value={market_monthlyTransactions} step="10"
                     class="input">
                 </div>
                 <div>
                   <label for="market_activeSellers" class="block text-sm text-base-content/70 mb-1">Active Sellers</label>
-                  <input id="market_activeSellers" type="number" bind:value={market_activeSellers} min="0" step="1"
+                  <input id="market_activeSellers" type="number" bind:value={market_activeSellers} step="1"
                     class="input">
                 </div>
               </div>
@@ -703,13 +741,13 @@
               <div class="space-y-3">
                 <div>
                   <label for="market_costPerTransaction" class="block text-sm text-base-content/70 mb-1">Cost per Transaction (R)</label>
-                  <input id="market_costPerTransaction" type="number" bind:value={market_costPerTransaction} min="0" step="1"
+                  <input id="market_costPerTransaction" type="number" bind:value={market_costPerTransaction} step="1"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Payment processing, support, fraud prevention</p>
                 </div>
                 <div>
                   <label for="market_desiredMargin" class="block text-sm text-base-content/70 mb-1">Desired Gross Margin (%)</label>
-                  <input id="market_desiredMargin" type="number" bind:value={market_desiredMargin} min="0" max="100" step="1"
+                  <input id="market_desiredMargin" type="number" bind:value={market_desiredMargin} step="1"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">Typical: 60-75%</p>
                 </div>
@@ -720,7 +758,7 @@
               <h3 class="text-sm font-medium text-base-content/70 mb-3">Seller Value</h3>
               <div>
                 <label for="market_sellerValuePerTransaction" class="block text-sm text-base-content/70 mb-1">Value per Transaction to Seller (R)</label>
-                <input id="market_sellerValuePerTransaction" type="number" bind:value={market_sellerValuePerTransaction} min="0" step="10"
+                <input id="market_sellerValuePerTransaction" type="number" bind:value={market_sellerValuePerTransaction} step="10"
                   class="input">
                 <p class="text-xs text-base-content/60 mt-1">Profit seller makes per transaction (before commission)</p>
               </div>
