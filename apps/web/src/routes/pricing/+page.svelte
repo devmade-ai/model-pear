@@ -449,7 +449,7 @@
 
 <SeoHead page={PAGES.pricing} />
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-w-0 w-full">
   <!-- Header -->
   <div class="mb-8">
     <h1 class="text-3xl font-bold text-base-content mb-2">Pricing Calculator</h1>
@@ -497,10 +497,11 @@
     </div>
   {/if}
 
-  <div class="grid lg:grid-cols-2 gap-8 min-w-0 max-w-full overflow-x-clip">
+  <!-- Requirement: 320px — implicit grid min-content (~387px) clipped by overflow-x-clip; use minmax(0,1fr) tracks. -->
+  <div class="pricing-main-grid grid gap-8 min-w-0 w-full max-w-full">
     <!-- Inputs -->
-    <div>
-      <div class="card p-6">
+    <div class="min-w-0">
+      <div class="card p-6 min-w-0">
         <h2 class="text-lg font-semibold text-base-content mb-4">Inputs</h2>
 
         {#if selectedModel === 'subscription'}
@@ -769,9 +770,9 @@
     </div>
 
     <!-- Results -->
-    <div>
-      <div class="card p-6">
-        <div class="flex items-center justify-between mb-4">
+    <div class="min-w-0">
+      <div class="card p-6 min-w-0">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 min-w-0">
           <h2 class="text-lg font-semibold text-base-content">Results</h2>
           <!-- Requirement: Let users save pricing results as PDF via the browser's native print dialog.
                Approach: window.print() — zero dependencies, leverages existing @media print CSS in app.css.
@@ -824,7 +825,7 @@
           {#if showEquilibriumChart}
             <div class="mb-6">
               <h3 class="text-sm font-medium text-base-content/70 mb-3">Price Range Visualization</h3>
-              <div class="card p-4 bg-base-300 max-w-full overflow-x-hidden">
+              <div class="card p-4 bg-base-300 min-w-0 w-full max-w-full">
                 <EquilibriumChart
                   minimumPrice={results.minimumPrice}
                   maximumPrice={results.maximumPrice}
@@ -843,27 +844,27 @@
                .stats wrapper (single .stat) so they grid to 2x2. -->
           <div class="mb-6">
             <h3 class="text-sm font-medium text-base-content/70 mb-3">Financial Performance</h3>
-            <div class="grid grid-cols-2 gap-3">
-              <div class="stats bg-base-300 rounded-box">
-                <div class="stat">
+            <div class="pricing-metrics-grid grid gap-3 min-w-0">
+              <div class="stats bg-base-300 rounded-box min-w-0">
+                <div class="stat min-w-0">
                   <div class="stat-title">Monthly Revenue</div>
                   <div class="stat-value text-base">{formatCurrency(results.monthlyRevenue)}</div>
                 </div>
               </div>
-              <div class="stats bg-base-300 rounded-box">
-                <div class="stat">
+              <div class="stats bg-base-300 rounded-box min-w-0">
+                <div class="stat min-w-0">
                   <div class="stat-title">Monthly Profit</div>
                   <div class="stat-value text-base">{formatCurrency(results.monthlyProfit)}</div>
                 </div>
               </div>
-              <div class="stats bg-base-300 rounded-box">
-                <div class="stat">
+              <div class="stats bg-base-300 rounded-box min-w-0">
+                <div class="stat min-w-0">
                   <div class="stat-title">Annual Revenue</div>
                   <div class="stat-value text-base">{formatCurrency(results.annualRevenue)}</div>
                 </div>
               </div>
-              <div class="stats bg-base-300 rounded-box">
-                <div class="stat">
+              <div class="stats bg-base-300 rounded-box min-w-0">
+                <div class="stat min-w-0">
                   <div class="stat-title">Annual Profit</div>
                   <div class="stat-value text-base">{formatCurrency(results.annualProfit)}</div>
                 </div>

@@ -2,11 +2,22 @@ import { test, expect } from '@playwright/test';
 
 const viewports = [
   { name: '320', width: 320, height: 640 },
+  { name: '360', width: 360, height: 640 },
   { name: '375', width: 375, height: 812 },
   { name: '390', width: 390, height: 844 },
   { name: 'landscape', width: 844, height: 390 },
   { name: 'desktop', width: 1280, height: 800 },
 ];
+
+const narrowCriticalWidths = [320, 360, 375, 390] as const;
+
+const pricingModels = [
+  { label: 'Subscription', pattern: /Subscription/ },
+  { label: 'Usage-Based', pattern: /Usage-Based/ },
+  { label: 'Per-Seat', pattern: /Per-Seat/ },
+  { label: 'One-Time', pattern: /One-Time/ },
+  { label: 'Marketplace', pattern: /Marketplace/ },
+] as const;
 
 /**
  * Document may be wider than the viewport only when the intentional pricing
@@ -40,8 +51,73 @@ async function assertNoChartDocumentBleed(
     return { cw, sw, docExcess, stripBudget, chartBleed, unexplained };
   }, options?.allowPricingStrip ?? false);
 
-  // chart-host rects can extend slightly while `overflow-x: clip` prevents document scroll.
   expect(result.unexplained, `doc overflow ${JSON.stringify(result)}`).toBeLessThanOrEqual(2);
+  expect(result.chartBleed, `chart-host bleed ${JSON.stringify(result)}`).toBeLessThanOrEqual(2);
+}
+
+/** Critical pricing values must be painted inside the viewport — not masked by parent overflow clip. */
+async function assertElementInViewport(
+  locator: import('@playwright/test').Locator,
+  viewportWidth: number,
+  label: string
+) {
+  await expect(locator, `${label} not found`).toBeVisible();
+  const box = await locator.boundingBox();
+  expect(box, `${label} bounding box`).not.toBeNull();
+  expect(box!.width, `${label} width`).toBeGreaterThan(0);
+  expect(box!.x, `${label} left`).toBeGreaterThanOrEqual(-1);
+  expect(box!.x + box!.width, `${label} right`).toBeLessThanOrEqual(viewportWidth + 2);
+}
+
+async function assertCriticalPricingVisible(page: import('@playwright/test').Page, viewportWidth: number) {
+  const scaleHigh = page.locator('dl[aria-label="Price scale"] > div').nth(2).locator('dd');
+  await assertElementInViewport(scaleHigh, viewportWidth, 'Scale high');
+
+  const monthlyProfit = page
+    .locator('.stat')
+    .filter({ has: page.getByText('Monthly Profit', { exact: true }) })
+    .locator('.stat-value');
+  await assertElementInViewport(monthlyProfit, viewportWidth, 'Monthly Profit');
+
+  const annualProfit = page
+    .locator('.stat')
+    .filter({ has: page.getByText('Annual Profit', { exact: true }) })
+    .locator('.stat-value');
+  await assertElementInViewport(annualProfit, viewportWidth, 'Annual Profit');
+
+  const equilibriumLine = page.locator('[data-pricing-equilibrium-line]');
+  await assertElementInViewport(equilibriumLine, viewportWidth, 'Equilibrium zone line');
+
+  const chartHost = page.locator('.chart-host').first();
+  await assertElementInViewport(chartHost, viewportWidth, 'Equilibrium chart host');
+
+  const inputsCard = page.getByRole('heading', { name: 'Inputs', exact: true }).locator('..');
+  await assertElementInViewport(inputsCard, viewportWidth, 'Inputs card');
+
+  const resultsCard = page.getByRole('heading', { name: 'Results', exact: true }).locator('..');
+  await assertElementInViewport(resultsCard, viewportWidth, 'Results card');
+}
+
+async function assertPricingGridTracksShrink(page: import('@playwright/test').Page) {
+  const tracks = await page.evaluate(() => {
+    const grid = document.querySelector('.pricing-main-grid');
+    if (!grid) return { missing: true as const };
+    const r = grid.getBoundingClientRect();
+    const cols = getComputedStyle(grid).gridTemplateColumns;
+    const firstCol = parseFloat(cols) || r.width;
+    return {
+      missing: false as const,
+      gridClientWidth: grid.clientWidth,
+      gridRight: r.right,
+      firstColPx: firstCol,
+      viewport: document.documentElement.clientWidth,
+    };
+  });
+  expect(tracks.missing, 'pricing-main-grid').toBe(false);
+  if (!tracks.missing) {
+    expect(tracks.firstColPx).toBeLessThanOrEqual(tracks.gridClientWidth + 2);
+    expect(tracks.gridRight).toBeLessThanOrEqual(tracks.viewport + 2);
+  }
 }
 
 function doubledCurrencyTick(text: string): boolean {
@@ -69,7 +145,25 @@ test.describe('Pricing calculator regression', () => {
       await expect(page.locator('dl[aria-label="Price scale"]')).toBeVisible();
       await expect(page.locator('dl[aria-label="Price scale"] dd').first()).not.toHaveText(/^[\s—]*$/);
       await assertNoChartDocumentBleed(page, { allowPricingStrip: vp.width < 640 });
+      if (narrowCriticalWidths.includes(vp.width as (typeof narrowCriticalWidths)[number])) {
+        await assertCriticalPricingVisible(page, vp.width);
+        await assertPricingGridTracksShrink(page);
+      }
     });
+  }
+
+  for (const width of narrowCriticalWidths) {
+    for (const model of pricingModels) {
+      test(`critical layout ${model.label} @ ${width}px`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto('/pricing');
+        await page.getByRole('button', { name: model.pattern }).click();
+        await page.waitForTimeout(800);
+        await assertCriticalPricingVisible(page, width);
+        await assertPricingGridTracksShrink(page);
+        await assertNoChartDocumentBleed(page, { allowPricingStrip: width < 640 });
+      });
+    }
   }
 
   for (const margin of ['99', '100', '101']) {

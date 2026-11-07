@@ -315,14 +315,43 @@
   }
 }
 
-/* Keep chart layers from widening the scrollable document on small viewports. */
+/* Requirement: Charts must fit parent width (BaseChart ResizeObserver) — not clip labels at 320px. */
 .chart-host {
+  width: 100%;
   max-width: 100%;
-  contain: inline-size;
-  overflow-x: clip;
+  min-width: 0;
+  /* Apex inner SVG can exceed host until ResizeObserver runs — contain doc scrollWidth. */
+  overflow-x: hidden;
 }
 
 .chart-host :global(svg) {
   max-width: 100%;
-  overflow: hidden;
+}
+
+/* Pricing page: shrink grid tracks below min-content (fix 320px implicit 387px column). */
+.pricing-main-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 1024px) {
+  .pricing-main-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.pricing-metrics-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 380px) {
+  .pricing-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.pricing-price-scale {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 380px) {
+  .pricing-price-scale {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }

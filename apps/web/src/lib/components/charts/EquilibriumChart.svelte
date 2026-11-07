@@ -138,10 +138,14 @@
   $: options = makeOptions(themeKey, chartReady);
 </script>
 
-<div class="w-full max-w-full overflow-x-hidden">
+<div class="w-full min-w-0 max-w-full">
   {#if options}
     <BaseChart {options} {height} />
-    <dl class="mt-3 grid grid-cols-3 gap-2 text-center text-xs tabular-nums" aria-label="Price scale">
+    <!-- Requirement: 3× tabular cols exceed ~320px; stack until 380px, then 3-col with minmax shrink. -->
+    <dl
+      class="mt-3 pricing-price-scale grid gap-2 text-center text-xs tabular-nums min-w-0"
+      aria-label="Price scale"
+    >
       <div>
         <dt class="text-base-content/60">Scale low</dt>
         <dd class="font-medium text-base-content">{formatValue(chartMin)}</dd>
@@ -158,7 +162,7 @@
   {:else}
     <p class="text-sm text-base-content/70 text-center py-8">Enter valid prices to see the chart.</p>
   {/if}
-  <div class="mt-2 text-center text-sm text-base-content/70">
+  <div class="mt-2 text-center text-sm text-base-content/70 px-1 break-words min-w-0" data-pricing-equilibrium-line>
     {#if equilibriumExists}
       <span class="text-success font-medium">Equilibrium zone:</span>
       {formatValue(minimumPrice)} to {formatValue(maximumPrice)}
