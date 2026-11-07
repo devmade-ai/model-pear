@@ -1,7 +1,7 @@
 # Session Notes
 
-## PR #132 follow-up (in flight on `devmade/pricing-chart-a11y-fixes-9aed`)
+## Pricing narrow layout follow-up (`devmade/pricing-narrow-layout-fix-9aed`)
 
-- Playwright E2E uses system Chrome when `PLAYWRIGHT_USE_SYSTEM_CHROME=1` (browser bundle download fails in cloud VM). Web server for E2E is `apps/web/scripts/preview-e2e.mjs` (not `vite preview`) so `/200.html` returns HTTP 200 for SW install.
-- PWA registration uses `workbox-window` with absolute `/sw.js` and scope `/` in `pwa.ts` (virtual `registerSW` emitted `./sw.js` on deep routes).
-- Pricing validation reactivity: `pricingFieldDefs` must list all input deps in its `$:` line (same pattern as `calculateResults`).
+- Post-merge #132 prod audit: at 320px pricing grid implicit min-content (~387px) plus `overflow-x-clip` masked clipped values; fix is `minmax(0,1fr)` on `.pricing-main-grid`, `.pricing-metrics-grid`, `.pricing-price-scale`, `min-w-0` on columns/cards/stats, removed pricing grid `overflow-x-clip`.
+- E2E: `assertCriticalPricingVisible` + `assertPricingGridTracksShrink`; all 5 models @ 320/360/375/390; `chartBleed` in `assertNoChartDocumentBleed`.
+- Playwright: `PLAYWRIGHT_USE_SYSTEM_CHROME=1` + `preview-e2e.mjs` for SW test unchanged.

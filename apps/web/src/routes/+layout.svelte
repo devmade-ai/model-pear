@@ -522,6 +522,7 @@
   {/if}
 
   <!-- Main content -->
+  <!-- Requirement: Residual Apex bleed must not widen the document; pricing grid shrink is fixed via minmax (not clip-as-layout). -->
   <main class="flex-1 min-w-0 overflow-x-clip">
     <slot />
   </main>

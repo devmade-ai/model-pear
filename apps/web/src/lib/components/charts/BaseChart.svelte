@@ -47,13 +47,16 @@
         animations: animationsFor(motionQuery.matches),
       },
     });
-    chart.render();
+    await chart.render();
     syncChartWidth = () => {
       if (!chart || !chartElement) return;
       const w = chartElement.clientWidth;
       if (w > 0) chart.updateOptions({ chart: { width: w } }, false, false);
     };
     syncChartWidth();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => syncChartWidth?.());
+    });
     const resizeObserver = new ResizeObserver(() => syncChartWidth?.());
     resizeObserver.observe(chartElement);
     cleanupResizeObserver = () => resizeObserver.disconnect();
@@ -102,6 +105,5 @@
   }
 </script>
 
-<!-- Requirement: chart SVG tick overflow must not widen the document (mobile).
-     Approach: clip at chart root only — not global canvas/svg rules. -->
-<div bind:this={chartElement} class="w-full max-w-full overflow-x-hidden chart-host"></div>
+<!-- Requirement: chart width synced to clientWidth — parent chain uses min-w-0 (not overflow clip). -->
+<div bind:this={chartElement} class="w-full min-w-0 max-w-full chart-host"></div>
