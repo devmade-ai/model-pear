@@ -713,7 +713,7 @@
               <div class="space-y-3">
                 <div>
                   <label for="market_commissionRate" class="block text-sm text-base-content/70 mb-1">Commission Rate (%)</label>
-                  <input id="market_commissionRate" type="number" bind:value={market_commissionRate} max="100" step="0.5"
+                  <input id="market_commissionRate" type="number" bind:value={market_commissionRate} step="0.5"
                     class="input">
                   <p class="text-xs text-base-content/60 mt-1">% commission on each transaction</p>
                 </div>

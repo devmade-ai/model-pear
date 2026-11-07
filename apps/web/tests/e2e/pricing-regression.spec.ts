@@ -116,6 +116,15 @@ test.describe('Pricing calculator regression', () => {
     await expect(alert).toHaveCount(0);
     await expect(page.getByRole('status')).toContainText(/Equilibrium|Viable/i);
 
+    await page.locator('#market_commissionRate').fill('101');
+    await page.locator('#market_commissionRate').blur();
+    await page.waitForTimeout(400);
+    await expect(page.getByRole('alert')).toContainText(/Commission Rate cannot be above 100/i);
+    await page.locator('#market_commissionRate').fill('10');
+    await page.locator('#market_commissionRate').blur();
+    await page.waitForTimeout(300);
+    await expect(page.getByRole('alert')).toHaveCount(0);
+
     await page.locator('#market_desiredMargin').fill('100');
     await page.locator('#market_desiredMargin').blur();
     await page.waitForTimeout(400);
@@ -178,6 +187,11 @@ test.describe('Service worker on preview', () => {
       type: 'note',
       description: `Requires built preview at ${baseURL} with pwa module loaded`,
     });
+
+    for (const method of ['GET', 'HEAD'] as const) {
+      const shell = await request.fetch(`${baseURL}/200.html`, { method });
+      expect(shell.status(), `${method} /200.html must return 200 on pnpm preview server`).toBe(200);
+    }
 
     const swProbe = await request.get(`${baseURL}/sw.js`);
     expect(swProbe.status(), '/sw.js must be served on preview').toBe(200);

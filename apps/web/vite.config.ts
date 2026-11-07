@@ -1,32 +1,6 @@
-import { createReadStream, existsSync } from 'node:fs';
-import { join } from 'node:path';
 import { sveltekit } from '@sveltejs/kit/vite';
-import type { PreviewServer } from 'vite';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-
-function preview200HtmlPlugin() {
-  return {
-    name: 'preview-200-html',
-    configurePreviewServer(server: PreviewServer) {
-      server.middlewares.use((req, res, next) => {
-        const urlPath = req.url?.split('?')[0] ?? '';
-        if (urlPath !== '/200.html') {
-          next();
-          return;
-        }
-        const file = join(server.config.build.outDir, '200.html');
-        if (!existsSync(file)) {
-          next();
-          return;
-        }
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        createReadStream(file).pipe(res);
-      });
-    },
-  };
-}
 
 export default defineConfig({
   // Requirement: PWA SW must register at `/sw.js` with scope `/` on deep routes.
@@ -34,7 +8,6 @@ export default defineConfig({
   // register `structuring/sw.js` from `/structuring/model-5`.
   base: '/',
   plugins: [
-    preview200HtmlPlugin(),
     sveltekit(),
     /* PWA configuration.
        - registerType: 'prompt' so the user controls when an updated SW

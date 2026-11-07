@@ -1,9 +1,8 @@
 /**
- * Static preview for Playwright: SvelteKit SPA routes + literal `/200.html` (HTTP 200).
+ * Production static preview (`pnpm preview`, Playwright webServer).
  *
- * Requirement: vite preview returns 404 status for `/200.html` while still body-serving
- *   the shell — Workbox install fails and SW never reaches `active` in automation.
- * Approach: minimal static server on `build/` with SPA fallback to `200.html`.
+ * Requirement: `vite preview` served `/200.html` with HTTP 404 (breaks Workbox precache).
+ * Approach: serve `build/` directly so GET/HEAD `/200.html` return 200 and SPA routes work.
  */
 
 import { createReadStream, existsSync, statSync } from 'node:fs';
@@ -33,10 +32,14 @@ function safePath(urlPath) {
   return file;
 }
 
-function sendFile(res, file) {
+function sendFile(req, res, file) {
   const type = MIME[extname(file)] ?? 'application/octet-stream';
   res.statusCode = 200;
   res.setHeader('Content-Type', type);
+  if (req.method === 'HEAD') {
+    res.end();
+    return;
+  }
   createReadStream(file).pipe(res);
 }
 
@@ -44,23 +47,23 @@ createServer((req, res) => {
   const urlPath = req.url?.split('?')[0] ?? '/';
   let file = safePath(urlPath);
   if (file && existsSync(file) && statSync(file).isFile()) {
-    sendFile(res, file);
+    sendFile(req, res, file);
     return;
   }
   if (urlPath.endsWith('/')) {
     const indexGuess = safePath(`${urlPath}index.html`);
     if (indexGuess && existsSync(indexGuess)) {
-      sendFile(res, indexGuess);
+      sendFile(req, res, indexGuess);
       return;
     }
   }
   const htmlGuess = safePath(`${urlPath}.html`);
   if (htmlGuess && existsSync(htmlGuess)) {
-    sendFile(res, htmlGuess);
+    sendFile(req, res, htmlGuess);
     return;
   }
   const shell = join(root, '200.html');
-  if (existsSync(shell)) sendFile(res, shell);
+  if (existsSync(shell)) sendFile(req, res, shell);
   else {
     res.statusCode = 500;
     res.end('missing 200.html');
