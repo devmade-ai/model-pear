@@ -90,6 +90,50 @@ test.describe('Clear All confirmation tab order', () => {
   });
 });
 
+test.describe('Save As modal — disabled Save skipped in tab order', () => {
+  test('empty name: Option Name → Cancel → Option Name', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/structuring/model-5');
+    await page.getByRole('button', { name: 'Save As...' }).click();
+
+    const dialog = saveDialog(page);
+    await dialog.getByLabel('Option Name').fill('');
+    await expect(dialog.getByRole('button', { name: 'Save', exact: true })).toBeDisabled();
+
+    await expectTabCycle(page, dialog, [
+      { label: 'Option Name' },
+      { role: 'button', name: 'Cancel' },
+      { label: 'Option Name' },
+    ]);
+  });
+});
+
+test.describe('Save As modal close restores focus to opener', () => {
+  test('backdrop click closes and returns focus to Save As...', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/structuring/model-5');
+    const opener = page.getByRole('button', { name: 'Save As...' });
+    await opener.click();
+
+    const dialog = saveDialog(page);
+    await expect(dialog).toBeVisible();
+    await dialog.getByTestId('modal-backdrop').click({ position: { x: 8, y: 8 } });
+    await expect(dialog).toBeHidden();
+    await expect(opener).toBeFocused();
+  });
+
+  test('Escape closes and returns focus to Save As...', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/structuring/model-5');
+    const opener = page.getByRole('button', { name: 'Save As...' });
+    await opener.click();
+    await expect(saveDialog(page)).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(saveDialog(page)).toBeHidden();
+    await expect(opener).toBeFocused();
+  });
+});
+
 test.describe('modal backdrop is not focusable', () => {
   test('Tab never focuses modal-backdrop close control', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });

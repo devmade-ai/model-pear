@@ -78,16 +78,22 @@ describe('handleModalTabKey', () => {
     expect(result).toEqual({ prevented: true, nextFocus: save });
   });
 
-  it('wraps Tab when focus escaped to backdrop close button', () => {
+  it('Tab from backdrop moves focus to first in-box control', () => {
     const e = new KeyboardEvent('keydown', { key: 'Tab' });
     const result = handleModalTabKey(dialog, e, backdropClose);
     expect(result).toEqual({ prevented: true, nextFocus: input });
   });
 
-  it('wraps Shift+Tab when active element is outside modal-box', () => {
+  it('Shift+Tab from outside modal-box moves focus to last in-box control', () => {
     const e = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true });
     const result = handleModalTabKey(dialog, e, document.body);
     expect(result).toEqual({ prevented: true, nextFocus: save });
+  });
+
+  it('Tab from outside modal-box moves focus to first in-box control', () => {
+    const e = new KeyboardEvent('keydown', { key: 'Tab' });
+    const result = handleModalTabKey(dialog, e, document.body);
+    expect(result).toEqual({ prevented: true, nextFocus: input });
   });
 
   it('does not trap when Tab moves between interior controls', () => {

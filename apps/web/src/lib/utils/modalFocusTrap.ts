@@ -20,10 +20,8 @@ export function getModalBoxFocusables(dialog: HTMLElement): HTMLElement[] {
 
   return Array.from(box.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter((el) => {
     if (el.getAttribute('aria-hidden') === 'true') return false;
-    if (el.disabled) return false;
-    // `hidden` attribute / aria-disabled are the only hard hides we need;
-    // offsetParent / getClientRects are unreliable inside <dialog> in jsdom
-    // and in top-layer rendering, so we do not filter on layout here.
+    // Selector already excludes `:disabled`; no layout filter — unreliable in
+    // <dialog> top layer / jsdom.
     return true;
   });
 }
@@ -50,12 +48,18 @@ export function handleModalTabKey(
 
   const first = focusable[0];
   const last = focusable[focusable.length - 1];
+  const inBox = focusableInBox(dialog, active);
+
+  // Focus escaped to backdrop, body, or browser sentinel — pull back in-box.
+  if (!inBox) {
+    return { prevented: true, nextFocus: e.shiftKey ? last : first };
+  }
 
   if (e.shiftKey) {
-    if (active === first || !focusableInBox(dialog, active)) {
+    if (active === first) {
       return { prevented: true, nextFocus: last };
     }
-  } else if (active === last || !focusableInBox(dialog, active)) {
+  } else if (active === last) {
     return { prevented: true, nextFocus: first };
   }
 

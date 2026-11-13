@@ -228,8 +228,7 @@
     background: var(--color-base-100) !important;
     overflow: visible !important;
   }
-  /* The native modal-backdrop close button (form method="dialog") is
-     visible in print otherwise — hide it. */
+  /* ModalBackdrop (aria-hidden click layer) must not print as an extra sheet. */
   dialog.modal .modal-backdrop {
     display: none !important;
   }
