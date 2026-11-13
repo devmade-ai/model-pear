@@ -6,6 +6,8 @@
    * rename, delete, and export/import functionality.
    */
   import { onDestroy } from 'svelte';
+  import ModalBackdrop from '$lib/components/ModalBackdrop.svelte';
+  import { modalFocusTrap } from '$lib/utils/modalFocusTrap';
   import {
     comparisonStore,
     savedOptions,
@@ -289,6 +291,7 @@
 <dialog
   bind:this={confirmDialog}
   class="modal"
+  use:modalFocusTrap
   on:close={() => (confirmClearOpen = false)}
   aria-labelledby="confirm-clear-title"
 >
@@ -308,7 +311,5 @@
       >Delete all</button>
     </div>
   </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
+  <ModalBackdrop />
 </dialog>
