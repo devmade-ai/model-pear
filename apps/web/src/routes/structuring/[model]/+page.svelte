@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
+  import ModalBackdrop from '$lib/components/ModalBackdrop.svelte';
+  import { modalFocusTrap } from '$lib/utils/modalFocusTrap';
   import { page } from '$app/stores';
   import { resolve } from '$app/paths';
   import {
@@ -520,6 +522,7 @@
   <dialog
     bind:this={saveDialog}
     class="modal"
+    use:modalFocusTrap
     on:close={() => (showSaveModal = false)}
     aria-labelledby="save-modal-title"
   >
@@ -545,10 +548,7 @@
         </button>
       </div>
     </div>
-    <!-- Backdrop click closes the dialog via native form-method-dialog -->
-    <form method="dialog" class="modal-backdrop">
-      <button>close</button>
-    </form>
+    <ModalBackdrop />
   </dialog>
 
   <!-- Comparison View -->

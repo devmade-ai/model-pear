@@ -10,6 +10,8 @@
    * which unmounts.
    */
   import { onMount } from 'svelte';
+  import ModalBackdrop from '$lib/components/ModalBackdrop.svelte';
+  import { modalFocusTrap } from '$lib/utils/modalFocusTrap';
   import { selectedOptions, comparisonStore } from '$lib/stores';
   import type { SavedOption } from '$lib/stores';
   import { formatCurrency, formatPercent } from '$lib/utils/formatters';
@@ -238,6 +240,7 @@
 <dialog
   bind:this={dialogEl}
   class="modal"
+  use:modalFocusTrap
   on:close={close}
   aria-label="Comparison view"
 >
@@ -390,8 +393,5 @@
       <button class="btn btn-primary no-print" on:click={close}> Close </button>
     </div>
   </div>
-  <!-- Native backdrop click → close -->
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
+  <ModalBackdrop />
 </dialog>

@@ -1,7 +1,6 @@
-# Session Notes
+# Session notes
 
-## Pricing narrow layout follow-up (`devmade/pricing-narrow-layout-fix-9aed`)
-
-- Post-merge #132 prod audit: at 320px pricing grid implicit min-content (~387px) plus `overflow-x-clip` masked clipped values; fix is `minmax(0,1fr)` on `.pricing-main-grid`, `.pricing-metrics-grid`, `.pricing-price-scale`, `min-w-0` on columns/cards/stats, removed pricing grid `overflow-x-clip`.
-- E2E: `assertCriticalPricingVisible` + `assertPricingGridTracksShrink`; all 5 models @ 320/360/375/390; `chartBleed` in `assertNoChartDocumentBleed`.
-- Playwright: `PLAYWRIGHT_USE_SYSTEM_CHROME=1` + `preview-e2e.mjs` for SW test unchanged.
+- **Done:** Modal Tab trap fix — `ModalBackdrop.svelte` (non-focusable click-to-close) + `modalFocusTrap` action on all DaisyUI `<dialog class="modal">` instances (Save Option, Clear All, Install, Comparison view). Unit + Playwright tab-cycle tests added.
+- **Branch:** `devmade/modal-focus-trap-308f`
+- **Verify:** `pnpm check`, `pnpm lint`, `pnpm test`, `pnpm build`, Playwright `modal-focus.spec.ts` (8 tests).
+- **Review follow-up (PR134):** svelte-check `disabled` fix, explicit outside-modal-box Tab handling, print CSS comment, e2e backdrop/Escape/empty-name cycles.

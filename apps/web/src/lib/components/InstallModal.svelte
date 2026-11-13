@@ -8,9 +8,8 @@
    *
    * Uses DaisyUI's <dialog class="modal"> + <div class="modal-box">.
    * Browser handles focus trap (top-layer rendering), Escape close,
-   * and focus return on close. Backdrop click is handled by the
-   * <form method="dialog" class="modal-backdrop"> child via native
-   * dialog semantics.
+   * and focus return on close. Backdrop click uses ModalBackdrop
+   * (non-focusable) with modalFocusTrap for Tab cycling in modal-box.
    *
    * The reference-counted bodyScrollLock is kept so the install
    * modal composes correctly with the burger-menu scroll lock —
@@ -20,6 +19,8 @@
   import { onMount, onDestroy } from 'svelte';
   import type { InstallInstruction } from '$lib/pwa';
   import { lockBodyScroll, unlockBodyScroll } from '$lib/utils/bodyScrollLock';
+  import ModalBackdrop from '$lib/components/ModalBackdrop.svelte';
+  import { modalFocusTrap } from '$lib/utils/modalFocusTrap';
 
   let info: InstallInstruction | null = null;
   let dialogEl: HTMLDialogElement;
@@ -74,6 +75,7 @@
 <dialog
   bind:this={dialogEl}
   class="modal"
+  use:modalFocusTrap
   on:close={handleClose}
   aria-labelledby="install-modal-title"
 >
@@ -126,8 +128,5 @@
       </div>
     </div>
   {/if}
-  <!-- Native backdrop click → close, no manual click-outside handler. -->
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
+  <ModalBackdrop />
 </dialog>
